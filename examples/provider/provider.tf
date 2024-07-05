@@ -1,3 +1,3 @@
-provider "scaffolding" {
+provider "signoz" {
   # example configuration here
 }
