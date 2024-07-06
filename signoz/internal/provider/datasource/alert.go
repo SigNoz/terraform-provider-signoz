@@ -17,13 +17,7 @@ import (
 // Ensure the implementation satisfies the expected interfaces.
 var (
 	_ datasource.DataSource = &alertDataSource{}
-	// _ datasource.DataSourceWithConfigure = &alertDataSource{}
 )
-
-// // alertDataSourceModel maps the data source schema data.
-// type alertDataSourceModel struct {
-// 	Alert alertModel `tfsdk:"alert"`
-// }
 
 // NewAlertDataSource is a helper function to simplify the provider implementation.
 func NewAlertDataSource() datasource.DataSource {

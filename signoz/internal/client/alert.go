@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// alertResponse - Maps the response data
+// alertResponse - Maps the response data.
 type alertResponse struct {
 	Status    string      `json:"status"`
 	Data      interface{} `json:"data,omitempty"`
@@ -19,14 +19,14 @@ type alertResponse struct {
 	Error     string      `json:"error,omitempty"`
 }
 
-// GetAlert - Returns specific alert
+// GetAlert - Returns specific alert.
 func (c *Client) GetAlert(ctx context.Context, alertID string) (*model.Alert, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/v1/rules/%s", c.HostURL, alertID), nil)
 	if err != nil {
 		return &model.Alert{}, err
 	}
 
-	body, err := c.doRequest(ctx, req, nil)
+	body, err := c.doRequest(ctx, req)
 	if err != nil {
 		return &model.Alert{}, err
 	}
@@ -57,7 +57,7 @@ func (c *Client) GetAlert(ctx context.Context, alertID string) (*model.Alert, er
 	return alert, nil
 }
 
-// CreateAlert - Creates a new alert
+// CreateAlert - Creates a new alert.
 func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*model.Alert, error) {
 	rb, err := json.Marshal(alertPayload)
 	if err != nil {
@@ -71,7 +71,7 @@ func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*m
 
 	req.Header.Set("Content-Type", "application/json")
 
-	body, err := c.doRequest(ctx, req, nil)
+	body, err := c.doRequest(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*m
 	return alert, nil
 }
 
-// UpdateAlert - Updates an existing alert
+// UpdateAlert - Updates an existing alert.
 func (c *Client) UpdateAlert(ctx context.Context, alertID string, alert *model.Alert) (*model.Alert, error) {
 	rb, err := json.Marshal(alert)
 	if err != nil {
@@ -116,7 +116,7 @@ func (c *Client) UpdateAlert(ctx context.Context, alertID string, alert *model.A
 
 	req.Header.Set("Content-Type", "application/json")
 
-	body, err := c.doRequest(ctx, req, nil)
+	body, err := c.doRequest(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -147,14 +147,14 @@ func (c *Client) UpdateAlert(ctx context.Context, alertID string, alert *model.A
 	return alertObj, nil
 }
 
-// DeleteAlert - Deletes an existing alert
+// DeleteAlert - Deletes an existing alert.
 func (c *Client) DeleteAlert(ctx context.Context, alertID string) error {
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/api/v1/rules/%s", c.HostURL, alertID), nil)
 	if err != nil {
 		return err
 	}
 
-	body, err := c.doRequest(ctx, req, nil)
+	body, err := c.doRequest(ctx, req)
 	if err != nil {
 		return err
 	}

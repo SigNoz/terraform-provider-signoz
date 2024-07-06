@@ -12,18 +12,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func addErr(diagnostics *diag.Diagnostics, err error, operation, resource string) {
+// addErr adds an error to the diagnostics.
+func addErr(diagnostics *diag.Diagnostics, err error, operation string) {
 	if err == nil {
 		return
 	}
 
 	diagnostics.AddError(
-		fmt.Sprintf("failed to %s %s", operation, resource),
+		fmt.Sprintf("failed to %s %s", operation, SigNozAlert),
 		err.Error(),
 	)
 }
 
-func createLabels(planLabels types.Map, planSeverity types.String) (map[string]string, error) {
+// createLabels creates labels for an alert.
+func createLabels(planLabels types.Map, planSeverity types.String) map[string]string {
 	labels := make(map[string]string)
 	for key, value := range planLabels.Elements() {
 		labels[key] = strings.Trim(value.String(), "\"")
@@ -35,9 +37,10 @@ func createLabels(planLabels types.Map, planSeverity types.String) (map[string]s
 		labels[signozattr.Severity] = planSeverity.ValueString()
 	}
 
-	return labels, nil
+	return labels
 }
 
+// createRuleType creates rule type for an alert.
 func createRuleType(planRuleType types.String) (string, error) {
 	ruleType := planRuleType.ValueString()
 	if ruleType == "" || (ruleType != model.AlertRuleTypeProm && ruleType != model.AlertRuleTypeThreshold) {
@@ -46,6 +49,7 @@ func createRuleType(planRuleType types.String) (string, error) {
 	return ruleType, nil
 }
 
+// fetchLabels fetches labels for an alert.
 func fetchLabels(labels map[string]string) (types.Map, diag.Diagnostics) {
 	elements := map[string]attr.Value{}
 	terraformLabels := strings.Split(alertTerraformLabel, ":")
@@ -58,6 +62,7 @@ func fetchLabels(labels map[string]string) (types.Map, diag.Diagnostics) {
 	return types.MapValue(types.StringType, elements)
 }
 
+// fetchPreferredChannels fetches preferred channels for an alert.
 func fetchPreferredChannels(preferredChannels []string) (types.List, diag.Diagnostics) {
 	elements := utils.Map(preferredChannels, func(value string) attr.Value {
 		return types.StringValue(value)

@@ -10,17 +10,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// DefaultHostURL - Default SigNoz URL
+// DefaultHostURL - Default SigNoz URL.
 const DefaultHostURL string = "http://localhost:3301"
 
-// Client -
+// Client - SigNoz API client.
 type Client struct {
 	HostURL    string
 	HTTPClient *http.Client
 	Token      string
 }
 
-// NewClient - Creates a new client
+// NewClient - Creates a new client.
 func NewClient(host, token *string) (*Client, error) {
 	c := Client{
 		HTTPClient: &http.Client{
@@ -41,14 +41,8 @@ func NewClient(host, token *string) (*Client, error) {
 	return &c, nil
 }
 
-func (c *Client) doRequest(ctx context.Context, req *http.Request, authToken *string) ([]byte, error) {
-	token := c.Token
-
-	if authToken != nil {
-		token = *authToken
-	}
-
-	req.Header.Set("SIGNOZ-API-KEY", token)
+func (c *Client) doRequest(ctx context.Context, req *http.Request) ([]byte, error) {
+	req.Header.Set("SIGNOZ-API-KEY", c.Token)
 
 	tflog.Debug(ctx, "Making SigNoz API request", map[string]any{"method": req.Method, "url": req.URL.String()})
 

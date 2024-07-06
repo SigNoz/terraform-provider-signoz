@@ -32,7 +32,7 @@ var (
 )
 
 const (
-	// registry       = "registry.terraform.io/SigNoz/signoz"
+	registry       = "registry.terraform.io/SigNoz/signoz"
 	terraformAgent = "TF"
 )
 

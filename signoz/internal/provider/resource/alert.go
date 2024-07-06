@@ -214,14 +214,9 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	// Generate API request body
-	labels, err := createLabels(plan.Labels, plan.Severity)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
-		return
-	}
 	condition, err := structure.ExpandJsonFromString(plan.Condition.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationCreate)
 		return
 	}
 	preferredChannels := utils.Map(plan.PreferredChannels.Elements(), func(value attr.Value) string {
@@ -229,7 +224,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	})
 	ruleType, err := createRuleType(plan.RuleType)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationCreate)
 		return
 	}
 	alertPayload := &model.Alert{
@@ -243,7 +238,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 		Condition:         condition,
 		EvalWindow:        plan.EvalWindow.ValueString(),
 		Frequency:         plan.Frequency.ValueString(),
-		Labels:            labels,
+		Labels:            createLabels(plan.Labels, plan.Severity),
 		PreferredChannels: preferredChannels,
 		RuleType:          ruleType,
 		Source:            plan.Source.ValueString(),
@@ -295,7 +290,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	// Get refreshed alert from SigNoz
 	alert, err := r.client.GetAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationRead)
 		return
 	}
 
@@ -304,7 +299,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
 	condition, err := structure.FlattenJsonToString(alert.Condition)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationRead)
 		return
 	}
 	state.Condition = types.StringValue(condition)
@@ -369,6 +364,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		Disabled:       plan.Disabled.ValueBool(),
 		EvalWindow:     plan.EvalWindow.ValueString(),
 		Frequency:      plan.Frequency.ValueString(),
+		Labels:         createLabels(plan.Labels, plan.Severity),
 		RuleType:       plan.RuleType.ValueString(),
 		Source:         plan.Source.ValueString(),
 		State:          state.State.ValueString(),
@@ -380,12 +376,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	}
 	alertUpdate.Condition, err = structure.ExpandJsonFromString(plan.Condition.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
-		return
-	}
-	alertUpdate.Labels, err = createLabels(plan.Labels, plan.Severity)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 	alertUpdate.PreferredChannels = utils.Map(plan.PreferredChannels.Elements(), func(element attr.Value) string {
@@ -395,14 +386,14 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	// Update existing alert
 	_, err = r.client.UpdateAlert(ctx, plan.ID.ValueString(), alertUpdate)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
 	// Fetch updated alert
 	alert, err := r.client.GetAlert(ctx, plan.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
@@ -412,7 +403,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
 	conditionString, err := structure.FlattenJsonToString(alert.Condition)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 	plan.Condition = types.StringValue(conditionString)
@@ -460,16 +451,27 @@ func (r *alertResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	// Delete existing alert
 	err := r.client.DeleteAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationDelete, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationDelete)
 		return
 	}
 }
 
 // Configure adds the provider configured client to the resource.
-func (r *alertResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
+func (r *alertResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
 
-	r.client = req.ProviderData.(*client.Client)
+	client, ok := req.ProviderData.(*client.Client)
+	if !ok {
+		addErr(
+			&resp.Diagnostics,
+			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. Please report this issue to the provider developers", req.ProviderData),
+			SigNozAlert,
+		)
+
+		return
+	}
+
+	r.client = client
 }

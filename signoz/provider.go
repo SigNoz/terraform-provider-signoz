@@ -22,7 +22,7 @@ const (
 	DefaultHTTPMaxRetry = "10"
 	DefaultURL          = "http://localhost:3301"
 
-	// Environment variables
+	// Environment variables.
 	EnvAccessToken = "SIGNOZ_ACCESS_TOKEN" // #nosec G101
 	EnvEndpoint    = "SIGNOZ_ENDPOINT"
 )

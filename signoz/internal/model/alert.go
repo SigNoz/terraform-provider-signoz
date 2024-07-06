@@ -30,7 +30,7 @@ var (
 	AlertStates     = []string{AlertStateInactive, AlertStatePending, AlertStateFiring, AlertStateDisabled}
 )
 
-// Alert model
+// Alert model.
 type Alert struct {
 	ID                string                 `json:"id"`
 	Alert             string                 `json:"alert"`
@@ -53,7 +53,7 @@ type Alert struct {
 	UpdateBy          string                 `json:"updateBy,omitempty"`
 }
 
-// Alert Annotations model
+// Alert Annotations model.
 type AlertAnnotations struct {
 	Description string `json:"description"`
 	Summary     string `json:"summary"`

@@ -2,7 +2,7 @@ package utils
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-// GetValueString - get value from string or return default
+// GetValueString - get value from string or return default.
 func GetValueString(element types.String, defaultValue string) string {
 	if element.IsNull() || element.IsUnknown() || element.ValueString() == "" {
 		return defaultValue
@@ -11,7 +11,7 @@ func GetValueString(element types.String, defaultValue string) string {
 	return element.ValueString()
 }
 
-// GetValueBool - get value from bool or return default
+// GetValueBool - get value from bool or return default.
 func GetValueBool(element types.Bool, defaultValue bool) bool {
 	if element.IsNull() || element.IsUnknown() {
 		return defaultValue
