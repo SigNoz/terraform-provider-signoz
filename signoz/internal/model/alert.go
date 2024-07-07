@@ -1,6 +1,15 @@
 package model
 
-import "github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
+import (
+	"strings"
+
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
+	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
+)
 
 const (
 	AlertTypeMetrics    = "METRIC_BASED_ALERT"
@@ -20,6 +29,8 @@ const (
 	AlertStatePending  = "pending"
 	AlertStateFiring   = "firing"
 	AlertStateDisabled = "disabled"
+
+	AlertTerraformLabel = "managedBy:terraform"
 )
 
 //nolint:gochecknoglobals
@@ -71,6 +82,35 @@ func (a Alert) GetType() string {
 	return a.AlertType
 }
 
+func (a Alert) ConditionToTerraform() (types.String, error) {
+	condition, err := structure.FlattenJsonToString(a.Condition)
+	if err != nil {
+		return types.StringValue(""), err
+	}
+
+	return types.StringValue(condition), nil
+}
+
+func (a Alert) LabelsToTerraform() (types.Map, diag.Diagnostics) {
+	elements := map[string]tfattr.Value{}
+	terraformLabels := strings.Split(AlertTerraformLabel, ":")
+	for key, value := range a.Labels {
+		if key == attr.Severity || key == terraformLabels[0] {
+			continue
+		}
+		elements[key] = types.StringValue(value)
+	}
+	return types.MapValue(types.StringType, elements)
+}
+
+func (a Alert) PreferredChannelsToTerraform() (types.List, diag.Diagnostics) {
+	preferredChannels := utils.Map(a.PreferredChannels, func(value string) tfattr.Value {
+		return types.StringValue(value)
+	})
+
+	return types.ListValue(types.StringType, preferredChannels)
+}
+
 func (a Alert) ToTerraform() interface{} {
 	return map[string]interface{}{
 		attr.ID:                a.ID,
@@ -98,6 +138,36 @@ func (a Alert) ToTerraform() interface{} {
 	}
 }
 
-func (a Alert) GetState() string {
-	return AlertStateInactive
+func (a *Alert) SetCondition(tfCondition types.String) error {
+	condition, err := structure.ExpandJsonFromString(tfCondition.ValueString())
+	if err != nil {
+		return err
+	}
+
+	a.Condition = condition
+	return nil
+}
+
+func (a *Alert) SetLabels(tfLabels types.Map, tfSeverity types.String) {
+	labels := make(map[string]string)
+
+	for key, value := range tfLabels.Elements() {
+		labels[key] = strings.Trim(value.String(), "\"")
+	}
+
+	terraformLabel := strings.Split(AlertTerraformLabel, ":")
+	labels[strings.TrimSpace(terraformLabel[0])] = strings.TrimSpace(terraformLabel[1])
+
+	if tfSeverity.ValueString() != "" {
+		labels[attr.Severity] = tfSeverity.ValueString()
+	}
+
+	a.Labels = labels
+}
+
+func (a *Alert) SetPreferredChannels(tfPreferredChannels types.List) {
+	preferredChannels := utils.Map(tfPreferredChannels.Elements(), func(value tfattr.Value) string {
+		return strings.Trim(value.String(), "\"")
+	})
+	a.PreferredChannels = preferredChannels
 }

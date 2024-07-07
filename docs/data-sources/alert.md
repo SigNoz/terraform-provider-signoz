@@ -17,7 +17,7 @@ Fetches an alert from Signoz using its ID. The ID can be found in the URL of the
 
 ### Required
 
-- `id` (String) ID of the alert. The ID can be found in the URL of the alert in the Signoz UI.
+- `id` (String) ID of the alert.
 
 ### Read-Only
 

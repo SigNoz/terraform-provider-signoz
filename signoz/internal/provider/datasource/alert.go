@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
@@ -63,7 +62,7 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 		Attributes: map[string]schema.Attribute{
 			attr.ID: schema.StringAttribute{
 				Required:    true,
-				Description: "ID of the alert. The ID can be found in the URL of the alert in the Signoz UI.",
+				Description: "ID of the alert.",
 			},
 			attr.Alert: schema.StringAttribute{
 				Computed:    true,
@@ -160,24 +159,7 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	condition, err := structure.FlattenJsonToString(alert.Condition)
-	if err != nil {
-		addErr(
-			&resp.Diagnostics,
-			fmt.Errorf("unable to flatten SigNoz condition JSON to string: %s", err.Error()),
-			SigNozAlert,
-		)
-
-		return
-	}
-	data.Condition = types.StringValue(condition)
-
-	data.Labels, diags = fetchLabels(alert.Labels)
-	resp.Diagnostics.Append(diags...)
-
-	data.PreferredChannels, diags = fetchPreferredChannels(alert.PreferredChannels)
-	resp.Diagnostics.Append(diags...)
-
+	// Set state values from retrieved data
 	data.ID = types.StringValue(alert.ID)
 	data.Alert = types.StringValue(alert.Alert)
 	data.AlertType = types.StringValue(alert.AlertType)
@@ -192,6 +174,18 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	data.State = types.StringValue(alert.State)
 	data.Summary = types.StringValue(alert.Annotations.Summary)
 	data.Version = types.StringValue(alert.Version)
+
+	data.Condition, err = alert.ConditionToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, SigNozAlert)
+		return
+	}
+
+	data.Labels, diags = alert.LabelsToTerraform()
+	resp.Diagnostics.Append(diags...)
+
+	data.PreferredChannels, diags = alert.PreferredChannelsToTerraform()
+	resp.Diagnostics.Append(diags...)
 
 	// Set state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

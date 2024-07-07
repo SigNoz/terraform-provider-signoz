@@ -5,15 +5,15 @@ import "github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
 // signozResponse - Maps the response data.
 type signozResponse struct {
 	Status    string      `json:"status"`
-	Data      interface{} `json:"data,omitempty"`
-	ErrorType string      `json:"errorType,omitempty"`
-	Error     string      `json:"error,omitempty"`
+	Data      interface{} `json:"data"`
+	ErrorType string      `json:"errorType"`
+	Error     string      `json:"error"`
 }
 
 // alertResponse - Maps the response data of GetAlert and CreateAlert.
 type alertResponse struct {
-	Status    string
-	Error     string
-	ErrorType string
-	Data      model.Alert
+	Status    string      `json:"status"`
+	Error     string      `json:"error"`
+	ErrorType string      `json:"errorType"`
+	Data      model.Alert `json:"data"`
 }

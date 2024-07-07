@@ -4,13 +4,10 @@ import (
 	"context"
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -19,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 )
@@ -214,19 +210,6 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	// Generate API request body
-	condition, err := structure.ExpandJsonFromString(plan.Condition.ValueString())
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
-		return
-	}
-	preferredChannels := utils.Map(plan.PreferredChannels.Elements(), func(value tfattr.Value) string {
-		return strings.Trim(value.String(), "\"")
-	})
-	ruleType, err := createRuleType(plan.RuleType)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
-		return
-	}
 	alertPayload := &model.Alert{
 		Alert:     plan.Alert.ValueString(),
 		AlertType: plan.AlertType.ValueString(),
@@ -234,16 +217,22 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 			Description: plan.Description.ValueString(),
 			Summary:     plan.Summary.ValueString(),
 		},
-		BroadcastToAll:    plan.BroadcastToAll.ValueBool(),
-		Condition:         condition,
-		EvalWindow:        plan.EvalWindow.ValueString(),
-		Frequency:         plan.Frequency.ValueString(),
-		Labels:            createLabels(plan.Labels, plan.Severity),
-		PreferredChannels: preferredChannels,
-		RuleType:          ruleType,
-		Source:            plan.Source.ValueString(),
-		Version:           plan.Version.ValueString(),
+		BroadcastToAll: plan.BroadcastToAll.ValueBool(),
+		EvalWindow:     plan.EvalWindow.ValueString(),
+		Frequency:      plan.Frequency.ValueString(),
+		RuleType:       plan.RuleType.ValueString(),
+		Source:         plan.Source.ValueString(),
+		Version:        plan.Version.ValueString(),
 	}
+
+	err := alertPayload.SetCondition(plan.Condition)
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationCreate)
+		return
+	}
+
+	alertPayload.SetLabels(plan.Labels, plan.Severity)
+	alertPayload.SetPreferredChannels(plan.PreferredChannels)
 
 	tflog.Debug(ctx, "Creating alert", map[string]any{"alert": alertPayload})
 
@@ -297,24 +286,8 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	// Overwrite items with refreshed state
 	state.Alert = types.StringValue(alert.Alert)
-	state.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
-	condition, err := structure.FlattenJsonToString(alert.Condition)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
-		return
-	}
-	state.Condition = types.StringValue(condition)
 	state.AlertType = types.StringValue(alert.AlertType)
-	state.Labels, diag = fetchLabels(alert.Labels)
-	if diag.HasError() {
-		resp.Diagnostics.Append(diag...)
-		return
-	}
-	state.PreferredChannels, diag = fetchPreferredChannels(alert.PreferredChannels)
-	if diag.HasError() {
-		resp.Diagnostics.Append(diag...)
-		return
-	}
+	state.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
 	state.Description = types.StringValue(alert.Annotations.Description)
 	state.Disabled = types.BoolValue(alert.Disabled)
 	state.EvalWindow = types.StringValue(alert.EvalWindow)
@@ -329,6 +302,18 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.CreateBy = types.StringValue(alert.CreateBy)
 	state.UpdateAt = types.StringValue(alert.UpdateAt)
 	state.UpdateBy = types.StringValue(alert.UpdateBy)
+
+	state.Condition, err = alert.ConditionToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	state.Labels, diag = alert.LabelsToTerraform()
+	resp.Diagnostics.Append(diag...)
+
+	state.PreferredChannels, diag = alert.PreferredChannelsToTerraform()
+	resp.Diagnostics.Append(diag...)
 
 	// Set refreshed state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
@@ -365,7 +350,6 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		Disabled:       plan.Disabled.ValueBool(),
 		EvalWindow:     plan.EvalWindow.ValueString(),
 		Frequency:      plan.Frequency.ValueString(),
-		Labels:         createLabels(plan.Labels, plan.Severity),
 		RuleType:       plan.RuleType.ValueString(),
 		Source:         plan.Source.ValueString(),
 		State:          state.State.ValueString(),
@@ -375,14 +359,15 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		UpdateAt:       state.UpdateAt.ValueString(),
 		UpdateBy:       state.UpdateBy.ValueString(),
 	}
-	alertUpdate.Condition, err = structure.ExpandJsonFromString(plan.Condition.ValueString())
+
+	err = alertUpdate.SetCondition(plan.Condition)
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
-	alertUpdate.PreferredChannels = utils.Map(plan.PreferredChannels.Elements(), func(element tfattr.Value) string {
-		return element.String()
-	})
+
+	alertUpdate.SetLabels(plan.Labels, plan.Severity)
+	alertUpdate.SetPreferredChannels(plan.PreferredChannels)
 
 	// Update existing alert
 	err = r.client.UpdateAlert(ctx, state.ID.ValueString(), alertUpdate)
@@ -403,26 +388,10 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.Alert = types.StringValue(alert.Alert)
 	plan.AlertType = types.StringValue(alert.AlertType)
 	plan.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
-	conditionString, err := structure.FlattenJsonToString(alert.Condition)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
-		return
-	}
-	plan.Condition = types.StringValue(conditionString)
 	plan.Description = types.StringValue(alert.Annotations.Description)
 	plan.Disabled = types.BoolValue(alert.Disabled)
 	plan.EvalWindow = types.StringValue(alert.EvalWindow)
 	plan.Frequency = types.StringValue(alert.Frequency)
-	plan.Labels, diag = fetchLabels(alert.Labels)
-	if diag.HasError() {
-		resp.Diagnostics.Append(diag...)
-		return
-	}
-	plan.PreferredChannels, diag = fetchPreferredChannels(alert.PreferredChannels)
-	if diag.HasError() {
-		resp.Diagnostics.Append(diag...)
-		return
-	}
 	plan.RuleType = types.StringValue(alert.RuleType)
 	plan.Severity = types.StringValue(alert.Labels[attr.Severity])
 	plan.Source = types.StringValue(alert.Source)
@@ -433,6 +402,18 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.CreateBy = types.StringValue(alert.CreateBy)
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
+
+	plan.Condition, err = alert.ConditionToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationUpdate)
+		return
+	}
+
+	plan.Labels, diag = alert.LabelsToTerraform()
+	resp.Diagnostics.Append(diag...)
+
+	plan.PreferredChannels, diag = alert.PreferredChannelsToTerraform()
+	resp.Diagnostics.Append(diag...)
 
 	// Set refreshed state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)

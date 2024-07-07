@@ -14,6 +14,4 @@ const (
 	alertDefaultSummary      = "The rule threshold is set to {{$threshold}}, and the observed metric value is {{$value}}"
 	alertDefaultSourceSuffix = "alerts"
 	alertDefaultVersion      = "v4"
-
-	alertTerraformLabel = "managedBy:terraform"
 )
