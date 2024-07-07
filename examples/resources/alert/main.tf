@@ -91,7 +91,6 @@ resource "signoz_alert" "new_alert" {
   ]
   rule_type = "threshold_rule"
   severity  = "info"
-  source    = "http://localhost:3301/alerts"
   version   = "v4"
 }
 

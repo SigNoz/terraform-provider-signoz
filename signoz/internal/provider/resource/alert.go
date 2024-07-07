@@ -10,7 +10,7 @@ import (
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
+	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -21,7 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 
-	signozattr "github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -74,11 +74,11 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 	resp.Schema = schema.Schema{
 		Description: "Creates and manages alert resources in SigNoz.",
 		Attributes: map[string]schema.Attribute{
-			signozattr.Alert: schema.StringAttribute{
+			attr.Alert: schema.StringAttribute{
 				Required:    true,
 				Description: "Name of the alert.",
 			},
-			signozattr.AlertType: schema.StringAttribute{
+			attr.AlertType: schema.StringAttribute{
 				Required: true,
 				Description: fmt.Sprintf("Type of the alert. Possible values are: %s, %s, %s, and %s.",
 					model.AlertTypeMetrics, model.AlertTypeLogs, model.AlertTypeTraces, model.AlertTypeExceptions),
@@ -86,29 +86,29 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 					stringvalidator.OneOf(model.AlertTypes...),
 				},
 			},
-			signozattr.BroadcastToAll: schema.BoolAttribute{
+			attr.BroadcastToAll: schema.BoolAttribute{
 				Optional: true,
 				Computed: true,
 				Description: "Whether to broadcast the alert to all the alerting channels. " +
 					"By default, the alert is only sent to the preferred channels.",
 			},
-			signozattr.Condition: schema.StringAttribute{
+			attr.Condition: schema.StringAttribute{
 				Required:    true,
 				Description: "Condition of the alert.",
 			},
-			signozattr.Description: schema.StringAttribute{
+			attr.Description: schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "Description of the alert.",
 				Default:     stringdefault.StaticString(alertDefaultDescription),
 			},
-			signozattr.Disabled: schema.BoolAttribute{
+			attr.Disabled: schema.BoolAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "Whether the alert is disabled.",
 				Default:     booldefault.StaticBool(false),
 			},
-			signozattr.EvalWindow: schema.StringAttribute{
+			attr.EvalWindow: schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "The evaluation window of the alert. By default, it is 5m0s.",
@@ -117,7 +117,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				},
 				Default: stringdefault.StaticString(alertDefaultEvalWindow),
 			},
-			signozattr.Frequency: schema.StringAttribute{
+			attr.Frequency: schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "The frequency of the alert. By default, it is 1m0s.",
@@ -126,19 +126,19 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				},
 				Default: stringdefault.StaticString(alertDefaultFrequency),
 			},
-			signozattr.Labels: schema.MapAttribute{
+			attr.Labels: schema.MapAttribute{
 				Optional:    true,
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: "Labels of the alert. Severity is a required label.",
 			},
-			signozattr.PreferredChannels: schema.ListAttribute{
+			attr.PreferredChannels: schema.ListAttribute{
 				Optional:    true,
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: "Preferred channels of the alert. By default, it is empty.",
 			},
-			signozattr.RuleType: schema.StringAttribute{
+			attr.RuleType: schema.StringAttribute{
 				Optional: true,
 				Computed: true,
 				Description: fmt.Sprintf("Type of the alert. Possible values are: %s and %s.",
@@ -147,7 +147,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 					stringvalidator.OneOf(model.AlertRuleTypes...),
 				},
 			},
-			signozattr.Severity: schema.StringAttribute{
+			attr.Severity: schema.StringAttribute{
 				Required: true,
 				Description: fmt.Sprintf("Severity of the alert. Possible values are: %s, %s, %s, and %s.",
 					model.AlertSeverityInfo, model.AlertSeverityWarning, model.AlertSeverityError, model.AlertSeverityCritical),
@@ -155,17 +155,18 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 					stringvalidator.OneOf(model.AlertSeverities...),
 				},
 			},
-			signozattr.Source: schema.StringAttribute{
-				Required:    true,
-				Description: "Source of the alert.",
+			attr.Source: schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "Source of the alert. By default, it is <SIGNOZ_ENDPOINT>/alerts.",
 			},
-			signozattr.Summary: schema.StringAttribute{
+			attr.Summary: schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "Summary of the alert.",
 				Default:     stringdefault.StaticString(alertDefaultSummary),
 			},
-			signozattr.Version: schema.StringAttribute{
+			attr.Version: schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
 				Description: "Version of the alert. By default, it is v4.",
@@ -175,28 +176,27 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Default: stringdefault.StaticString(alertDefaultVersion),
 			},
 			// computed
-			signozattr.ID: schema.StringAttribute{
-				Optional:    true,
+			attr.ID: schema.StringAttribute{
 				Computed:    true,
 				Description: "Autogenerated unique ID for the alert.",
 			},
-			signozattr.State: schema.StringAttribute{
+			attr.State: schema.StringAttribute{
 				Computed:    true,
 				Description: "State of the alert.",
 			},
-			signozattr.CreateAt: schema.StringAttribute{
+			attr.CreateAt: schema.StringAttribute{
 				Computed:    true,
 				Description: "Creation time of the alert.",
 			},
-			signozattr.CreateBy: schema.StringAttribute{
+			attr.CreateBy: schema.StringAttribute{
 				Computed:    true,
 				Description: "Creator of the alert.",
 			},
-			signozattr.UpdateAt: schema.StringAttribute{
+			attr.UpdateAt: schema.StringAttribute{
 				Computed:    true,
 				Description: "Last update time of the alert.",
 			},
-			signozattr.UpdateBy: schema.StringAttribute{
+			attr.UpdateBy: schema.StringAttribute{
 				Computed:    true,
 				Description: "Last updater of the alert.",
 			},
@@ -219,7 +219,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 		addErr(&resp.Diagnostics, err, operationCreate)
 		return
 	}
-	preferredChannels := utils.Map(plan.PreferredChannels.Elements(), func(value attr.Value) string {
+	preferredChannels := utils.Map(plan.PreferredChannels.Elements(), func(value tfattr.Value) string {
 		return strings.Trim(value.String(), "\"")
 	})
 	ruleType, err := createRuleType(plan.RuleType)
@@ -262,6 +262,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	// Map response to schema and populate Computed attributes
 	plan.ID = types.StringValue(alert.ID)
 	plan.Disabled = types.BoolValue(alert.Disabled)
+	plan.Source = types.StringValue(alert.Source)
 	plan.State = types.StringValue(alert.State)
 	plan.CreateAt = types.StringValue(alert.CreateAt)
 	plan.CreateBy = types.StringValue(alert.CreateBy)
@@ -319,7 +320,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.EvalWindow = types.StringValue(alert.EvalWindow)
 	state.Frequency = types.StringValue(alert.Frequency)
 	state.RuleType = types.StringValue(alert.RuleType)
-	state.Severity = types.StringValue(alert.Labels[signozattr.Severity])
+	state.Severity = types.StringValue(alert.Labels[attr.Severity])
 	state.Source = types.StringValue(alert.Source)
 	state.State = types.StringValue(alert.State)
 	state.Summary = types.StringValue(alert.Annotations.Summary)
@@ -379,25 +380,26 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
-	alertUpdate.PreferredChannels = utils.Map(plan.PreferredChannels.Elements(), func(element attr.Value) string {
+	alertUpdate.PreferredChannels = utils.Map(plan.PreferredChannels.Elements(), func(element tfattr.Value) string {
 		return element.String()
 	})
 
 	// Update existing alert
-	_, err = r.client.UpdateAlert(ctx, plan.ID.ValueString(), alertUpdate)
+	err = r.client.UpdateAlert(ctx, state.ID.ValueString(), alertUpdate)
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
 	// Fetch updated alert
-	alert, err := r.client.GetAlert(ctx, plan.ID.ValueString())
+	alert, err := r.client.GetAlert(ctx, state.ID.ValueString())
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
 	// Overwrite items with refreshed state
+	plan.ID = types.StringValue(alert.ID)
 	plan.Alert = types.StringValue(alert.Alert)
 	plan.AlertType = types.StringValue(alert.AlertType)
 	plan.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
@@ -422,7 +424,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 	plan.RuleType = types.StringValue(alert.RuleType)
-	plan.Severity = types.StringValue(alert.Labels[signozattr.Severity])
+	plan.Severity = types.StringValue(alert.Labels[attr.Severity])
 	plan.Source = types.StringValue(alert.Source)
 	plan.State = types.StringValue(alert.State)
 	plan.Summary = types.StringValue(alert.Annotations.Summary)

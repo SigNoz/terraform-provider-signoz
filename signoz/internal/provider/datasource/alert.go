@@ -8,8 +8,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 
-	signozattr "github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
 )
@@ -43,6 +44,7 @@ type alertModel struct {
 	Labels            types.Map    `tfsdk:"labels"`
 	PreferredChannels types.List   `tfsdk:"preferred_channels"`
 	RuleType          types.String `tfsdk:"rule_type"`
+	Severity          types.String `tfsdk:"severity"`
 	Source            types.String `tfsdk:"source"`
 	State             types.String `tfsdk:"state"`
 	Summary           types.String `tfsdk:"summary"`
@@ -59,72 +61,76 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 	resp.Schema = schema.Schema{
 		Description: "Fetches an alert from Signoz using its ID. The ID can be found in the URL of the alert in the Signoz UI.",
 		Attributes: map[string]schema.Attribute{
-			signozattr.ID: schema.StringAttribute{
+			attr.ID: schema.StringAttribute{
 				Required:    true,
 				Description: "ID of the alert. The ID can be found in the URL of the alert in the Signoz UI.",
 			},
-			signozattr.Alert: schema.StringAttribute{
+			attr.Alert: schema.StringAttribute{
 				Computed:    true,
 				Description: "Name of the alert.",
 			},
-			signozattr.AlertType: schema.StringAttribute{
+			attr.AlertType: schema.StringAttribute{
 				Computed: true,
 				Description: fmt.Sprintf("Type of the alert. Possible values are: %s, %s, %s, and %s.",
 					model.AlertTypeMetrics, model.AlertTypeLogs, model.AlertTypeTraces, model.AlertTypeExceptions),
 			},
-			signozattr.BroadcastToAll: schema.BoolAttribute{
+			attr.BroadcastToAll: schema.BoolAttribute{
 				Computed:    true,
 				Description: "Whether to broadcast the alert to all the alert channels.",
 			},
-			signozattr.Condition: schema.StringAttribute{
+			attr.Condition: schema.StringAttribute{
 				Computed:    true,
 				Description: "Condition of the alert.",
 			},
-			signozattr.Description: schema.StringAttribute{
+			attr.Description: schema.StringAttribute{
 				Computed:    true,
 				Description: "Description of the alert.",
 			},
-			signozattr.Disabled: schema.BoolAttribute{
+			attr.Disabled: schema.BoolAttribute{
 				Computed:    true,
 				Description: "Whether the alert is disabled.",
 			},
-			signozattr.EvalWindow: schema.StringAttribute{
+			attr.EvalWindow: schema.StringAttribute{
 				Computed:    true,
 				Description: "Evaluation window of the alert.",
 			},
-			signozattr.Frequency: schema.StringAttribute{
+			attr.Frequency: schema.StringAttribute{
 				Computed:    true,
 				Description: "Frequency of the alert.",
 			},
-			signozattr.Labels: schema.MapAttribute{
+			attr.Labels: schema.MapAttribute{
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: "Labels of the alert. Severity is a required label.",
 			},
-			signozattr.PreferredChannels: schema.ListAttribute{
+			attr.PreferredChannels: schema.ListAttribute{
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: "List of preferred channels of the alert. This is a noop if BroadcastToAll is true.",
 			},
-			signozattr.RuleType: schema.StringAttribute{
+			attr.RuleType: schema.StringAttribute{
 				Computed: true,
 				Description: fmt.Sprintf("Type of the Alert Rule for threshold. Possible values are: %s and %s.",
 					model.AlertRuleTypeThreshold, model.AlertRuleTypeProm),
 			},
-			signozattr.Source: schema.StringAttribute{
+			attr.Severity: schema.StringAttribute{
+				Computed:    true,
+				Description: "Severity of the alert.",
+			},
+			attr.Source: schema.StringAttribute{
 				Computed:    true,
 				Description: "Source URL of the alert.",
 			},
-			signozattr.State: schema.StringAttribute{
+			attr.State: schema.StringAttribute{
 				Computed: true,
 				Description: fmt.Sprintf("State of the alert. Possible values are: %s, %s, %s, and %s.",
 					model.AlertStateInactive, model.AlertStateFiring, model.AlertStatePending, model.AlertStateDisabled),
 			},
-			signozattr.Summary: schema.StringAttribute{
+			attr.Summary: schema.StringAttribute{
 				Computed:    true,
 				Description: "Summary of the alert.",
 			},
-			signozattr.Version: schema.StringAttribute{
+			attr.Version: schema.StringAttribute{
 				Computed:    true,
 				Description: "Version of the alert.",
 			},
@@ -135,7 +141,6 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 // Read refreshes the Terraform state with the latest data.
 func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data alertModel
-	var err error
 	var diags diag.Diagnostics
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
@@ -154,19 +159,22 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 		return
 	}
-	data.Condition, err = fetchCondition(alert.Condition)
+
+	condition, err := structure.FlattenJsonToString(alert.Condition)
 	if err != nil {
 		addErr(
 			&resp.Diagnostics,
-			fmt.Errorf("unable to read SigNoz condition: %s", err.Error()),
+			fmt.Errorf("unable to flatten SigNoz condition JSON to string: %s", err.Error()),
 			SigNozAlert,
 		)
 
 		return
 	}
+	data.Condition = types.StringValue(condition)
 
 	data.Labels, diags = fetchLabels(alert.Labels)
 	resp.Diagnostics.Append(diags...)
+
 	data.PreferredChannels, diags = fetchPreferredChannels(alert.PreferredChannels)
 	resp.Diagnostics.Append(diags...)
 
@@ -179,6 +187,7 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	data.EvalWindow = types.StringValue(alert.EvalWindow)
 	data.Frequency = types.StringValue(alert.Frequency)
 	data.RuleType = types.StringValue(alert.RuleType)
+	data.Severity = types.StringValue(alert.Labels[attr.Severity])
 	data.Source = types.StringValue(alert.Source)
 	data.State = types.StringValue(alert.State)
 	data.Summary = types.StringValue(alert.Annotations.Summary)

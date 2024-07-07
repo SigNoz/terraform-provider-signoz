@@ -1,11 +1,12 @@
 package datasource
 
 import (
-	"encoding/json"
 	"fmt"
+	"strings"
 
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
+	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -21,26 +22,20 @@ func addErr(diagnostics *diag.Diagnostics, err error, resource string) {
 	)
 }
 
-func fetchCondition(alertCondition map[string]interface{}) (types.String, error) {
-	condition, err := json.Marshal(alertCondition)
-	if err != nil {
-		return types.StringValue(""), err
+func fetchLabels(labels map[string]string) (types.Map, diag.Diagnostics) {
+	elements := map[string]tfattr.Value{}
+	terraformLabels := strings.Split(alertTerraformLabel, ":")
+	for key, value := range labels {
+		if key == attr.Severity || key == terraformLabels[0] {
+			continue
+		}
+		elements[key] = types.StringValue(value)
 	}
-
-	return types.StringValue(string(condition)), nil
-}
-
-func fetchLabels(alertLabels map[string]string) (types.Map, diag.Diagnostics) {
-	labels := make(map[string]attr.Value, len(alertLabels))
-	for key, value := range alertLabels {
-		labels[key] = types.StringValue(value)
-	}
-
-	return types.MapValue(types.StringType, labels)
+	return types.MapValue(types.StringType, elements)
 }
 
 func fetchPreferredChannels(alertPreferredChannels []string) (types.List, diag.Diagnostics) {
-	preferredChannels := utils.Map(alertPreferredChannels, func(value string) attr.Value {
+	preferredChannels := utils.Map(alertPreferredChannels, func(value string) tfattr.Value {
 		return types.StringValue(value)
 	})
 

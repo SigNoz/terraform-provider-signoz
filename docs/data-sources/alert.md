@@ -32,6 +32,7 @@ Fetches an alert from Signoz using its ID. The ID can be found in the URL of the
 - `labels` (Map of String) Labels of the alert. Severity is a required label.
 - `preferred_channels` (List of String) List of preferred channels of the alert. This is a noop if BroadcastToAll is true.
 - `rule_type` (String) Type of the Alert Rule for threshold. Possible values are: threshold_rule and promql_rule.
+- `severity` (String) Severity of the alert.
 - `source` (String) Source URL of the alert.
 - `state` (String) State of the alert. Possible values are: inactive, firing, pending, and disabled.
 - `summary` (String) Summary of the alert.

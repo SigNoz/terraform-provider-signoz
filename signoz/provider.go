@@ -2,7 +2,9 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -12,9 +14,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	signozdatasource "github.com/SigNoz/terraform-provider-signoz/signoz/internal/provider/datasource"
 	signozresource "github.com/SigNoz/terraform-provider-signoz/signoz/internal/provider/resource"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 )
 
 const (
@@ -23,14 +27,18 @@ const (
 	DefaultURL          = "http://localhost:3301"
 
 	// Environment variables.
-	EnvAccessToken = "SIGNOZ_ACCESS_TOKEN" // #nosec G101
-	EnvEndpoint    = "SIGNOZ_ENDPOINT"
+	EnvAccessToken  = "SIGNOZ_ACCESS_TOKEN" // #nosec G101
+	EnvEndpoint     = "SIGNOZ_ENDPOINT"
+	EnvHTTPMaxRetry = "SIGNOZ_HTTP_MAX_RETRY"
+	EnvHTTPTimeout  = "SIGNOZ_HTTP_TIMEOUT"
 )
 
 // signozProviderModel maps provider schema data to a Go type.
 type signozProviderModel struct {
-	Endpoint    types.String `tfsdk:"endpoint"`
-	AccessToken types.String `tfsdk:"access_token"`
+	AccessToken  types.String `tfsdk:"access_token"`
+	Endpoint     types.String `tfsdk:"endpoint"`
+	HTTPMaxRetry types.Int64  `tfsdk:"http_max_retry"`
+	HTTPTimeout  types.Int64  `tfsdk:"http_timeout"`
 }
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -69,14 +77,27 @@ func (p *signozProvider) Metadata(_ context.Context, _ provider.MetadataRequest,
 func (p *signozProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"endpoint": schema.StringAttribute{
-				Optional:    true,
-				Description: "Endpoint of the SigNoz API. " + DefaultURL + " by default.",
+			attr.AccessToken: schema.StringAttribute{
+				Optional:  true,
+				Sensitive: true,
+				Description: fmt.Sprintf("Access token of the SigNoz API. You can retrieve it from SigNoz UI\n"+
+					"with Admin Role ([documentation](https://signoz.io/newsroom/launch-week-1-day-5/#using-access-token)).\n"+
+					"Also, you can set it using environment variable %s.", EnvAccessToken),
 			},
-			"access_token": schema.StringAttribute{
-				Optional:    true,
-				Sensitive:   true,
-				Description: "Access token of the SigNoz API.",
+			attr.Endpoint: schema.StringAttribute{
+				Optional: true,
+				Description: fmt.Sprintf("Endpoint of the SigNoz. It is the root URL of the SigNoz UI.\n"+
+					"Also, you can set it using environment variable %s. If not set, it defaults to %s.", EnvEndpoint, DefaultURL),
+			},
+			attr.HTTPMaxRetry: schema.Int64Attribute{
+				Optional: true,
+				Description: fmt.Sprintf("Specifies the max retry limit for the HTTP requests made to SigNoz.\n"+
+					"Also, you can set it using environment variable %s. If not set, it defaults to %s.", EnvHTTPMaxRetry, DefaultHTTPMaxRetry),
+			},
+			attr.HTTPTimeout: schema.Int64Attribute{
+				Optional: true,
+				Description: fmt.Sprintf("Specifies the timeout limit in seconds for the HTTP requests made to SigNoz.\n"+
+					"Also, you can set it using environment variable %s. If not set, it defaults to %s.", EnvHTTPTimeout, DefaultHTTPTimeout),
 			},
 		},
 	}
@@ -88,78 +109,47 @@ func (p *signozProvider) Configure(ctx context.Context, req provider.ConfigureRe
 
 	// Retrieve provider data from configuration
 	var config signozProviderModel
-	diags := req.Config.Get(ctx, &config)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	// If practitioner provided a configuration value for any of the
-	// attributes, it must be a known value.
-	if config.Endpoint.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("endpoint"),
-			"Unknown SigNoz API Endpoint",
-			"The provider cannot create the SigNoz API client as there is an unknown configuration value for the SigNoz API endpoint. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the SIGNOZ_ENDPOINT environment variable.",
-		)
-	}
-	if config.AccessToken.IsUnknown() {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("access_token"),
-			"Unknown SigNoz API Access Token",
-			"The provider cannot create the SigNoz API client as there is an unknown configuration value for the SigNoz API access token. "+
-				"Either target apply the source of the value first, set the value statically in the configuration, or use the SIGNOZ_ACCESS_TOKEN environment variable.",
-		)
-	}
-	if resp.Diagnostics.HasError() {
-		return
-	}
+
 	// Default values to environment variables, but override
 	// with Terraform configuration value if set.
-	endpoint := os.Getenv(EnvEndpoint)
 	accessToken := os.Getenv(EnvAccessToken)
-	if !config.Endpoint.IsNull() {
-		endpoint = config.Endpoint.ValueString()
-	}
-	if !config.AccessToken.IsNull() {
-		accessToken = config.AccessToken.ValueString()
-	}
-	// If any of the expected configurations are missing, return
-	// errors with provider-specific guidance.
-	if endpoint == "" {
-		tflog.Warn(ctx, "Missing SigNoz API Endpoint, using default endpoint "+DefaultURL)
-		endpoint = DefaultURL
-	}
+	endpoint := utils.WithDefault(os.Getenv(EnvEndpoint), DefaultURL)
+	httpMaxRetry := utils.MustGetInt(utils.WithDefault(os.Getenv(EnvHTTPMaxRetry), DefaultHTTPMaxRetry))
+	httpTimeout := utils.MustGetInt(utils.WithDefault(os.Getenv(EnvHTTPTimeout), DefaultHTTPTimeout))
+
+	accessToken = utils.OverrideStrWithConfig(config.AccessToken, accessToken)
+	endpoint = utils.OverrideStrWithConfig(config.Endpoint, endpoint)
+	httpMaxRetry = utils.OverrideIntWithConfig(config.HTTPMaxRetry, httpMaxRetry)
+	httpTimeout = utils.OverrideIntWithConfig(config.HTTPTimeout, httpTimeout)
+
+	// Check if the SigNoz access token has been set in the configuration or
+	// environment variables. If not, return an error.
 	if accessToken == "" {
 		resp.Diagnostics.AddAttributeError(
-			path.Root("access_token"),
-			"Missing SigNoz API Access Token",
-			"The provider cannot create the SigNoz API client as there is a missing or empty value for the SigNoz API access token. "+
-				"Set the access_token value in the configuration or use the SIGNOZ_ACCESS_TOKEN environment variable. "+
-				"If either is already set, ensure the value is not empty.",
+			path.Root(attr.AccessToken),
+			"Missing SigNoz "+attr.AccessToken,
+			fmt.Sprintf("The provider cannot create the SigNoz API client as there is a missing or empty value for the SigNoz API %s. "+
+				"Set the %s value in the configuration or use the %s environment variable. "+
+				"If either is already set, ensure the value is not empty.", attr.AccessToken, attr.AccessToken, EnvAccessToken),
 		)
-	}
-	if resp.Diagnostics.HasError() {
+
 		return
 	}
-
-	ctx = tflog.SetField(ctx, "signoz_endpoint", endpoint)
-	ctx = tflog.SetField(ctx, "signoz_access_token", accessToken)
-	ctx = tflog.MaskFieldValuesWithFieldKeys(ctx, "signoz_access_token")
-
-	tflog.Debug(ctx, "Creating SigNoz client")
 
 	// Create a new SigNoz client using the configuration values
-	client, err := client.NewClient(&endpoint, &accessToken)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Unable to Create SigNoz API Client",
-			"An unexpected error occurred when creating the SigNoz API client. "+
-				"If the error is not clear, please contact the provider developers.\n\n"+
-				"SigNoz Client Error: "+err.Error(),
-		)
-		return
-	}
+	client := client.NewClient(
+		endpoint,
+		accessToken,
+		time.Duration(httpTimeout)*time.Second,
+		httpMaxRetry,
+		p.terraformAgent,
+		p.version,
+	)
+
 	// Make the SigNoz client available during DataSource and Resource
 	// type Configure methods.
 	resp.DataSourceData = client

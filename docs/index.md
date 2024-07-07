@@ -23,5 +23,12 @@ provider "signoz" {
 
 ### Optional
 
-- `access_token` (String, Sensitive) Access token of the SigNoz API.
-- `endpoint` (String) Endpoint of the SigNoz API. http://localhost:3301 by default.
+- `access_token` (String, Sensitive) Access token of the SigNoz API. You can retrieve it from SigNoz UI
+with Admin Role ([documentation](https://signoz.io/newsroom/launch-week-1-day-5/#using-access-token)).
+Also, you can set it using environment variable SIGNOZ_ACCESS_TOKEN.
+- `endpoint` (String) Endpoint of the SigNoz. It is the root URL of the SigNoz UI.
+Also, you can set it using environment variable SIGNOZ_ENDPOINT. If not set, it defaults to http://localhost:3301.
+- `http_max_retry` (Number) Specifies the max retry limit for the HTTP requests made to SigNoz.
+Also, you can set it using environment variable SIGNOZ_HTTP_MAX_RETRY. If not set, it defaults to 10.
+- `http_timeout` (Number) Specifies the timeout limit in seconds for the HTTP requests made to SigNoz.
+Also, you can set it using environment variable SIGNOZ_HTTP_TIMEOUT. If not set, it defaults to 35.

@@ -12,7 +12,7 @@ provider "signoz" {
 }
 
 data "signoz_alert" "get_alert" {
-  id = "38"
+  id = "5"
 }
 
 output "alert" {
