@@ -6,6 +6,10 @@
 
 - <Add Fix>
 
+#### Chores
+
+- <Add Chore>
+
 #### Refactors
 
 - <Add Refactor>
