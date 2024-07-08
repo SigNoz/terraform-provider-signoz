@@ -12,7 +12,3 @@ provider "signoz" {
 }
 
 resource "signoz_alert" "existing_alert" { }
-
-output "existing_alert" {
-  value = signoz_alert.existing_alert
-}
