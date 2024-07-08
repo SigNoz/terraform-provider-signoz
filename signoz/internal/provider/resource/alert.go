@@ -9,6 +9,7 @@ import (
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -22,7 +23,9 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource = &alertResource{}
+	_ resource.Resource                = &alertResource{}
+	_ resource.ResourceWithConfigure   = &alertResource{}
+	_ resource.ResourceWithImportState = &alertResource{}
 )
 
 // NewAlertResource is a helper function to simplify the provider implementation.
@@ -58,6 +61,27 @@ type alertResourceModel struct {
 	CreateBy          types.String `tfsdk:"create_by"`
 	UpdateAt          types.String `tfsdk:"update_at"`
 	UpdateBy          types.String `tfsdk:"update_by"`
+}
+
+// Configure adds the provider configured client to the resource.
+func (r *alertResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
+
+	client, ok := req.ProviderData.(*client.Client)
+	if !ok {
+		addErr(
+			&resp.Diagnostics,
+			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. "+
+				"Please report this issue to the provider developers", req.ProviderData),
+			SigNozAlert,
+		)
+
+		return
+	}
+
+	r.client = client
 }
 
 // Metadata returns the resource type name.
@@ -439,22 +463,8 @@ func (r *alertResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	}
 }
 
-// Configure adds the provider configured client to the resource.
-func (r *alertResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*client.Client)
-	if !ok {
-		addErr(
-			&resp.Diagnostics,
-			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. Please report this issue to the provider developers", req.ProviderData),
-			SigNozAlert,
-		)
-
-		return
-	}
-
-	r.client = client
+// ImportState imports Terraform state into the resource.
+func (r *alertResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// Retrieve import ID and save to id attribute
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
