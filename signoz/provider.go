@@ -136,7 +136,7 @@ func (p *signozProvider) Configure(ctx context.Context, req provider.ConfigureRe
 	}
 
 	// Create a new SigNoz client using the configuration values
-	client := client.NewClient(
+	client, err := client.NewClient(
 		endpoint,
 		accessToken,
 		time.Duration(httpTimeout)*time.Second,
@@ -144,6 +144,10 @@ func (p *signozProvider) Configure(ctx context.Context, req provider.ConfigureRe
 		p.terraformAgent,
 		p.version,
 	)
+	if err != nil {
+		resp.Diagnostics.AddError("Unable to create SigNoz API client", err.Error())
+		return
+	}
 
 	// Make the SigNoz client available during DataSource and Resource
 	// type Configure methods.
