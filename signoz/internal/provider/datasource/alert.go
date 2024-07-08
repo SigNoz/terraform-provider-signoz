@@ -50,6 +50,29 @@ type alertModel struct {
 	Version           types.String `tfsdk:"version"`
 }
 
+// Configure adds the provider configured client to the data source.
+func (d *alertDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	// Add a nil check when handling ProviderData because Terraform
+	// sets that data after it calls the ConfigureProvider RPC.
+	if req.ProviderData == nil {
+		return
+	}
+
+	client, ok := req.ProviderData.(*client.Client)
+	if !ok {
+		addErr(
+			&resp.Diagnostics,
+			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. "+
+				"Please report this issue to the provider developers", req.ProviderData),
+			SigNozAlert,
+		)
+
+		return
+	}
+
+	d.client = client
+}
+
 // Metadata returns the data source type name.
 func (d *alertDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = SigNozAlert
@@ -184,26 +207,4 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	// Set state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-// Configure adds the provider configured client to the data source.
-func (d *alertDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	// Add a nil check when handling ProviderData because Terraform
-	// sets that data after it calls the ConfigureProvider RPC.
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*client.Client)
-	if !ok {
-		addErr(
-			&resp.Diagnostics,
-			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. Please report this issue to the provider developers", req.ProviderData),
-			SigNozAlert,
-		)
-
-		return
-	}
-
-	d.client = client
 }
