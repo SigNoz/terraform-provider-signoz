@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gojek/heimdall/v7"
@@ -17,19 +18,26 @@ const (
 	DefaultHostURL string = "http://localhost:3301"
 	// DefaultHTTPTimeout - Default HTTP timeout.
 	DefaultHTTPTimeout time.Duration = 10 * time.Second
+
+	// SigNozAPIKeyHeader - SigNoz API key header.
+	SigNozAPIKeyHeader string = "SIGNOZ-API-KEY"
 )
 
 // Client - SigNoz API client.
 type Client struct {
 	agent      string
-	hostURL    string
 	token      string
 	version    string
+	hostURL    *url.URL
 	httpClient *httpclient.Client
 }
 
 // NewClient - Creates a new client.
-func NewClient(host, token string, httpTimeout time.Duration, httpRetryMax int, agent, version string) *Client {
+func NewClient(endpoint, token string, httpTimeout time.Duration, httpRetryMax int, agent, version string) (*Client, error) {
+	host, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, err
+	}
 	client := httpclient.NewClient(
 		httpclient.WithHTTPClient(
 			&http.Client{
@@ -51,15 +59,16 @@ func NewClient(host, token string, httpTimeout time.Duration, httpRetryMax int, 
 
 	return &Client{
 		agent:      agent,
-		hostURL:    host,
 		token:      token,
 		version:    version,
+		hostURL:    host,
 		httpClient: client,
-	}
+	}, nil
 }
 
 func (c *Client) doRequest(ctx context.Context, req *http.Request) ([]byte, error) {
-	req.Header.Set("SIGNOZ-API-KEY", c.token)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(SigNozAPIKeyHeader, c.token)
 
 	tflog.Debug(ctx, "Making SigNoz API request", map[string]any{
 		"method": req.Method,

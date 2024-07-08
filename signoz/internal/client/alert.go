@@ -5,29 +5,38 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+)
+
+const (
+	// alertPath - URL path for alert APIs.
+	alertPath = "api/v1/rules"
 )
 
 // GetAlert - Returns specific alert.
 func (c *Client) GetAlert(ctx context.Context, alertID string) (*model.Alert, error) {
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/api/v1/rules/%s", c.hostURL, alertID), nil)
+	url, err := url.JoinPath(c.hostURL.String(), alertPath, alertID)
 	if err != nil {
-		return &model.Alert{}, err
+		return nil, err
+	}
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
 	}
 
 	body, err := c.doRequest(ctx, req)
 	if err != nil {
-		return &model.Alert{}, err
+		return nil, err
 	}
 
 	var bodyObj alertResponse
 	err = json.Unmarshal(body, &bodyObj)
 	if err != nil {
-		return &model.Alert{}, err
+		return nil, err
 	}
 
 	if bodyObj.Status != "success" || bodyObj.Error != "" {
@@ -47,18 +56,20 @@ func (c *Client) GetAlert(ctx context.Context, alertID string) (*model.Alert, er
 
 // CreateAlert - Creates a new alert.
 func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*model.Alert, error) {
-	alertPayload.Source = utils.WithDefault(alertPayload.Source, c.hostURL+"/alerts")
+	alertPayload.SetSourceIfEmpty(c.hostURL.String())
 	rb, err := json.Marshal(alertPayload)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/api/v1/rules", c.hostURL), strings.NewReader(string(rb)))
+	url, err := url.JoinPath(c.hostURL.String(), alertPath)
 	if err != nil {
 		return nil, err
 	}
-
-	req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(string(rb)))
+	if err != nil {
+		return nil, err
+	}
 
 	body, err := c.doRequest(ctx, req)
 	if err != nil {
@@ -87,18 +98,20 @@ func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*m
 
 // UpdateAlert - Updates an existing alert.
 func (c *Client) UpdateAlert(ctx context.Context, alertID string, alertPayload *model.Alert) error {
-	alertPayload.Source = utils.WithDefault(alertPayload.Source, c.hostURL+"/alerts")
+	alertPayload.SetSourceIfEmpty(c.hostURL.String())
 	rb, err := json.Marshal(alertPayload)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/api/v1/rules/%s", c.hostURL, alertID), strings.NewReader(string(rb)))
+	url, err := url.JoinPath(c.hostURL.String(), alertPath, alertID)
 	if err != nil {
 		return err
 	}
-
-	req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest(http.MethodPut, url, strings.NewReader(string(rb)))
+	if err != nil {
+		return err
+	}
 
 	body, err := c.doRequest(ctx, req)
 	if err != nil {
@@ -127,7 +140,11 @@ func (c *Client) UpdateAlert(ctx context.Context, alertID string, alertPayload *
 
 // DeleteAlert - Deletes an existing alert.
 func (c *Client) DeleteAlert(ctx context.Context, alertID string) error {
-	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/api/v1/rules/%s", c.hostURL, alertID), nil)
+	url, err := url.JoinPath(c.hostURL.String(), alertPath, alertID)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return err
 	}

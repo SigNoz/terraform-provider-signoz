@@ -171,3 +171,7 @@ func (a *Alert) SetPreferredChannels(tfPreferredChannels types.List) {
 	})
 	a.PreferredChannels = preferredChannels
 }
+
+func (a *Alert) SetSourceIfEmpty(hostURL string) {
+	a.Source = utils.WithDefault(a.Source, hostURL+"/alerts")
+}

@@ -150,12 +150,7 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	alert, err := d.client.GetAlert(ctx, data.ID.ValueString())
 	if err != nil {
-		addErr(
-			&resp.Diagnostics,
-			fmt.Errorf("unable to read SigNoz alert: %s", err.Error()),
-			SigNozAlert,
-		)
-
+		addErr(&resp.Diagnostics, fmt.Errorf("unable to read SigNoz alert: %s", err.Error()), SigNozAlert)
 		return
 	}
 

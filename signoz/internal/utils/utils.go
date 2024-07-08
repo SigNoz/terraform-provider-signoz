@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"strconv"
-
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -32,33 +30,6 @@ func WithDefault[T comparable](val, defaultVal T) T {
 	}
 
 	return val
-}
-
-// MustGetInt - convert string to int or return 0.
-func MustGetInt(str string) int {
-	if val, err := strconv.Atoi(str); err == nil {
-		return val
-	}
-
-	return 0
-}
-
-// OverrideStrWithConfig - Override string with config or return default.
-func OverrideStrWithConfig(cfg types.String, defaultValue string) string {
-	if !cfg.IsNull() {
-		return cfg.ValueString()
-	}
-
-	return defaultValue
-}
-
-// OverrideIntWithConfig - Override int with config or return default.
-func OverrideIntWithConfig(cfg types.Int64, defaultValue int) int {
-	if !cfg.IsNull() {
-		return int(cfg.ValueInt64())
-	}
-
-	return defaultValue
 }
 
 // Map - transform giving slice of items by applying the func.

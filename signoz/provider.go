@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -18,12 +19,11 @@ import (
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	signozdatasource "github.com/SigNoz/terraform-provider-signoz/signoz/internal/provider/datasource"
 	signozresource "github.com/SigNoz/terraform-provider-signoz/signoz/internal/provider/resource"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 )
 
 const (
-	DefaultHTTPTimeout  = "35"
-	DefaultHTTPMaxRetry = "10"
+	DefaultHTTPTimeout  = 35
+	DefaultHTTPMaxRetry = 10
 	DefaultURL          = "http://localhost:3301"
 
 	// Environment variables.
@@ -92,12 +92,12 @@ func (p *signozProvider) Schema(_ context.Context, _ provider.SchemaRequest, res
 			attr.HTTPMaxRetry: schema.Int64Attribute{
 				Optional: true,
 				Description: fmt.Sprintf("Specifies the max retry limit for the HTTP requests made to SigNoz.\n"+
-					"Also, you can set it using environment variable %s. If not set, it defaults to %s.", EnvHTTPMaxRetry, DefaultHTTPMaxRetry),
+					"Also, you can set it using environment variable %s. If not set, it defaults to %d.", EnvHTTPMaxRetry, DefaultHTTPMaxRetry),
 			},
 			attr.HTTPTimeout: schema.Int64Attribute{
 				Optional: true,
 				Description: fmt.Sprintf("Specifies the timeout limit in seconds for the HTTP requests made to SigNoz.\n"+
-					"Also, you can set it using environment variable %s. If not set, it defaults to %s.", EnvHTTPTimeout, DefaultHTTPTimeout),
+					"Also, you can set it using environment variable %s. If not set, it defaults to %d.", EnvHTTPTimeout, DefaultHTTPTimeout),
 			},
 		},
 	}
@@ -116,15 +116,10 @@ func (p *signozProvider) Configure(ctx context.Context, req provider.ConfigureRe
 
 	// Default values to environment variables, but override
 	// with Terraform configuration value if set.
-	accessToken := os.Getenv(EnvAccessToken)
-	endpoint := utils.WithDefault(os.Getenv(EnvEndpoint), DefaultURL)
-	httpMaxRetry := utils.MustGetInt(utils.WithDefault(os.Getenv(EnvHTTPMaxRetry), DefaultHTTPMaxRetry))
-	httpTimeout := utils.MustGetInt(utils.WithDefault(os.Getenv(EnvHTTPTimeout), DefaultHTTPTimeout))
-
-	accessToken = utils.OverrideStrWithConfig(config.AccessToken, accessToken)
-	endpoint = utils.OverrideStrWithConfig(config.Endpoint, endpoint)
-	httpMaxRetry = utils.OverrideIntWithConfig(config.HTTPMaxRetry, httpMaxRetry)
-	httpTimeout = utils.OverrideIntWithConfig(config.HTTPTimeout, httpTimeout)
+	accessToken := overrideStrWithConfig(config.AccessToken, os.Getenv(EnvAccessToken))
+	endpoint := overrideStrWithConfig(config.Endpoint, os.Getenv(EnvEndpoint), DefaultURL)
+	httpMaxRetry := overrideIntWithConfig(config.HTTPMaxRetry, mustGetInt(os.Getenv(EnvHTTPMaxRetry)), DefaultHTTPMaxRetry)
+	httpTimeout := overrideIntWithConfig(config.HTTPTimeout, mustGetInt(os.Getenv(EnvHTTPTimeout)), DefaultHTTPTimeout)
 
 	// Check if the SigNoz access token has been set in the configuration or
 	// environment variables. If not, return an error.
@@ -170,4 +165,43 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 	return []func() resource.Resource{
 		signozresource.NewAlertResource,
 	}
+}
+
+// mustGetInt - convert string to int or return 0.
+func mustGetInt(str string) int {
+	if val, err := strconv.Atoi(str); err == nil {
+		return val
+	}
+
+	return 0
+}
+
+// overrideStrWithConfig - Override string with config or return non-zero value default.
+func overrideStrWithConfig(cfg types.String, defaultValue ...string) string {
+	if !cfg.IsNull() {
+		return cfg.ValueString()
+	}
+
+	for _, value := range defaultValue {
+		if value != "" {
+			return value
+		}
+	}
+
+	return ""
+}
+
+// overrideIntWithConfig - Override int with config or return non-zero default.
+func overrideIntWithConfig(cfg types.Int64, defaultValue ...int) int {
+	if !cfg.IsNull() {
+		return int(cfg.ValueInt64())
+	}
+
+	for _, value := range defaultValue {
+		if value != 0 {
+			return value
+		}
+	}
+
+	return 0
 }
