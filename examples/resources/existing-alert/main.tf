@@ -11,4 +11,4 @@ provider "signoz" {
   # access_token = "ACCESS_TOKEN"
 }
 
-resource "signoz_alert" "existing_alert" { }
+resource "signoz_alert" "existing_alert" {}
