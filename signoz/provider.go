@@ -161,6 +161,7 @@ func (p *signozProvider) Configure(ctx context.Context, req provider.ConfigureRe
 func (p *signozProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		signozdatasource.NewAlertDataSource,
+		signozdatasource.NewDashboardDataSource,
 	}
 }
 
@@ -168,6 +169,7 @@ func (p *signozProvider) DataSources(_ context.Context) []func() datasource.Data
 func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		signozresource.NewAlertResource,
+		signozresource.NewDashboardResource,
 	}
 }
 
