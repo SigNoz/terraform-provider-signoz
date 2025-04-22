@@ -34,14 +34,17 @@ type dashboardResource struct {
 
 // dashboardResourceModel maps the resource schema data.
 type dashboardResourceModel struct {
-	Dashboard types.String `tfsdk:"dashboard"`
-	Condition types.String `tfsdk:"condition"`
-	CreateAt  types.String `tfsdk:"create_at"`
-	CreateBy  types.String `tfsdk:"create_by"`
-	Labels    types.Map    `tfsdk:"labels"`
-	UpdateAt  types.String `tfsdk:"update_at"`
-	UpdateBy  types.String `tfsdk:"update_by"`
-	UUID      types.String `tfsdk:"uuid"`
+	Title       types.String `tfsdk:"title"`
+	Description types.String `tfsdk:"description"`
+	Tags        types.List   `tfsdk:"tags"`
+	Layout      types.List   `tfsdk:"layout"`
+	Widgets     types.List   `tfsdk:"widgets"`
+	Variables   types.String `tfsdk:"variables"`
+	CreateAt    types.String `tfsdk:"create_at"`
+	CreateBy    types.String `tfsdk:"create_by"`
+	UpdateAt    types.String `tfsdk:"update_at"`
+	UpdateBy    types.String `tfsdk:"update_by"`
+	UUID        types.String `tfsdk:"uuid"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -76,9 +79,32 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 	resp.Schema = schema.Schema{
 		Description: "Creates and manages dashboard resources in SigNoz.",
 		Attributes: map[string]schema.Attribute{
-			attr.Dashboard: schema.StringAttribute{
+			attr.Title: schema.StringAttribute{
 				Required:    true,
-				Description: "Name of the dashboard.",
+				Description: "Title of the dashboard.",
+			},
+			attr.Description: schema.StringAttribute{
+				Required:    true,
+				Description: "Description of the dashboard.",
+			},
+			attr.Widgets: schema.ListAttribute{
+				Required:    true,
+				ElementType: types.StringType,
+				Description: "Widgets of the dashboard.",
+			},
+			attr.Variables: schema.StringAttribute{
+				Required:    true,
+				Description: "Variables of the dashboard.",
+			},
+			attr.Tags: schema.ListAttribute{
+				Required:    true,
+				ElementType: types.StringType,
+				Description: "Tags of the dashboard.",
+			},
+			attr.Layout: schema.ListAttribute{
+				Required:    true,
+				ElementType: types.StringType,
+				Description: "Layout of the dashboard.",
 			},
 		},
 	}
@@ -95,13 +121,7 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 
 	// Generate API request body
 	dashboardPayload := &model.Dashboard{
-		Dashboard: plan.Dashboard.ValueString(),
-	}
-
-	err := dashboardPayload.SetCondition(plan.Condition)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
-		return
+		Title: plan.Title.ValueString(),
 	}
 
 	tflog.Debug(ctx, "Creating dashboard", map[string]any{"dashboard": dashboardPayload})
@@ -154,13 +174,6 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 	state.UpdateAt = types.StringValue(dashboard.UpdateAt)
 	state.UpdateBy = types.StringValue(dashboard.UpdateBy)
 
-	state.Condition, err = dashboard.ConditionToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
-		return
-	}
-
-	state.Labels, diag = dashboard.LabelsToTerraform()
 	resp.Diagnostics.Append(diag...)
 
 	// Set refreshed state
@@ -191,12 +204,6 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 		// todo:
 	}
 
-	err = dashboardUpdate.SetCondition(plan.Condition)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
-		return
-	}
-
 	// Update existing dashboard
 	err = r.client.UpdateDashboard(ctx, state.UUID.ValueString(), dashboardUpdate)
 	if err != nil {
@@ -219,13 +226,6 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 	plan.UpdateAt = types.StringValue(dashboard.UpdateAt)
 	plan.UpdateBy = types.StringValue(dashboard.UpdateBy)
 
-	plan.Condition, err = dashboard.ConditionToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
-		return
-	}
-
-	plan.Labels, diag = dashboard.LabelsToTerraform()
 	resp.Diagnostics.Append(diag...)
 
 	// Set refreshed state

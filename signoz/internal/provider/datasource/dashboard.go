@@ -97,13 +97,6 @@ func (d *dashboardDataSource) Read(ctx context.Context, req datasource.ReadReque
 	// Set state values from retrieved data
 	data.UUID = types.StringValue(dashboard.UUID)
 
-	data.Condition, err = dashboard.ConditionToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, SigNozAlert)
-		return
-	}
-
-	data.Labels, diags = dashboard.LabelsToTerraform()
 	resp.Diagnostics.Append(diags...)
 
 	// Set state

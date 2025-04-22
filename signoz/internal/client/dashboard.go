@@ -56,7 +56,6 @@ func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*model
 
 // CreateDashboard - Creates a new dashboard.
 func (c *Client) CreateDashboard(ctx context.Context, dashboardPayload *model.Dashboard) (*model.Dashboard, error) {
-	dashboardPayload.SetSourceIfEmpty(c.hostURL.String())
 	rb, err := json.Marshal(dashboardPayload)
 	if err != nil {
 		return nil, err
@@ -98,7 +97,6 @@ func (c *Client) CreateDashboard(ctx context.Context, dashboardPayload *model.Da
 
 // UpdateDashboard - Updates an existing dashboard.
 func (c *Client) UpdateDashboard(ctx context.Context, dashboardUUID string, dashboardPayload *model.Dashboard) error {
-	dashboardPayload.SetSourceIfEmpty(c.hostURL.String())
 	rb, err := json.Marshal(dashboardPayload)
 	if err != nil {
 		return err
