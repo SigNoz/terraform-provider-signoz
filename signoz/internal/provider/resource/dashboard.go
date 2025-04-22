@@ -34,8 +34,14 @@ type dashboardResource struct {
 
 // dashboardResourceModel maps the resource schema data.
 type dashboardResourceModel struct {
-	Condition         types.String `tfsdk:"condition"`
-	UUID              types.String `tfsdk:"uuid"`
+	Dashboard types.String `tfsdk:"dashboard"`
+	Condition types.String `tfsdk:"condition"`
+	CreateAt  types.String `tfsdk:"create_at"`
+	CreateBy  types.String `tfsdk:"create_by"`
+	Labels    types.Map    `tfsdk:"labels"`
+	UpdateAt  types.String `tfsdk:"update_at"`
+	UpdateBy  types.String `tfsdk:"update_by"`
+	UUID      types.String `tfsdk:"uuid"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -71,10 +77,10 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 		Description: "Creates and manages dashboard resources in SigNoz.",
 		Attributes: map[string]schema.Attribute{
 			attr.Dashboard: schema.StringAttribute{
-				Required: true,
+				Required:    true,
 				Description: "Name of the dashboard.",
 			},
-		}
+		},
 	}
 }
 
@@ -181,7 +187,7 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 	// Generate API request body from plan
 	var err error
 	dashboardUpdate := &model.Dashboard{
-		UUID:        state.UUID.ValueString(),
+		UUID: state.UUID.ValueString(),
 		// todo:
 	}
 
@@ -230,7 +236,7 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
-func (r* dashboardResource) Delete(ctx context.Context, req resource.DeleteResource, resp *resource.DeleteResponse) {
+func (r *dashboardResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// Retrieve values from state
 	var state dashboardResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
