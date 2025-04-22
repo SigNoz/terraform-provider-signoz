@@ -8,4 +8,8 @@ const (
 	Variables = "variables"
 	Layout    = "layout"
 	Widgets   = "widgets"
+	CreatedAt = "created_at"
+	CreatedBy = "created_by"
+	UpdatedAt = "updated_at"
+	UpdatedBy = "updated_by"
 )

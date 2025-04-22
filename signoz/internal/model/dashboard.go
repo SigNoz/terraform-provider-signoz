@@ -21,10 +21,10 @@ type Dashboard struct {
 	Layout      []string               `json:"layout"`
 	Widgets     []string               `json:"widgets"`
 	Variables   map[string]interface{} `json:"variables"`
-	CreateAt    string                 `json:"createAt,omitempty"`
-	CreateBy    string                 `json:"createBy,omitempty"`
-	UpdateAt    string                 `json:"updateAt,omitempty"`
-	UpdateBy    string                 `json:"updateBy,omitempty"`
+	CreatedAt   string                 `json:"CreatedAt,omitempty"`
+	CreatedBy   string                 `json:"createdBy,omitempty"`
+	UpdatedAt   string                 `json:"updatedAt,omitempty"`
+	UpdatedBy   string                 `json:"updatedBy,omitempty"`
 	UUID        string                 `json:"uuid,omitempty"`
 }
 
