@@ -168,6 +168,8 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
+
 	tflog.Debug(ctx, "Created dashboard", map[string]any{"dashboard": dashboard})
 
 	// Map response to schema and populate Computed attributes
