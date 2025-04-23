@@ -21,6 +21,7 @@ type Dashboard struct {
 	Layout      []string               `json:"layout"`
 	Widgets     []string               `json:"widgets"`
 	Variables   map[string]interface{} `json:"variables"`
+	Source      string                 `json:"source"`
 	CreatedAt   string                 `json:"CreatedAt,omitempty"`
 	CreatedBy   string                 `json:"createdBy,omitempty"`
 	UpdatedAt   string                 `json:"updatedAt,omitempty"`
@@ -57,4 +58,8 @@ func (d *Dashboard) SetWidgets(tfWidgets types.List) {
 		return strings.Trim(value.String(), "\"")
 	})
 	d.Widgets = widgets
+}
+
+func (d *Dashboard) SetSourceIfEmpty(hostURL string) {
+	d.Source = utils.WithDefault(d.Source, hostURL+"/dashboards")
 }
