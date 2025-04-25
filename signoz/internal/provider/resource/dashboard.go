@@ -39,12 +39,13 @@ type dashboardResourceModel struct {
 	Tags        types.List   `tfsdk:"tags"`
 	Layout      types.List   `tfsdk:"layout"`
 	Widgets     types.List   `tfsdk:"widgets"`
-	Variables   types.String `tfsdk:"variables"`
-	CreatedAt   types.String `tfsdk:"created_at"`
-	CreatedBy   types.String `tfsdk:"created_by"`
-	UpdatedAt   types.String `tfsdk:"updated_at"`
-	UpdatedBy   types.String `tfsdk:"updated_by"`
-	UUID        types.String `tfsdk:"uuid"`
+	// Source      types.String `tfsdk:"source"`
+	Variables types.String `tfsdk:"variables"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	CreatedBy types.String `tfsdk:"created_by"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
+	UpdatedBy types.String `tfsdk:"updated_by"`
+	UUID      types.String `tfsdk:"uuid"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -171,8 +172,9 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 	tflog.Debug(ctx, "Created dashboard", map[string]any{"dashboard": dashboard})
 
 	// Map response to schema and populate Computed attributes
-	//todo:
 	plan.UUID = types.StringValue(dashboard.UUID)
+	// plan.Source = types.StringValue(dashboard.Source)
+	//todo: plan.Variables = types.StringValue(dashboard.Variables)
 	plan.CreatedAt = types.StringValue(dashboard.CreatedAt)
 	plan.CreatedBy = types.StringValue(dashboard.CreatedBy)
 	plan.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
@@ -195,6 +197,8 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", state))
+
 	tflog.Debug(ctx, "Reading dashboard", map[string]any{"alert": state.UUID.ValueString()})
 
 	// Get refreshed dashboard from SigNoz
@@ -204,8 +208,9 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
+
 	// Overwrite items with refreshed state
-	// todo:
 	state.CreatedAt = types.StringValue(dashboard.CreatedAt)
 	state.CreatedBy = types.StringValue(dashboard.CreatedBy)
 	state.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
@@ -258,6 +263,7 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 	// Overwrite items with refreshed state
 	plan.UUID = types.StringValue(dashboard.UUID)
 	// todo:
+	// plan.Source = types.StringValue(dashboard.Source)
 	plan.CreatedAt = types.StringValue(dashboard.CreatedAt)
 	plan.CreatedBy = types.StringValue(dashboard.CreatedBy)
 	plan.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
