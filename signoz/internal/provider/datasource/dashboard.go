@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -68,11 +67,11 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 	resp.Schema = schema.Schema{
 		// todo: verify the correctness of the description below.
 		Description: "Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the alert in the Signoz UI.",
-		Attributes: map[string]schema.Attribute{
-			attr.Dashboard: schema.StringAttribute{
-				Computed:    true,
-				Description: "Name of the dashboard.",
-			},
+		Attributes:  map[string]schema.Attribute{
+			// attr.Dashboard: schema.StringAttribute{
+			// 	Computed:    true,
+			// 	Description: "Name of the dashboard.",
+			// },
 		},
 	}
 }

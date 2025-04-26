@@ -34,18 +34,32 @@ type dashboardResource struct {
 
 // dashboardResourceModel maps the resource schema data.
 type dashboardResourceModel struct {
-	Title       types.String `tfsdk:"title"`
-	Description types.String `tfsdk:"description"`
-	Tags        types.List   `tfsdk:"tags"`
-	Layout      types.List   `tfsdk:"layout"`
-	Widgets     types.List   `tfsdk:"widgets"`
-	// Source      types.String `tfsdk:"source"`
-	Variables types.String `tfsdk:"variables"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	CreatedBy types.String `tfsdk:"created_by"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
-	UpdatedBy types.String `tfsdk:"updated_by"`
-	UUID      types.String `tfsdk:"uuid"`
+	CollapsableRowsMigrated types.Bool   `tfsdk:"collapsable_rows_migrated"`
+	Description             types.String `tfsdk:"description"`
+	Name                    types.String `tfsdk:"name"`
+	PanelMap                types.String `tfsdk:"panel_map"`
+	Tags                    types.List   `tfsdk:"tags"`
+	Title                   types.String `tfsdk:"title"`
+	UploadedGrafana         types.Bool   `tfsdk:"uploaded_grafana"`
+	Variables               types.String `tfsdk:"variables"`
+	Layout                  types.String `tfsdk:"layout"`
+	Widgets                 types.String `tfsdk:"widgets"`
+	Version                 types.String `tfsdk:"version"`
+	CreatedAt               types.String `tfsdk:"created_at"`
+	CreatedBy               types.String `tfsdk:"created_by"`
+	UpdatedAt               types.String `tfsdk:"updated_at"`
+	UpdatedBy               types.String `tfsdk:"updated_by"`
+	UUID                    types.String `tfsdk:"uuid"`
+	ID                      types.String `tfsdk:"id"`
+
+	// Title       types.String `tfsdk:"title"`
+	// Description types.String `tfsdk:"description"`
+	// Tags        types.List   `tfsdk:"tags"`
+	// Layout      types.List   `tfsdk:"layout"`
+	// Widgets     types.List   `tfsdk:"widgets"`
+	// // Source      types.String `tfsdk:"source"`
+	// Variables types.String `tfsdk:"variables"`
+
 }
 
 // Configure adds the provider configured client to the resource.
@@ -80,34 +94,85 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 	resp.Schema = schema.Schema{
 		Description: "Creates and manages dashboard resources in SigNoz.",
 		Attributes: map[string]schema.Attribute{
+			attr.CollapsableRowsMigrated: schema.BoolAttribute{
+				Required:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Name: schema.StringAttribute{
+				Required:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.PanelMap: schema.StringAttribute{
+				Optional:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Tags: schema.ListAttribute{
+				Optional:    true,
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: "Title of the dashboard.",
+			},
 			attr.Title: schema.StringAttribute{
+				Required:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.UploadedGrafana: schema.BoolAttribute{
+				Required:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Variables: schema.StringAttribute{
+				Required:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Layout: schema.StringAttribute{
+				Required:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Widgets: schema.StringAttribute{
 				Required:    true,
 				Description: "Title of the dashboard.",
 			},
 			attr.Description: schema.StringAttribute{
 				Required:    true,
-				Description: "Description of the dashboard.",
+				Description: "Title of the dashboard.",
 			},
-			attr.Tags: schema.ListAttribute{
+			attr.Version: schema.StringAttribute{
 				Required:    true,
-				ElementType: types.StringType,
-				Description: "Tags of the dashboard.",
+				Description: "Title of the dashboard.",
 			},
-			attr.Layout: schema.ListAttribute{
-				Required:    true,
-				ElementType: types.StringType,
-				Description: "Layout of the dashboard.",
-			},
-			attr.Variables: schema.StringAttribute{
-				Required:    true,
-				Description: "Variables of the dashboard.",
-			},
-			attr.Widgets: schema.ListAttribute{
-				Required:    true,
-				ElementType: types.StringType,
-				Description: "Widgets of the dashboard.",
-			},
+
+			// attr.Title: schema.StringAttribute{
+			// 	Required:    true,
+			// 	Description: "Title of the dashboard.",
+			// },
+			// attr.Description: schema.StringAttribute{
+			// 	Required:    true,
+			// 	Description: "Description of the dashboard.",
+			// },
+			// attr.Tags: schema.ListAttribute{
+			// 	Required:    true,
+			// 	ElementType: types.StringType,
+			// 	Description: "Tags of the dashboard.",
+			// },
+			// attr.Layout: schema.ListAttribute{
+			// 	Required:    true,
+			// 	ElementType: types.StringType,
+			// 	Description: "Layout of the dashboard.",
+			// },
+			// attr.Variables: schema.StringAttribute{
+			// 	Required:    true,
+			// 	Description: "Variables of the dashboard.",
+			// },
+			// attr.Widgets: schema.ListAttribute{
+			// 	Required:    true,
+			// 	ElementType: types.StringType,
+			// 	Description: "Widgets of the dashboard.",
+			// },
 			// computed
+			attr.ID: schema.StringAttribute{
+				Computed:    true,
+				Description: "Autogenerated unique ID for the dashboard.",
+			},
 			attr.UUID: schema.StringAttribute{
 				Computed:    true,
 				Description: "Autogenerated UUID for the dashboard.",
@@ -141,33 +206,57 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", plan))
+
 	// Generate API request body
 	dashboardPayload := &model.Dashboard{
-		Title:       plan.Title.ValueString(),
-		Description: plan.Description.ValueString(),
+		CollapsableRowsMigrated: plan.CollapsableRowsMigrated.ValueBool(),
+		Description:             plan.Description.ValueString(),
+		Name:                    plan.Name.ValueString(),
+		Title:                   plan.Title.ValueString(),
+		UploadedGrafana:         plan.UploadedGrafana.ValueBool(),
+		Version:                 plan.Version.ValueString(),
 	}
 
-	err := dashboardPayload.SetVariables(plan.Variables)
+	err := dashboardPayload.SetLayout(plan.Layout)
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationCreate)
+		return
+	}
+	err = dashboardPayload.SetPanelMap(plan.PanelMap)
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationCreate)
+		return
+	}
+	dashboardPayload.SetTags(plan.Tags)
+	err = dashboardPayload.SetVariables(plan.Variables)
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationCreate)
+		return
+	}
+	err = dashboardPayload.SetWidgets(plan.Widgets)
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationCreate)
 		return
 	}
 
-	dashboardPayload.SetTags(plan.Tags)
-	dashboardPayload.SetLayout(plan.Layout)
-	dashboardPayload.SetWidgets(plan.Widgets)
+	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboardPayload))
 
 	tflog.Debug(ctx, "Creating dashboard", map[string]any{"dashboard": dashboardPayload})
 
 	// Create new dashboard
 	dashboard, err := r.client.CreateDashboard(ctx, dashboardPayload)
 	if err != nil {
+		test1 := "test1"
+		tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
 		resp.Diagnostics.AddError(
 			"Error creating dashboard",
 			"Could not create dashboard, unexpected error: "+err.Error(),
 		)
 		return
 	}
+
+	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
 
 	tflog.Debug(ctx, "Created dashboard", map[string]any{"dashboard": dashboard})
 
@@ -197,7 +286,7 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", state))
+	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", state))
 
 	tflog.Debug(ctx, "Reading dashboard", map[string]any{"alert": state.UUID.ValueString()})
 
@@ -208,7 +297,7 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
+	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
 
 	// Overwrite items with refreshed state
 	state.CreatedAt = types.StringValue(dashboard.CreatedAt)
