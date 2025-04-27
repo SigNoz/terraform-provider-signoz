@@ -272,8 +272,6 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 	tflog.Debug(ctx, "Created alert", map[string]any{"alert": alert})
 
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", alert))
-
 	// Map response to schema and populate Computed attributes
 	plan.ID = types.StringValue(alert.ID)
 	plan.Disabled = types.BoolValue(alert.Disabled)

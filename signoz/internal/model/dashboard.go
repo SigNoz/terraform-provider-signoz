@@ -32,7 +32,7 @@ type Dashboard struct {
 	UpdatedAt               string                   `json:"updatedAt,omitempty"`
 	UpdatedBy               string                   `json:"updatedBy,omitempty"`
 	UUID                    string                   `json:"uuid,omitempty"`
-	ID                      string                   `json:"id,omitempty"`
+	ID                      int32                    `json:"id"`
 
 	// IsLocked  bool                   `json:"isLocked,omitempty"`
 	// Data      map[string]interface{} `json:"data"`
