@@ -51,15 +51,7 @@ type dashboardResourceModel struct {
 	UpdatedBy               types.String `tfsdk:"updated_by"`
 	UUID                    types.String `tfsdk:"uuid"`
 	ID                      types.Int32  `tfsdk:"id"`
-
-	// Title       types.String `tfsdk:"title"`
-	// Description types.String `tfsdk:"description"`
-	// Tags        types.List   `tfsdk:"tags"`
-	// Layout      types.List   `tfsdk:"layout"`
-	// Widgets     types.List   `tfsdk:"widgets"`
-	// // Source      types.String `tfsdk:"source"`
-	// Variables types.String `tfsdk:"variables"`
-
+	Source                  types.String `tfsdk:"source"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -72,8 +64,7 @@ func (r *dashboardResource) Configure(_ context.Context, req resource.ConfigureR
 	if !ok {
 		addErr(
 			&resp.Diagnostics,
-			// todo: check the below message, looks a bit off. should have been "unexpected resource configure type..."
-			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. "+
+			fmt.Errorf("unexpected resource configure type. Expected *client.Client, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
 			SigNozDashboard,
 		)
@@ -140,34 +131,12 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Required:    true,
 				Description: "Title of the dashboard.",
 			},
+			attr.Source: schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.",
+			},
 
-			// attr.Title: schema.StringAttribute{
-			// 	Required:    true,
-			// 	Description: "Title of the dashboard.",
-			// },
-			// attr.Description: schema.StringAttribute{
-			// 	Required:    true,
-			// 	Description: "Description of the dashboard.",
-			// },
-			// attr.Tags: schema.ListAttribute{
-			// 	Required:    true,
-			// 	ElementType: types.StringType,
-			// 	Description: "Tags of the dashboard.",
-			// },
-			// attr.Layout: schema.ListAttribute{
-			// 	Required:    true,
-			// 	ElementType: types.StringType,
-			// 	Description: "Layout of the dashboard.",
-			// },
-			// attr.Variables: schema.StringAttribute{
-			// 	Required:    true,
-			// 	Description: "Variables of the dashboard.",
-			// },
-			// attr.Widgets: schema.ListAttribute{
-			// 	Required:    true,
-			// 	ElementType: types.StringType,
-			// 	Description: "Widgets of the dashboard.",
-			// },
 			// computed
 			attr.ID: schema.Int32Attribute{
 				Computed:    true,
@@ -255,8 +224,7 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 	// Map response to schema and populate Computed attributes
 	plan.ID = types.Int32Value(dashboard.ID)
 	plan.UUID = types.StringValue(dashboard.UUID)
-	// plan.Source = types.StringValue(dashboard.Source)
-	//todo: plan.Variables = types.StringValue(dashboard.Variables)
+	plan.Source = types.StringValue(dashboard.Source)
 	plan.CreatedAt = types.StringValue(dashboard.CreatedAt)
 	plan.CreatedBy = types.StringValue(dashboard.CreatedBy)
 	plan.UpdatedAt = types.StringValue(dashboard.UpdatedAt)

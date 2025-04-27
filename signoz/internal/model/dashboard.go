@@ -106,7 +106,7 @@ func (d *Dashboard) SetWidgets(tfWidgets types.String) error {
 // }
 
 func (d *Dashboard) SetSourceIfEmpty(hostURL string) {
-	d.Source = utils.WithDefault(d.Source, hostURL+"/dashboards")
+	d.Source = utils.WithDefault(d.Source, hostURL+"/dashboard")
 }
 
 // func (d *Dashboard) SetPanelMap(tfPanelMap types.List) {
