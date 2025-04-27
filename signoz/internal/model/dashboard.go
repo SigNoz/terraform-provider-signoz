@@ -6,6 +6,7 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 )
@@ -33,17 +34,49 @@ type Dashboard struct {
 	UpdatedBy               string                   `json:"updatedBy,omitempty"`
 	UUID                    string                   `json:"uuid,omitempty"`
 	ID                      int32                    `json:"id"`
+	Source                  string                   `json:"source"`
+}
 
-	// IsLocked  bool                   `json:"isLocked,omitempty"`
-	// Data      map[string]interface{} `json:"data"`
-	// data and IsLocked
-	// Title       string                 `json:"title"`
-	// Description string                 `json:"description"`
-	// Tags        []string               `json:"tags"`
-	// Layout      []string               `json:"layout"`
-	// Widgets     []string               `json:"widgets"`
-	// Variables   map[string]interface{} `json:"variables"`
-	Source string `json:"source"`
+func (d Dashboard) PanelMapToTerraform() (types.String, error) {
+	panelMap, err := structure.FlattenJsonToString(d.PanelMap)
+	if err != nil {
+		return types.StringValue(""), err
+	}
+
+	return types.StringValue(panelMap), nil
+}
+
+func (d Dashboard) VariablesToTerraform() (types.String, error) {
+	variables, err := structure.FlattenJsonToString(d.Variables)
+	if err != nil {
+		return types.StringValue(""), err
+	}
+
+	return types.StringValue(variables), nil
+}
+
+func (d Dashboard) TagsToTerraform() (types.List, diag.Diagnostics) {
+	tags := utils.Map(d.Tags, func(value string) tfattr.Value {
+		return types.StringValue(value)
+	})
+
+	return types.ListValue(types.StringType, tags)
+}
+
+func (d Dashboard) LayoutToTerraform() (types.String, error) {
+	b, err := json.Marshal(d.Layout)
+	if err != nil {
+		return types.StringValue(""), err
+	}
+	return types.StringValue(string(b)), nil
+}
+
+func (d Dashboard) WidgetsToTerraform() (types.String, error) {
+	b, err := json.Marshal(d.Widgets)
+	if err != nil {
+		return types.StringValue(""), err
+	}
+	return types.StringValue(string(b)), nil
 }
 
 func (d *Dashboard) SetVariables(tfVariables types.String) error {

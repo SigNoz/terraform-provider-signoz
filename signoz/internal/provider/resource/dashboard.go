@@ -247,9 +247,7 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", state))
-
-	tflog.Debug(ctx, "Reading dashboard", map[string]any{"alert": state.UUID.ValueString()})
+	tflog.Debug(ctx, "Reading dashboard", map[string]any{"dashboard": state.UUID.ValueString()})
 
 	// Get refreshed dashboard from SigNoz
 	dashboard, err := r.client.GetDashboard(ctx, state.UUID.ValueString())
@@ -258,14 +256,44 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
-
 	// Overwrite items with refreshed state
+	state.CollapsableRowsMigrated = types.BoolValue(dashboard.CollapsableRowsMigrated)
+	state.Description = types.StringValue(dashboard.Description)
+	state.Name = types.StringValue(dashboard.Name)
+	state.Title = types.StringValue(dashboard.Title)
+	state.UploadedGrafana = types.BoolValue(dashboard.UploadedGrafana)
+	state.Version = types.StringValue(dashboard.Version)
+	state.Source = types.StringValue(dashboard.Source)
 	state.CreatedAt = types.StringValue(dashboard.CreatedAt)
 	state.CreatedBy = types.StringValue(dashboard.CreatedBy)
 	state.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
 	state.UpdatedBy = types.StringValue(dashboard.UpdatedBy)
 
+	state.PanelMap, err = dashboard.PanelMapToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	state.Variables, err = dashboard.VariablesToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	state.Layout, err = dashboard.LayoutToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	state.Widgets, err = dashboard.WidgetsToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	state.Tags, diag = dashboard.TagsToTerraform()
 	resp.Diagnostics.Append(diag...)
 
 	// Set refreshed state
