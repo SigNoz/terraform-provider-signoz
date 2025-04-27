@@ -18,7 +18,7 @@ const (
 )
 
 // GetDashboard - Returns specific dashboard.
-func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*model.Dashboard, error) {
+func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*dashboardData, error) {
 	url, err := url.JoinPath(c.hostURL.String(), dashboardPath, dashboardUUID)
 	if err != nil {
 		return nil, err
@@ -41,12 +41,12 @@ func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*model
 
 	if bodyObj.Status != "success" || bodyObj.Error != "" {
 		tflog.Error(ctx, "GetDashboard: error while fetching dashboard", map[string]any{
-			"error": bodyObj.Error,
-			"type":  bodyObj.ErrorType,
-			"data":  bodyObj.Data,
+			"error":     bodyObj.Error,
+			"errorType": bodyObj.ErrorType,
+			"data":      bodyObj.Data,
 		})
 
-		return &model.Dashboard{}, fmt.Errorf("error while fetching dashboard: %s", bodyObj.Error)
+		return &dashboardData{}, fmt.Errorf("error while fetching dashboard: %s", bodyObj.Error)
 	}
 
 	tflog.Debug(ctx, "GetDashboard: dashboard fetched", map[string]any{"dashboard": bodyObj.Data})
@@ -55,7 +55,7 @@ func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*model
 }
 
 // CreateDashboard - Creates a new dashboard.
-func (c *Client) CreateDashboard(ctx context.Context, dashboardPayload *model.Dashboard) (*model.Dashboard, error) {
+func (c *Client) CreateDashboard(ctx context.Context, dashboardPayload *model.Dashboard) (*dashboardData, error) {
 	dashboardPayload.SetSourceIfEmpty(c.hostURL.String())
 	rb, err := json.Marshal(dashboardPayload)
 	if err != nil {
