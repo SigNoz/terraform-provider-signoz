@@ -241,7 +241,7 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	// Get current state
 	var state dashboardResourceModel
-	var diag diag.Diagnostics
+	// var diag diag.Diagnostics
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -250,51 +250,51 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 	tflog.Debug(ctx, "Reading dashboard", map[string]any{"dashboard": state.UUID.ValueString()})
 
 	// Get refreshed dashboard from SigNoz
-	dashboard, err := r.client.GetDashboard(ctx, state.UUID.ValueString())
+	_, err := r.client.GetDashboard(ctx, state.UUID.ValueString())
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationRead)
 		return
 	}
 
 	// Overwrite items with refreshed state
-	state.CollapsableRowsMigrated = types.BoolValue(dashboard.CollapsableRowsMigrated)
-	state.Description = types.StringValue(dashboard.Description)
-	state.Name = types.StringValue(dashboard.Name)
-	state.Title = types.StringValue(dashboard.Title)
-	state.UploadedGrafana = types.BoolValue(dashboard.UploadedGrafana)
-	state.Version = types.StringValue(dashboard.Version)
-	state.Source = types.StringValue(dashboard.Source)
-	state.CreatedAt = types.StringValue(dashboard.CreatedAt)
-	state.CreatedBy = types.StringValue(dashboard.CreatedBy)
-	state.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
-	state.UpdatedBy = types.StringValue(dashboard.UpdatedBy)
+	// state.CollapsableRowsMigrated = types.BoolValue(dashboard.CollapsableRowsMigrated)
+	// state.Description = types.StringValue(dashboard.Description)
+	// state.Name = types.StringValue(dashboard.Name)
+	// state.Title = types.StringValue(dashboard.Title)
+	// state.UploadedGrafana = types.BoolValue(dashboard.UploadedGrafana)
+	// state.Version = types.StringValue(dashboard.Version)
+	// state.Source = types.StringValue(dashboard.Source)
+	// state.CreatedAt = types.StringValue(dashboard.CreatedAt)
+	// state.CreatedBy = types.StringValue(dashboard.CreatedBy)
+	// state.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
+	// state.UpdatedBy = types.StringValue(dashboard.UpdatedBy)
 
-	state.PanelMap, err = dashboard.PanelMapToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
-		return
-	}
+	// state.PanelMap, err = dashboard.PanelMapToTerraform()
+	// if err != nil {
+	// 	addErr(&resp.Diagnostics, err, operationRead)
+	// 	return
+	// }
 
-	state.Variables, err = dashboard.VariablesToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
-		return
-	}
+	// state.Variables, err = dashboard.VariablesToTerraform()
+	// if err != nil {
+	// 	addErr(&resp.Diagnostics, err, operationRead)
+	// 	return
+	// }
 
-	state.Layout, err = dashboard.LayoutToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
-		return
-	}
+	// state.Layout, err = dashboard.LayoutToTerraform()
+	// if err != nil {
+	// 	addErr(&resp.Diagnostics, err, operationRead)
+	// 	return
+	// }
 
-	state.Widgets, err = dashboard.WidgetsToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
-		return
-	}
+	// state.Widgets, err = dashboard.WidgetsToTerraform()
+	// if err != nil {
+	// 	addErr(&resp.Diagnostics, err, operationRead)
+	// 	return
+	// }
 
-	state.Tags, diag = dashboard.TagsToTerraform()
-	resp.Diagnostics.Append(diag...)
+	// state.Tags, diag = dashboard.TagsToTerraform()
+	// resp.Diagnostics.Append(diag...)
 
 	// Set refreshed state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
