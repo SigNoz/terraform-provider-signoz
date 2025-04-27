@@ -27,14 +27,13 @@ type dashboardResponse struct {
 }
 
 type dashboardData struct {
-	CreatedAt string `json:"createdAt"`
-	CreatedBy string `json:"createdBy"`
-	ID        int32  `json:"id"`
-	IsLocked  int    `json:"isLocked"`
-	UpdatedAt string `json:"updatedAt"`
-	UpdatedBy string `json:"updatedBy"`
-	UUID      string `json:"uuid"`
-	// see the info for Data in VS Code.
-	Data   model.Dashboard `json:data`
-	Source string          `json:"source"`
+	CreatedAt string          `json:"createdAt"`
+	CreatedBy string          `json:"createdBy"`
+	ID        int32           `json:"id"`
+	IsLocked  int             `json:"isLocked"`
+	UpdatedAt string          `json:"updatedAt"`
+	UpdatedBy string          `json:"updatedBy"`
+	UUID      string          `json:"uuid"`
+	Data      model.Dashboard `json:"data"`
+	Source    string          `json:"source"`
 }
