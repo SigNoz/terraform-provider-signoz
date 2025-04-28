@@ -11,10 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 )
 
-const ()
-
-var ()
-
 // Dashboard model.
 type Dashboard struct {
 	CollapsableRowsMigrated bool                     `json:"collapsableRowsMigrated"`
