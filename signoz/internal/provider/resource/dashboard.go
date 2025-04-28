@@ -86,50 +86,50 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 		Description: "Creates and manages dashboard resources in SigNoz.",
 		Attributes: map[string]schema.Attribute{
 			attr.CollapsableRowsMigrated: schema.BoolAttribute{
-				Required:    true,
-				Description: "Title of the dashboard.",
+				Required: true,
+				// Description: "Title of the dashboard.",
 			},
 			attr.Name: schema.StringAttribute{
 				Required:    true,
-				Description: "Title of the dashboard.",
+				Description: "Name of the dashboard.",
 			},
 			attr.PanelMap: schema.StringAttribute{
-				Optional:    true,
-				Description: "Title of the dashboard.",
+				Optional: true,
+				// Description: "Title of the dashboard.",
 			},
 			attr.Tags: schema.ListAttribute{
 				Optional:    true,
 				Computed:    true,
 				ElementType: types.StringType,
-				Description: "Title of the dashboard.",
+				Description: "Tags of the dashboard.",
 			},
 			attr.Title: schema.StringAttribute{
 				Required:    true,
 				Description: "Title of the dashboard.",
 			},
 			attr.UploadedGrafana: schema.BoolAttribute{
-				Required:    true,
-				Description: "Title of the dashboard.",
+				Required: true,
+				// Description: "Title of the dashboard.",
 			},
 			attr.Variables: schema.StringAttribute{
-				Required:    true,
-				Description: "Title of the dashboard.",
+				Required: true,
+				// Description: "Title of the dashboard.",
 			},
 			attr.Layout: schema.StringAttribute{
 				Required:    true,
-				Description: "Title of the dashboard.",
+				Description: "Layout of the dashboard.",
 			},
 			attr.Widgets: schema.StringAttribute{
-				Required:    true,
-				Description: "Title of the dashboard.",
+				Required: true,
+				// Description: "Title of the dashboard.",
 			},
 			attr.Description: schema.StringAttribute{
 				Required:    true,
-				Description: "Title of the dashboard.",
+				Description: "Description of the dashboard.",
 			},
 			attr.Version: schema.StringAttribute{
-				Required:    true,
-				Description: "Title of the dashboard.",
+				Required: true,
+				// Description: "Title of the dashboard.",
 			},
 			attr.Source: schema.StringAttribute{
 				Optional:    true,
