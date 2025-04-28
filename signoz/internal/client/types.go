@@ -18,7 +18,7 @@ type alertResponse struct {
 	Data      model.Alert `json:"data"`
 }
 
-// dashboardRespose - Maps the response data of CreateDashboard and GetDashboard
+// dashboardRespose - Maps the response data of CreateDashboard and GetDashboard.
 type dashboardResponse struct {
 	Status    string        `json:"status"`
 	Error     string        `json:"error,omitempty"`
