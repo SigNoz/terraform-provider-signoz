@@ -75,7 +75,7 @@ func (r *alertResource) Configure(_ context.Context, req resource.ConfigureReque
 			&resp.Diagnostics,
 			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
-			SigNozAlert,
+			operationConfigure, SigNozAlert,
 		)
 
 		return
@@ -251,7 +251,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 	err := alertPayload.SetCondition(plan.Condition)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
+		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
 		return
 	}
 
@@ -304,7 +304,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	// Get refreshed alert from SigNoz
 	alert, err := r.client.GetAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
+		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
 		return
 	}
 
@@ -329,7 +329,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	state.Condition, err = alert.ConditionToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
+		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
 		return
 	}
 
@@ -386,7 +386,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 	err = alertUpdate.SetCondition(plan.Condition)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
 	}
 
@@ -396,14 +396,14 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	// Update existing alert
 	err = r.client.UpdateAlert(ctx, state.ID.ValueString(), alertUpdate)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
 	}
 
 	// Fetch updated alert
 	alert, err := r.client.GetAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
 	}
 
@@ -429,7 +429,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 	plan.Condition, err = alert.ConditionToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
 	}
 
@@ -458,7 +458,7 @@ func (r *alertResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	// Delete existing alert
 	err := r.client.DeleteAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationDelete)
+		addErr(&resp.Diagnostics, err, operationDelete, SigNozAlert)
 		return
 	}
 }

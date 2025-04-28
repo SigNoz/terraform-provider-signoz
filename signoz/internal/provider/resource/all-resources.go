@@ -9,6 +9,8 @@ const (
 	operationUpdate = "update"
 	operationDelete = "delete"
 
+	operationConfigure = "configure"
+
 	alertDefaultEvalWindow   = "5m0s"
 	alertDefaultDescription  = "This alert is fired when the defined metric (current value: {{$value}}) crosses the threshold ({{$threshold}})"
 	alertDefaultFrequency    = "1m0s"

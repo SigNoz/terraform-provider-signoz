@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -156,16 +155,6 @@ func (d *dashboardDataSource) Read(ctx context.Context, req datasource.ReadReque
 		addErr(&resp.Diagnostics, fmt.Errorf("unable to read SigNoz dashboard: %s", err.Error()), SigNozDashboard)
 		return
 	}
-
-	test1 := "test1"
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", data))
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-
-	test2 := "test2"
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test2))
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test2))
 
 	// Set state values from retrieved data
 	data.ID = types.Int32Value(dashboard.ID)

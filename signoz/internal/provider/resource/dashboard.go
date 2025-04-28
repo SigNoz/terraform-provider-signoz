@@ -66,7 +66,7 @@ func (r *dashboardResource) Configure(_ context.Context, req resource.ConfigureR
 			&resp.Diagnostics,
 			fmt.Errorf("unexpected resource configure type. Expected *client.Client, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
-			SigNozDashboard,
+			operationConfigure, SigNozDashboard,
 		)
 
 		return
@@ -187,23 +187,23 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 
 	err := dashboardPayload.SetLayout(plan.Layout)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
+		addErr(&resp.Diagnostics, err, operationCreate, SigNozDashboard)
 		return
 	}
 	err = dashboardPayload.SetPanelMap(plan.PanelMap)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
+		addErr(&resp.Diagnostics, err, operationCreate, SigNozDashboard)
 		return
 	}
 	dashboardPayload.SetTags(plan.Tags)
 	err = dashboardPayload.SetVariables(plan.Variables)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
+		addErr(&resp.Diagnostics, err, operationCreate, SigNozDashboard)
 		return
 	}
 	err = dashboardPayload.SetWidgets(plan.Widgets)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate)
+		addErr(&resp.Diagnostics, err, operationCreate, SigNozDashboard)
 		return
 	}
 
@@ -251,7 +251,7 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 	// Get refreshed dashboard from SigNoz
 	dashboard, err := r.client.GetDashboard(ctx, state.UUID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
+		addErr(&resp.Diagnostics, err, operationRead, SigNozDashboard)
 		return
 	}
 
@@ -270,25 +270,25 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	state.PanelMap, err = dashboard.Data.PanelMapToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
+		addErr(&resp.Diagnostics, err, operationRead, SigNozDashboard)
 		return
 	}
 
 	state.Variables, err = dashboard.Data.VariablesToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
+		addErr(&resp.Diagnostics, err, operationRead, SigNozDashboard)
 		return
 	}
 
 	state.Layout, err = dashboard.Data.LayoutToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
+		addErr(&resp.Diagnostics, err, operationRead, SigNozDashboard)
 		return
 	}
 
 	state.Widgets, err = dashboard.Data.WidgetsToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead)
+		addErr(&resp.Diagnostics, err, operationRead, SigNozDashboard)
 		return
 	}
 
@@ -335,37 +335,37 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 
 	err = dashboardUpdate.SetLayout(plan.Layout)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 	err = dashboardUpdate.SetPanelMap(plan.PanelMap)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 	dashboardUpdate.SetTags(plan.Tags)
 	err = dashboardUpdate.SetVariables(plan.Variables)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 	err = dashboardUpdate.SetWidgets(plan.Widgets)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
 	// Update existing dashboard
 	err = r.client.UpdateDashboard(ctx, state.UUID.ValueString(), dashboardUpdate)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
 	// Fetch updated dashboard
 	dashboard, err := r.client.GetDashboard(ctx, state.UUID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
@@ -386,25 +386,25 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 
 	plan.PanelMap, err = dashboard.Data.PanelMapToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
 	plan.Variables, err = dashboard.Data.VariablesToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
 	plan.Layout, err = dashboard.Data.LayoutToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
 	plan.Widgets, err = dashboard.Data.WidgetsToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate)
+		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
@@ -430,7 +430,7 @@ func (r *dashboardResource) Delete(ctx context.Context, req resource.DeleteReque
 	// Delete existing dashboard
 	err := r.client.DeleteDashboard(ctx, state.UUID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationDelete)
+		addErr(&resp.Diagnostics, err, operationDelete, SigNozDashboard)
 		return
 	}
 }
