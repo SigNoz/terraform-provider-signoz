@@ -1,7 +1,6 @@
 package attr
 
 const (
-	Description = "description"
 	ID          = "id"
 	Labels      = "labels"
 	Version     = "version"
@@ -9,4 +8,5 @@ const (
 	CreateBy    = "create_by"
 	UpdateAt    = "update_at"
 	UpdateBy    = "update_by"
+	Description = "description"
 )
