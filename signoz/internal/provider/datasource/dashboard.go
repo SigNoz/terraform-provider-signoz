@@ -125,11 +125,11 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 			},
 			attr.Variables: schema.StringAttribute{
 				Computed:    true,
-				Description: "TBD.",
+				Description: "Variables for the dashboard.",
 			},
 			attr.Widgets: schema.StringAttribute{
 				Computed:    true,
-				Description: "TBD.",
+				Description: "Widgets for the dashboard.",
 			},
 			attr.Version: schema.StringAttribute{
 				Computed:    true,

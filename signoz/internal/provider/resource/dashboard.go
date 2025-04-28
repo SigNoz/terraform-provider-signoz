@@ -86,8 +86,8 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 		Description: "Creates and manages dashboard resources in SigNoz.",
 		Attributes: map[string]schema.Attribute{
 			attr.CollapsableRowsMigrated: schema.BoolAttribute{
-				Required: true,
-				// Description: "Title of the dashboard.",
+				Required:    true,
+				Description: "TBD.",
 			},
 			attr.Description: schema.StringAttribute{
 				Required:    true,
@@ -102,8 +102,8 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Description: "Name of the dashboard.",
 			},
 			attr.PanelMap: schema.StringAttribute{
-				Optional: true,
-				// Description: "Title of the dashboard.",
+				Optional:    true,
+				Description: "TBD.",
 			},
 			attr.Source: schema.StringAttribute{
 				Optional:    true,
@@ -121,20 +121,20 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Description: "Title of the dashboard.",
 			},
 			attr.UploadedGrafana: schema.BoolAttribute{
-				Required: true,
-				// Description: "Title of the dashboard.",
+				Required:    true,
+				Description: "TBD.",
 			},
 			attr.Variables: schema.StringAttribute{
-				Required: true,
-				// Description: "Title of the dashboard.",
+				Required:    true,
+				Description: "Variables for the dashboard.",
 			},
 			attr.Widgets: schema.StringAttribute{
-				Required: true,
-				// Description: "Title of the dashboard.",
+				Required:    true,
+				Description: "Widgets for the dashboard.",
 			},
 			attr.Version: schema.StringAttribute{
-				Required: true,
-				// Description: "Title of the dashboard.",
+				Required:    true,
+				Description: "TBD.",
 			},
 
 			// computed.
