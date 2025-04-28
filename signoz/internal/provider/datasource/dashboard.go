@@ -52,7 +52,7 @@ func (d *dashboardDataSource) Metadata(_ context.Context, req datasource.Metadat
 
 // Configure adds the provider configured client to the data source.
 func (d *dashboardDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	// Add a nil check when handling ProviderData because Terraform
+	// Add a nil check when handling ProviderData because Terraform.
 	// sets that data after it calls the ConfigureProvider RPC.
 	if req.ProviderData == nil {
 		return
@@ -156,7 +156,7 @@ func (d *dashboardDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	// Set state values from retrieved data
+	// Set state values from retrieved data.
 	data.ID = types.Int32Value(dashboard.ID)
 	data.UUID = types.StringValue(dashboard.UUID)
 	data.CollapsableRowsMigrated = types.BoolValue(dashboard.Data.CollapsableRowsMigrated)
@@ -198,6 +198,6 @@ func (d *dashboardDataSource) Read(ctx context.Context, req datasource.ReadReque
 	data.Tags, diags = dashboard.Data.TagsToTerraform()
 	resp.Diagnostics.Append(diags...)
 
-	// Set state
+	// Set state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
