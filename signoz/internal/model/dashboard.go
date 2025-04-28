@@ -104,13 +104,6 @@ func (d *Dashboard) SetTags(tfTags types.List) {
 	d.Tags = tags
 }
 
-// func (d *Dashboard) SetTags(tfTags types.List) {
-// 	tags := utils.Map(tfTags.Elements(), func(value tfattr.Value) string {
-// 		return strings.Trim(value.String(), "\"")
-// 	})
-// 	d.Tags = tags
-// }
-
 func (d *Dashboard) SetLayout(tfLayout types.String) error {
 	var layout []map[string]interface{}
 	err := json.Unmarshal([]byte(tfLayout.ValueString()), &layout)
@@ -131,48 +124,6 @@ func (d *Dashboard) SetWidgets(tfWidgets types.String) error {
 	return nil
 }
 
-// func (d *Dashboard) SetWidgets(tfWidgets types.List) {
-// 	widgets := utils.Map(tfWidgets.Elements(), func(value tfattr.Value) string {
-// 		return strings.Trim(value.String(), "\"")
-// 	})
-// 	d.Widgets = widgets
-// }
-
 func (d *Dashboard) SetSourceIfEmpty(hostURL string) {
 	d.Source = utils.WithDefault(d.Source, hostURL+"/dashboard")
 }
-
-// func (d *Dashboard) SetPanelMap(tfPanelMap types.List) {
-// 	widgets := utils.Map(tfPanelMap.Elements(), func(value tfattr.Value) string {
-// 		return strings.Trim(value.String(), "\"")
-// 	})
-// 	d.Widgets = widgets
-// }
-
-// func (d *Dashboard) SetTags(tfTags types.List) {
-// 	widgets := utils.Map(tfTags.Elements(), func(value tfattr.Value) string {
-// 		return strings.Trim(value.String(), "\"")
-// 	})
-// 	d.Widgets = widgets
-// }
-
-// func (d *Dashboard) SetVariables(tfVariables types.String) {
-// 	widgets := utils.Map(tfVariables.Elements(), func(value tfattr.Value) string {
-// 		return strings.Trim(value.String(), "\"")
-// 	})
-// 	d.Widgets = widgets
-// }
-
-// func (d *Dashboard) SetLayout(tfLayout types.List) {
-// 	widgets := utils.Map(tfLayout.Elements(), func(value tfattr.Value) string {
-// 		return strings.Trim(value.String(), "\"")
-// 	})
-// 	d.Widgets = widgets
-// }
-
-// func (d *Dashboard) SetWidgets(tfWidgets types.List) {
-// 	widgets := utils.Map(tfWidgets.Elements(), func(value tfattr.Value) string {
-// 		return strings.Trim(value.String(), "\"")
-// 	})
-// 	d.Widgets = widgets
-// }

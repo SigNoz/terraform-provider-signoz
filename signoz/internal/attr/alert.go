@@ -7,7 +7,6 @@ const (
 	BroadcastToAll    = "broadcast_to_all"
 	Condition         = "condition"
 	Disabled          = "disabled"
-	Description       = "description" // todo: move this to common.go
 	EvalWindow        = "eval_window"
 	Frequency         = "frequency"
 	PreferredChannels = "preferred_channels"
