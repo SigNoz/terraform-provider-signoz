@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -28,10 +30,20 @@ type dashboardDataSource struct {
 
 // dashboardModel maps dashboard schema data.
 type dashboardModel struct {
-	Dashboard types.String `tfsdk:"dashboard"`
-	Condition types.String `tfsdk:"condition"`
-	Labels    types.Map    `tfsdk:"labels"`
-	UUID      types.String `tfsdk:"uuid"`
+	CollapsableRowsMigrated types.Bool   `tfsdk:"collapsable_rows_migrated"`
+	Description             types.String `tfsdk:"description"`
+	Name                    types.String `tfsdk:"name"`
+	PanelMap                types.String `tfsdk:"panel_map"`
+	Tags                    types.List   `tfsdk:"tags"`
+	Title                   types.String `tfsdk:"title"`
+	UploadedGrafana         types.Bool   `tfsdk:"uploaded_grafana"`
+	Variables               types.String `tfsdk:"variables"`
+	Layout                  types.String `tfsdk:"layout"`
+	Widgets                 types.String `tfsdk:"widgets"`
+	Version                 types.String `tfsdk:"version"`
+	UUID                    types.String `tfsdk:"uuid"`
+	ID                      types.Int32  `tfsdk:"id"`
+	Source                  types.String `tfsdk:"source"`
 }
 
 // Metadata returns the data source type name.
@@ -65,13 +77,65 @@ func (d *dashboardDataSource) Configure(_ context.Context, req datasource.Config
 // Schema defines the schema for the data source.
 func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		// todo: verify the correctness of the description below.
 		Description: "Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the alert in the Signoz UI.",
-		Attributes:  map[string]schema.Attribute{
-			// attr.Dashboard: schema.StringAttribute{
-			// 	Computed:    true,
-			// 	Description: "Name of the dashboard.",
-			// },
+		Attributes: map[string]schema.Attribute{
+			attr.CollapsableRowsMigrated: schema.BoolAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Name: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.PanelMap: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Tags: schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: "Title of the dashboard.",
+			},
+			attr.Title: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.UploadedGrafana: schema.BoolAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Variables: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Layout: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Widgets: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Description: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Version: schema.StringAttribute{
+				Computed:    true,
+				Description: "Title of the dashboard.",
+			},
+			attr.Source: schema.StringAttribute{
+				Computed:    true,
+				Description: "Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.",
+			},
+			attr.ID: schema.Int32Attribute{
+				Computed:    true,
+				Description: "Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.",
+			},
+			attr.UUID: schema.StringAttribute{
+				Required:    true,
+				Description: "UUID of the dashboard.",
+			},
 		},
 	}
 }
@@ -89,13 +153,60 @@ func (d *dashboardDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	dashboard, err := d.client.GetDashboard(ctx, data.UUID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, fmt.Errorf("unable to read SigNoz alert: %s", err.Error()), SigNozDashboard)
+		addErr(&resp.Diagnostics, fmt.Errorf("unable to read SigNoz dashboard: %s", err.Error()), SigNozDashboard)
 		return
 	}
 
-	// Set state values from retrieved data
-	data.UUID = types.StringValue(dashboard.UUID)
+	test1 := "test1"
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", data))
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
 
+	test2 := "test2"
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test2))
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard))
+	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test2))
+
+	// Set state values from retrieved data
+	data.ID = types.Int32Value(dashboard.ID)
+	data.UUID = types.StringValue(dashboard.UUID)
+	data.CollapsableRowsMigrated = types.BoolValue(dashboard.Data.CollapsableRowsMigrated)
+	data.Description = types.StringValue(dashboard.Data.Description)
+	data.Name = types.StringValue(dashboard.Data.Name)
+	data.Title = types.StringValue(dashboard.Data.Title)
+	data.UploadedGrafana = types.BoolValue(dashboard.Data.UploadedGrafana)
+	data.Version = types.StringValue(dashboard.Data.Version)
+	data.Source = types.StringValue(dashboard.Source)
+	// data.CreatedAt = types.StringValue(dashboard.CreatedAt)
+	// data.CreatedBy = types.StringValue(dashboard.CreatedBy)
+	// data.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
+	// data.UpdatedBy = types.StringValue(dashboard.UpdatedBy)
+
+	data.PanelMap, err = dashboard.Data.PanelMapToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	data.Variables, err = dashboard.Data.VariablesToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	data.Layout, err = dashboard.Data.LayoutToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	data.Widgets, err = dashboard.Data.WidgetsToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead)
+		return
+	}
+
+	data.Tags, diags = dashboard.Data.TagsToTerraform()
 	resp.Diagnostics.Append(diags...)
 
 	// Set state
