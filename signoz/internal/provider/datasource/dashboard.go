@@ -79,8 +79,7 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 		Description: "Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the dashboard in the Signoz UI.",
 		Attributes: map[string]schema.Attribute{
 			attr.CollapsableRowsMigrated: schema.BoolAttribute{
-				Computed:    true,
-				Description: "TBD.",
+				Computed: true,
 			},
 			attr.Description: schema.StringAttribute{
 				Computed:    true,
@@ -99,8 +98,7 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Description: "Name of the dashboard.",
 			},
 			attr.PanelMap: schema.StringAttribute{
-				Computed:    true,
-				Description: "TBD.",
+				Computed: true,
 			},
 			attr.Source: schema.StringAttribute{
 				Computed:    true,
@@ -116,8 +114,7 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Description: "Title of the dashboard.",
 			},
 			attr.UploadedGrafana: schema.BoolAttribute{
-				Computed:    true,
-				Description: "TBD.",
+				Computed: true,
 			},
 			attr.UUID: schema.StringAttribute{
 				Required:    true,
@@ -132,8 +129,7 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Description: "Widgets for the dashboard.",
 			},
 			attr.Version: schema.StringAttribute{
-				Computed:    true,
-				Description: "TBD.",
+				Computed: true,
 			},
 		},
 	}
