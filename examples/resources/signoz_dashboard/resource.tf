@@ -11,6 +11,8 @@ provider "signoz" {
   access_token = "<SIGNOZ-API-KEY>"
 }
 
+// Refer to https://github.com/SigNoz/dashboards for more dashboard templates.
+
 resource "signoz_dashboard" "new_dashboard" {
   collapsable_rows_migrated = true
   description               = "test1"
