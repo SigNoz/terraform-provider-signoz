@@ -3,12 +3,12 @@
 page_title: "signoz_dashboard Data Source - signoz"
 subcategory: ""
 description: |-
-  Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the alert in the Signoz UI.
+  Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the dashboard in the Signoz UI.
 ---
 
 # signoz_dashboard (Data Source)
 
-Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the alert in the Signoz UI.
+Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the dashboard in the Signoz UI.
 
 ## Example Usage
 
