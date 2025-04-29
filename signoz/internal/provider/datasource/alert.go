@@ -52,7 +52,7 @@ type alertModel struct {
 
 // Configure adds the provider configured client to the data source.
 func (d *alertDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	// Add a nil check when handling ProviderData because Terraform
+	// Add a nil check when handling ProviderData because Terraform.
 	// sets that data after it calls the ConfigureProvider RPC.
 	if req.ProviderData == nil {
 		return
@@ -177,7 +177,7 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	// Set state values from retrieved data
+	// Set state values from retrieved data.
 	data.ID = types.StringValue(alert.ID)
 	data.Alert = types.StringValue(alert.Alert)
 	data.AlertType = types.StringValue(alert.AlertType)
@@ -205,6 +205,6 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	data.PreferredChannels, diags = alert.PreferredChannelsToTerraform()
 	resp.Diagnostics.Append(diags...)
 
-	// Set state
+	// Set state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

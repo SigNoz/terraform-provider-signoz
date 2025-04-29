@@ -11,10 +11,10 @@ provider "signoz" {
   access_token = "<SIGNOZ-API-KEY>"
 }
 
-data "signoz_alert" "get_alert" {
-  id = "5"
+data "signoz_dashboard" "get_dashboard" {
+  uuid = "<uuid>"
 }
 
-output "alert" {
-  value = data.signoz_alert.get_alert
+output "dashboard" {
+  value = data.signoz_dashboard.get_dashboard
 }

@@ -11,10 +11,4 @@ provider "signoz" {
   # access_token = "ACCESS_TOKEN"
 }
 
-data "signoz_alert" "get_alert" {
-  id = "5"
-}
-
-output "alert" {
-  value = data.signoz_alert.get_alert
-}
+resource "signoz_dashboard" "existing_dashboard" {}

@@ -1,12 +1,15 @@
 package resource
 
 const (
-	SigNozAlert = "signoz_alert"
+	SigNozAlert     = "signoz_alert"
+	SigNozDashboard = "signoz_dashboard"
 
 	operationCreate = "create"
 	operationRead   = "read"
 	operationUpdate = "update"
 	operationDelete = "delete"
+
+	operationConfigure = "configure"
 
 	alertDefaultEvalWindow   = "5m0s"
 	alertDefaultDescription  = "This alert is fired when the defined metric (current value: {{$value}}) crosses the threshold ({{$threshold}})"
