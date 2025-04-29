@@ -22,8 +22,8 @@ terraform {
 }
 
 provider "signoz" {
-  endpoint = "http://localhost:3301"
-  # access_token = "ACCESS_TOKEN"
+  endpoint     = "http://localhost:3301"
+  access_token = "<SIGNOZ-API-KEY>"
 }
 
 data "signoz_dashboard" "get_dashboard" {
@@ -54,6 +54,6 @@ output "dashboard" {
 - `tags` (List of String) Tags of the dashboard.
 - `title` (String) Title of the dashboard.
 - `uploaded_grafana` (Boolean) TBD.
-- `variables` (String) TBD.
+- `variables` (String) Variables for the dashboard.
 - `version` (String) TBD.
-- `widgets` (String) TBD.
+- `widgets` (String) Widgets for the dashboard.

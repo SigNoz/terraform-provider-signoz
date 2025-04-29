@@ -7,8 +7,8 @@ terraform {
 }
 
 provider "signoz" {
-  endpoint = "http://localhost:3301"
-  # access_token = "ACCESS_TOKEN"
+  endpoint     = "http://localhost:3301"
+  access_token = "<SIGNOZ-API-KEY>"
 }
 
 data "signoz_alert" "get_alert" {
