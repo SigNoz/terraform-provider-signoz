@@ -133,7 +133,7 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Description: "Widgets for the dashboard.",
 			},
 			attr.Version: schema.StringAttribute{
-				Required:    true,
+				Optional:    true,
 				Description: "TBD.",
 			},
 

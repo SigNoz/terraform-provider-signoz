@@ -7,8 +7,8 @@ terraform {
 }
 
 provider "signoz" {
-  endpoint = "http://localhost:3301"
-  # access_token = "ACCESS_TOKEN"
+  endpoint     = "http://localhost:3301"
+  access_token = "<SIGNOZ-API-KEY>"
 }
 
 resource "signoz_dashboard" "new_dashboard" {
@@ -24,105 +24,6 @@ resource "signoz_dashboard" "new_dashboard" {
       "x" : 0,
       "y" : 0
     },
-    {
-      "h" : 8,
-      "i" : "f5174a53-c201-4e17-aff7-33b1402b0d7b",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 6,
-      "y" : 0
-    },
-    {
-      "h" : 7,
-      "i" : "4b9a4513-d7c8-4217-8d76-0714d96432e7",
-      "moved" : false,
-      "static" : false,
-      "w" : 12,
-      "x" : 0,
-      "y" : 8
-    },
-    {
-      "h" : 7,
-      "i" : "9d0f96dc-d744-4baa-9910-ac1aef63cc34",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 0,
-      "y" : 15
-    },
-    {
-      "h" : 7,
-      "i" : "960ff49f-d73b-49c2-ab4a-69df1e1abc51",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 6,
-      "y" : 15
-    },
-    {
-      "h" : 7,
-      "i" : "1c841c0b-be32-43ec-8bcb-bfd8a87edeef",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 0,
-      "y" : 22
-    },
-    {
-      "h" : 7,
-      "i" : "75fdac11-19dd-472f-a155-63e4682b88df",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 6,
-      "y" : 22
-    },
-    {
-      "h" : 7,
-      "i" : "2e864710-b418-4133-b248-2fa047e37fe3",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 0,
-      "y" : 29
-    },
-    {
-      "h" : 7,
-      "i" : "1f8965fb-5ad1-4679-9d28-9bd31d4e4cac",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 6,
-      "y" : 29
-    },
-    {
-      "h" : 7,
-      "i" : "8722151e-7690-4152-98c3-f2cc0f741d50",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 0,
-      "y" : 36
-    },
-    {
-      "h" : 7,
-      "i" : "230f3562-5ac1-4fec-946d-0dd21057f4b3",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 6,
-      "y" : 36
-    },
-    {
-      "h" : 7,
-      "i" : "7403ba8f-36bf-4c31-8b91-a447a36eeca0",
-      "moved" : false,
-      "static" : false,
-      "w" : 12,
-      "x" : 0,
-      "y" : 43
-    }
   ])
   name = "test1"
   panel_map = jsonencode(

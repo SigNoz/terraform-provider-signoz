@@ -22,8 +22,8 @@ terraform {
 }
 
 provider "signoz" {
-  endpoint = "http://localhost:3301"
-  # access_token = "ACCESS_TOKEN"
+  endpoint     = "http://localhost:3301"
+  access_token = "<SIGNOZ-API-KEY>"
 }
 
 resource "signoz_dashboard" "new_dashboard" {
@@ -2215,19 +2215,19 @@ output "dashboard_new" {
 
 ### Required
 
-- `collapsable_rows_migrated` (Boolean)
+- `collapsable_rows_migrated` (Boolean) TBD.
 - `description` (String) Description of the dashboard.
 - `layout` (String) Layout of the dashboard.
 - `name` (String) Name of the dashboard.
 - `title` (String) Title of the dashboard.
-- `uploaded_grafana` (Boolean)
-- `variables` (String)
-- `version` (String)
-- `widgets` (String)
+- `uploaded_grafana` (Boolean) TBD.
+- `variables` (String) Variables for the dashboard.
+- `version` (String) TBD.
+- `widgets` (String) Widgets for the dashboard.
 
 ### Optional
 
-- `panel_map` (String)
+- `panel_map` (String) TBD.
 - `source` (String) Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.
 - `tags` (List of String) Tags of the dashboard.
 
