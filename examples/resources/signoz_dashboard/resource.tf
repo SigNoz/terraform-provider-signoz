@@ -103,7 +103,6 @@ resource "signoz_dashboard" "new_dashboard" {
       },
     }
   )
-  version = "v4"
   widgets = jsonencode([
     {
       "bucketCount" : 30,

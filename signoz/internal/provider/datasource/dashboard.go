@@ -130,6 +130,7 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 			},
 			attr.Version: schema.StringAttribute{
 				Computed: true,
+				Optional: true,
 			},
 		},
 	}

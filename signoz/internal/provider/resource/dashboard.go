@@ -157,6 +157,7 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 			},
 			attr.Version: schema.StringAttribute{
 				Computed: true,
+				Optional: true,
 			},
 		},
 	}
@@ -225,6 +226,7 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 	plan.CreatedBy = types.StringValue(dashboard.CreatedBy)
 	plan.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
 	plan.UpdatedBy = types.StringValue(dashboard.UpdatedBy)
+	plan.Version = types.StringValue(dashboard.Data.Version)
 
 	// Set state to populated data.
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
