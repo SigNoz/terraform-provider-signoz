@@ -13,30 +13,33 @@ import (
 
 // Dashboard model.
 type Dashboard struct {
-	CollapsableRowsMigrated bool                     `json:"collapsableRowsMigrated"`
-	CreatedAt               string                   `json:"createdAt,omitempty"` // CreatedAt, CreatedBy, UpdatedAt, UpdatedBy, ID, UUID are not really present in Dashboard reponse. Comment out these things
-	CreatedBy               string                   `json:"createdBy,omitempty"`
-	Description             string                   `json:"description"`
-	ID                      int32                    `json:"id,omitempty"` // if uuid,omitempty, then id should also be that
-	Layout                  []map[string]interface{} `json:"layout"`
-	Name                    string                   `json:"name"`
-	PanelMap                map[string]interface{}   `json:"panelMap,omitempty"`
-	Source                  string                   `json:"source"`
-	Tags                    []string                 `json:"tags"`
-	Title                   string                   `json:"title"`
-	UpdatedAt               string                   `json:"updatedAt,omitempty"`
-	UpdatedBy               string                   `json:"updatedBy,omitempty"`
-	UploadedGrafana         bool                     `json:"uploadedGrafana"`
-	UUID                    string                   `json:"uuid,omitempty"`
-	Variables               map[string]interface{}   `json:"variables"`
+	CollapsableRowsMigrated bool `json:"collapsableRowsMigrated"`
+	// CreatedAt               string                   `json:"createdAt,omitempty"` // CreatedAt, CreatedBy, UpdatedAt, UpdatedBy, ID, UUID are not really present in Dashboard reponse. Comment out these things
+	// CreatedBy               string                   `json:"createdBy,omitempty"`
+	Description string `json:"description"`
+	// ID              int32                    `json:"id,omitempty"` // if uuid,omitempty, then id should also be that
+	Layout   []map[string]interface{} `json:"layout"`
+	Name     string                   `json:"name"`
+	PanelMap map[string]interface{}   `json:"panelMap,omitempty"`
+	Source   string                   `json:"source"`
+	Tags     []string                 `json:"tags"`
+	Title    string                   `json:"title"`
+	// UpdatedAt       string                   `json:"updatedAt,omitempty"`
+	// UpdatedBy       string                   `json:"updatedBy,omitempty"`
+	UploadedGrafana bool `json:"uploadedGrafana"`
+	// UUID            string                   `json:"uuid,omitempty"`
+	Variables map[string]interface{} `json:"variables"`
 	// Version                 string                   `json:"version,omitempty"`
 	Widgets []map[string]interface{} `json:"widgets"`
 }
 
 func (d Dashboard) PanelMapToTerraform() (types.String, error) {
+	if d.PanelMap == nil {
+		return types.StringNull(), nil
+	}
 	panelMap, err := structure.FlattenJsonToString(d.PanelMap)
 	if err != nil {
-		return types.StringValue(""), err
+		return types.StringNull(), err
 	}
 
 	return types.StringValue(panelMap), nil

@@ -165,9 +165,6 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 
 // Create creates the resource and sets the initial Terraform state.
 func (r *dashboardResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	test1 := "create"
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-	tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
 	// Retrieve values from plan.
 	var plan dashboardResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
@@ -230,16 +227,6 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 	plan.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
 	plan.UpdatedBy = types.StringValue(dashboard.UpdatedBy)
 	// plan.Version = types.StringValue(dashboard.Data.Version)
-
-	// test1 := "plan.version"
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", plan.Version))
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-
-	// test1 = "dashboard.data.version"
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", dashboard.Data.Version))
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
 
 	// Set state to populated data.
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
@@ -329,16 +316,6 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	// test1 := "plan"
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", plan))  // PanelMap: "{}" // feed some data in panelMap in main.tf and then see the values of these two variables //start from here.
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1)) // basically plan me cheeze unknown hain, check ke alerts me plan and state me bhi yeh unknown wala diff hai kya?
-
-	// test1 = "state"
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", state)) // PanelMap: ""
-	// tflog.Info(ctx, fmt.Sprintf("\n\n\n\n%+v\n\n\n\n", test1))
-
 	// Generate API request body from plan.
 	var err error
 	dashboardUpdate := &model.Dashboard{
@@ -348,12 +325,12 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 		Title:                   plan.Title.ValueString(),
 		UploadedGrafana:         plan.UploadedGrafana.ValueBool(),
 		// Version:                 plan.Version.ValueString(),
-		CreatedAt: state.CreatedAt.ValueString(),
-		CreatedBy: state.CreatedBy.ValueString(),
-		UpdatedAt: state.UpdatedAt.ValueString(),
-		UpdatedBy: state.UpdatedBy.ValueString(),
-		ID:        state.ID.ValueInt32(),
-		UUID:      state.UUID.ValueString(),
+		// CreatedAt: state.CreatedAt.ValueString(),
+		// CreatedBy: state.CreatedBy.ValueString(),
+		// UpdatedAt: state.UpdatedAt.ValueString(),
+		// UpdatedBy: state.UpdatedBy.ValueString(),
+		// ID:        state.ID.ValueInt32(),
+		// UUID:      state.UUID.ValueString(),
 	}
 
 	err = dashboardUpdate.SetLayout(plan.Layout)
@@ -461,5 +438,5 @@ func (r *dashboardResource) Delete(ctx context.Context, req resource.DeleteReque
 // ImportState imports Terraform state into the resource.
 func (r *dashboardResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Retrieve import ID and save to id attribute.
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughID(ctx, path.Root("uuid"), req, resp)
 }
