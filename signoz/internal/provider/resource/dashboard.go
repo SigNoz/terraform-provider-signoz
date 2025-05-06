@@ -104,7 +104,7 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Optional: true,
 			},
 			attr.Source: schema.StringAttribute{
-				Optional:    true, // todo: try to remove it from here and add in //computed section.
+				Optional:    true,
 				Computed:    true,
 				Description: "Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.",
 			},
