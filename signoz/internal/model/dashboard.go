@@ -14,23 +14,23 @@ import (
 // Dashboard model.
 type Dashboard struct {
 	CollapsableRowsMigrated bool                     `json:"collapsableRowsMigrated"`
+	CreatedAt               string                   `json:"createdAt,omitempty"` // CreatedAt, CreatedBy, UpdatedAt, UpdatedBy, ID, UUID are not really present in Dashboard reponse. Comment out these things
+	CreatedBy               string                   `json:"createdBy,omitempty"`
 	Description             string                   `json:"description"`
+	ID                      int32                    `json:"id,omitempty"` // if uuid,omitempty, then id should also be that
 	Layout                  []map[string]interface{} `json:"layout"`
 	Name                    string                   `json:"name"`
-	PanelMap                map[string]interface{}   `json:"panelMap"`
+	PanelMap                map[string]interface{}   `json:"panelMap,omitempty"`
+	Source                  string                   `json:"source"`
 	Tags                    []string                 `json:"tags"`
 	Title                   string                   `json:"title"`
-	UploadedGrafana         bool                     `json:"uploadedGrafana"`
-	Variables               map[string]interface{}   `json:"variables"`
-	Version                 string                   `json:"version"`
-	Widgets                 []map[string]interface{} `json:"widgets"`
-	CreatedAt               string                   `json:"createdAt,omitempty"`
-	CreatedBy               string                   `json:"createdBy,omitempty"`
 	UpdatedAt               string                   `json:"updatedAt,omitempty"`
 	UpdatedBy               string                   `json:"updatedBy,omitempty"`
+	UploadedGrafana         bool                     `json:"uploadedGrafana"`
 	UUID                    string                   `json:"uuid,omitempty"`
-	ID                      int32                    `json:"id"`
-	Source                  string                   `json:"source"`
+	Variables               map[string]interface{}   `json:"variables"`
+	// Version                 string                   `json:"version,omitempty"`
+	Widgets []map[string]interface{} `json:"widgets"`
 }
 
 func (d Dashboard) PanelMapToTerraform() (types.String, error) {
@@ -85,6 +85,10 @@ func (d *Dashboard) SetVariables(tfVariables types.String) error {
 }
 
 func (d *Dashboard) SetPanelMap(tfPanelMap types.String) error {
+	if tfPanelMap.ValueString() == "" {
+		d.PanelMap = make(map[string]interface{})
+		return nil
+	}
 	panelMap, err := structure.ExpandJsonFromString(tfPanelMap.ValueString())
 	if err != nil {
 		return err
