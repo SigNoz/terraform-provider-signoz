@@ -324,12 +324,6 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 		Title:                   plan.Title.ValueString(),
 		UploadedGrafana:         plan.UploadedGrafana.ValueBool(),
 		Version:                 plan.Version.ValueString(),
-		// CreatedAt: state.CreatedAt.ValueString(),
-		// CreatedBy: state.CreatedBy.ValueString(),
-		// UpdatedAt: state.UpdatedAt.ValueString(),
-		// UpdatedBy: state.UpdatedBy.ValueString(),
-		// ID:        state.ID.ValueInt32(),
-		// UUID:      state.UUID.ValueString(),
 	}
 
 	err = dashboardUpdate.SetLayout(plan.Layout)
