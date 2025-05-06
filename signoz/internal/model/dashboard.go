@@ -28,9 +28,9 @@ type Dashboard struct {
 	// UpdatedBy       string                   `json:"updatedBy,omitempty"`
 	UploadedGrafana bool `json:"uploadedGrafana"`
 	// UUID            string                   `json:"uuid,omitempty"`
-	Variables map[string]interface{} `json:"variables"`
-	// Version                 string                   `json:"version,omitempty"`
-	Widgets []map[string]interface{} `json:"widgets"`
+	Variables map[string]interface{}   `json:"variables"`
+	Version   string                   `json:"version,omitempty"`
+	Widgets   []map[string]interface{} `json:"widgets"`
 }
 
 func (d Dashboard) PanelMapToTerraform() (types.String, error) {

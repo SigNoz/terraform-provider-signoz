@@ -42,8 +42,8 @@ type dashboardModel struct {
 	UploadedGrafana         types.Bool   `tfsdk:"uploaded_grafana"`
 	UUID                    types.String `tfsdk:"uuid"`
 	Variables               types.String `tfsdk:"variables"`
-	// Version                 types.String `tfsdk:"version"`
-	Widgets types.String `tfsdk:"widgets"`
+	Version                 types.String `tfsdk:"version"`
+	Widgets                 types.String `tfsdk:"widgets"`
 }
 
 // Metadata returns the data source type name.
@@ -129,10 +129,10 @@ func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaReque
 				Computed:    true,
 				Description: "Widgets for the dashboard.",
 			},
-			// attr.Version: schema.StringAttribute{
-			// 	Computed: true,
-			// 	Optional: true,
-			// },
+			attr.Version: schema.StringAttribute{
+				Computed: true,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -162,7 +162,7 @@ func (d *dashboardDataSource) Read(ctx context.Context, req datasource.ReadReque
 	data.Name = types.StringValue(dashboard.Data.Name)
 	data.Title = types.StringValue(dashboard.Data.Title)
 	data.UploadedGrafana = types.BoolValue(dashboard.Data.UploadedGrafana)
-	// data.Version = types.StringValue(dashboard.Data.Version)
+	data.Version = types.StringValue(dashboard.Data.Version)
 	data.Source = types.StringValue(dashboard.Data.Source)
 	// data.CreatedAt = types.StringValue(dashboard.CreatedAt)
 	// data.CreatedBy = types.StringValue(dashboard.CreatedBy)

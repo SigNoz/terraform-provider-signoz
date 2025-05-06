@@ -84,6 +84,7 @@ resource "signoz_dashboard" "new_dashboard" {
   )
   tags             = ["node", "kubelet"]
   title            = "test1"
+  version          = "v4"
   uploaded_grafana = false
   variables = jsonencode(
     {
