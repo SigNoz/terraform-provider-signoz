@@ -99,6 +99,7 @@ resource "signoz_dashboard" "new_dashboard" {
   )
   tags             = ["node", "kubelet"]
   title            = "test1"
+  version          = "v4"
   uploaded_grafana = false
   variables = jsonencode(
     {
@@ -253,6 +254,7 @@ output "dashboard_new" {
 - `title` (String) Title of the dashboard.
 - `uploaded_grafana` (Boolean)
 - `variables` (String) Variables for the dashboard.
+- `version` (String) Version of the dashboard.
 - `widgets` (String) Widgets for the dashboard.
 
 ### Optional
@@ -260,7 +262,6 @@ output "dashboard_new" {
 - `panel_map` (String)
 - `source` (String) Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.
 - `tags` (List of String) Tags of the dashboard.
-- `version` (String)
 
 ### Read-Only
 

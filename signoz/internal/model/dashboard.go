@@ -17,26 +17,23 @@ type Dashboard struct {
 	Description             string                   `json:"description"`
 	Layout                  []map[string]interface{} `json:"layout"`
 	Name                    string                   `json:"name"`
-	PanelMap                map[string]interface{}   `json:"panelMap"`
+	PanelMap                map[string]interface{}   `json:"panelMap,omitempty"`
+	Source                  string                   `json:"source"`
 	Tags                    []string                 `json:"tags"`
 	Title                   string                   `json:"title"`
 	UploadedGrafana         bool                     `json:"uploadedGrafana"`
 	Variables               map[string]interface{}   `json:"variables"`
-	Version                 string                   `json:"version"`
+	Version                 string                   `json:"version,omitempty"`
 	Widgets                 []map[string]interface{} `json:"widgets"`
-	CreatedAt               string                   `json:"createdAt,omitempty"`
-	CreatedBy               string                   `json:"createdBy,omitempty"`
-	UpdatedAt               string                   `json:"updatedAt,omitempty"`
-	UpdatedBy               string                   `json:"updatedBy,omitempty"`
-	UUID                    string                   `json:"uuid,omitempty"`
-	ID                      int32                    `json:"id"`
-	Source                  string                   `json:"source"`
 }
 
 func (d Dashboard) PanelMapToTerraform() (types.String, error) {
+	if d.PanelMap == nil {
+		return types.StringNull(), nil
+	}
 	panelMap, err := structure.FlattenJsonToString(d.PanelMap)
 	if err != nil {
-		return types.StringValue(""), err
+		return types.StringNull(), err
 	}
 
 	return types.StringValue(panelMap), nil
@@ -85,6 +82,10 @@ func (d *Dashboard) SetVariables(tfVariables types.String) error {
 }
 
 func (d *Dashboard) SetPanelMap(tfPanelMap types.String) error {
+	if tfPanelMap.ValueString() == "" {
+		d.PanelMap = make(map[string]interface{})
+		return nil
+	}
 	panelMap, err := structure.ExpandJsonFromString(tfPanelMap.ValueString())
 	if err != nil {
 		return err

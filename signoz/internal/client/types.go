@@ -35,5 +35,4 @@ type dashboardData struct {
 	UpdatedBy string          `json:"updatedBy"`
 	UUID      string          `json:"uuid"`
 	Data      model.Dashboard `json:"data"`
-	Source    string          `json:"source"`
 }

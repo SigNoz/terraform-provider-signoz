@@ -14,7 +14,8 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ datasource.DataSource = &dashboardDataSource{}
+	_ datasource.DataSource              = &dashboardDataSource{}
+	_ datasource.DataSourceWithConfigure = &dashboardDataSource{}
 )
 
 // NewDashboardDataSource is a helper function to simplify the provider implementation.
@@ -31,18 +32,18 @@ type dashboardDataSource struct {
 type dashboardModel struct {
 	CollapsableRowsMigrated types.Bool   `tfsdk:"collapsable_rows_migrated"`
 	Description             types.String `tfsdk:"description"`
+	ID                      types.Int32  `tfsdk:"id"`
+	Layout                  types.String `tfsdk:"layout"`
 	Name                    types.String `tfsdk:"name"`
 	PanelMap                types.String `tfsdk:"panel_map"`
+	Source                  types.String `tfsdk:"source"`
 	Tags                    types.List   `tfsdk:"tags"`
 	Title                   types.String `tfsdk:"title"`
 	UploadedGrafana         types.Bool   `tfsdk:"uploaded_grafana"`
-	Variables               types.String `tfsdk:"variables"`
-	Layout                  types.String `tfsdk:"layout"`
-	Widgets                 types.String `tfsdk:"widgets"`
-	Version                 types.String `tfsdk:"version"`
 	UUID                    types.String `tfsdk:"uuid"`
-	ID                      types.Int32  `tfsdk:"id"`
-	Source                  types.String `tfsdk:"source"`
+	Variables               types.String `tfsdk:"variables"`
+	Version                 types.String `tfsdk:"version"`
+	Widgets                 types.String `tfsdk:"widgets"`
 }
 
 // Metadata returns the data source type name.
@@ -162,7 +163,7 @@ func (d *dashboardDataSource) Read(ctx context.Context, req datasource.ReadReque
 	data.Title = types.StringValue(dashboard.Data.Title)
 	data.UploadedGrafana = types.BoolValue(dashboard.Data.UploadedGrafana)
 	data.Version = types.StringValue(dashboard.Data.Version)
-	data.Source = types.StringValue(dashboard.Source)
+	data.Source = types.StringValue(dashboard.Data.Source)
 	// data.CreatedAt = types.StringValue(dashboard.CreatedAt)
 	// data.CreatedBy = types.StringValue(dashboard.CreatedBy)
 	// data.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
