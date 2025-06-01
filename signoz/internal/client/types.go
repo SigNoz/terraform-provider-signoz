@@ -29,10 +29,9 @@ type dashboardResponse struct {
 type dashboardData struct {
 	CreatedAt string          `json:"createdAt"`
 	CreatedBy string          `json:"createdBy"`
-	ID        int32           `json:"id"`
-	IsLocked  int             `json:"isLocked"`
+	ID        string          `json:"id"`
+	Locked    int             `json:"locked"`
 	UpdatedAt string          `json:"updatedAt"`
 	UpdatedBy string          `json:"updatedBy"`
-	UUID      string          `json:"uuid"`
 	Data      model.Dashboard `json:"data"`
 }

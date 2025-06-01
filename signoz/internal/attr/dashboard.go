@@ -14,5 +14,4 @@ const (
 	CreatedBy               = "created_by"
 	UpdatedAt               = "updated_at"
 	UpdatedBy               = "updated_by"
-	UUID                    = "uuid"
 )
