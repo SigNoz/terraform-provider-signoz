@@ -48,7 +48,6 @@ type dashboardResourceModel struct {
 	UpdatedAt               types.String `tfsdk:"updated_at"`
 	UpdatedBy               types.String `tfsdk:"updated_by"`
 	UploadedGrafana         types.Bool   `tfsdk:"uploaded_grafana"`
-	UUID                    types.String `tfsdk:"uuid"`
 	Variables               types.String `tfsdk:"variables"`
 	Version                 types.String `tfsdk:"version"`
 	Widgets                 types.String `tfsdk:"widgets"`
@@ -238,10 +237,10 @@ func (r *dashboardResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	tflog.Debug(ctx, "Reading dashboard", map[string]any{"dashboard": state.UUID.ValueString()})
+	tflog.Debug(ctx, "Reading dashboard", map[string]any{"dashboard": state.ID.ValueString()})
 
 	// Get refreshed dashboard from SigNoz.
-	dashboard, err := r.client.GetDashboard(ctx, state.UUID.ValueString())
+	dashboard, err := r.client.GetDashboard(ctx, state.ID.ValueString())
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationRead, SigNozDashboard)
 		return
@@ -343,14 +342,14 @@ func (r *dashboardResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	// Update existing dashboard.
-	err = r.client.UpdateDashboard(ctx, state.UUID.ValueString(), dashboardUpdate)
+	err = r.client.UpdateDashboard(ctx, state.ID.ValueString(), dashboardUpdate)
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
 	}
 
 	// Fetch updated dashboard.
-	dashboard, err := r.client.GetDashboard(ctx, state.UUID.ValueString())
+	dashboard, err := r.client.GetDashboard(ctx, state.ID.ValueString())
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate, SigNozDashboard)
 		return
@@ -414,7 +413,7 @@ func (r *dashboardResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	// Delete existing dashboard.
-	err := r.client.DeleteDashboard(ctx, state.UUID.ValueString())
+	err := r.client.DeleteDashboard(ctx, state.ID.ValueString())
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationDelete, SigNozDashboard)
 		return
@@ -424,5 +423,5 @@ func (r *dashboardResource) Delete(ctx context.Context, req resource.DeleteReque
 // ImportState imports Terraform state into the resource.
 func (r *dashboardResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Retrieve import ID and save to id attribute.
-	resource.ImportStatePassthroughID(ctx, path.Root("uuid"), req, resp)
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

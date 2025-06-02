@@ -76,7 +76,7 @@ func (d *dashboardDataSource) Configure(_ context.Context, req datasource.Config
 // Schema defines the schema for the data source.
 func (d *dashboardDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Fetches a dashboard from Signoz using its UUID. The UUID can be found in the URL of the dashboard in the Signoz UI.",
+		Description: "Fetches a dashboard from Signoz using its id. The id can be found in the URL of the dashboard in the Signoz UI.",
 		Attributes: map[string]schema.Attribute{
 			attr.CollapsableRowsMigrated: schema.BoolAttribute{
 				Computed: true,

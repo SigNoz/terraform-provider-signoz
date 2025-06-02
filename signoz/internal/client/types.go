@@ -30,7 +30,7 @@ type dashboardData struct {
 	CreatedAt string          `json:"createdAt"`
 	CreatedBy string          `json:"createdBy"`
 	ID        string          `json:"id"`
-	Locked    int             `json:"locked"`
+	Locked    bool            `json:"locked"`
 	UpdatedAt string          `json:"updatedAt"`
 	UpdatedBy string          `json:"updatedBy"`
 	Data      model.Dashboard `json:"data"`
