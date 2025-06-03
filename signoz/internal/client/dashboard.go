@@ -149,27 +149,11 @@ func (c *Client) DeleteDashboard(ctx context.Context, dashboardUUID string) erro
 		return err
 	}
 
-	body, err := c.doRequest(ctx, req)
+	_, err = c.doRequest(ctx, req)
 	if err != nil {
 		return err
 	}
 
-	var bodyObj signozResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
-		return err
-	}
-
-	if bodyObj.Status != "success" || bodyObj.Error != "" {
-		tflog.Error(ctx, "DeleteDashboard: error while deleting dashboard", map[string]any{
-			"error":     bodyObj.Error,
-			"errorType": bodyObj.ErrorType,
-			"data":      bodyObj.Data,
-		})
-		return fmt.Errorf("error while deleting dashboard: %s", bodyObj.Error)
-	}
-
-	tflog.Debug(ctx, "DeleteDashboard: dashboard deleted", map[string]any{"dashboardUUID": dashboardUUID, "bodyData": bodyObj.Data})
-
+	tflog.Debug(ctx, "DeleteDashboard: dashboard deleted", map[string]any{"dashboardUUID": dashboardUUID})
 	return nil
 }

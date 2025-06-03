@@ -87,9 +87,9 @@ func (c *Client) doRequest(ctx context.Context, req *http.Request) ([]byte, erro
 		return nil, err
 	}
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode/100 > 2 {
 		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
 	}
 
-	return body, err
+	return body, nil
 }
