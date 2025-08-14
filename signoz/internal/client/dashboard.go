@@ -39,15 +39,15 @@ func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*dashb
 		return nil, err
 	}
 
-	if bodyObj.Status != "success" || bodyObj.Error != "" {
-		tflog.Error(ctx, "GetDashboard: error while fetching dashboard", map[string]any{
-			"error":     bodyObj.Error,
-			"errorType": bodyObj.ErrorType,
-			"data":      bodyObj.Data,
-		})
+if resp.StatusCode != http.StatusOK {
+	tflog.Error(ctx, "GetDashboard: error while fetching dashboard", map[string]any{
+		"statusCode": resp.StatusCode,
+		"status":     resp.Status,
+	})
 
-		return &dashboardData{}, fmt.Errorf("error while fetching dashboard: %s", bodyObj.Error)
-	}
+	return &dashboardData{}, fmt.Errorf("error while fetching dashboard: received status code %d", resp.StatusCode)
+}
+
 
 	tflog.Debug(ctx, "GetDashboard: dashboard fetched", map[string]any{"dashboard": bodyObj.Data})
 
