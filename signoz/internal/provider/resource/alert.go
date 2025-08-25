@@ -282,6 +282,11 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
+	// Set labels from API response
+	var diag diag.Diagnostics
+	plan.Labels, diag = alert.LabelsToTerraform()
+	resp.Diagnostics.Append(diag...)
+
 	// Set state to populated data.
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
 	if resp.Diagnostics.HasError() {
