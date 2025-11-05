@@ -273,7 +273,6 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	data.SchemaVersion = types.StringValue(alert.SchemaVersion)
 
-	// Populate v2+ schema fields only if schema version is not v1
 	if alert.SchemaVersion != "" && alert.SchemaVersion != "v1" {
 		data.NotificationSettings, diags = alert.NotificationSettingsToTerraform(ctx)
 		resp.Diagnostics.Append(diags...)
