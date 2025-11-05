@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -17,8 +20,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -40,27 +41,30 @@ type alertResource struct {
 
 // alertResourceModel maps the resource schema data.
 type alertResourceModel struct {
-	ID                types.String `tfsdk:"id"`
-	Alert             types.String `tfsdk:"alert"`
-	AlertType         types.String `tfsdk:"alert_type"`
-	BroadcastToAll    types.Bool   `tfsdk:"broadcast_to_all"`
-	Condition         types.String `tfsdk:"condition"`
-	Description       types.String `tfsdk:"description"`
-	Disabled          types.Bool   `tfsdk:"disabled"`
-	EvalWindow        types.String `tfsdk:"eval_window"`
-	Frequency         types.String `tfsdk:"frequency"`
-	Labels            types.Map    `tfsdk:"labels"`
-	PreferredChannels types.List   `tfsdk:"preferred_channels"`
-	RuleType          types.String `tfsdk:"rule_type"`
-	Severity          types.String `tfsdk:"severity"`
-	Source            types.String `tfsdk:"source"`
-	State             types.String `tfsdk:"state"`
-	Summary           types.String `tfsdk:"summary"`
-	Version           types.String `tfsdk:"version"`
-	CreateAt          types.String `tfsdk:"create_at"`
-	CreateBy          types.String `tfsdk:"create_by"`
-	UpdateAt          types.String `tfsdk:"update_at"`
-	UpdateBy          types.String `tfsdk:"update_by"`
+	ID                   types.String `tfsdk:"id"`
+	Alert                types.String `tfsdk:"alert"`
+	AlertType            types.String `tfsdk:"alert_type"`
+	BroadcastToAll       types.Bool   `tfsdk:"broadcast_to_all"`
+	Condition            types.String `tfsdk:"condition"`
+	Description          types.String `tfsdk:"description"`
+	Disabled             types.Bool   `tfsdk:"disabled"`
+	EvalWindow           types.String `tfsdk:"eval_window"`
+	Frequency            types.String `tfsdk:"frequency"`
+	Labels               types.Map    `tfsdk:"labels"`
+	PreferredChannels    types.List   `tfsdk:"preferred_channels"`
+	RuleType             types.String `tfsdk:"rule_type"`
+	Severity             types.String `tfsdk:"severity"`
+	Source               types.String `tfsdk:"source"`
+	State                types.String `tfsdk:"state"`
+	Summary              types.String `tfsdk:"summary"`
+	Version              types.String `tfsdk:"version"`
+	SchemaVersion        types.String `tfsdk:"schema_version"`
+	NotificationSettings types.Object `tfsdk:"notification_settings"`
+	Evaluation           types.String `tfsdk:"evaluation"`
+	CreateAt             types.String `tfsdk:"create_at"`
+	CreateBy             types.String `tfsdk:"create_by"`
+	UpdateAt             types.String `tfsdk:"update_at"`
+	UpdateBy             types.String `tfsdk:"update_by"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -111,6 +115,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Computed: true,
 				Description: "Whether to broadcast the alert to all the alerting channels. " +
 					"By default, the alert is only sent to the preferred channels.",
+				DeprecationMessage: "This field is no longer needed and will be ignored",
 			},
 			attr.Condition: schema.StringAttribute{
 				Required:    true,
@@ -195,6 +200,65 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				},
 				Default: stringdefault.StaticString(alertDefaultVersion),
 			},
+			attr.SchemaVersion: schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "Schema version of the alert. By default, it is v1. For v2+ schemas, additional fields like evaluation and notification_settings are supported.",
+			},
+			attr.NotificationSettings: schema.SingleNestedAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "Notification settings for the alert. Only used when schema_version is v2 or higher.",
+				Attributes: map[string]schema.Attribute{
+					attr.Renotify: schema.SingleNestedAttribute{
+						Optional:    true,
+						Computed:    true,
+						Description: "The alert re-notification settings.",
+						Attributes: map[string]schema.Attribute{
+							attr.Interval: schema.StringAttribute{
+								Required: true,
+								Validators: []validator.String{
+									stringvalidator.RegexMatches(regexp.MustCompile(`^([0-9]+h)?([0-9]+m)?([0-9]+s)?$`), "invalid alert evaluation window. It should be in format of 5m0s or 15m30s"),
+								},
+								Description: "Re-notify interval of the alert.",
+							},
+							attr.AlertStates: schema.ListAttribute{
+								Required:    true,
+								ElementType: types.StringType,
+								Validators: []validator.List{
+									listvalidator.ValueStringsAre([]validator.String{
+										stringvalidator.OneOf(model.AlertStates...),
+									}...),
+								},
+								Description: "For which AlertStates of the alert want to get renotified.",
+							},
+							attr.Enabled: schema.BoolAttribute{
+								Computed:    true,
+								Optional:    true,
+								Default:     booldefault.StaticBool(true),
+								Description: "To enable the re-notification of the alert.",
+							},
+						},
+					},
+					attr.GroupBy: schema.ListAttribute{
+						Optional:    true,
+						Computed:    true,
+						ElementType: types.StringType,
+						Description: "Group by the alert. By default, it is empty.",
+					},
+					attr.UsePolicy: schema.BoolAttribute{
+						Optional:    true,
+						Computed:    true,
+						Default:     booldefault.StaticBool(false),
+						Description: "Use policy in the alert. By default, it is false.",
+					},
+				},
+			},
+			attr.Evaluation: schema.StringAttribute{
+				Optional:    true,
+				Computed:    true,
+				Description: "Evaluation settings for the alert (JSON). Only used when schema_version is v2 or higher.",
+			},
 			// computed.
 			attr.ID: schema.StringAttribute{
 				Computed:    true,
@@ -247,12 +311,29 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 		RuleType:       plan.RuleType.ValueString(),
 		Source:         plan.Source.ValueString(),
 		Version:        plan.Version.ValueString(),
+		SchemaVersion:  plan.SchemaVersion.ValueString(),
 	}
 
 	err := alertPayload.SetCondition(plan.Condition)
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
 		return
+	}
+
+	if !utils.IsNullOrUnknown(plan.NotificationSettings) {
+		err := alertPayload.SetNotificationSettings(ctx, plan.NotificationSettings)
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			return
+		}
+	}
+
+	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
+		err := alertPayload.SetEvaluation(plan.Evaluation)
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			return
+		}
 	}
 
 	alertPayload.SetLabels(plan.Labels, plan.Severity)
@@ -274,18 +355,34 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 	// Map response to schema and populate Computed attributes.
 	plan.ID = types.StringValue(alert.ID)
+	plan.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
 	plan.Disabled = types.BoolValue(alert.Disabled)
 	plan.Source = types.StringValue(alert.Source)
 	plan.State = types.StringValue(alert.State)
+	plan.SchemaVersion = types.StringValue(alert.SchemaVersion)
 	plan.CreateAt = types.StringValue(alert.CreateAt)
 	plan.CreateBy = types.StringValue(alert.CreateBy)
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
-	// Set labels from API response
-	var diag diag.Diagnostics
-	plan.Labels, diag = alert.LabelsToTerraform()
-	resp.Diagnostics.Append(diag...)
+	var diagLabels diag.Diagnostics
+	plan.Labels, diagLabels = alert.LabelsToTerraform()
+	resp.Diagnostics.Append(diagLabels...)
+
+	if alert.SchemaVersion != "" && alert.SchemaVersion != "v1" {
+		plan.NotificationSettings, diagLabels = alert.NotificationSettingsToTerraform(ctx)
+		resp.Diagnostics.Append(diagLabels...)
+
+		var evalErr error
+		plan.Evaluation, evalErr = alert.EvaluationToTerraform()
+		if evalErr != nil {
+			addErr(&resp.Diagnostics, evalErr, operationCreate, SigNozAlert)
+		}
+	} else {
+		plan.NotificationSettings = types.ObjectNull(
+			attr.NotificationSettingsAttrTypes())
+		plan.Evaluation = types.StringNull()
+	}
 
 	// Set state to populated data.
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
@@ -298,7 +395,6 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	// Get current state
 	var state alertResourceModel
-	var diag diag.Diagnostics
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -331,6 +427,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.CreateBy = types.StringValue(alert.CreateBy)
 	state.UpdateAt = types.StringValue(alert.UpdateAt)
 	state.UpdateBy = types.StringValue(alert.UpdateBy)
+	state.SchemaVersion = types.StringValue(alert.SchemaVersion)
 
 	state.Condition, err = alert.ConditionToTerraform()
 	if err != nil {
@@ -338,13 +435,33 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
-	state.Labels, diag = alert.LabelsToTerraform()
-	resp.Diagnostics.Append(diag...)
+	var diagLabelsRead diag.Diagnostics
+	state.Labels, diagLabelsRead = alert.LabelsToTerraform()
+	resp.Diagnostics.Append(diagLabelsRead...)
 
-	state.PreferredChannels, diag = alert.PreferredChannelsToTerraform()
-	resp.Diagnostics.Append(diag...)
+	var diagPreferredChannels diag.Diagnostics
+	state.PreferredChannels, diagPreferredChannels = alert.PreferredChannelsToTerraform()
+	resp.Diagnostics.Append(diagPreferredChannels...)
 
-	// Set refreshed state.
+	if alert.SchemaVersion != "" && alert.SchemaVersion != "v1" {
+		var diagNotifSettings diag.Diagnostics
+		state.NotificationSettings, diagNotifSettings = alert.NotificationSettingsToTerraform(ctx)
+		resp.Diagnostics.Append(diagNotifSettings...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		state.Evaluation, err = alert.EvaluationToTerraform()
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
+			return
+		}
+	} else {
+		state.NotificationSettings = types.ObjectNull(
+			attr.NotificationSettingsAttrTypes())
+		state.Evaluation = types.StringNull()
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -355,7 +472,6 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	// Retrieve values from plan.
 	var plan, state alertResourceModel
-	var diag diag.Diagnostics
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -383,6 +499,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		Source:         plan.Source.ValueString(),
 		State:          state.State.ValueString(),
 		Version:        plan.Version.ValueString(),
+		SchemaVersion:  plan.SchemaVersion.ValueString(),
 		CreateAt:       state.CreateAt.ValueString(),
 		CreateBy:       state.CreateBy.ValueString(),
 		UpdateAt:       state.UpdateAt.ValueString(),
@@ -393,6 +510,24 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
+	}
+
+	tflog.Debug(ctx, "alert update", map[string]interface{}{"id": alertUpdate})
+
+	if !utils.IsNullOrUnknown(plan.NotificationSettings) {
+		err := alertUpdate.SetNotificationSettings(ctx, plan.NotificationSettings)
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			return
+		}
+	}
+
+	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
+		err := alertUpdate.SetEvaluation(plan.Evaluation)
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			return
+		}
 	}
 
 	alertUpdate.SetLabels(plan.Labels, plan.Severity)
@@ -427,6 +562,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.State = types.StringValue(alert.State)
 	plan.Summary = types.StringValue(alert.Annotations.Summary)
 	plan.Version = types.StringValue(alert.Version)
+	plan.SchemaVersion = types.StringValue(alert.SchemaVersion)
 	plan.CreateAt = types.StringValue(alert.CreateAt)
 	plan.CreateBy = types.StringValue(alert.CreateBy)
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
@@ -438,11 +574,32 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	plan.Labels, diag = alert.LabelsToTerraform()
-	resp.Diagnostics.Append(diag...)
+	var diagLabelsUpdate diag.Diagnostics
+	plan.Labels, diagLabelsUpdate = alert.LabelsToTerraform()
+	resp.Diagnostics.Append(diagLabelsUpdate...)
 
-	plan.PreferredChannels, diag = alert.PreferredChannelsToTerraform()
-	resp.Diagnostics.Append(diag...)
+	var diagPreferredChannelsUpdate diag.Diagnostics
+	plan.PreferredChannels, diagPreferredChannelsUpdate = alert.PreferredChannelsToTerraform()
+	resp.Diagnostics.Append(diagPreferredChannelsUpdate...)
+
+	if alert.SchemaVersion != "" && alert.SchemaVersion != "v1" {
+		var diagNotif diag.Diagnostics
+		plan.NotificationSettings, diagNotif = alert.NotificationSettingsToTerraform(ctx)
+		resp.Diagnostics.Append(diagNotif...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		plan.Evaluation, err = alert.EvaluationToTerraform()
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+			return
+		}
+	} else {
+		plan.NotificationSettings = types.ObjectNull(
+			attr.NotificationSettingsAttrTypes())
+		plan.Evaluation = types.StringNull()
+	}
 
 	// Set refreshed state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)

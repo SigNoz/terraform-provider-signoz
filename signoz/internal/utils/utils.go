@@ -1,6 +1,7 @@
 package utils
 
 import (
+	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -66,4 +67,36 @@ func Contains[T comparable](items []T, element T) bool {
 	}
 
 	return false
+}
+
+// TfValueToGo converts a Terraform attr.Value to a Go value.
+func TfValueToGo(val tfattr.Value) interface{} {
+	switch v := val.(type) {
+	case types.String:
+		return v.ValueString()
+	case types.Bool:
+		return v.ValueBool()
+	case types.Int64:
+		return v.ValueInt64()
+	case types.Float64:
+		return v.ValueFloat64()
+	case types.List:
+		result := make([]interface{}, 0, len(v.Elements()))
+		for _, elem := range v.Elements() {
+			result = append(result, TfValueToGo(elem))
+		}
+		return result
+	case types.Object:
+		result := make(map[string]interface{})
+		for k, attrVal := range v.Attributes() {
+			result[k] = TfValueToGo(attrVal)
+		}
+		return result
+	}
+	return nil
+}
+
+// IsNullOrUnknown checks if a Terraform value is null or unknown.
+func IsNullOrUnknown(v tfattr.Value) bool {
+	return v.IsNull() || v.IsUnknown()
 }

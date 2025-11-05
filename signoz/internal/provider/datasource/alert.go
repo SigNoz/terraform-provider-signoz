@@ -45,9 +45,16 @@ type alertModel struct {
 	RuleType          types.String `tfsdk:"rule_type"`
 	Severity          types.String `tfsdk:"severity"`
 	Source            types.String `tfsdk:"source"`
-	State             types.String `tfsdk:"state"`
-	Summary           types.String `tfsdk:"summary"`
-	Version           types.String `tfsdk:"version"`
+	State                types.String `tfsdk:"state"`
+	Summary              types.String `tfsdk:"summary"`
+	Version              types.String `tfsdk:"version"`
+	SchemaVersion        types.String `tfsdk:"schema_version"`
+	NotificationSettings types.Object `tfsdk:"notification_settings"`
+	Evaluation           types.String `tfsdk:"evaluation"`
+	CreateAt             types.String `tfsdk:"create_at"`
+	CreateBy             types.String `tfsdk:"create_by"`
+	UpdateAt             types.String `tfsdk:"update_at"`
+	UpdateBy             types.String `tfsdk:"update_by"`
 }
 
 // Configure adds the provider configured client to the data source.
@@ -97,8 +104,9 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 					model.AlertTypeMetrics, model.AlertTypeLogs, model.AlertTypeTraces, model.AlertTypeExceptions),
 			},
 			attr.BroadcastToAll: schema.BoolAttribute{
-				Computed:    true,
-				Description: "Whether to broadcast the alert to all the alert channels.",
+				Computed:           true,
+				Description:        "Whether to broadcast the alert to all the alert channels.",
+				DeprecationMessage: "This field is no longer needed and will be ignored",
 			},
 			attr.Condition: schema.StringAttribute{
 				Computed:    true,
@@ -156,6 +164,64 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 				Computed:    true,
 				Description: "Version of the alert.",
 			},
+			attr.SchemaVersion: schema.StringAttribute{
+				Computed:    true,
+				Description: "Schema version of the alert.",
+			},
+			attr.NotificationSettings: schema.SingleNestedAttribute{
+				Computed:    true,
+				Description: "Notification settings for the alert.",
+				Attributes: map[string]schema.Attribute{
+					attr.Renotify: schema.SingleNestedAttribute{
+						Computed:    true,
+						Description: "Renotify settings for the alert.",
+						Attributes: map[string]schema.Attribute{
+							attr.Enabled: schema.BoolAttribute{
+								Computed:    true,
+								Description: "Whether renotify is enabled.",
+							},
+							attr.Interval: schema.StringAttribute{
+								Computed:    true,
+								Description: "Interval for renotify.",
+							},
+							attr.AlertStates: schema.ListAttribute{
+								Computed:    true,
+								ElementType: types.StringType,
+								Description: "Alert states for renotify.",
+							},
+						},
+					},
+					attr.GroupBy: schema.ListAttribute{
+						Computed:    true,
+						ElementType: types.StringType,
+						Description: "Group by labels for notification.",
+					},
+					attr.UsePolicy: schema.BoolAttribute{
+						Computed:    true,
+						Description: "Whether to use notification policy.",
+					},
+				},
+			},
+			attr.Evaluation: schema.StringAttribute{
+				Computed:    true,
+				Description: "Evaluation configuration of the alert as JSON.",
+			},
+			attr.CreateAt: schema.StringAttribute{
+				Computed:    true,
+				Description: "Timestamp when the alert was created.",
+			},
+			attr.CreateBy: schema.StringAttribute{
+				Computed:    true,
+				Description: "User who created the alert.",
+			},
+			attr.UpdateAt: schema.StringAttribute{
+				Computed:    true,
+				Description: "Timestamp when the alert was last updated.",
+			},
+			attr.UpdateBy: schema.StringAttribute{
+				Computed:    true,
+				Description: "User who last updated the alert.",
+			},
 		},
 	}
 }
@@ -204,6 +270,25 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	data.PreferredChannels, diags = alert.PreferredChannelsToTerraform()
 	resp.Diagnostics.Append(diags...)
+
+	data.SchemaVersion = types.StringValue(alert.SchemaVersion)
+
+	// Populate v2+ schema fields only if schema version is not v1
+	if alert.SchemaVersion != "" && alert.SchemaVersion != "v1" {
+		data.NotificationSettings, diags = alert.NotificationSettingsToTerraform(ctx)
+		resp.Diagnostics.Append(diags...)
+
+		data.Evaluation, err = alert.EvaluationToTerraform()
+		if err != nil {
+			addErr(&resp.Diagnostics, err, SigNozAlert)
+			return
+		}
+	}
+
+	data.CreateAt = types.StringValue(alert.CreateAt)
+	data.CreateBy = types.StringValue(alert.CreateBy)
+	data.UpdateAt = types.StringValue(alert.UpdateAt)
+	data.UpdateBy = types.StringValue(alert.UpdateBy)
 
 	// Set state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
