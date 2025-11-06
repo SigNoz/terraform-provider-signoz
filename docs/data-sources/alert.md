@@ -73,7 +73,7 @@ output "alert" {
 
 Read-Only:
 
-- `group_by` (List of String) List of labels to group notifications by.
+- `group_by` (List of String) List of labels to group notifications by, '__all__' to get different notification for each unique parameters.
 - `renotify` (Attributes) Renotify settings for the alert. (see below for nested schema)
 - `use_policy` (Boolean) Whether to use notification policy.
 
