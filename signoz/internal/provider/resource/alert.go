@@ -512,7 +512,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	tflog.Debug(ctx, "alert update", map[string]interface{}{"id": alertUpdate})
+	tflog.Debug(ctx, "alert update", map[string]interface{}{"alertUpdate": alertUpdate})
 
 	if !utils.IsNullOrUnknown(plan.NotificationSettings) {
 		err := alertUpdate.SetNotificationSettings(ctx, plan.NotificationSettings)

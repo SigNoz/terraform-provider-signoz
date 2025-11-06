@@ -51,10 +51,6 @@ type alertModel struct {
 	SchemaVersion        types.String `tfsdk:"schema_version"`
 	NotificationSettings types.Object `tfsdk:"notification_settings"`
 	Evaluation           types.String `tfsdk:"evaluation"`
-	CreateAt             types.String `tfsdk:"create_at"`
-	CreateBy             types.String `tfsdk:"create_by"`
-	UpdateAt             types.String `tfsdk:"update_at"`
-	UpdateBy             types.String `tfsdk:"update_by"`
 }
 
 // Configure adds the provider configured client to the data source.
@@ -266,6 +262,9 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 			addErr(&resp.Diagnostics, err, SigNozAlert)
 			return
 		}
+	} else {
+		data.NotificationSettings = types.ObjectNull(attr.NotificationSettingsAttrTypes())
+		data.Evaluation = types.StringNull()
 	}
 
 	// Set state.
