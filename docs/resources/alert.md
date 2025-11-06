@@ -176,7 +176,7 @@ resource "signoz_alert" "new_alert_v2" {
   rule_type        = "threshold_rule"
   version          = "v5"
 
-  schema_version = "v2"
+  schema_version = "v2alpha1"
 
   evaluation = jsonencode({
     kind = "rolling"
