@@ -177,7 +177,7 @@ resource "signoz_alert" "new_alert_v2" {
       alert_states = ["nodata","firing"]
       enabled      = true
     },
-    group_by = ["asd"]
+    group_by = ["container.id"]
     use_policy = true
   }
 

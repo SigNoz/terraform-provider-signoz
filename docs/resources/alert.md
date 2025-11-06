@@ -213,7 +213,7 @@ output "alert_v2" {
 
 Optional:
 
-- `group_by` (List of String) List of labels to group notifications by. By default, it is empty.
+- `group_by` (List of String) List of labels to group notifications by. By default, it is empty, use '__all__' to get different notification for each unique parameters.
 - `renotify` (Attributes) Renotify settings for the alert. (see below for nested schema)
 - `use_policy` (Boolean) Whether to use notification policy. By default, it is false.
 

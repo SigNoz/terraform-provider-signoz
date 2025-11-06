@@ -62,8 +62,6 @@ output "v2_alert_notification_settings" {
 - `alert_type` (String) Type of the alert. Possible values are: METRIC_BASED_ALERT, LOGS_BASED_ALERT, TRACES_BASED_ALERT, and EXCEPTIONS_BASED_ALERT.
 - `broadcast_to_all` (Boolean) Whether to broadcast the alert to all the alert channels. **Deprecated:** This field is no longer needed and will be ignored.
 - `condition` (String) Condition of the alert.
-- `create_at` (String) Timestamp when the alert was created.
-- `create_by` (String) User who created the alert.
 - `description` (String) Description of the alert.
 - `disabled` (Boolean) Whether the alert is disabled.
 - `eval_window` (String) Evaluation window of the alert.
@@ -78,15 +76,13 @@ output "v2_alert_notification_settings" {
 - `source` (String) Source URL of the alert.
 - `state` (String) State of the alert. Possible values are: inactive, firing, pending, and disabled.
 - `summary` (String) Summary of the alert.
-- `update_at` (String) Timestamp when the alert was last updated.
-- `update_by` (String) User who last updated the alert.
 - `version` (String) Version of the alert.
 
 ### Nested Schema for `notification_settings`
 
 Read-Only:
 
-- `group_by` (List of String) List of labels to group notifications by.
+- `group_by` (List of String) List of labels to group notifications by, use '__all__' to get different notification for each unique parameters.
 - `renotify` (Attributes) Renotify settings for the alert. (see below for nested schema)
 - `use_policy` (Boolean) Whether to use notification policy.
 

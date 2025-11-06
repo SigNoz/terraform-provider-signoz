@@ -244,7 +244,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 						Optional:    true,
 						Computed:    true,
 						ElementType: types.StringType,
-						Description: "Group by the alert. By default, it is empty.",
+						Description: "Group by the alert. By default, it is empty, use '__all__' to get different notification for each unique parameters.",
 					},
 					attr.UsePolicy: schema.BoolAttribute{
 						Optional:    true,

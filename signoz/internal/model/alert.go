@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
@@ -247,7 +248,11 @@ func (a *Alert) SetNotificationSettings(ctx context.Context, tfNotification type
 
 	var renotify Renotify
 	if renotifyAttr, ok := attrs[attr.Renotify]; ok && !utils.IsNullOrUnknown(renotifyAttr) {
-		renotifyObj := renotifyAttr.(types.Object)
+		renotifyObj, ok := renotifyAttr.(types.Object)
+		if !ok {
+			return fmt.Errorf("invalid renotify attribute type")
+		}
+
 		renotifyAttrs := renotifyObj.Attributes()
 
 		if v, ok := renotifyAttrs[attr.Enabled]; ok {
