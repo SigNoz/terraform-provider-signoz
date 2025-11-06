@@ -131,22 +131,22 @@ resource "signoz_alert" "new_alert_v2" {
       kind = "basic"
       spec = [
         {
-          name            = "critical"
-          target          = 100
-          targetUnit      = ""
-          recoveryTarget  = null
-          matchType       = "1"
-          op              = "1"
-          channels        = ["alert-test-terraform"]
+          name           = "critical"
+          target         = 100
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
         },
         {
-          name            = "warning"
-          target          = 50
-          targetUnit      = ""
-          recoveryTarget  = null
-          matchType       = "1"
-          op              = "1"
-          channels        = ["alert-test-terraform"]
+          name           = "warning"
+          target         = 50
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
         }
       ]
     }
@@ -174,10 +174,10 @@ resource "signoz_alert" "new_alert_v2" {
   notification_settings = {
     renotify = {
       interval     = "25m0s"
-      alert_states = ["nodata","firing"]
+      alert_states = ["nodata", "firing"]
       enabled      = true
     },
-    group_by = ["container.id"]
+    group_by   = ["container.id"]
     use_policy = true
   }
 

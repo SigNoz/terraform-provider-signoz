@@ -109,44 +109,73 @@ resource "signoz_alert" "new_alert" {
   version   = "v4"
 }
 
-# Example of v2+ schema alert with notification settings
-resource "signoz_alert" "v2_alert" {
-  alert            = "V2 Alert with Notifications"
-  alert_type       = "LOGS_BASED_ALERT"
-  broadcast_to_all = false
+resource "signoz_alert" "new_alert_v2" {
+  alert      = "new alert with v2 schema"
+  alert_type = "LOGS_BASED_ALERT"
+  severity   = "critical"
+
   condition = jsonencode({
     compositeQuery = {
-      queries = [{
-        type = "builder_query"
-        spec = {
-          name   = "A"
-          signal = "logs"
-          aggregations = [{
-            expression = "count()"
-          }]
+      queries = [
+        {
+          type = "builder_query"
+          spec = {
+            name         = "A"
+            stepInterval = 0
+            signal       = "logs"
+            source       = ""
+            aggregations = [
+              {
+                expression = "count()"
+              }
+            ]
+            filter = {
+              expression = ""
+            }
+            having = {
+              expression = ""
+            }
+          }
         }
-      }]
+      ]
+      panelType = "graph"
       queryType = "builder"
     }
     selectedQueryName = "A"
     thresholds = {
       kind = "basic"
-      spec = [{
-        name       = "critical"
-        target     = 100
-        matchType  = "1"
-        op         = "1"
-        channels   = ["alert-test-terraform"]
-      }]
+      spec = [
+        {
+          name           = "critical"
+          target         = 100
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
+        },
+        {
+          name           = "warning"
+          target         = 50
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
+        }
+      ]
     }
   })
-  description = "V2 schema alert with notification settings"
-  eval_window = "5m0s"
-  frequency   = "1m0s"
-  severity    = "critical"
-  version     = "v5"
 
-  # V2+ Schema fields
+  description      = "This alert is fired when log count crosses the threshold (current: {{$value}}, threshold: {{$threshold}})"
+  summary          = "Log count alert triggered"
+  eval_window      = "5m0s"
+  frequency        = "1m0s"
+  broadcast_to_all = false
+  disabled         = false
+  rule_type        = "threshold_rule"
+  version          = "v5"
+
   schema_version = "v2"
 
   evaluation = jsonencode({
@@ -159,25 +188,27 @@ resource "signoz_alert" "v2_alert" {
 
   notification_settings = {
     renotify = {
-      enabled      = true
       interval     = "25m0s"
       alert_states = ["nodata", "firing"]
-    }
-    group_by   = ["severity"]
+      enabled      = true
+    },
+    group_by   = ["container.id"]
     use_policy = true
   }
 
+  preferred_channels = ["alert-test-terraform"]
+
   labels = {
     "team" = "platform"
+  }
+
+  lifecycle {
+    ignore_changes = [condition]
   }
 }
 
 output "alert_new" {
   value = signoz_alert.new_alert
-}
-
-output "alert_v2" {
-  value = signoz_alert.v2_alert
 }
 ```
 
@@ -213,7 +244,7 @@ output "alert_v2" {
 
 Optional:
 
-- `group_by` (List of String) List of labels to group notifications by. By default, it is empty, use '__all__' to get different notification for each unique parameters.
+- `group_by` (List of String) List of labels to group notifications by. By default, it is empty.
 - `renotify` (Attributes) Renotify settings for the alert. (see below for nested schema)
 - `use_policy` (Boolean) Whether to use notification policy. By default, it is false.
 
