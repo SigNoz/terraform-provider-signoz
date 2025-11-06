@@ -206,22 +206,6 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 				Computed:    true,
 				Description: "Evaluation configuration of the alert as JSON.",
 			},
-			attr.CreateAt: schema.StringAttribute{
-				Computed:    true,
-				Description: "Timestamp when the alert was created.",
-			},
-			attr.CreateBy: schema.StringAttribute{
-				Computed:    true,
-				Description: "User who created the alert.",
-			},
-			attr.UpdateAt: schema.StringAttribute{
-				Computed:    true,
-				Description: "Timestamp when the alert was last updated.",
-			},
-			attr.UpdateBy: schema.StringAttribute{
-				Computed:    true,
-				Description: "User who last updated the alert.",
-			},
 		},
 	}
 }
@@ -283,11 +267,6 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 			return
 		}
 	}
-
-	data.CreateAt = types.StringValue(alert.CreateAt)
-	data.CreateBy = types.StringValue(alert.CreateBy)
-	data.UpdateAt = types.StringValue(alert.UpdateAt)
-	data.UpdateBy = types.StringValue(alert.UpdateBy)
 
 	// Set state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

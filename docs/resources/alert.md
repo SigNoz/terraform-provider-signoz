@@ -109,8 +109,75 @@ resource "signoz_alert" "new_alert" {
   version   = "v4"
 }
 
+# Example of v2+ schema alert with notification settings
+resource "signoz_alert" "v2_alert" {
+  alert            = "V2 Alert with Notifications"
+  alert_type       = "LOGS_BASED_ALERT"
+  broadcast_to_all = false
+  condition = jsonencode({
+    compositeQuery = {
+      queries = [{
+        type = "builder_query"
+        spec = {
+          name   = "A"
+          signal = "logs"
+          aggregations = [{
+            expression = "count()"
+          }]
+        }
+      }]
+      queryType = "builder"
+    }
+    selectedQueryName = "A"
+    thresholds = {
+      kind = "basic"
+      spec = [{
+        name       = "critical"
+        target     = 100
+        matchType  = "1"
+        op         = "1"
+        channels   = ["alert-test-terraform"]
+      }]
+    }
+  })
+  description = "V2 schema alert with notification settings"
+  eval_window = "5m0s"
+  frequency   = "1m0s"
+  severity    = "critical"
+  version     = "v5"
+
+  # V2+ Schema fields
+  schema_version = "v2"
+
+  evaluation = jsonencode({
+    kind = "rolling"
+    spec = {
+      evalWindow = "35m0s"
+      frequency  = "1m0s"
+    }
+  })
+
+  notification_settings = {
+    renotify = {
+      enabled      = true
+      interval     = "25m0s"
+      alert_states = ["nodata", "firing"]
+    }
+    group_by   = ["severity"]
+    use_policy = true
+  }
+
+  labels = {
+    "team" = "platform"
+  }
+}
+
 output "alert_new" {
   value = signoz_alert.new_alert
+}
+
+output "alert_v2" {
+  value = signoz_alert.v2_alert
 }
 ```
 
@@ -127,17 +194,36 @@ output "alert_new" {
 
 ### Optional
 
-- `broadcast_to_all` (Boolean) Whether to broadcast the alert to all the alerting channels. By default, the alert is only sent to the preferred channels.
+- `broadcast_to_all` (Boolean) Whether to broadcast the alert to all the alerting channels. By default, the alert is only sent to the preferred channels. **Deprecated:** This field is no longer needed and will be ignored.
 - `description` (String) Description of the alert.
 - `disabled` (Boolean) Whether the alert is disabled.
 - `eval_window` (String) The evaluation window of the alert. By default, it is 5m0s.
+- `evaluation` (String) Evaluation configuration of the alert as JSON. Only used when schema_version is v2 or higher.
 - `frequency` (String) The frequency of the alert. By default, it is 1m0s.
 - `labels` (Map of String) Labels of the alert. Severity is a required label.
+- `notification_settings` (Attributes) Notification settings for the alert. Only used when schema_version is v2 or higher. (see below for nested schema)
 - `preferred_channels` (List of String) Preferred channels of the alert. By default, it is empty.
 - `rule_type` (String) Type of the alert. Possible values are: threshold_rule and promql_rule.
+- `schema_version` (String) Schema version of the alert. By default, it is v1. For v2+ schemas, additional fields like evaluation and notification_settings are supported.
 - `source` (String) Source of the alert. By default, it is <SIGNOZ_ENDPOINT>/alerts.
 - `summary` (String) Summary of the alert.
 - `version` (String) Version of the alert. By default, it is v4.
+
+### Nested Schema for `notification_settings`
+
+Optional:
+
+- `group_by` (List of String) List of labels to group notifications by. By default, it is empty.
+- `renotify` (Attributes) Renotify settings for the alert. (see below for nested schema)
+- `use_policy` (Boolean) Whether to use notification policy. By default, it is false.
+
+### Nested Schema for `notification_settings.renotify`
+
+Optional:
+
+- `alert_states` (List of String) List of alert states to trigger renotification. Possible values are: firing, nodata.
+- `enabled` (Boolean) Whether renotify is enabled. By default, it is false.
+- `interval` (String) Renotification interval (e.g., "25m0s"). By default, it is empty.
 
 ### Read-Only
 
