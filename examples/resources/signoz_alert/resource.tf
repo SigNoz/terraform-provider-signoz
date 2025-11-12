@@ -94,6 +94,104 @@ resource "signoz_alert" "new_alert" {
   version   = "v4"
 }
 
+resource "signoz_alert" "new_alert_v2" {
+  alert      = "new alert with v2 schema"
+  alert_type = "LOGS_BASED_ALERT"
+  severity   = "critical"
+
+  condition = jsonencode({
+    compositeQuery = {
+      queries = [
+        {
+          type = "builder_query"
+          spec = {
+            name         = "A"
+            stepInterval = 0
+            signal       = "logs"
+            source       = ""
+            aggregations = [
+              {
+                expression = "count()"
+              }
+            ]
+            filter = {
+              expression = ""
+            }
+            having = {
+              expression = ""
+            }
+          }
+        }
+      ]
+      panelType = "graph"
+      queryType = "builder"
+    }
+    selectedQueryName = "A"
+    thresholds = {
+      kind = "basic"
+      spec = [
+        {
+          name           = "critical"
+          target         = 100
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
+        },
+        {
+          name           = "warning"
+          target         = 50
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
+        }
+      ]
+    }
+  })
+
+  description      = "This alert is fired when log count crosses the threshold (current: {{$value}}, threshold: {{$threshold}})"
+  summary          = "Log count alert triggered"
+  eval_window      = "5m0s"
+  frequency        = "1m0s"
+  broadcast_to_all = false
+  disabled         = false
+  rule_type        = "threshold_rule"
+  version          = "v5"
+
+  schema_version = "v2alpha1"
+
+  evaluation = jsonencode({
+    kind = "rolling"
+    spec = {
+      evalWindow = "35m0s"
+      frequency  = "1m0s"
+    }
+  })
+
+  notification_settings = {
+    renotify = {
+      interval     = "25m0s"
+      alert_states = ["nodata", "firing"]
+      enabled      = true
+    },
+    group_by   = ["container.id"]
+    use_policy = true
+  }
+
+  preferred_channels = ["alert-test-terraform"]
+
+  labels = {
+    "team" = "platform"
+  }
+
+  lifecycle {
+    ignore_changes = [condition]
+  }
+}
+
 output "alert_new" {
   value = signoz_alert.new_alert
 }

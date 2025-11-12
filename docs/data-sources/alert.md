@@ -47,17 +47,40 @@ output "alert" {
 
 - `alert` (String) Name of the alert.
 - `alert_type` (String) Type of the alert. Possible values are: METRIC_BASED_ALERT, LOGS_BASED_ALERT, TRACES_BASED_ALERT, and EXCEPTIONS_BASED_ALERT.
-- `broadcast_to_all` (Boolean) Whether to broadcast the alert to all the alert channels.
+- `broadcast_to_all` (Boolean) Whether to broadcast the alert to all the alert channels. **Deprecated:** This field is no longer needed and will be ignored.
 - `condition` (String) Condition of the alert.
+- `create_at` (String) Timestamp when the alert was created.
+- `create_by` (String) User who created the alert.
 - `description` (String) Description of the alert.
 - `disabled` (Boolean) Whether the alert is disabled.
 - `eval_window` (String) Evaluation window of the alert.
+- `evaluation` (String) Evaluation configuration of the alert as JSON. Available for v2+ schema alerts.
 - `frequency` (String) Frequency of the alert.
 - `labels` (Map of String) Labels of the alert. Severity is a required label.
+- `notification_settings` (Attributes) Notification settings for the alert. Available for v2+ schema alerts. (see below for nested schema)
 - `preferred_channels` (List of String) List of preferred channels of the alert. This is a noop if BroadcastToAll is true.
 - `rule_type` (String) Type of the Alert Rule for threshold. Possible values are: threshold_rule and promql_rule.
+- `schema_version` (String) Schema version of the alert. By default, it is v1.
 - `severity` (String) Severity of the alert.
 - `source` (String) Source URL of the alert.
 - `state` (String) State of the alert. Possible values are: inactive, firing, pending, and disabled.
 - `summary` (String) Summary of the alert.
+- `update_at` (String) Timestamp when the alert was last updated.
+- `update_by` (String) User who last updated the alert.
 - `version` (String) Version of the alert.
+
+### Nested Schema for `notification_settings`
+
+Read-Only:
+
+- `group_by` (List of String) List of labels to group notifications by, '__all__' to get different notification for each unique parameters.
+- `renotify` (Attributes) Renotify settings for the alert. (see below for nested schema)
+- `use_policy` (Boolean) Whether to use notification policy.
+
+### Nested Schema for `notification_settings.renotify`
+
+Read-Only:
+
+- `alert_states` (List of String) List of alert states to trigger renotification. Possible values are: firing, nodata.
+- `enabled` (Boolean) Whether renotify is enabled.
+- `interval` (String) Renotification interval (e.g., "25m0s").

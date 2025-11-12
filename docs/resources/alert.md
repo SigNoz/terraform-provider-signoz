@@ -109,6 +109,104 @@ resource "signoz_alert" "new_alert" {
   version   = "v4"
 }
 
+resource "signoz_alert" "new_alert_v2" {
+  alert      = "new alert with v2 schema"
+  alert_type = "LOGS_BASED_ALERT"
+  severity   = "critical"
+
+  condition = jsonencode({
+    compositeQuery = {
+      queries = [
+        {
+          type = "builder_query"
+          spec = {
+            name         = "A"
+            stepInterval = 0
+            signal       = "logs"
+            source       = ""
+            aggregations = [
+              {
+                expression = "count()"
+              }
+            ]
+            filter = {
+              expression = ""
+            }
+            having = {
+              expression = ""
+            }
+          }
+        }
+      ]
+      panelType = "graph"
+      queryType = "builder"
+    }
+    selectedQueryName = "A"
+    thresholds = {
+      kind = "basic"
+      spec = [
+        {
+          name           = "critical"
+          target         = 100
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
+        },
+        {
+          name           = "warning"
+          target         = 50
+          targetUnit     = ""
+          recoveryTarget = null
+          matchType      = "1"
+          op             = "1"
+          channels       = ["alert-test-terraform"]
+        }
+      ]
+    }
+  })
+
+  description      = "This alert is fired when log count crosses the threshold (current: {{$value}}, threshold: {{$threshold}})"
+  summary          = "Log count alert triggered"
+  eval_window      = "5m0s"
+  frequency        = "1m0s"
+  broadcast_to_all = false
+  disabled         = false
+  rule_type        = "threshold_rule"
+  version          = "v5"
+
+  schema_version = "v2alpha1"
+
+  evaluation = jsonencode({
+    kind = "rolling"
+    spec = {
+      evalWindow = "35m0s"
+      frequency  = "1m0s"
+    }
+  })
+
+  notification_settings = {
+    renotify = {
+      interval     = "25m0s"
+      alert_states = ["nodata", "firing"]
+      enabled      = true
+    },
+    group_by   = ["container.id"]
+    use_policy = true
+  }
+
+  preferred_channels = ["alert-test-terraform"]
+
+  labels = {
+    "team" = "platform"
+  }
+
+  lifecycle {
+    ignore_changes = [condition]
+  }
+}
+
 output "alert_new" {
   value = signoz_alert.new_alert
 }
@@ -127,17 +225,36 @@ output "alert_new" {
 
 ### Optional
 
-- `broadcast_to_all` (Boolean) Whether to broadcast the alert to all the alerting channels. By default, the alert is only sent to the preferred channels.
+- `broadcast_to_all` (Boolean) Whether to broadcast the alert to all the alerting channels. By default, the alert is only sent to the preferred channels. **Deprecated:** This field is no longer needed and will be ignored.
 - `description` (String) Description of the alert.
 - `disabled` (Boolean) Whether the alert is disabled.
 - `eval_window` (String) The evaluation window of the alert. By default, it is 5m0s.
+- `evaluation` (String) Evaluation configuration of the alert as JSON. Only used when schema_version is v2 or higher.
 - `frequency` (String) The frequency of the alert. By default, it is 1m0s.
 - `labels` (Map of String) Labels of the alert. Severity is a required label.
+- `notification_settings` (Attributes) Notification settings for the alert. Only used when schema_version is v2 or higher. (see below for nested schema)
 - `preferred_channels` (List of String) Preferred channels of the alert. By default, it is empty.
 - `rule_type` (String) Type of the alert. Possible values are: threshold_rule and promql_rule.
+- `schema_version` (String) Schema version of the alert. By default, it is v1. For v2+ schemas, additional fields like evaluation and notification_settings are supported.
 - `source` (String) Source of the alert. By default, it is <SIGNOZ_ENDPOINT>/alerts.
 - `summary` (String) Summary of the alert.
 - `version` (String) Version of the alert. By default, it is v4.
+
+### Nested Schema for `notification_settings`
+
+Optional:
+
+- `group_by` (List of String) List of labels to group notifications by, use '__all__' to get different notification for each unique parameters.
+- `renotify` (Attributes) Renotify settings for the alert. (see below for nested schema)
+- `use_policy` (Boolean) Whether to use notification policy. By default, it is false.
+
+### Nested Schema for `notification_settings.renotify`
+
+Optional:
+
+- `alert_states` (List of String) List of alert states to trigger renotification. Possible values are: firing, nodata.
+- `enabled` (Boolean) Whether renotify is enabled.
+- `interval` (String) Renotification interval (e.g., "25m0s"). By default, it is empty.
 
 ### Read-Only
 

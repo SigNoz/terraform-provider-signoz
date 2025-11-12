@@ -31,23 +31,26 @@ type alertDataSource struct {
 
 // alertModel maps alert schema data.
 type alertModel struct {
-	ID                types.String `tfsdk:"id"`
-	Alert             types.String `tfsdk:"alert"`
-	AlertType         types.String `tfsdk:"alert_type"`
-	BroadcastToAll    types.Bool   `tfsdk:"broadcast_to_all"`
-	Condition         types.String `tfsdk:"condition"`
-	Description       types.String `tfsdk:"description"`
-	Disabled          types.Bool   `tfsdk:"disabled"`
-	EvalWindow        types.String `tfsdk:"eval_window"`
-	Frequency         types.String `tfsdk:"frequency"`
-	Labels            types.Map    `tfsdk:"labels"`
-	PreferredChannels types.List   `tfsdk:"preferred_channels"`
-	RuleType          types.String `tfsdk:"rule_type"`
-	Severity          types.String `tfsdk:"severity"`
-	Source            types.String `tfsdk:"source"`
-	State             types.String `tfsdk:"state"`
-	Summary           types.String `tfsdk:"summary"`
-	Version           types.String `tfsdk:"version"`
+	ID                   types.String `tfsdk:"id"`
+	Alert                types.String `tfsdk:"alert"`
+	AlertType            types.String `tfsdk:"alert_type"`
+	BroadcastToAll       types.Bool   `tfsdk:"broadcast_to_all"`
+	Condition            types.String `tfsdk:"condition"`
+	Description          types.String `tfsdk:"description"`
+	Disabled             types.Bool   `tfsdk:"disabled"`
+	EvalWindow           types.String `tfsdk:"eval_window"`
+	Frequency            types.String `tfsdk:"frequency"`
+	Labels               types.Map    `tfsdk:"labels"`
+	PreferredChannels    types.List   `tfsdk:"preferred_channels"`
+	RuleType             types.String `tfsdk:"rule_type"`
+	Severity             types.String `tfsdk:"severity"`
+	Source               types.String `tfsdk:"source"`
+	State                types.String `tfsdk:"state"`
+	Summary              types.String `tfsdk:"summary"`
+	Version              types.String `tfsdk:"version"`
+	SchemaVersion        types.String `tfsdk:"schema_version"`
+	NotificationSettings types.Object `tfsdk:"notification_settings"`
+	Evaluation           types.String `tfsdk:"evaluation"`
 }
 
 // Configure adds the provider configured client to the data source.
@@ -97,8 +100,9 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 					model.AlertTypeMetrics, model.AlertTypeLogs, model.AlertTypeTraces, model.AlertTypeExceptions),
 			},
 			attr.BroadcastToAll: schema.BoolAttribute{
-				Computed:    true,
-				Description: "Whether to broadcast the alert to all the alert channels.",
+				Computed:           true,
+				Description:        "Whether to broadcast the alert to all the alert channels.",
+				DeprecationMessage: "This field is no longer needed and will be ignored",
 			},
 			attr.Condition: schema.StringAttribute{
 				Computed:    true,
@@ -156,6 +160,48 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 				Computed:    true,
 				Description: "Version of the alert.",
 			},
+			attr.SchemaVersion: schema.StringAttribute{
+				Computed:    true,
+				Description: "Schema version of the alert.",
+			},
+			attr.NotificationSettings: schema.SingleNestedAttribute{
+				Computed:    true,
+				Description: "Notification settings for the alert.",
+				Attributes: map[string]schema.Attribute{
+					attr.Renotify: schema.SingleNestedAttribute{
+						Computed:    true,
+						Description: "Renotify settings for the alert.",
+						Attributes: map[string]schema.Attribute{
+							attr.Enabled: schema.BoolAttribute{
+								Computed:    true,
+								Description: "Whether renotify is enabled.",
+							},
+							attr.Interval: schema.StringAttribute{
+								Computed:    true,
+								Description: "Interval for renotify.",
+							},
+							attr.AlertStates: schema.ListAttribute{
+								Computed:    true,
+								ElementType: types.StringType,
+								Description: "Alert states for renotify.",
+							},
+						},
+					},
+					attr.GroupBy: schema.ListAttribute{
+						Computed:    true,
+						ElementType: types.StringType,
+						Description: "Group by labels for notification.",
+					},
+					attr.UsePolicy: schema.BoolAttribute{
+						Computed:    true,
+						Description: "Whether to use notification policy.",
+					},
+				},
+			},
+			attr.Evaluation: schema.StringAttribute{
+				Computed:    true,
+				Description: "Evaluation configuration of the alert as JSON.",
+			},
 		},
 	}
 }
@@ -204,6 +250,22 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	data.PreferredChannels, diags = alert.PreferredChannelsToTerraform()
 	resp.Diagnostics.Append(diags...)
+
+	data.SchemaVersion = types.StringValue(alert.SchemaVersion)
+
+	if alert.SchemaVersion != "" && alert.SchemaVersion != "v1" {
+		data.NotificationSettings, diags = alert.NotificationSettingsToTerraform(ctx)
+		resp.Diagnostics.Append(diags...)
+
+		data.Evaluation, err = alert.EvaluationToTerraform()
+		if err != nil {
+			addErr(&resp.Diagnostics, err, SigNozAlert)
+			return
+		}
+	} else {
+		data.NotificationSettings = types.ObjectNull(attr.NotificationSettingsAttrTypes())
+		data.Evaluation = types.StringNull()
+	}
 
 	// Set state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
