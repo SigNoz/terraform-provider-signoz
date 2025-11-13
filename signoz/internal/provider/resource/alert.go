@@ -336,6 +336,22 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 		}
 	}
 
+	if !utils.IsNullOrUnknown(plan.NotificationSettings) {
+		err := alertPayload.SetNotificationSettings(ctx, plan.NotificationSettings)
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			return
+		}
+	}
+
+	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
+		err := alertPayload.SetEvaluation(plan.Evaluation)
+		if err != nil {
+			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			return
+		}
+	}
+
 	alertPayload.SetLabels(plan.Labels, plan.Severity)
 	alertPayload.SetPreferredChannels(plan.PreferredChannels)
 
@@ -365,7 +381,6 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
-	//As condition is JSON string, updated response contains extra keys
 	plan.Condition, err = alertPayload.ConditionToTerraform()
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)

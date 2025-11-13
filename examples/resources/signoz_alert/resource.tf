@@ -188,6 +188,10 @@ resource "signoz_alert" "new_alert_v2" {
   labels = {
     "team" = "platform"
   }
+
+  lifecycle {
+    ignore_changes = [condition]
+  }
 }
 
 output "alert_new" {
