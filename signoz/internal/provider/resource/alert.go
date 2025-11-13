@@ -365,6 +365,13 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
+	//As condition is JSON string, updated response contains extra keys
+	plan.Condition, err = alertPayload.ConditionToTerraform()
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+		return
+	}
+
 	var diagLabels diag.Diagnostics
 	plan.Labels, diagLabels = alert.LabelsToTerraform()
 	resp.Diagnostics.Append(diagLabels...)
@@ -568,7 +575,8 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
-	plan.Condition, err = alert.ConditionToTerraform()
+	//As condition is JSON string, updated response contains extra keys
+	plan.Condition, err = alertUpdate.ConditionToTerraform()
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
