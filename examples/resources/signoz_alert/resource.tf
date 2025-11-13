@@ -22,9 +22,9 @@ resource "signoz_alert" "new_alert" {
       compositeQuery = {
         builderQueries = {
           A = {
-            IsAnomaly= false
+            IsAnomaly            = false
             QueriesUsedInFormula = null
-            ShiftBy = 0
+            ShiftBy              = 0
             aggregateAttribute = {
               dataType = "float64"
               isColumn = true

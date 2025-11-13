@@ -37,7 +37,9 @@ resource "signoz_alert" "new_alert" {
       compositeQuery = {
         builderQueries = {
           A = {
-            ShiftBy = 0
+            IsAnomaly            = false
+            QueriesUsedInFormula = null
+            ShiftBy              = 0
             aggregateAttribute = {
               dataType = "float64"
               isColumn = true
@@ -200,10 +202,6 @@ resource "signoz_alert" "new_alert_v2" {
 
   labels = {
     "team" = "platform"
-  }
-
-  lifecycle {
-    ignore_changes = [condition]
   }
 }
 
