@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"time"
+
 	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -99,4 +101,15 @@ func TfValueToGo(val tfattr.Value) interface{} {
 // IsNullOrUnknown checks if a Terraform value is null or unknown.
 func IsNullOrUnknown(v tfattr.Value) bool {
 	return v.IsNull() || v.IsUnknown()
+}
+
+// NormalizeDuration parses a duration string and returns it in Go's canonical
+// format. This ensures consistent formatting regardless of how the API returns
+// the duration (e.g., "60m0s" and "1h0m0s" both become "1h0m0s").
+func NormalizeDuration(s string) string {
+	d, err := time.ParseDuration(s)
+	if err != nil {
+		return s // return original if parsing fails
+	}
+	return d.String()
 }
