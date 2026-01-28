@@ -5,10 +5,6 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -16,10 +12,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
+	signozplanmodifier "github.com/SigNoz/terraform-provider-signoz/signoz/internal/planmodifier"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -89,7 +92,7 @@ func (r *alertResource) Configure(_ context.Context, req resource.ConfigureReque
 }
 
 // Metadata returns the resource type name.
-func (r *alertResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *alertResource) Metadata(_ context.Context, _ resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = SigNozAlert
 }
 
@@ -140,6 +143,9 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`^([0-9]+h)?([0-9]+m)?([0-9]+s)?$`), "invalid alert evaluation window. It should be in format of 5m0s or 15m30s"),
 				},
+				PlanModifiers: []planmodifier.String{
+					signozplanmodifier.NormalizeDuration(),
+				},
 				Default: stringdefault.StaticString(alertDefaultEvalWindow),
 			},
 			attr.Frequency: schema.StringAttribute{
@@ -148,6 +154,9 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Description: "The frequency of the alert. By default, it is 1m0s.",
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`^([0-9]+h)?([0-9]+m)?([0-9]+s)?$`), "invalid alert frequency. It should be in format of 1m0s or 10m30s"),
+				},
+				PlanModifiers: []planmodifier.String{
+					signozplanmodifier.NormalizeDuration(),
 				},
 				Default: stringdefault.StaticString(alertDefaultFrequency),
 			},
