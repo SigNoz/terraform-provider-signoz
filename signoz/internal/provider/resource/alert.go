@@ -5,6 +5,11 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
+	signozplanmodifier "github.com/SigNoz/terraform-provider-signoz/signoz/internal/planmodifier"
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -17,12 +22,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
-	signozplanmodifier "github.com/SigNoz/terraform-provider-signoz/signoz/internal/planmodifier"
-	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 )
 
 // Ensure the implementation satisfies the expected interfaces.

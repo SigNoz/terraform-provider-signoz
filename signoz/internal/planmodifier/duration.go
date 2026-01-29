@@ -5,6 +5,7 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // NormalizeDuration returns a plan modifier that normalizes duration strings
@@ -31,24 +32,21 @@ func (m normalizeDurationModifier) PlanModifyString(_ context.Context, req planm
 	}
 
 	// Normalize the planned value
-	normalized := utils.NormalizeDuration(req.PlanValue.ValueString())
-
-	// If normalization changed the value, update the plan
-	if normalized != req.PlanValue.ValueString() {
-		resp.PlanValue = req.PlanValue
-		// We keep the original value but use semantic equality via state comparison
-	}
+	planNormalized := utils.NormalizeDuration(req.PlanValue.ValueString())
 
 	// If there's a state value, check if the normalized versions are equal
 	if !req.StateValue.IsNull() && !req.StateValue.IsUnknown() {
-		planNormalized := utils.NormalizeDuration(req.PlanValue.ValueString())
 		stateNormalized := utils.NormalizeDuration(req.StateValue.ValueString())
 
 		// If normalized values are equal, preserve the state value to prevent spurious diffs
 		if planNormalized == stateNormalized {
 			resp.PlanValue = req.StateValue
+			return
 		}
 	}
+
+	// For actual changes, set the normalized value so Terraform expects the API's format
+	resp.PlanValue = types.StringValue(planNormalized)
 }
 
 // NormalizeJSONDurations returns a plan modifier that normalizes duration strings
@@ -73,17 +71,20 @@ func (m normalizeJSONDurationsModifier) PlanModifyString(_ context.Context, req 
 		return
 	}
 
-	// If there's no state value, nothing to compare against
-	if req.StateValue.IsNull() || req.StateValue.IsUnknown() {
-		return
-	}
-
-	// Normalize both plan and state JSON values
+	// Normalize the plan value
 	planNormalized := utils.NormalizeJSONDurationString(req.PlanValue.ValueString())
-	stateNormalized := utils.NormalizeJSONDurationString(req.StateValue.ValueString())
 
-	// If normalized values are equal, preserve the state value to prevent spurious diffs
-	if planNormalized == stateNormalized {
-		resp.PlanValue = req.StateValue
+	// If there's a state value, check if the normalized versions are equal
+	if !req.StateValue.IsNull() && !req.StateValue.IsUnknown() {
+		stateNormalized := utils.NormalizeJSONDurationString(req.StateValue.ValueString())
+
+		// If normalized values are equal, preserve the state value to prevent spurious diffs
+		if planNormalized == stateNormalized {
+			resp.PlanValue = req.StateValue
+			return
+		}
 	}
+
+	// For actual changes, set the normalized value so Terraform expects the API's format
+	resp.PlanValue = types.StringValue(planNormalized)
 }
