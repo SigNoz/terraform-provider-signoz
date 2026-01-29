@@ -267,6 +267,9 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Optional:    true,
 				Computed:    true,
 				Description: "Evaluation settings for the alert (JSON). Only used when schema_version is v2 or higher.",
+				PlanModifiers: []planmodifier.String{
+					signozplanmodifier.NormalizeJSONDurations(),
+				},
 			},
 			// computed.
 			attr.ID: schema.StringAttribute{

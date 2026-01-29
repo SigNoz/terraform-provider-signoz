@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"time"
 
 	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
@@ -112,4 +113,69 @@ func NormalizeDuration(s string) string {
 		return s // return original if parsing fails
 	}
 	return d.String()
+}
+
+// NormalizeDurationsInMap recursively normalizes duration string values in a map.
+// It looks for known duration field names and normalizes their values.
+func NormalizeDurationsInMap(m map[string]interface{}) map[string]interface{} {
+	if m == nil {
+		return nil
+	}
+
+	result := make(map[string]interface{}, len(m))
+	for key, value := range m {
+		result[key] = normalizeDurationValue(key, value)
+	}
+	return result
+}
+
+var durationFieldNames = map[string]bool{
+	"evalWindow": true,
+	"frequency":  true,
+	"interval":   true,
+}
+
+// NormalizeJSONDurationString parses a JSON string, normalizes duration values,
+// and returns the normalized JSON string.
+func NormalizeJSONDurationString(jsonStr string) string {
+	if jsonStr == "" {
+		return jsonStr
+	}
+
+	var data map[string]interface{}
+	if err := json.Unmarshal([]byte(jsonStr), &data); err != nil {
+		return jsonStr // return original if parsing fails
+	}
+
+	normalized := NormalizeDurationsInMap(data)
+
+	result, err := json.Marshal(normalized)
+	if err != nil {
+		return jsonStr // return original if marshaling fails
+	}
+
+	return string(result)
+}
+
+// normalizeDurationValue normalizes a value if it's a duration field or recursively
+// processes nested structures.
+func normalizeDurationValue(key string, value interface{}) interface{} {
+	switch v := value.(type) {
+	case string:
+		// Only normalize if this is a known duration field
+		if durationFieldNames[key] {
+			return NormalizeDuration(v)
+		}
+		return v
+	case map[string]interface{}:
+		return NormalizeDurationsInMap(v)
+	case []interface{}:
+		result := make([]interface{}, len(v))
+		for i, item := range v {
+			result[i] = normalizeDurationValue("", item)
+		}
+		return result
+	default:
+		return value
+	}
 }

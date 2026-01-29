@@ -165,7 +165,9 @@ func (a Alert) NotificationSettingsToTerraform(ctx context.Context) (types.Objec
 }
 
 func (a Alert) EvaluationToTerraform() (types.String, error) {
-	evaluation, err := structure.FlattenJsonToString(a.Evaluation)
+	// Normalize duration values in the evaluation map before converting to JSON
+	normalizedEvaluation := utils.NormalizeDurationsInMap(a.Evaluation)
+	evaluation, err := structure.FlattenJsonToString(normalizedEvaluation)
 	if err != nil {
 		return types.StringValue(""), err
 	}
