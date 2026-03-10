@@ -47,6 +47,9 @@ func (d Dashboard) VariablesToTerraform() (types.String, error) {
 	if err != nil {
 		return types.StringValue(""), err
 	}
+	if variables == "" {
+		variables = "{}"
+	}
 
 	return types.StringValue(variables), nil
 }
