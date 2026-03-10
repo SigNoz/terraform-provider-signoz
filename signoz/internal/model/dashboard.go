@@ -17,7 +17,7 @@ type Dashboard struct {
 	Description             string                   `json:"description"`
 	Layout                  []map[string]interface{} `json:"layout"`
 	Name                    string                   `json:"name"`
-	PanelMap                map[string]interface{}   `json:"panelMap,omitempty"`
+	PanelMap                map[string]interface{}   `json:"panelMap"`
 	Source                  string                   `json:"source"`
 	Tags                    []string                 `json:"tags"`
 	Title                   string                   `json:"title"`
@@ -34,6 +34,9 @@ func (d Dashboard) PanelMapToTerraform() (types.String, error) {
 	panelMap, err := structure.FlattenJsonToString(d.PanelMap)
 	if err != nil {
 		return types.StringNull(), err
+	}
+	if panelMap == "" {
+		panelMap = "{}"
 	}
 
 	return types.StringValue(panelMap), nil
