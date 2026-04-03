@@ -120,8 +120,8 @@ func (r *dashboardResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Required: true,
 			},
 			attr.Variables: schema.StringAttribute{
-				Required:    true,
-				Description: "Variables for the dashboard.",
+				Optional:    true,
+				Description: "JSON map of dashboard template variables. Omit or use {} when none.",
 			},
 			attr.Widgets: schema.StringAttribute{
 				Required:    true,
@@ -220,6 +220,11 @@ func (r *dashboardResource) Create(ctx context.Context, req resource.CreateReque
 	plan.UpdatedAt = types.StringValue(dashboard.UpdatedAt)
 	plan.UpdatedBy = types.StringValue(dashboard.UpdatedBy)
 	plan.Version = types.StringValue(dashboard.Data.Version)
+
+	// align optional variables with read path (empty api map -> "{}")
+	if plan.Variables.IsNull() || plan.Variables.ValueString() == "" {
+		plan.Variables = types.StringValue("{}")
+	}
 
 	// Set state to populated data.
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)

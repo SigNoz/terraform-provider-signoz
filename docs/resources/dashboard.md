@@ -253,13 +253,13 @@ output "dashboard_new" {
 - `name` (String) Name of the dashboard.
 - `title` (String) Title of the dashboard.
 - `uploaded_grafana` (Boolean)
-- `variables` (String) Variables for the dashboard.
 - `version` (String) Version of the dashboard.
 - `widgets` (String) Widgets for the dashboard.
 
 ### Optional
 
 - `panel_map` (String)
+- `variables` (String) JSON map of dashboard template variables. Omit or use {} when none.
 - `source` (String) Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.
 - `tags` (List of String) Tags of the dashboard.
 
