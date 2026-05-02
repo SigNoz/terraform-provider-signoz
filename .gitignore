@@ -25,6 +25,9 @@ website/node_modules
 *.test
 *.iml
 
+# Go
+vendor/
+
 website/vendor
 
 # Test exclusions
@@ -34,3 +37,6 @@ website/vendor
 # Keep windows files with windows line endings
 *.winfile eol=crlf
 test
+
+# tmp
+tmp/
