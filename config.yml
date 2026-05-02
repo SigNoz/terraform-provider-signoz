@@ -1,0 +1,208 @@
+provider:
+  name: signoz
+
+resources:
+  rule:
+    create:
+      path: /api/v2/rules
+      method: POST
+    read:
+      path: /api/v2/rules/{id}
+      method: GET
+    update:
+      path: /api/v2/rules/{id}
+      method: PUT
+    delete:
+      path: /api/v2/rules/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+  route_policy:
+    create:
+      path: /api/v1/route_policies
+      method: POST
+    read:
+      path: /api/v1/route_policies/{id}
+      method: GET
+    update:
+      path: /api/v1/route_policies/{id}
+      method: PUT
+    delete:
+      path: /api/v1/route_policies/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+  planned_maintenance:
+    create:
+      path: /api/v1/downtime_schedules
+      method: POST
+    read:
+      path: /api/v1/downtime_schedules/{id}
+      method: GET
+    update:
+      path: /api/v1/downtime_schedules/{id}
+      method: PUT
+    delete:
+      path: /api/v1/downtime_schedules/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+  notification_channel:
+    create:
+      path: /api/v1/channels
+      method: POST
+    read:
+      path: /api/v1/channels/{id}
+      method: GET
+    update:
+      path: /api/v1/channels/{id}
+      method: PUT
+    delete:
+      path: /api/v1/channels/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+  auth_domain:
+    create:
+      path: /api/v1/domains
+      method: POST
+    read:
+      path: /api/v1/domains/{id}
+      method: GET
+    update:
+      path: /api/v1/domains/{id}
+      method: PUT
+    delete:
+      path: /api/v1/domains/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+
+data_sources:
+  rule:
+    read:
+      path: /api/v2/rules/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+  route_policy:
+    read:
+      path: /api/v1/route_policies/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+  planned_maintenance:
+    read:
+      path: /api/v1/downtime_schedules/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+  notification_channel:
+    read:
+      path: /api/v1/channels/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+  auth_domain:
+    read:
+      path: /api/v1/domains/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+
+scaff:
+  property_types:
+    # Querybuildertypesv5FunctionArg.value is `{}` in the OpenAPI (its real type
+    # depends on the function name at runtime). Coerce to string so upstream
+    # codegen can build the attribute; the resource layer maps it.
+    - schema: Querybuildertypesv5FunctionArg
+      property: value
+      type: string
+
+  one_of:
+    # oneOf-of-$ref-of-objects schemas are auto-detected and rewritten with
+    # snake-cased variant names derived from the member schema names.
+    # Validators are auto-injected at every spec path that matches the
+    # variant set, and `unwrap: spec` is auto-applied when each variant
+    # follows the {kind|type, spec} envelope pattern.
+    #
+    # Per-schema overrides below pin variant names that auto-derivation
+    # snake-cases differently than we want (acronyms like ClickHouseSQL
+    # auto-derive to `click_house_sql`; we prefer `clickhouse_sql`).
+    rewrites:
+      - schema: Querybuildertypesv5QueryEnvelope
+        variants:
+          builder_log:    Querybuildertypesv5QueryEnvelopeBuilderLog
+          builder_metric: Querybuildertypesv5QueryEnvelopeBuilderMetric
+          builder_trace:  Querybuildertypesv5QueryEnvelopeBuilderTrace
+          clickhouse_sql: Querybuildertypesv5QueryEnvelopeClickHouseSQL
+          formula:        Querybuildertypesv5QueryEnvelopeFormula
+          promql:         Querybuildertypesv5QueryEnvelopePromQL
+          trace_operator: Querybuildertypesv5QueryEnvelopeTraceOperator
+      - schema: RuletypesRuleThresholdData
+        variants:
+          basic: RuletypesThresholdBasic
+      - schema: RuletypesEvaluationEnvelope
+        variants:
+          cumulative: RuletypesEvaluationCumulative
+          rolling:    RuletypesEvaluationRolling
+
+    # Auxiliary `oneOf` constraints — schemas where a `oneOf:` sits alongside
+    # a real `properties:` block (an "exactly one of these is required" hint
+    # rather than a polymorphic union). tfplugingen-openapi rejects oneOf
+    # either way, so skaff drops the `oneOf:` and keeps the properties.
+    # Auto-detection covers both shapes:
+    #   - `oneOf: [{$ref: X}, ...]` — `among` is the property names whose
+    #     `$ref` matches a member,
+    #   - `oneOf: [{required: [x]}, ...]` — `among` is the union of the
+    #     `required` arrays.
+    # `enforce: true` injects validators.ExactlyOneNestedAttribute(among...)
+    # at every spec attribute whose nested children are a SUPERSET of
+    # `among`. Without `enforce`, the schema-level `oneOf:` is still dropped
+    # (codegen requires it) but constraint enforcement falls to the
+    # resource's CRUD code.
+    constraints:
+      - schema: AuthtypesAuthDomainConfig
+        among: [googleAuthConfig, oidcConfig, samlConfig]
+        enforce: true
+      - schema: AlertmanagertypesPostableChannel
+        among:
+          - discord_configs
+          - email_configs
+          - incidentio_configs
+          - jira_configs
+          - mattermost_configs
+          - msteams_configs
+          - msteamsv2_configs
+          - opsgenie_configs
+          - pagerduty_configs
+          - pushover_configs
+          - rocketchat_configs
+          - slack_configs
+          - sns_configs
+          - telegram_configs
+          - victorops_configs
+          - webex_configs
+          - webhook_configs
+          - wechat_configs
+        enforce: true
