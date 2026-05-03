@@ -2728,12 +2728,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Required: true,
 			},
-			"created_at": schema.StringAttribute{
-				Computed: true,
-			},
-			"created_by": schema.StringAttribute{
-				Computed: true,
-			},
 			"description": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
@@ -2917,12 +2911,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 			"state": schema.StringAttribute{
 				Computed: true,
 			},
-			"updated_at": schema.StringAttribute{
-				Computed: true,
-			},
-			"updated_by": schema.StringAttribute{
-				Computed: true,
-			},
 			"version": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
@@ -2936,8 +2924,6 @@ type RuleModel struct {
 	AlertType            types.String                                   `tfsdk:"alert_type"`
 	Annotations          types.Map                                      `tfsdk:"annotations"`
 	Condition            customtypes.RuletypesRuleConditionValue        `tfsdk:"condition"`
-	CreatedAt            types.String                                   `tfsdk:"created_at"`
-	CreatedBy            types.String                                   `tfsdk:"created_by"`
 	Description          types.String                                   `tfsdk:"description"`
 	Disabled             types.Bool                                     `tfsdk:"disabled"`
 	EvalWindow           types.String                                   `tfsdk:"eval_window"`
@@ -2951,7 +2937,5 @@ type RuleModel struct {
 	SchemaVersion        types.String                                   `tfsdk:"schema_version"`
 	Source               types.String                                   `tfsdk:"source"`
 	State                types.String                                   `tfsdk:"state"`
-	UpdatedAt            types.String                                   `tfsdk:"updated_at"`
-	UpdatedBy            types.String                                   `tfsdk:"updated_by"`
 	Version              types.String                                   `tfsdk:"version"`
 }

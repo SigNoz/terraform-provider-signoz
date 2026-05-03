@@ -18,9 +18,6 @@ import (
 func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"created_at": schema.StringAttribute{
-				Computed: true,
-			},
 			"discord_configs": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -5336,9 +5333,6 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 			"type": schema.StringAttribute{
 				Computed: true,
 			},
-			"updated_at": schema.StringAttribute{
-				Computed: true,
-			},
 			"victorops_configs": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -6722,7 +6716,6 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 }
 
 type NotificationChannelModel struct {
-	CreatedAt         types.String `tfsdk:"created_at"`
 	DiscordConfigs    types.List   `tfsdk:"discord_configs"`
 	EmailConfigs      types.List   `tfsdk:"email_configs"`
 	Id                types.String `tfsdk:"id"`
@@ -6741,7 +6734,6 @@ type NotificationChannelModel struct {
 	SnsConfigs        types.List   `tfsdk:"sns_configs"`
 	TelegramConfigs   types.List   `tfsdk:"telegram_configs"`
 	Type              types.String `tfsdk:"type"`
-	UpdatedAt         types.String `tfsdk:"updated_at"`
 	VictoropsConfigs  types.List   `tfsdk:"victorops_configs"`
 	WebexConfigs      types.List   `tfsdk:"webex_configs"`
 	WebhookConfigs    types.List   `tfsdk:"webhook_configs"`

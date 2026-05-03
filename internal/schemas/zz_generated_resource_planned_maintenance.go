@@ -21,12 +21,6 @@ func PlannedMaintenanceResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Computed:    true,
 			},
-			"created_at": schema.StringAttribute{
-				Computed: true,
-			},
-			"created_by": schema.StringAttribute{
-				Computed: true,
-			},
 			"description": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
@@ -97,25 +91,15 @@ func PlannedMaintenanceResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Required: true,
 			},
-			"updated_at": schema.StringAttribute{
-				Computed: true,
-			},
-			"updated_by": schema.StringAttribute{
-				Computed: true,
-			},
 		},
 	}
 }
 
 type PlannedMaintenanceModel struct {
 	AlertIds    types.List                         `tfsdk:"alert_ids"`
-	CreatedAt   types.String                       `tfsdk:"created_at"`
-	CreatedBy   types.String                       `tfsdk:"created_by"`
 	Description types.String                       `tfsdk:"description"`
 	Id          types.String                       `tfsdk:"id"`
 	Kind        types.String                       `tfsdk:"kind"`
 	Name        types.String                       `tfsdk:"name"`
 	Schedule    customtypes.RuletypesScheduleValue `tfsdk:"schedule"`
-	UpdatedAt   types.String                       `tfsdk:"updated_at"`
-	UpdatedBy   types.String                       `tfsdk:"updated_by"`
 }

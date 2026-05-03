@@ -19,6 +19,10 @@ resources:
       ignores:
         - data
         - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
   route_policy:
     create:
       path: /api/v1/route_policies
@@ -36,6 +40,10 @@ resources:
       ignores:
         - data
         - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
   planned_maintenance:
     create:
       path: /api/v1/downtime_schedules
@@ -53,6 +61,10 @@ resources:
       ignores:
         - data
         - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
   notification_channel:
     create:
       path: /api/v1/channels
@@ -70,6 +82,10 @@ resources:
       ignores:
         - data
         - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
   auth_domain:
     create:
       path: /api/v1/domains
@@ -87,6 +103,10 @@ resources:
       ignores:
         - data
         - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
 
 data_sources:
   rule:

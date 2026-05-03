@@ -40,3 +40,7 @@ test
 
 # tmp
 tmp/
+
+# Local acceptance / dev workspace (binary, terraformrc, tfstate, plans).
+# Lives in-repo so it's visible during dev, but never committed.
+.dev/

@@ -6,8 +6,7 @@ import (
 	"context"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/validators"
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -45,8 +44,9 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"client_secret": schema.StringAttribute{
-								Optional: true,
-								Computed: true,
+								Optional:  true,
+								Computed:  true,
+								Sensitive: true,
 							},
 							"domain_to_admin_email": schema.MapAttribute{
 								ElementType: types.StringType,
@@ -70,8 +70,9 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"service_account_json": schema.StringAttribute{
-								Optional: true,
-								Computed: true,
+								Optional:  true,
+								Computed:  true,
+								Sensitive: true,
 							},
 						},
 						CustomType: customtypes.AuthtypesGoogleConfigType{
@@ -116,8 +117,9 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"client_secret": schema.StringAttribute{
-								Optional: true,
-								Computed: true,
+								Optional:  true,
+								Computed:  true,
+								Sensitive: true,
 							},
 							"get_user_info": schema.BoolAttribute{
 								Optional: true,
@@ -229,6 +231,14 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 					"sso_type": schema.StringAttribute{
 						Optional: true,
 						Computed: true,
+						Validators: []validator.String{
+							stringvalidator.OneOf(
+								"google_auth",
+								"saml",
+								"email_password",
+								"oidc",
+							),
+						},
 					},
 				},
 				CustomType: customtypes.AuthtypesAuthDomainConfigType{
@@ -242,9 +252,6 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 					validators.ExactlyOneNestedAttribute("google_auth_config", "oidc_config", "saml_config"),
 				},
 			},
-			"created_at": schema.StringAttribute{
-				Computed: true,
-			},
 			"google_auth_config": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"allowed_groups": schema.ListAttribute{
@@ -255,7 +262,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"client_secret": schema.StringAttribute{
-						Computed: true,
+						Computed:  true,
+						Sensitive: true,
 					},
 					"domain_to_admin_email": schema.MapAttribute{
 						ElementType: types.StringType,
@@ -274,7 +282,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"service_account_json": schema.StringAttribute{
-						Computed: true,
+						Computed:  true,
+						Sensitive: true,
 					},
 				},
 				CustomType: customtypes.AuthtypesGoogleConfigType{
@@ -283,9 +292,6 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				Computed: true,
-				Validators: []validator.Object{
-					objectvalidator.ExactlyOneOf(path.MatchRoot("google_auth_config"), path.MatchRoot("oidc_config"), path.MatchRoot("saml_config")),
-				},
 			},
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -322,7 +328,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"client_secret": schema.StringAttribute{
-						Computed: true,
+						Computed:  true,
+						Sensitive: true,
 					},
 					"get_user_info": schema.BoolAttribute{
 						Computed: true,
@@ -417,9 +424,6 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 			"sso_type": schema.StringAttribute{
 				Computed: true,
 			},
-			"updated_at": schema.StringAttribute{
-				Computed: true,
-			},
 		},
 	}
 }
@@ -427,7 +431,6 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 type AuthDomainModel struct {
 	AuthNproviderInfo customtypes.AuthtypesAuthNproviderInfoValue `tfsdk:"auth_nprovider_info"`
 	Config            customtypes.AuthtypesAuthDomainConfigValue  `tfsdk:"config"`
-	CreatedAt         types.String                                `tfsdk:"created_at"`
 	GoogleAuthConfig  customtypes.AuthtypesGoogleConfigValue      `tfsdk:"google_auth_config"`
 	Id                types.String                                `tfsdk:"id"`
 	Name              types.String                                `tfsdk:"name"`
@@ -437,5 +440,4 @@ type AuthDomainModel struct {
 	SamlConfig        customtypes.AuthtypesSamlConfigValue        `tfsdk:"saml_config"`
 	SsoEnabled        types.Bool                                  `tfsdk:"sso_enabled"`
 	SsoType           types.String                                `tfsdk:"sso_type"`
-	UpdatedAt         types.String                                `tfsdk:"updated_at"`
 }

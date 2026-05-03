@@ -5,9 +5,6 @@ package schemas
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	customtypes "github.com/SigNoz/terraform-provider-signoz/internal/types"
@@ -43,7 +40,8 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"client_secret": schema.StringAttribute{
-						Computed: true,
+						Computed:  true,
+						Sensitive: true,
 					},
 					"domain_to_admin_email": schema.MapAttribute{
 						ElementType: types.StringType,
@@ -62,7 +60,8 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"service_account_json": schema.StringAttribute{
-						Computed: true,
+						Computed:  true,
+						Sensitive: true,
 					},
 				},
 				CustomType: customtypes.AuthtypesGoogleConfigType{
@@ -71,9 +70,6 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 				Computed: true,
-				Validators: []validator.Object{
-					objectvalidator.ExactlyOneOf(path.MatchRoot("google_auth_config"), path.MatchRoot("oidc_config"), path.MatchRoot("saml_config")),
-				},
 			},
 			"id": schema.StringAttribute{
 				Required: true,
@@ -109,7 +105,8 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"client_secret": schema.StringAttribute{
-						Computed: true,
+						Computed:  true,
+						Sensitive: true,
 					},
 					"get_user_info": schema.BoolAttribute{
 						Computed: true,
