@@ -159,6 +159,101 @@ scaff:
       property: value
       type: string
 
+    # ConfigSecretURL, ConfigURLType2, and ConfigURL are declared as
+    # `type: object` with no properties in the OpenAPI but on the wire
+    # they're plain URL strings (signoz's Go types use custom JSON
+    # marshalers). Coerce every API-URL field across the channel
+    # configs to plain strings so users can set them — and so the
+    # convertor codegen can generate a body for the parent schemas
+    # (otherwise they cascade-skip on `*ConfigURLType2`).
+    - schema: ConfigSlackConfig
+      property: api_url
+      type: string
+    - schema: ConfigSlackConfig
+      property: app_url
+      type: string
+    - schema: ConfigIncidentioConfig
+      property: url
+      type: string
+    - schema: ConfigJiraConfig
+      property: api_url
+      type: string
+    - schema: ConfigOpsGenieConfig
+      property: api_url
+      type: string
+    - schema: ConfigPagerdutyConfig
+      property: url
+      type: string
+    - schema: ConfigRocketchatConfig
+      property: api_url
+      type: string
+    - schema: ConfigTelegramConfig
+      property: api_url
+      type: string
+    - schema: ConfigVictorOpsConfig
+      property: api_url
+      type: string
+    - schema: ConfigWebexConfig
+      property: api_url
+      type: string
+    - schema: ConfigWechatConfig
+      property: api_url
+      type: string
+
+    # ConfigHTTPClientConfig.proxy_url is `*ConfigURL` (alias for
+    # `map[string]interface{}`); same opaque-object trick as above.
+    # Coerce to string here so the channel configs that nest
+    # ConfigHTTPClientConfig (webhook, pushover, …) can generate.
+    - schema: ConfigHTTPClientConfig
+      property: proxy_url
+      type: string
+    # ConfigOAuth2.proxy_url is the same alias.
+    - schema: ConfigOAuth2
+      property: proxy_url
+      type: string
+    # ConfigProxyHeader is `map[string][]string` at the top level — no
+    # customtype counterpart (skaff types can't model it without an
+    # inner shape). Coerce the proxy_connect_header field on every
+    # parent to plain string so users can pass JSON if they need it.
+    - schema: ConfigHTTPClientConfig
+      property: proxy_connect_header
+      type: string
+    - schema: ConfigOAuth2
+      property: proxy_connect_header
+      type: string
+    # ConfigHeaders is `map[string][]string` aliased — same opaque
+    # treatment as ConfigProxyHeader.
+    - schema: ConfigHTTPClientConfig
+      property: http_headers
+      type: string
+
+    # webhook_url fields across the channel configs that use
+    # ConfigSecretURL (similar opaque-URL alias).
+    - schema: ConfigDiscordConfig
+      property: webhook_url
+      type: string
+    - schema: ConfigMattermostConfig
+      property: webhook_url
+      type: string
+    - schema: ConfigMSTeamsConfig
+      property: webhook_url
+      type: string
+    - schema: ConfigMSTeamsV2Config
+      property: webhook_url
+      type: string
+
+    # Sigv4SigV4Config is `map[string]interface{}` aliased — used by
+    # config_snsconfig.Sigv4. Pass-through as string.
+    - schema: ConfigSNSConfig
+      property: sigv4
+      type: string
+
+    # ConfigHostPort is also a `map[string]interface{}` alias — used
+    # by ConfigEmailConfig.smarthost.
+    - schema: ConfigEmailConfig
+      property: smarthost
+      type: string
+
   one_of:
     # oneOf-of-$ref-of-objects schemas are auto-detected and rewritten with
     # snake-cased variant names derived from the member schema names.
