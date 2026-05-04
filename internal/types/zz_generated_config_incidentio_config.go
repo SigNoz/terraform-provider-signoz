@@ -157,12 +157,12 @@ func (t ConfigIncidentioConfigType) ValueFromObject(ctx context.Context, in base
 		return nil, diags
 	}
 
-	urlVal, ok := urlAttribute.(basetypes.ObjectValue)
+	urlVal, ok := urlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`url expected to be basetypes.ObjectValue, was: %T`, urlAttribute))
+			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
 	}
 
 	urlFileAttribute, ok := attributes["url_file"]
@@ -381,12 +381,12 @@ func NewConfigIncidentioConfigValue(attributeTypes map[string]attr.Type, attribu
 		return NewConfigIncidentioConfigValueUnknown(), diags
 	}
 
-	urlVal, ok := urlAttribute.(basetypes.ObjectValue)
+	urlVal, ok := urlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`url expected to be basetypes.ObjectValue, was: %T`, urlAttribute))
+			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
 	}
 
 	urlFileAttribute, ok := attributes["url_file"]
@@ -498,7 +498,7 @@ type ConfigIncidentioConfigValue struct {
 	MaxAlerts            basetypes.Int64Value  `tfsdk:"max_alerts"`
 	SendResolved         basetypes.BoolValue   `tfsdk:"send_resolved"`
 	Timeout              basetypes.Int64Value  `tfsdk:"timeout"`
-	Url                  basetypes.ObjectValue `tfsdk:"url"`
+	Url                  basetypes.StringValue `tfsdk:"url"`
 	UrlFile              basetypes.StringValue `tfsdk:"url_file"`
 	state                attr.ValueState
 }
@@ -517,9 +517,7 @@ func (v ConfigIncidentioConfigValue) ToTerraformValue(ctx context.Context) (tfty
 	attrTypes["max_alerts"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["send_resolved"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["timeout"] = basetypes.Int64Type{}.TerraformType(ctx)
-	attrTypes["url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["url_file"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
@@ -642,27 +640,6 @@ func (v ConfigIncidentioConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		)
 	}
 
-	var url basetypes.ObjectValue
-
-	if v.Url.IsNull() {
-		url = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.Url.IsUnknown() {
-		url = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.Url.IsNull() && !v.Url.IsUnknown() {
-		url = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.Url.Attributes(),
-		)
-	}
-
 	attributeTypes := map[string]attr.Type{
 		"alert_source_token":      basetypes.StringType{},
 		"alert_source_token_file": basetypes.StringType{},
@@ -672,10 +649,8 @@ func (v ConfigIncidentioConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		"max_alerts":    basetypes.Int64Type{},
 		"send_resolved": basetypes.BoolType{},
 		"timeout":       basetypes.Int64Type{},
-		"url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"url_file": basetypes.StringType{},
+		"url":           basetypes.StringType{},
+		"url_file":      basetypes.StringType{},
 	}
 
 	if v.IsNull() {
@@ -695,7 +670,7 @@ func (v ConfigIncidentioConfigValue) ToObjectValue(ctx context.Context) (basetyp
 			"max_alerts":              v.MaxAlerts,
 			"send_resolved":           v.SendResolved,
 			"timeout":                 v.Timeout,
-			"url":                     url,
+			"url":                     v.Url,
 			"url_file":                v.UrlFile,
 		})
 
@@ -770,9 +745,7 @@ func (v ConfigIncidentioConfigValue) AttributeTypes(ctx context.Context) map[str
 		"max_alerts":    basetypes.Int64Type{},
 		"send_resolved": basetypes.BoolType{},
 		"timeout":       basetypes.Int64Type{},
-		"url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"url_file": basetypes.StringType{},
+		"url":           basetypes.StringType{},
+		"url_file":      basetypes.StringType{},
 	}
 }

@@ -175,12 +175,12 @@ func (t ConfigDiscordConfigType) ValueFromObject(ctx context.Context, in basetyp
 		return nil, diags
 	}
 
-	webhookUrlVal, ok := webhookUrlAttribute.(basetypes.ObjectValue)
+	webhookUrlVal, ok := webhookUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`webhook_url expected to be basetypes.ObjectValue, was: %T`, webhookUrlAttribute))
+			fmt.Sprintf(`webhook_url expected to be basetypes.StringValue, was: %T`, webhookUrlAttribute))
 	}
 
 	webhookUrlFileAttribute, ok := attributes["webhook_url_file"]
@@ -418,12 +418,12 @@ func NewConfigDiscordConfigValue(attributeTypes map[string]attr.Type, attributes
 		return NewConfigDiscordConfigValueUnknown(), diags
 	}
 
-	webhookUrlVal, ok := webhookUrlAttribute.(basetypes.ObjectValue)
+	webhookUrlVal, ok := webhookUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`webhook_url expected to be basetypes.ObjectValue, was: %T`, webhookUrlAttribute))
+			fmt.Sprintf(`webhook_url expected to be basetypes.StringValue, was: %T`, webhookUrlAttribute))
 	}
 
 	webhookUrlFileAttribute, ok := attributes["webhook_url_file"]
@@ -537,7 +537,7 @@ type ConfigDiscordConfigValue struct {
 	SendResolved   basetypes.BoolValue   `tfsdk:"send_resolved"`
 	Title          basetypes.StringValue `tfsdk:"title"`
 	Username       basetypes.StringValue `tfsdk:"username"`
-	WebhookUrl     basetypes.ObjectValue `tfsdk:"webhook_url"`
+	WebhookUrl     basetypes.StringValue `tfsdk:"webhook_url"`
 	WebhookUrlFile basetypes.StringValue `tfsdk:"webhook_url_file"`
 	state          attr.ValueState
 }
@@ -557,9 +557,7 @@ func (v ConfigDiscordConfigValue) ToTerraformValue(ctx context.Context) (tftypes
 	attrTypes["send_resolved"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["title"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["username"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["webhook_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigSecretUrlValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["webhook_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["webhook_url_file"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
@@ -690,40 +688,17 @@ func (v ConfigDiscordConfigValue) ToObjectValue(ctx context.Context) (basetypes.
 		)
 	}
 
-	var webhookUrl basetypes.ObjectValue
-
-	if v.WebhookUrl.IsNull() {
-		webhookUrl = types.ObjectNull(
-			ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.WebhookUrl.IsUnknown() {
-		webhookUrl = types.ObjectUnknown(
-			ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.WebhookUrl.IsNull() && !v.WebhookUrl.IsUnknown() {
-		webhookUrl = types.ObjectValueMust(
-			ConfigSecretUrlValue{}.AttributeTypes(ctx),
-			v.WebhookUrl.Attributes(),
-		)
-	}
-
 	attributeTypes := map[string]attr.Type{
 		"avatar_url": basetypes.StringType{},
 		"content":    basetypes.StringType{},
 		"http_config": basetypes.ObjectType{
 			AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
 		},
-		"message":       basetypes.StringType{},
-		"send_resolved": basetypes.BoolType{},
-		"title":         basetypes.StringType{},
-		"username":      basetypes.StringType{},
-		"webhook_url": basetypes.ObjectType{
-			AttrTypes: ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		},
+		"message":          basetypes.StringType{},
+		"send_resolved":    basetypes.BoolType{},
+		"title":            basetypes.StringType{},
+		"username":         basetypes.StringType{},
+		"webhook_url":      basetypes.StringType{},
 		"webhook_url_file": basetypes.StringType{},
 	}
 
@@ -745,7 +720,7 @@ func (v ConfigDiscordConfigValue) ToObjectValue(ctx context.Context) (basetypes.
 			"send_resolved":    v.SendResolved,
 			"title":            v.Title,
 			"username":         v.Username,
-			"webhook_url":      webhookUrl,
+			"webhook_url":      v.WebhookUrl,
 			"webhook_url_file": v.WebhookUrlFile,
 		})
 
@@ -821,13 +796,11 @@ func (v ConfigDiscordConfigValue) AttributeTypes(ctx context.Context) map[string
 		"http_config": basetypes.ObjectType{
 			AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
 		},
-		"message":       basetypes.StringType{},
-		"send_resolved": basetypes.BoolType{},
-		"title":         basetypes.StringType{},
-		"username":      basetypes.StringType{},
-		"webhook_url": basetypes.ObjectType{
-			AttrTypes: ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		},
+		"message":          basetypes.StringType{},
+		"send_resolved":    basetypes.BoolType{},
+		"title":            basetypes.StringType{},
+		"username":         basetypes.StringType{},
+		"webhook_url":      basetypes.StringType{},
 		"webhook_url_file": basetypes.StringType{},
 	}
 }

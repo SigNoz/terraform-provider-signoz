@@ -67,12 +67,12 @@ func (t ConfigRocketchatConfigType) ValueFromObject(ctx context.Context, in base
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	channelAttribute, ok := attributes["channel"]
@@ -519,12 +519,12 @@ func NewConfigRocketchatConfigValue(attributeTypes map[string]attr.Type, attribu
 		return NewConfigRocketchatConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	channelAttribute, ok := attributes["channel"]
@@ -949,7 +949,7 @@ var _ basetypes.ObjectValuable = ConfigRocketchatConfigValue{}
 
 type ConfigRocketchatConfigValue struct {
 	Actions      basetypes.ListValue   `tfsdk:"actions"`
-	ApiUrl       basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl       basetypes.StringValue `tfsdk:"api_url"`
 	Channel      basetypes.StringValue `tfsdk:"channel"`
 	Color        basetypes.StringValue `tfsdk:"color"`
 	Emoji        basetypes.StringValue `tfsdk:"emoji"`
@@ -980,9 +980,7 @@ func (v ConfigRocketchatConfigValue) ToTerraformValue(ctx context.Context) (tfty
 	attrTypes["actions"] = basetypes.ListType{
 		ElemType: ConfigRocketchatAttachmentActionValue{}.Type(ctx),
 	}.TerraformType(ctx)
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["channel"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["color"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["emoji"] = basetypes.StringType{}.TerraformType(ctx)
@@ -1230,27 +1228,6 @@ func (v ConfigRocketchatConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		)
 	}
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
 	fields := types.ListValueMust(
 		ConfigRocketchatAttachmentFieldType{
 			basetypes.ObjectType{
@@ -1305,9 +1282,7 @@ func (v ConfigRocketchatConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		"actions": basetypes.ListType{
 			ElemType: ConfigRocketchatAttachmentActionValue{}.Type(ctx),
 		},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url": basetypes.StringType{},
 		"channel": basetypes.StringType{},
 		"color":   basetypes.StringType{},
 		"emoji":   basetypes.StringType{},
@@ -1344,7 +1319,7 @@ func (v ConfigRocketchatConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		attributeTypes,
 		map[string]attr.Value{
 			"actions":       actions,
-			"api_url":       apiUrl,
+			"api_url":       v.ApiUrl,
 			"channel":       v.Channel,
 			"color":         v.Color,
 			"emoji":         v.Emoji,
@@ -1479,9 +1454,7 @@ func (v ConfigRocketchatConfigValue) AttributeTypes(ctx context.Context) map[str
 		"actions": basetypes.ListType{
 			ElemType: ConfigRocketchatAttachmentActionValue{}.Type(ctx),
 		},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url": basetypes.StringType{},
 		"channel": basetypes.StringType{},
 		"color":   basetypes.StringType{},
 		"emoji":   basetypes.StringType{},

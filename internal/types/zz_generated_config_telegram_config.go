@@ -49,12 +49,12 @@ func (t ConfigTelegramConfigType) ValueFromObject(ctx context.Context, in basety
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	chatAttribute, ok := attributes["chat"]
@@ -330,12 +330,12 @@ func NewConfigTelegramConfigValue(attributeTypes map[string]attr.Type, attribute
 		return NewConfigTelegramConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	chatAttribute, ok := attributes["chat"]
@@ -606,7 +606,7 @@ func (t ConfigTelegramConfigType) ValueType(ctx context.Context) attr.Value {
 var _ basetypes.ObjectValuable = ConfigTelegramConfigValue{}
 
 type ConfigTelegramConfigValue struct {
-	ApiUrl               basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl               basetypes.StringValue `tfsdk:"api_url"`
 	Chat                 basetypes.Int64Value  `tfsdk:"chat"`
 	ChatFile             basetypes.StringValue `tfsdk:"chat_file"`
 	DisableNotifications basetypes.BoolValue   `tfsdk:"disable_notifications"`
@@ -626,9 +626,7 @@ func (v ConfigTelegramConfigValue) ToTerraformValue(ctx context.Context) (tftype
 	var val tftypes.Value
 	var err error
 
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["chat"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["chat_file"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["disable_notifications"] = basetypes.BoolType{}.TerraformType(ctx)
@@ -765,27 +763,6 @@ func (v ConfigTelegramConfigValue) String() string {
 func (v ConfigTelegramConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
 	var httpConfig basetypes.ObjectValue
 
 	if v.HttpConfig.IsNull() {
@@ -808,9 +785,7 @@ func (v ConfigTelegramConfigValue) ToObjectValue(ctx context.Context) (basetypes
 	}
 
 	attributeTypes := map[string]attr.Type{
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url":               basetypes.StringType{},
 		"chat":                  basetypes.Int64Type{},
 		"chat_file":             basetypes.StringType{},
 		"disable_notifications": basetypes.BoolType{},
@@ -836,7 +811,7 @@ func (v ConfigTelegramConfigValue) ToObjectValue(ctx context.Context) (basetypes
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"api_url":               apiUrl,
+			"api_url":               v.ApiUrl,
 			"chat":                  v.Chat,
 			"chat_file":             v.ChatFile,
 			"disable_notifications": v.DisableNotifications,
@@ -924,9 +899,7 @@ func (v ConfigTelegramConfigValue) Type(ctx context.Context) attr.Type {
 
 func (v ConfigTelegramConfigValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url":               basetypes.StringType{},
 		"chat":                  basetypes.Int64Type{},
 		"chat_file":             basetypes.StringType{},
 		"disable_notifications": basetypes.BoolType{},

@@ -283,12 +283,12 @@ func (t ConfigEmailConfigType) ValueFromObject(ctx context.Context, in basetypes
 		return nil, diags
 	}
 
-	smarthostVal, ok := smarthostAttribute.(basetypes.ObjectValue)
+	smarthostVal, ok := smarthostAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`smarthost expected to be basetypes.ObjectValue, was: %T`, smarthostAttribute))
+			fmt.Sprintf(`smarthost expected to be basetypes.StringValue, was: %T`, smarthostAttribute))
 	}
 
 	textAttribute, ok := attributes["text"]
@@ -697,12 +697,12 @@ func NewConfigEmailConfigValue(attributeTypes map[string]attr.Type, attributes m
 		return NewConfigEmailConfigValueUnknown(), diags
 	}
 
-	smarthostVal, ok := smarthostAttribute.(basetypes.ObjectValue)
+	smarthostVal, ok := smarthostAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`smarthost expected to be basetypes.ObjectValue, was: %T`, smarthostAttribute))
+			fmt.Sprintf(`smarthost expected to be basetypes.StringValue, was: %T`, smarthostAttribute))
 	}
 
 	textAttribute, ok := attributes["text"]
@@ -885,7 +885,7 @@ type ConfigEmailConfigValue struct {
 	Html             basetypes.StringValue `tfsdk:"html"`
 	RequireTls       basetypes.BoolValue   `tfsdk:"require_tls"`
 	SendResolved     basetypes.BoolValue   `tfsdk:"send_resolved"`
-	Smarthost        basetypes.ObjectValue `tfsdk:"smarthost"`
+	Smarthost        basetypes.StringValue `tfsdk:"smarthost"`
 	Text             basetypes.StringValue `tfsdk:"text"`
 	Threading        basetypes.ObjectValue `tfsdk:"threading"`
 	TlsConfig        basetypes.ObjectValue `tfsdk:"tls_config"`
@@ -914,9 +914,7 @@ func (v ConfigEmailConfigValue) ToTerraformValue(ctx context.Context) (tftypes.V
 	attrTypes["html"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["require_tls"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["send_resolved"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["smarthost"] = basetypes.ObjectType{
-		AttrTypes: ConfigHostPortValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["smarthost"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["text"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["threading"] = basetypes.ObjectType{
 		AttrTypes: ConfigThreadingConfigValue{}.AttributeTypes(ctx),
@@ -1105,27 +1103,6 @@ func (v ConfigEmailConfigValue) String() string {
 func (v ConfigEmailConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var smarthost basetypes.ObjectValue
-
-	if v.Smarthost.IsNull() {
-		smarthost = types.ObjectNull(
-			ConfigHostPortValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.Smarthost.IsUnknown() {
-		smarthost = types.ObjectUnknown(
-			ConfigHostPortValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.Smarthost.IsNull() && !v.Smarthost.IsUnknown() {
-		smarthost = types.ObjectValueMust(
-			ConfigHostPortValue{}.AttributeTypes(ctx),
-			v.Smarthost.Attributes(),
-		)
-	}
-
 	var threading basetypes.ObjectValue
 
 	if v.Threading.IsNull() {
@@ -1197,10 +1174,8 @@ func (v ConfigEmailConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 			"html":          basetypes.StringType{},
 			"require_tls":   basetypes.BoolType{},
 			"send_resolved": basetypes.BoolType{},
-			"smarthost": basetypes.ObjectType{
-				AttrTypes: ConfigHostPortValue{}.AttributeTypes(ctx),
-			},
-			"text": basetypes.StringType{},
+			"smarthost":     basetypes.StringType{},
+			"text":          basetypes.StringType{},
 			"threading": basetypes.ObjectType{
 				AttrTypes: ConfigThreadingConfigValue{}.AttributeTypes(ctx),
 			},
@@ -1227,10 +1202,8 @@ func (v ConfigEmailConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 		"html":          basetypes.StringType{},
 		"require_tls":   basetypes.BoolType{},
 		"send_resolved": basetypes.BoolType{},
-		"smarthost": basetypes.ObjectType{
-			AttrTypes: ConfigHostPortValue{}.AttributeTypes(ctx),
-		},
-		"text": basetypes.StringType{},
+		"smarthost":     basetypes.StringType{},
+		"text":          basetypes.StringType{},
 		"threading": basetypes.ObjectType{
 			AttrTypes: ConfigThreadingConfigValue{}.AttributeTypes(ctx),
 		},
@@ -1264,7 +1237,7 @@ func (v ConfigEmailConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 			"html":               v.Html,
 			"require_tls":        v.RequireTls,
 			"send_resolved":      v.SendResolved,
-			"smarthost":          smarthost,
+			"smarthost":          v.Smarthost,
 			"text":               v.Text,
 			"threading":          threading,
 			"tls_config":         tlsConfig,
@@ -1389,10 +1362,8 @@ func (v ConfigEmailConfigValue) AttributeTypes(ctx context.Context) map[string]a
 		"html":          basetypes.StringType{},
 		"require_tls":   basetypes.BoolType{},
 		"send_resolved": basetypes.BoolType{},
-		"smarthost": basetypes.ObjectType{
-			AttrTypes: ConfigHostPortValue{}.AttributeTypes(ctx),
-		},
-		"text": basetypes.StringType{},
+		"smarthost":     basetypes.StringType{},
+		"text":          basetypes.StringType{},
 		"threading": basetypes.ObjectType{
 			AttrTypes: ConfigThreadingConfigValue{}.AttributeTypes(ctx),
 		},

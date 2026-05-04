@@ -103,12 +103,12 @@ func (t ConfigOpsGenieConfigType) ValueFromObject(ctx context.Context, in basety
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	descriptionAttribute, ok := attributes["description"]
@@ -479,12 +479,12 @@ func NewConfigOpsGenieConfigValue(attributeTypes map[string]attr.Type, attribute
 		return NewConfigOpsGenieConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	descriptionAttribute, ok := attributes["description"]
@@ -799,7 +799,7 @@ type ConfigOpsGenieConfigValue struct {
 	Actions      basetypes.StringValue `tfsdk:"actions"`
 	ApiKey       basetypes.StringValue `tfsdk:"api_key"`
 	ApiKeyFile   basetypes.StringValue `tfsdk:"api_key_file"`
-	ApiUrl       basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl       basetypes.StringValue `tfsdk:"api_url"`
 	Description  basetypes.StringValue `tfsdk:"description"`
 	Details      basetypes.MapValue    `tfsdk:"details"`
 	Entity       basetypes.StringValue `tfsdk:"entity"`
@@ -824,9 +824,7 @@ func (v ConfigOpsGenieConfigValue) ToTerraformValue(ctx context.Context) (tftype
 	attrTypes["actions"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["api_key"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["api_key_file"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["description"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["details"] = basetypes.MapType{
 		ElemType: types.StringType,
@@ -1009,27 +1007,6 @@ func (v ConfigOpsGenieConfigValue) String() string {
 func (v ConfigOpsGenieConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
 	var httpConfig basetypes.ObjectValue
 
 	if v.HttpConfig.IsNull() {
@@ -1097,10 +1074,8 @@ func (v ConfigOpsGenieConfigValue) ToObjectValue(ctx context.Context) (basetypes
 			"actions":      basetypes.StringType{},
 			"api_key":      basetypes.StringType{},
 			"api_key_file": basetypes.StringType{},
-			"api_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-			},
-			"description": basetypes.StringType{},
+			"api_url":      basetypes.StringType{},
+			"description":  basetypes.StringType{},
 			"details": basetypes.MapType{
 				ElemType: types.StringType,
 			},
@@ -1125,10 +1100,8 @@ func (v ConfigOpsGenieConfigValue) ToObjectValue(ctx context.Context) (basetypes
 		"actions":      basetypes.StringType{},
 		"api_key":      basetypes.StringType{},
 		"api_key_file": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"description": basetypes.StringType{},
+		"api_url":      basetypes.StringType{},
+		"description":  basetypes.StringType{},
 		"details": basetypes.MapType{
 			ElemType: types.StringType,
 		},
@@ -1162,7 +1135,7 @@ func (v ConfigOpsGenieConfigValue) ToObjectValue(ctx context.Context) (basetypes
 			"actions":       v.Actions,
 			"api_key":       v.ApiKey,
 			"api_key_file":  v.ApiKeyFile,
-			"api_url":       apiUrl,
+			"api_url":       v.ApiUrl,
 			"description":   v.Description,
 			"details":       detailsVal,
 			"entity":        v.Entity,
@@ -1275,10 +1248,8 @@ func (v ConfigOpsGenieConfigValue) AttributeTypes(ctx context.Context) map[strin
 		"actions":      basetypes.StringType{},
 		"api_key":      basetypes.StringType{},
 		"api_key_file": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"description": basetypes.StringType{},
+		"api_url":      basetypes.StringType{},
+		"description":  basetypes.StringType{},
 		"details": basetypes.MapType{
 			ElemType: types.StringType,
 		},

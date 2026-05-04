@@ -373,12 +373,12 @@ func (t ConfigPagerdutyConfigType) ValueFromObject(ctx context.Context, in baset
 		return nil, diags
 	}
 
-	urlVal, ok := urlAttribute.(basetypes.ObjectValue)
+	urlVal, ok := urlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`url expected to be basetypes.ObjectValue, was: %T`, urlAttribute))
+			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
 	}
 
 	if diags.HasError() {
@@ -806,12 +806,12 @@ func NewConfigPagerdutyConfigValue(attributeTypes map[string]attr.Type, attribut
 		return NewConfigPagerdutyConfigValueUnknown(), diags
 	}
 
-	urlVal, ok := urlAttribute.(basetypes.ObjectValue)
+	urlVal, ok := urlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`url expected to be basetypes.ObjectValue, was: %T`, urlAttribute))
+			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
 	}
 
 	if diags.HasError() {
@@ -928,7 +928,7 @@ type ConfigPagerdutyConfigValue struct {
 	Severity       basetypes.StringValue `tfsdk:"severity"`
 	Source         basetypes.StringValue `tfsdk:"source"`
 	Timeout        basetypes.Int64Value  `tfsdk:"timeout"`
-	Url            basetypes.ObjectValue `tfsdk:"url"`
+	Url            basetypes.StringValue `tfsdk:"url"`
 	state          attr.ValueState
 }
 
@@ -964,9 +964,7 @@ func (v ConfigPagerdutyConfigValue) ToTerraformValue(ctx context.Context) (tftyp
 	attrTypes["severity"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["source"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["timeout"] = basetypes.Int64Type{}.TerraformType(ctx)
-	attrTypes["url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["url"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
@@ -1234,27 +1232,6 @@ func (v ConfigPagerdutyConfigValue) ToObjectValue(ctx context.Context) (basetype
 		)
 	}
 
-	var url basetypes.ObjectValue
-
-	if v.Url.IsNull() {
-		url = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.Url.IsUnknown() {
-		url = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.Url.IsNull() && !v.Url.IsUnknown() {
-		url = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.Url.Attributes(),
-		)
-	}
-
 	var detailsVal basetypes.MapValue
 	switch {
 	case v.Details.IsUnknown():
@@ -1295,9 +1272,7 @@ func (v ConfigPagerdutyConfigValue) ToObjectValue(ctx context.Context) (basetype
 			"severity":         basetypes.StringType{},
 			"source":           basetypes.StringType{},
 			"timeout":          basetypes.Int64Type{},
-			"url": basetypes.ObjectType{
-				AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-			},
+			"url":              basetypes.StringType{},
 		}), diags
 	}
 
@@ -1328,9 +1303,7 @@ func (v ConfigPagerdutyConfigValue) ToObjectValue(ctx context.Context) (basetype
 		"severity":         basetypes.StringType{},
 		"source":           basetypes.StringType{},
 		"timeout":          basetypes.Int64Type{},
-		"url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"url":              basetypes.StringType{},
 	}
 
 	if v.IsNull() {
@@ -1362,7 +1335,7 @@ func (v ConfigPagerdutyConfigValue) ToObjectValue(ctx context.Context) (basetype
 			"severity":         v.Severity,
 			"source":           v.Source,
 			"timeout":          v.Timeout,
-			"url":              url,
+			"url":              v.Url,
 		})
 
 	return objVal, diags
@@ -1498,8 +1471,6 @@ func (v ConfigPagerdutyConfigValue) AttributeTypes(ctx context.Context) map[stri
 		"severity":         basetypes.StringType{},
 		"source":           basetypes.StringType{},
 		"timeout":          basetypes.Int64Type{},
-		"url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"url":              basetypes.StringType{},
 	}
 }

@@ -67,12 +67,12 @@ func (t ConfigSlackConfigType) ValueFromObject(ctx context.Context, in basetypes
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	apiUrlFileAttribute, ok := attributes["api_url_file"]
@@ -139,12 +139,12 @@ func (t ConfigSlackConfigType) ValueFromObject(ctx context.Context, in basetypes
 		return nil, diags
 	}
 
-	appUrlVal, ok := appUrlAttribute.(basetypes.ObjectValue)
+	appUrlVal, ok := appUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`app_url expected to be basetypes.ObjectValue, was: %T`, appUrlAttribute))
+			fmt.Sprintf(`app_url expected to be basetypes.StringValue, was: %T`, appUrlAttribute))
 	}
 
 	callbackIdAttribute, ok := attributes["callback_id"]
@@ -671,12 +671,12 @@ func NewConfigSlackConfigValue(attributeTypes map[string]attr.Type, attributes m
 		return NewConfigSlackConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	apiUrlFileAttribute, ok := attributes["api_url_file"]
@@ -743,12 +743,12 @@ func NewConfigSlackConfigValue(attributeTypes map[string]attr.Type, attributes m
 		return NewConfigSlackConfigValueUnknown(), diags
 	}
 
-	appUrlVal, ok := appUrlAttribute.(basetypes.ObjectValue)
+	appUrlVal, ok := appUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`app_url expected to be basetypes.ObjectValue, was: %T`, appUrlAttribute))
+			fmt.Sprintf(`app_url expected to be basetypes.StringValue, was: %T`, appUrlAttribute))
 	}
 
 	callbackIdAttribute, ok := attributes["callback_id"]
@@ -1253,11 +1253,11 @@ var _ basetypes.ObjectValuable = ConfigSlackConfigValue{}
 
 type ConfigSlackConfigValue struct {
 	Actions      basetypes.ListValue   `tfsdk:"actions"`
-	ApiUrl       basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl       basetypes.StringValue `tfsdk:"api_url"`
 	ApiUrlFile   basetypes.StringValue `tfsdk:"api_url_file"`
 	AppToken     basetypes.StringValue `tfsdk:"app_token"`
 	AppTokenFile basetypes.StringValue `tfsdk:"app_token_file"`
-	AppUrl       basetypes.ObjectValue `tfsdk:"app_url"`
+	AppUrl       basetypes.StringValue `tfsdk:"app_url"`
 	CallbackId   basetypes.StringValue `tfsdk:"callback_id"`
 	Channel      basetypes.StringValue `tfsdk:"channel"`
 	Color        basetypes.StringValue `tfsdk:"color"`
@@ -1292,15 +1292,11 @@ func (v ConfigSlackConfigValue) ToTerraformValue(ctx context.Context) (tftypes.V
 	attrTypes["actions"] = basetypes.ListType{
 		ElemType: ConfigSlackActionValue{}.Type(ctx),
 	}.TerraformType(ctx)
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigSecretUrlValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["api_url_file"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["app_token"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["app_token_file"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["app_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["app_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["callback_id"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["channel"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["color"] = basetypes.StringType{}.TerraformType(ctx)
@@ -1618,48 +1614,6 @@ func (v ConfigSlackConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 		)
 	}
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigSecretUrlValue{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
-	var appUrl basetypes.ObjectValue
-
-	if v.AppUrl.IsNull() {
-		appUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.AppUrl.IsUnknown() {
-		appUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.AppUrl.IsNull() && !v.AppUrl.IsUnknown() {
-		appUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.AppUrl.Attributes(),
-		)
-	}
-
 	fields := types.ListValueMust(
 		ConfigSlackFieldType{
 			basetypes.ObjectType{
@@ -1727,19 +1681,15 @@ func (v ConfigSlackConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 			"actions": basetypes.ListType{
 				ElemType: ConfigSlackActionValue{}.Type(ctx),
 			},
-			"api_url": basetypes.ObjectType{
-				AttrTypes: ConfigSecretUrlValue{}.AttributeTypes(ctx),
-			},
+			"api_url":        basetypes.StringType{},
 			"api_url_file":   basetypes.StringType{},
 			"app_token":      basetypes.StringType{},
 			"app_token_file": basetypes.StringType{},
-			"app_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-			},
-			"callback_id": basetypes.StringType{},
-			"channel":     basetypes.StringType{},
-			"color":       basetypes.StringType{},
-			"fallback":    basetypes.StringType{},
+			"app_url":        basetypes.StringType{},
+			"callback_id":    basetypes.StringType{},
+			"channel":        basetypes.StringType{},
+			"color":          basetypes.StringType{},
+			"fallback":       basetypes.StringType{},
 			"fields": basetypes.ListType{
 				ElemType: ConfigSlackFieldValue{}.Type(ctx),
 			},
@@ -1771,19 +1721,15 @@ func (v ConfigSlackConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 		"actions": basetypes.ListType{
 			ElemType: ConfigSlackActionValue{}.Type(ctx),
 		},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		},
+		"api_url":        basetypes.StringType{},
 		"api_url_file":   basetypes.StringType{},
 		"app_token":      basetypes.StringType{},
 		"app_token_file": basetypes.StringType{},
-		"app_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"callback_id": basetypes.StringType{},
-		"channel":     basetypes.StringType{},
-		"color":       basetypes.StringType{},
-		"fallback":    basetypes.StringType{},
+		"app_url":        basetypes.StringType{},
+		"callback_id":    basetypes.StringType{},
+		"channel":        basetypes.StringType{},
+		"color":          basetypes.StringType{},
+		"fallback":       basetypes.StringType{},
 		"fields": basetypes.ListType{
 			ElemType: ConfigSlackFieldValue{}.Type(ctx),
 		},
@@ -1822,11 +1768,11 @@ func (v ConfigSlackConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 		attributeTypes,
 		map[string]attr.Value{
 			"actions":        actions,
-			"api_url":        apiUrl,
+			"api_url":        v.ApiUrl,
 			"api_url_file":   v.ApiUrlFile,
 			"app_token":      v.AppToken,
 			"app_token_file": v.AppTokenFile,
-			"app_url":        appUrl,
+			"app_url":        v.AppUrl,
 			"callback_id":    v.CallbackId,
 			"channel":        v.Channel,
 			"color":          v.Color,
@@ -1997,19 +1943,15 @@ func (v ConfigSlackConfigValue) AttributeTypes(ctx context.Context) map[string]a
 		"actions": basetypes.ListType{
 			ElemType: ConfigSlackActionValue{}.Type(ctx),
 		},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigSecretUrlValue{}.AttributeTypes(ctx),
-		},
+		"api_url":        basetypes.StringType{},
 		"api_url_file":   basetypes.StringType{},
 		"app_token":      basetypes.StringType{},
 		"app_token_file": basetypes.StringType{},
-		"app_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"callback_id": basetypes.StringType{},
-		"channel":     basetypes.StringType{},
-		"color":       basetypes.StringType{},
-		"fallback":    basetypes.StringType{},
+		"app_url":        basetypes.StringType{},
+		"callback_id":    basetypes.StringType{},
+		"channel":        basetypes.StringType{},
+		"color":          basetypes.StringType{},
+		"fallback":       basetypes.StringType{},
 		"fields": basetypes.ListType{
 			ElemType: ConfigSlackFieldValue{}.Type(ctx),
 		},

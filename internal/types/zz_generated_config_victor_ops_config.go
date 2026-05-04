@@ -85,12 +85,12 @@ func (t ConfigVictorOpsConfigType) ValueFromObject(ctx context.Context, in baset
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	customFieldsAttribute, ok := attributes["custom_fields"]
@@ -366,12 +366,12 @@ func NewConfigVictorOpsConfigValue(attributeTypes map[string]attr.Type, attribut
 		return NewConfigVictorOpsConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	customFieldsAttribute, ok := attributes["custom_fields"]
@@ -608,7 +608,7 @@ var _ basetypes.ObjectValuable = ConfigVictorOpsConfigValue{}
 type ConfigVictorOpsConfigValue struct {
 	ApiKey            basetypes.StringValue `tfsdk:"api_key"`
 	ApiKeyFile        basetypes.StringValue `tfsdk:"api_key_file"`
-	ApiUrl            basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl            basetypes.StringValue `tfsdk:"api_url"`
 	CustomFields      basetypes.MapValue    `tfsdk:"custom_fields"`
 	EntityDisplayName basetypes.StringValue `tfsdk:"entity_display_name"`
 	HttpConfig        basetypes.ObjectValue `tfsdk:"http_config"`
@@ -628,9 +628,7 @@ func (v ConfigVictorOpsConfigValue) ToTerraformValue(ctx context.Context) (tftyp
 
 	attrTypes["api_key"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["api_key_file"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["custom_fields"] = basetypes.MapType{
 		ElemType: types.StringType,
 	}.TerraformType(ctx)
@@ -767,27 +765,6 @@ func (v ConfigVictorOpsConfigValue) String() string {
 func (v ConfigVictorOpsConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
 	var httpConfig basetypes.ObjectValue
 
 	if v.HttpConfig.IsNull() {
@@ -825,9 +802,7 @@ func (v ConfigVictorOpsConfigValue) ToObjectValue(ctx context.Context) (basetype
 		return types.ObjectUnknown(map[string]attr.Type{
 			"api_key":      basetypes.StringType{},
 			"api_key_file": basetypes.StringType{},
-			"api_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-			},
+			"api_url":      basetypes.StringType{},
 			"custom_fields": basetypes.MapType{
 				ElemType: types.StringType,
 			},
@@ -846,9 +821,7 @@ func (v ConfigVictorOpsConfigValue) ToObjectValue(ctx context.Context) (basetype
 	attributeTypes := map[string]attr.Type{
 		"api_key":      basetypes.StringType{},
 		"api_key_file": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url":      basetypes.StringType{},
 		"custom_fields": basetypes.MapType{
 			ElemType: types.StringType,
 		},
@@ -876,7 +849,7 @@ func (v ConfigVictorOpsConfigValue) ToObjectValue(ctx context.Context) (basetype
 		map[string]attr.Value{
 			"api_key":             v.ApiKey,
 			"api_key_file":        v.ApiKeyFile,
-			"api_url":             apiUrl,
+			"api_url":             v.ApiUrl,
 			"custom_fields":       customFieldsVal,
 			"entity_display_name": v.EntityDisplayName,
 			"http_config":         httpConfig,
@@ -964,9 +937,7 @@ func (v ConfigVictorOpsConfigValue) AttributeTypes(ctx context.Context) map[stri
 	return map[string]attr.Type{
 		"api_key":      basetypes.StringType{},
 		"api_key_file": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url":      basetypes.StringType{},
 		"custom_fields": basetypes.MapType{
 			ElemType: types.StringType,
 		},

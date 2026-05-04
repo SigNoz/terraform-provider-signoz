@@ -109,13 +109,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -183,10 +177,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -194,13 +185,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -226,10 +211,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -237,13 +219,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -341,13 +317,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"webhook_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigSecretUrlType{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigSecretUrlValue{}.AttributeTypes(ctx),
-								},
-							},
+						"webhook_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -424,13 +394,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"smarthost": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigHostPortType{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigHostPortValue{}.AttributeTypes(ctx),
-								},
-							},
+						"smarthost": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -634,13 +598,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -708,10 +666,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -719,13 +674,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -751,10 +700,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -762,13 +708,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -865,13 +805,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -896,13 +830,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -1010,13 +938,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1084,10 +1006,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -1095,13 +1014,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -1127,10 +1040,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1138,13 +1048,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1469,13 +1373,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1543,10 +1441,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -1554,13 +1449,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -1586,10 +1475,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1597,13 +1483,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1747,13 +1627,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"webhook_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigSecretUrlType{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigSecretUrlValue{}.AttributeTypes(ctx),
-								},
-							},
+						"webhook_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -1854,13 +1728,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1928,10 +1796,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -1939,13 +1804,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -1971,10 +1830,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -1982,13 +1838,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -2086,13 +1936,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"webhook_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigSecretUrlType{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigSecretUrlValue{}.AttributeTypes(ctx),
-								},
-							},
+						"webhook_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -2193,13 +2037,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -2267,10 +2105,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -2278,13 +2113,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -2310,10 +2139,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -2321,13 +2147,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -2421,13 +2241,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"webhook_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigSecretUrlType{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigSecretUrlValue{}.AttributeTypes(ctx),
-								},
-							},
+						"webhook_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -2463,13 +2277,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -2566,13 +2374,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -2640,10 +2442,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -2651,13 +2450,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -2683,10 +2476,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -2694,13 +2484,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -2964,13 +2748,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3038,10 +2816,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -3049,13 +2824,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -3081,10 +2850,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3092,13 +2858,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3258,13 +3018,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -3373,13 +3127,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3447,10 +3195,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -3458,13 +3203,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -3490,10 +3229,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3501,13 +3237,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3707,13 +3437,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -3834,13 +3558,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3908,10 +3626,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -3919,13 +3634,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -3951,10 +3660,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -3962,13 +3668,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -4179,13 +3879,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -4201,13 +3895,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"app_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"app_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -4336,13 +4024,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -4410,10 +4092,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -4421,13 +4100,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -4453,10 +4126,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -4464,13 +4134,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -4715,13 +4379,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -4789,10 +4447,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -4800,13 +4455,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -4832,10 +4481,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -4843,13 +4489,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -4943,13 +4583,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"sigv4": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.Sigv4SigV4ConfigType{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-								},
-							},
+						"sigv4": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -4978,13 +4612,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 			"telegram_configs": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -5080,13 +4708,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5154,10 +4776,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -5165,13 +4784,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -5197,10 +4810,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5208,13 +4818,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5344,13 +4948,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -5443,13 +5041,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5517,10 +5109,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -5528,13 +5117,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -5560,10 +5143,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5571,13 +5151,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5692,13 +5266,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 			"webex_configs": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -5782,13 +5350,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5856,10 +5418,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -5867,13 +5426,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -5899,10 +5452,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -5910,13 +5460,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -6103,13 +5647,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -6177,10 +5715,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -6188,13 +5723,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -6220,10 +5749,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -6231,13 +5757,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -6367,13 +5887,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							Optional: true,
 							Computed: true,
 						},
-						"api_url": schema.SingleNestedAttribute{
-							Attributes: map[string]schema.Attribute{},
-							CustomType: customtypes.ConfigUrltype2Type{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.ConfigUrltype2Value{}.AttributeTypes(ctx),
-								},
-							},
+						"api_url": schema.StringAttribute{
 							Optional: true,
 							Computed: true,
 						},
@@ -6461,13 +5975,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"http_headers": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigHeadersType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigHeadersValue{}.AttributeTypes(ctx),
-										},
-									},
+								"http_headers": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -6535,10 +6043,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_connect_header": schema.MapAttribute{
-											ElementType: types.ListType{
-												ElemType: types.StringType,
-											},
+										"proxy_connect_header": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -6546,13 +6051,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 											Optional: true,
 											Computed: true,
 										},
-										"proxy_url": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{},
-											CustomType: customtypes.ConfigUrlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"proxy_url": schema.StringAttribute{
 											Optional: true,
 											Computed: true,
 										},
@@ -6578,10 +6077,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_connect_header": schema.MapAttribute{
-									ElementType: types.ListType{
-										ElemType: types.StringType,
-									},
+								"proxy_connect_header": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},
@@ -6589,13 +6085,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 									Optional: true,
 									Computed: true,
 								},
-								"proxy_url": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{},
-									CustomType: customtypes.ConfigUrlType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.ConfigUrlValue{}.AttributeTypes(ctx),
-										},
-									},
+								"proxy_url": schema.StringAttribute{
 									Optional: true,
 									Computed: true,
 								},

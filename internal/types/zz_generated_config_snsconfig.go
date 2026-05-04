@@ -157,12 +157,12 @@ func (t ConfigSnsconfigType) ValueFromObject(ctx context.Context, in basetypes.O
 		return nil, diags
 	}
 
-	sigv4Val, ok := sigv4Attribute.(basetypes.ObjectValue)
+	sigv4Val, ok := sigv4Attribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`sigv4 expected to be basetypes.ObjectValue, was: %T`, sigv4Attribute))
+			fmt.Sprintf(`sigv4 expected to be basetypes.StringValue, was: %T`, sigv4Attribute))
 	}
 
 	subjectAttribute, ok := attributes["subject"]
@@ -419,12 +419,12 @@ func NewConfigSnsconfigValue(attributeTypes map[string]attr.Type, attributes map
 		return NewConfigSnsconfigValueUnknown(), diags
 	}
 
-	sigv4Val, ok := sigv4Attribute.(basetypes.ObjectValue)
+	sigv4Val, ok := sigv4Attribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`sigv4 expected to be basetypes.ObjectValue, was: %T`, sigv4Attribute))
+			fmt.Sprintf(`sigv4 expected to be basetypes.StringValue, was: %T`, sigv4Attribute))
 	}
 
 	subjectAttribute, ok := attributes["subject"]
@@ -574,7 +574,7 @@ type ConfigSnsconfigValue struct {
 	Message      basetypes.StringValue `tfsdk:"message"`
 	PhoneNumber  basetypes.StringValue `tfsdk:"phone_number"`
 	SendResolved basetypes.BoolValue   `tfsdk:"send_resolved"`
-	Sigv4        basetypes.ObjectValue `tfsdk:"sigv4"`
+	Sigv4        basetypes.StringValue `tfsdk:"sigv4"`
 	Subject      basetypes.StringValue `tfsdk:"subject"`
 	TargetArn    basetypes.StringValue `tfsdk:"target_arn"`
 	TopicArn     basetypes.StringValue `tfsdk:"topic_arn"`
@@ -597,9 +597,7 @@ func (v ConfigSnsconfigValue) ToTerraformValue(ctx context.Context) (tftypes.Val
 	attrTypes["message"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["phone_number"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["send_resolved"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["sigv4"] = basetypes.ObjectType{
-		AttrTypes: Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["sigv4"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["subject"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["target_arn"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["topic_arn"] = basetypes.StringType{}.TerraformType(ctx)
@@ -740,27 +738,6 @@ func (v ConfigSnsconfigValue) ToObjectValue(ctx context.Context) (basetypes.Obje
 		)
 	}
 
-	var sigv4 basetypes.ObjectValue
-
-	if v.Sigv4.IsNull() {
-		sigv4 = types.ObjectNull(
-			Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.Sigv4.IsUnknown() {
-		sigv4 = types.ObjectUnknown(
-			Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.Sigv4.IsNull() && !v.Sigv4.IsUnknown() {
-		sigv4 = types.ObjectValueMust(
-			Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-			v.Sigv4.Attributes(),
-		)
-	}
-
 	var attributesVal basetypes.MapValue
 	switch {
 	case v.Attributes.IsUnknown():
@@ -785,12 +762,10 @@ func (v ConfigSnsconfigValue) ToObjectValue(ctx context.Context) (basetypes.Obje
 			"message":       basetypes.StringType{},
 			"phone_number":  basetypes.StringType{},
 			"send_resolved": basetypes.BoolType{},
-			"sigv4": basetypes.ObjectType{
-				AttrTypes: Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-			},
-			"subject":    basetypes.StringType{},
-			"target_arn": basetypes.StringType{},
-			"topic_arn":  basetypes.StringType{},
+			"sigv4":         basetypes.StringType{},
+			"subject":       basetypes.StringType{},
+			"target_arn":    basetypes.StringType{},
+			"topic_arn":     basetypes.StringType{},
 		}), diags
 	}
 
@@ -805,12 +780,10 @@ func (v ConfigSnsconfigValue) ToObjectValue(ctx context.Context) (basetypes.Obje
 		"message":       basetypes.StringType{},
 		"phone_number":  basetypes.StringType{},
 		"send_resolved": basetypes.BoolType{},
-		"sigv4": basetypes.ObjectType{
-			AttrTypes: Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-		},
-		"subject":    basetypes.StringType{},
-		"target_arn": basetypes.StringType{},
-		"topic_arn":  basetypes.StringType{},
+		"sigv4":         basetypes.StringType{},
+		"subject":       basetypes.StringType{},
+		"target_arn":    basetypes.StringType{},
+		"topic_arn":     basetypes.StringType{},
 	}
 
 	if v.IsNull() {
@@ -830,7 +803,7 @@ func (v ConfigSnsconfigValue) ToObjectValue(ctx context.Context) (basetypes.Obje
 			"message":       v.Message,
 			"phone_number":  v.PhoneNumber,
 			"send_resolved": v.SendResolved,
-			"sigv4":         sigv4,
+			"sigv4":         v.Sigv4,
 			"subject":       v.Subject,
 			"target_arn":    v.TargetArn,
 			"topic_arn":     v.TopicArn,
@@ -917,11 +890,9 @@ func (v ConfigSnsconfigValue) AttributeTypes(ctx context.Context) map[string]att
 		"message":       basetypes.StringType{},
 		"phone_number":  basetypes.StringType{},
 		"send_resolved": basetypes.BoolType{},
-		"sigv4": basetypes.ObjectType{
-			AttrTypes: Sigv4SigV4ConfigValue{}.AttributeTypes(ctx),
-		},
-		"subject":    basetypes.StringType{},
-		"target_arn": basetypes.StringType{},
-		"topic_arn":  basetypes.StringType{},
+		"sigv4":         basetypes.StringType{},
+		"subject":       basetypes.StringType{},
+		"target_arn":    basetypes.StringType{},
+		"topic_arn":     basetypes.StringType{},
 	}
 }

@@ -157,12 +157,12 @@ func (t ConfigHttpclientConfigType) ValueFromObject(ctx context.Context, in base
 		return nil, diags
 	}
 
-	httpHeadersVal, ok := httpHeadersAttribute.(basetypes.ObjectValue)
+	httpHeadersVal, ok := httpHeadersAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`http_headers expected to be basetypes.ObjectValue, was: %T`, httpHeadersAttribute))
+			fmt.Sprintf(`http_headers expected to be basetypes.StringValue, was: %T`, httpHeadersAttribute))
 	}
 
 	noProxyAttribute, ok := attributes["no_proxy"]
@@ -211,12 +211,12 @@ func (t ConfigHttpclientConfigType) ValueFromObject(ctx context.Context, in base
 		return nil, diags
 	}
 
-	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.MapValue)
+	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_connect_header expected to be basetypes.MapValue, was: %T`, proxyConnectHeaderAttribute))
+			fmt.Sprintf(`proxy_connect_header expected to be basetypes.StringValue, was: %T`, proxyConnectHeaderAttribute))
 	}
 
 	proxyFromEnvironmentAttribute, ok := attributes["proxy_from_environment"]
@@ -247,12 +247,12 @@ func (t ConfigHttpclientConfigType) ValueFromObject(ctx context.Context, in base
 		return nil, diags
 	}
 
-	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.ObjectValue)
+	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_url expected to be basetypes.ObjectValue, was: %T`, proxyUrlAttribute))
+			fmt.Sprintf(`proxy_url expected to be basetypes.StringValue, was: %T`, proxyUrlAttribute))
 	}
 
 	tlsConfigAttribute, ok := attributes["tls_config"]
@@ -476,12 +476,12 @@ func NewConfigHttpclientConfigValue(attributeTypes map[string]attr.Type, attribu
 		return NewConfigHttpclientConfigValueUnknown(), diags
 	}
 
-	httpHeadersVal, ok := httpHeadersAttribute.(basetypes.ObjectValue)
+	httpHeadersVal, ok := httpHeadersAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`http_headers expected to be basetypes.ObjectValue, was: %T`, httpHeadersAttribute))
+			fmt.Sprintf(`http_headers expected to be basetypes.StringValue, was: %T`, httpHeadersAttribute))
 	}
 
 	noProxyAttribute, ok := attributes["no_proxy"]
@@ -530,12 +530,12 @@ func NewConfigHttpclientConfigValue(attributeTypes map[string]attr.Type, attribu
 		return NewConfigHttpclientConfigValueUnknown(), diags
 	}
 
-	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.MapValue)
+	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_connect_header expected to be basetypes.MapValue, was: %T`, proxyConnectHeaderAttribute))
+			fmt.Sprintf(`proxy_connect_header expected to be basetypes.StringValue, was: %T`, proxyConnectHeaderAttribute))
 	}
 
 	proxyFromEnvironmentAttribute, ok := attributes["proxy_from_environment"]
@@ -566,12 +566,12 @@ func NewConfigHttpclientConfigValue(attributeTypes map[string]attr.Type, attribu
 		return NewConfigHttpclientConfigValueUnknown(), diags
 	}
 
-	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.ObjectValue)
+	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_url expected to be basetypes.ObjectValue, was: %T`, proxyUrlAttribute))
+			fmt.Sprintf(`proxy_url expected to be basetypes.StringValue, was: %T`, proxyUrlAttribute))
 	}
 
 	tlsConfigAttribute, ok := attributes["tls_config"]
@@ -688,12 +688,12 @@ type ConfigHttpclientConfigValue struct {
 	BearerTokenFile      basetypes.StringValue `tfsdk:"bearer_token_file"`
 	EnableHttp2          basetypes.BoolValue   `tfsdk:"enable_http2"`
 	FollowRedirects      basetypes.BoolValue   `tfsdk:"follow_redirects"`
-	HttpHeaders          basetypes.ObjectValue `tfsdk:"http_headers"`
+	HttpHeaders          basetypes.StringValue `tfsdk:"http_headers"`
 	NoProxy              basetypes.StringValue `tfsdk:"no_proxy"`
 	Oauth2               basetypes.ObjectValue `tfsdk:"oauth2"`
-	ProxyConnectHeader   basetypes.MapValue    `tfsdk:"proxy_connect_header"`
+	ProxyConnectHeader   basetypes.StringValue `tfsdk:"proxy_connect_header"`
 	ProxyFromEnvironment basetypes.BoolValue   `tfsdk:"proxy_from_environment"`
-	ProxyUrl             basetypes.ObjectValue `tfsdk:"proxy_url"`
+	ProxyUrl             basetypes.StringValue `tfsdk:"proxy_url"`
 	TlsConfig            basetypes.ObjectValue `tfsdk:"tls_config"`
 	state                attr.ValueState
 }
@@ -714,22 +714,14 @@ func (v ConfigHttpclientConfigValue) ToTerraformValue(ctx context.Context) (tfty
 	attrTypes["bearer_token_file"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["enable_http2"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["follow_redirects"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["http_headers"] = basetypes.ObjectType{
-		AttrTypes: ConfigHeadersValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["http_headers"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["no_proxy"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["oauth2"] = basetypes.ObjectType{
 		AttrTypes: ConfigOauth2Value{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
-	attrTypes["proxy_connect_header"] = basetypes.MapType{
-		ElemType: types.ListType{
-			ElemType: types.StringType,
-		},
-	}.TerraformType(ctx)
+	attrTypes["proxy_connect_header"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["proxy_from_environment"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["proxy_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["proxy_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["tls_config"] = basetypes.ObjectType{
 		AttrTypes: ConfigTlsconfigValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -915,27 +907,6 @@ func (v ConfigHttpclientConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		)
 	}
 
-	var httpHeaders basetypes.ObjectValue
-
-	if v.HttpHeaders.IsNull() {
-		httpHeaders = types.ObjectNull(
-			ConfigHeadersValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.HttpHeaders.IsUnknown() {
-		httpHeaders = types.ObjectUnknown(
-			ConfigHeadersValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.HttpHeaders.IsNull() && !v.HttpHeaders.IsUnknown() {
-		httpHeaders = types.ObjectValueMust(
-			ConfigHeadersValue{}.AttributeTypes(ctx),
-			v.HttpHeaders.Attributes(),
-		)
-	}
-
 	var oauth2 basetypes.ObjectValue
 
 	if v.Oauth2.IsNull() {
@@ -954,27 +925,6 @@ func (v ConfigHttpclientConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		oauth2 = types.ObjectValueMust(
 			ConfigOauth2Value{}.AttributeTypes(ctx),
 			v.Oauth2.Attributes(),
-		)
-	}
-
-	var proxyUrl basetypes.ObjectValue
-
-	if v.ProxyUrl.IsNull() {
-		proxyUrl = types.ObjectNull(
-			ConfigUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ProxyUrl.IsUnknown() {
-		proxyUrl = types.ObjectUnknown(
-			ConfigUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ProxyUrl.IsNull() && !v.ProxyUrl.IsUnknown() {
-		proxyUrl = types.ObjectValueMust(
-			ConfigUrlValue{}.AttributeTypes(ctx),
-			v.ProxyUrl.Attributes(),
 		)
 	}
 
@@ -999,58 +949,6 @@ func (v ConfigHttpclientConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		)
 	}
 
-	var proxyConnectHeaderVal basetypes.MapValue
-	switch {
-	case v.ProxyConnectHeader.IsUnknown():
-		proxyConnectHeaderVal = types.MapUnknown(types.ListType{
-			ElemType: types.StringType,
-		})
-	case v.ProxyConnectHeader.IsNull():
-		proxyConnectHeaderVal = types.MapNull(types.ListType{
-			ElemType: types.StringType,
-		})
-	default:
-		var d diag.Diagnostics
-		proxyConnectHeaderVal, d = types.MapValue(types.ListType{
-			ElemType: types.StringType,
-		}, v.ProxyConnectHeader.Elements())
-		diags.Append(d...)
-	}
-
-	if diags.HasError() {
-		return types.ObjectUnknown(map[string]attr.Type{
-			"authorization": basetypes.ObjectType{
-				AttrTypes: ConfigAuthorizationValue{}.AttributeTypes(ctx),
-			},
-			"basic_auth": basetypes.ObjectType{
-				AttrTypes: ConfigBasicAuthValue{}.AttributeTypes(ctx),
-			},
-			"bearer_token":      basetypes.StringType{},
-			"bearer_token_file": basetypes.StringType{},
-			"enable_http2":      basetypes.BoolType{},
-			"follow_redirects":  basetypes.BoolType{},
-			"http_headers": basetypes.ObjectType{
-				AttrTypes: ConfigHeadersValue{}.AttributeTypes(ctx),
-			},
-			"no_proxy": basetypes.StringType{},
-			"oauth2": basetypes.ObjectType{
-				AttrTypes: ConfigOauth2Value{}.AttributeTypes(ctx),
-			},
-			"proxy_connect_header": basetypes.MapType{
-				ElemType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
-			"proxy_from_environment": basetypes.BoolType{},
-			"proxy_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-			},
-			"tls_config": basetypes.ObjectType{
-				AttrTypes: ConfigTlsconfigValue{}.AttributeTypes(ctx),
-			},
-		}), diags
-	}
-
 	attributeTypes := map[string]attr.Type{
 		"authorization": basetypes.ObjectType{
 			AttrTypes: ConfigAuthorizationValue{}.AttributeTypes(ctx),
@@ -1062,22 +960,14 @@ func (v ConfigHttpclientConfigValue) ToObjectValue(ctx context.Context) (basetyp
 		"bearer_token_file": basetypes.StringType{},
 		"enable_http2":      basetypes.BoolType{},
 		"follow_redirects":  basetypes.BoolType{},
-		"http_headers": basetypes.ObjectType{
-			AttrTypes: ConfigHeadersValue{}.AttributeTypes(ctx),
-		},
-		"no_proxy": basetypes.StringType{},
+		"http_headers":      basetypes.StringType{},
+		"no_proxy":          basetypes.StringType{},
 		"oauth2": basetypes.ObjectType{
 			AttrTypes: ConfigOauth2Value{}.AttributeTypes(ctx),
 		},
-		"proxy_connect_header": basetypes.MapType{
-			ElemType: types.ListType{
-				ElemType: types.StringType,
-			},
-		},
+		"proxy_connect_header":   basetypes.StringType{},
 		"proxy_from_environment": basetypes.BoolType{},
-		"proxy_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-		},
+		"proxy_url":              basetypes.StringType{},
 		"tls_config": basetypes.ObjectType{
 			AttrTypes: ConfigTlsconfigValue{}.AttributeTypes(ctx),
 		},
@@ -1100,12 +990,12 @@ func (v ConfigHttpclientConfigValue) ToObjectValue(ctx context.Context) (basetyp
 			"bearer_token_file":      v.BearerTokenFile,
 			"enable_http2":           v.EnableHttp2,
 			"follow_redirects":       v.FollowRedirects,
-			"http_headers":           httpHeaders,
+			"http_headers":           v.HttpHeaders,
 			"no_proxy":               v.NoProxy,
 			"oauth2":                 oauth2,
-			"proxy_connect_header":   proxyConnectHeaderVal,
+			"proxy_connect_header":   v.ProxyConnectHeader,
 			"proxy_from_environment": v.ProxyFromEnvironment,
-			"proxy_url":              proxyUrl,
+			"proxy_url":              v.ProxyUrl,
 			"tls_config":             tlsConfig,
 		})
 
@@ -1202,22 +1092,14 @@ func (v ConfigHttpclientConfigValue) AttributeTypes(ctx context.Context) map[str
 		"bearer_token_file": basetypes.StringType{},
 		"enable_http2":      basetypes.BoolType{},
 		"follow_redirects":  basetypes.BoolType{},
-		"http_headers": basetypes.ObjectType{
-			AttrTypes: ConfigHeadersValue{}.AttributeTypes(ctx),
-		},
-		"no_proxy": basetypes.StringType{},
+		"http_headers":      basetypes.StringType{},
+		"no_proxy":          basetypes.StringType{},
 		"oauth2": basetypes.ObjectType{
 			AttrTypes: ConfigOauth2Value{}.AttributeTypes(ctx),
 		},
-		"proxy_connect_header": basetypes.MapType{
-			ElemType: types.ListType{
-				ElemType: types.StringType,
-			},
-		},
+		"proxy_connect_header":   basetypes.StringType{},
 		"proxy_from_environment": basetypes.BoolType{},
-		"proxy_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-		},
+		"proxy_url":              basetypes.StringType{},
 		"tls_config": basetypes.ObjectType{
 			AttrTypes: ConfigTlsconfigValue{}.AttributeTypes(ctx),
 		},

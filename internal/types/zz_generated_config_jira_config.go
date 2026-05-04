@@ -67,12 +67,12 @@ func (t ConfigJiraConfigType) ValueFromObject(ctx context.Context, in basetypes.
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	customFieldsAttribute, ok := attributes["custom_fields"]
@@ -424,12 +424,12 @@ func NewConfigJiraConfigValue(attributeTypes map[string]attr.Type, attributes ma
 		return NewConfigJiraConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	customFieldsAttribute, ok := attributes["custom_fields"]
@@ -759,7 +759,7 @@ var _ basetypes.ObjectValuable = ConfigJiraConfigValue{}
 
 type ConfigJiraConfigValue struct {
 	ApiType           basetypes.StringValue `tfsdk:"api_type"`
-	ApiUrl            basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl            basetypes.StringValue `tfsdk:"api_url"`
 	CustomFields      basetypes.MapValue    `tfsdk:"custom_fields"`
 	Description       basetypes.ObjectValue `tfsdk:"description"`
 	HttpConfig        basetypes.ObjectValue `tfsdk:"http_config"`
@@ -783,9 +783,7 @@ func (v ConfigJiraConfigValue) ToTerraformValue(ctx context.Context) (tftypes.Va
 	var err error
 
 	attrTypes["api_type"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["custom_fields"] = basetypes.MapType{
 		ElemType: types.StringType,
 	}.TerraformType(ctx)
@@ -965,27 +963,6 @@ func (v ConfigJiraConfigValue) String() string {
 func (v ConfigJiraConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
 	var description basetypes.ObjectValue
 
 	if v.Description.IsNull() {
@@ -1064,9 +1041,7 @@ func (v ConfigJiraConfigValue) ToObjectValue(ctx context.Context) (basetypes.Obj
 	if diags.HasError() {
 		return types.ObjectUnknown(map[string]attr.Type{
 			"api_type": basetypes.StringType{},
-			"api_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-			},
+			"api_url":  basetypes.StringType{},
 			"custom_fields": basetypes.MapType{
 				ElemType: types.StringType,
 			},
@@ -1108,9 +1083,7 @@ func (v ConfigJiraConfigValue) ToObjectValue(ctx context.Context) (basetypes.Obj
 	if diags.HasError() {
 		return types.ObjectUnknown(map[string]attr.Type{
 			"api_type": basetypes.StringType{},
-			"api_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-			},
+			"api_url":  basetypes.StringType{},
 			"custom_fields": basetypes.MapType{
 				ElemType: types.StringType,
 			},
@@ -1139,9 +1112,7 @@ func (v ConfigJiraConfigValue) ToObjectValue(ctx context.Context) (basetypes.Obj
 
 	attributeTypes := map[string]attr.Type{
 		"api_type": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url":  basetypes.StringType{},
 		"custom_fields": basetypes.MapType{
 			ElemType: types.StringType,
 		},
@@ -1179,7 +1150,7 @@ func (v ConfigJiraConfigValue) ToObjectValue(ctx context.Context) (basetypes.Obj
 		attributeTypes,
 		map[string]attr.Value{
 			"api_type":            v.ApiType,
-			"api_url":             apiUrl,
+			"api_url":             v.ApiUrl,
 			"custom_fields":       customFieldsVal,
 			"description":         description,
 			"http_config":         httpConfig,
@@ -1287,9 +1258,7 @@ func (v ConfigJiraConfigValue) Type(ctx context.Context) attr.Type {
 func (v ConfigJiraConfigValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
 		"api_type": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url":  basetypes.StringType{},
 		"custom_fields": basetypes.MapType{
 			ElemType: types.StringType,
 		},

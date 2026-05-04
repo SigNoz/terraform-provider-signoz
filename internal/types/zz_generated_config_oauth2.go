@@ -301,12 +301,12 @@ func (t ConfigOauth2Type) ValueFromObject(ctx context.Context, in basetypes.Obje
 		return nil, diags
 	}
 
-	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.MapValue)
+	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_connect_header expected to be basetypes.MapValue, was: %T`, proxyConnectHeaderAttribute))
+			fmt.Sprintf(`proxy_connect_header expected to be basetypes.StringValue, was: %T`, proxyConnectHeaderAttribute))
 	}
 
 	proxyFromEnvironmentAttribute, ok := attributes["proxy_from_environment"]
@@ -337,12 +337,12 @@ func (t ConfigOauth2Type) ValueFromObject(ctx context.Context, in basetypes.Obje
 		return nil, diags
 	}
 
-	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.ObjectValue)
+	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_url expected to be basetypes.ObjectValue, was: %T`, proxyUrlAttribute))
+			fmt.Sprintf(`proxy_url expected to be basetypes.StringValue, was: %T`, proxyUrlAttribute))
 	}
 
 	scopesAttribute, ok := attributes["scopes"]
@@ -753,12 +753,12 @@ func NewConfigOauth2Value(attributeTypes map[string]attr.Type, attributes map[st
 		return NewConfigOauth2ValueUnknown(), diags
 	}
 
-	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.MapValue)
+	proxyConnectHeaderVal, ok := proxyConnectHeaderAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_connect_header expected to be basetypes.MapValue, was: %T`, proxyConnectHeaderAttribute))
+			fmt.Sprintf(`proxy_connect_header expected to be basetypes.StringValue, was: %T`, proxyConnectHeaderAttribute))
 	}
 
 	proxyFromEnvironmentAttribute, ok := attributes["proxy_from_environment"]
@@ -789,12 +789,12 @@ func NewConfigOauth2Value(attributeTypes map[string]attr.Type, attributes map[st
 		return NewConfigOauth2ValueUnknown(), diags
 	}
 
-	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.ObjectValue)
+	proxyUrlVal, ok := proxyUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`proxy_url expected to be basetypes.ObjectValue, was: %T`, proxyUrlAttribute))
+			fmt.Sprintf(`proxy_url expected to be basetypes.StringValue, was: %T`, proxyUrlAttribute))
 	}
 
 	scopesAttribute, ok := attributes["scopes"]
@@ -962,9 +962,9 @@ type ConfigOauth2Value struct {
 	GrantType                basetypes.StringValue `tfsdk:"grant_type"`
 	Iss                      basetypes.StringValue `tfsdk:"iss"`
 	NoProxy                  basetypes.StringValue `tfsdk:"no_proxy"`
-	ProxyConnectHeader       basetypes.MapValue    `tfsdk:"proxy_connect_header"`
+	ProxyConnectHeader       basetypes.StringValue `tfsdk:"proxy_connect_header"`
 	ProxyFromEnvironment     basetypes.BoolValue   `tfsdk:"proxy_from_environment"`
-	ProxyUrl                 basetypes.ObjectValue `tfsdk:"proxy_url"`
+	ProxyUrl                 basetypes.StringValue `tfsdk:"proxy_url"`
 	Scopes                   basetypes.ListValue   `tfsdk:"scopes"`
 	SignatureAlgorithm       basetypes.StringValue `tfsdk:"signature_algorithm"`
 	TokenUrl                 basetypes.StringValue `tfsdk:"token_url"`
@@ -995,15 +995,9 @@ func (v ConfigOauth2Value) ToTerraformValue(ctx context.Context) (tftypes.Value,
 	attrTypes["grant_type"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["iss"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["no_proxy"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["proxy_connect_header"] = basetypes.MapType{
-		ElemType: types.ListType{
-			ElemType: types.StringType,
-		},
-	}.TerraformType(ctx)
+	attrTypes["proxy_connect_header"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["proxy_from_environment"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["proxy_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["proxy_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["scopes"] = basetypes.ListType{
 		ElemType: types.StringType,
 	}.TerraformType(ctx)
@@ -1205,27 +1199,6 @@ func (v ConfigOauth2Value) String() string {
 func (v ConfigOauth2Value) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var proxyUrl basetypes.ObjectValue
-
-	if v.ProxyUrl.IsNull() {
-		proxyUrl = types.ObjectNull(
-			ConfigUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ProxyUrl.IsUnknown() {
-		proxyUrl = types.ObjectUnknown(
-			ConfigUrlValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ProxyUrl.IsNull() && !v.ProxyUrl.IsUnknown() {
-		proxyUrl = types.ObjectValueMust(
-			ConfigUrlValue{}.AttributeTypes(ctx),
-			v.ProxyUrl.Attributes(),
-		)
-	}
-
 	var claimsVal basetypes.MapValue
 	switch {
 	case v.Claims.IsUnknown():
@@ -1255,18 +1228,12 @@ func (v ConfigOauth2Value) ToObjectValue(ctx context.Context) (basetypes.ObjectV
 			"endpoint_params": basetypes.MapType{
 				ElemType: types.StringType,
 			},
-			"grant_type": basetypes.StringType{},
-			"iss":        basetypes.StringType{},
-			"no_proxy":   basetypes.StringType{},
-			"proxy_connect_header": basetypes.MapType{
-				ElemType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
+			"grant_type":             basetypes.StringType{},
+			"iss":                    basetypes.StringType{},
+			"no_proxy":               basetypes.StringType{},
+			"proxy_connect_header":   basetypes.StringType{},
 			"proxy_from_environment": basetypes.BoolType{},
-			"proxy_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-			},
+			"proxy_url":              basetypes.StringType{},
 			"scopes": basetypes.ListType{
 				ElemType: types.StringType,
 			},
@@ -1304,73 +1271,12 @@ func (v ConfigOauth2Value) ToObjectValue(ctx context.Context) (basetypes.ObjectV
 			"endpoint_params": basetypes.MapType{
 				ElemType: types.StringType,
 			},
-			"grant_type": basetypes.StringType{},
-			"iss":        basetypes.StringType{},
-			"no_proxy":   basetypes.StringType{},
-			"proxy_connect_header": basetypes.MapType{
-				ElemType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
+			"grant_type":             basetypes.StringType{},
+			"iss":                    basetypes.StringType{},
+			"no_proxy":               basetypes.StringType{},
+			"proxy_connect_header":   basetypes.StringType{},
 			"proxy_from_environment": basetypes.BoolType{},
-			"proxy_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-			},
-			"scopes": basetypes.ListType{
-				ElemType: types.StringType,
-			},
-			"signature_algorithm": basetypes.StringType{},
-			"token_url":           basetypes.StringType{},
-		}), diags
-	}
-
-	var proxyConnectHeaderVal basetypes.MapValue
-	switch {
-	case v.ProxyConnectHeader.IsUnknown():
-		proxyConnectHeaderVal = types.MapUnknown(types.ListType{
-			ElemType: types.StringType,
-		})
-	case v.ProxyConnectHeader.IsNull():
-		proxyConnectHeaderVal = types.MapNull(types.ListType{
-			ElemType: types.StringType,
-		})
-	default:
-		var d diag.Diagnostics
-		proxyConnectHeaderVal, d = types.MapValue(types.ListType{
-			ElemType: types.StringType,
-		}, v.ProxyConnectHeader.Elements())
-		diags.Append(d...)
-	}
-
-	if diags.HasError() {
-		return types.ObjectUnknown(map[string]attr.Type{
-			"audience": basetypes.StringType{},
-			"claims": basetypes.MapType{
-				ElemType: types.StringType,
-			},
-			"client_certificate_key":      basetypes.StringType{},
-			"client_certificate_key_file": basetypes.StringType{},
-			"client_certificate_key_id":   basetypes.StringType{},
-			"client_certificate_key_ref":  basetypes.StringType{},
-			"client_id":                   basetypes.StringType{},
-			"client_secret":               basetypes.StringType{},
-			"client_secret_file":          basetypes.StringType{},
-			"client_secret_ref":           basetypes.StringType{},
-			"endpoint_params": basetypes.MapType{
-				ElemType: types.StringType,
-			},
-			"grant_type": basetypes.StringType{},
-			"iss":        basetypes.StringType{},
-			"no_proxy":   basetypes.StringType{},
-			"proxy_connect_header": basetypes.MapType{
-				ElemType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
-			"proxy_from_environment": basetypes.BoolType{},
-			"proxy_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-			},
+			"proxy_url":              basetypes.StringType{},
 			"scopes": basetypes.ListType{
 				ElemType: types.StringType,
 			},
@@ -1408,18 +1314,12 @@ func (v ConfigOauth2Value) ToObjectValue(ctx context.Context) (basetypes.ObjectV
 			"endpoint_params": basetypes.MapType{
 				ElemType: types.StringType,
 			},
-			"grant_type": basetypes.StringType{},
-			"iss":        basetypes.StringType{},
-			"no_proxy":   basetypes.StringType{},
-			"proxy_connect_header": basetypes.MapType{
-				ElemType: types.ListType{
-					ElemType: types.StringType,
-				},
-			},
+			"grant_type":             basetypes.StringType{},
+			"iss":                    basetypes.StringType{},
+			"no_proxy":               basetypes.StringType{},
+			"proxy_connect_header":   basetypes.StringType{},
 			"proxy_from_environment": basetypes.BoolType{},
-			"proxy_url": basetypes.ObjectType{
-				AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-			},
+			"proxy_url":              basetypes.StringType{},
 			"scopes": basetypes.ListType{
 				ElemType: types.StringType,
 			},
@@ -1444,18 +1344,12 @@ func (v ConfigOauth2Value) ToObjectValue(ctx context.Context) (basetypes.ObjectV
 		"endpoint_params": basetypes.MapType{
 			ElemType: types.StringType,
 		},
-		"grant_type": basetypes.StringType{},
-		"iss":        basetypes.StringType{},
-		"no_proxy":   basetypes.StringType{},
-		"proxy_connect_header": basetypes.MapType{
-			ElemType: types.ListType{
-				ElemType: types.StringType,
-			},
-		},
+		"grant_type":             basetypes.StringType{},
+		"iss":                    basetypes.StringType{},
+		"no_proxy":               basetypes.StringType{},
+		"proxy_connect_header":   basetypes.StringType{},
 		"proxy_from_environment": basetypes.BoolType{},
-		"proxy_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-		},
+		"proxy_url":              basetypes.StringType{},
 		"scopes": basetypes.ListType{
 			ElemType: types.StringType,
 		},
@@ -1488,9 +1382,9 @@ func (v ConfigOauth2Value) ToObjectValue(ctx context.Context) (basetypes.ObjectV
 			"grant_type":                  v.GrantType,
 			"iss":                         v.Iss,
 			"no_proxy":                    v.NoProxy,
-			"proxy_connect_header":        proxyConnectHeaderVal,
+			"proxy_connect_header":        v.ProxyConnectHeader,
 			"proxy_from_environment":      v.ProxyFromEnvironment,
-			"proxy_url":                   proxyUrl,
+			"proxy_url":                   v.ProxyUrl,
 			"scopes":                      scopesVal,
 			"signature_algorithm":         v.SignatureAlgorithm,
 			"token_url":                   v.TokenUrl,
@@ -1622,18 +1516,12 @@ func (v ConfigOauth2Value) AttributeTypes(ctx context.Context) map[string]attr.T
 		"endpoint_params": basetypes.MapType{
 			ElemType: types.StringType,
 		},
-		"grant_type": basetypes.StringType{},
-		"iss":        basetypes.StringType{},
-		"no_proxy":   basetypes.StringType{},
-		"proxy_connect_header": basetypes.MapType{
-			ElemType: types.ListType{
-				ElemType: types.StringType,
-			},
-		},
+		"grant_type":             basetypes.StringType{},
+		"iss":                    basetypes.StringType{},
+		"no_proxy":               basetypes.StringType{},
+		"proxy_connect_header":   basetypes.StringType{},
 		"proxy_from_environment": basetypes.BoolType{},
-		"proxy_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrlValue{}.AttributeTypes(ctx),
-		},
+		"proxy_url":              basetypes.StringType{},
 		"scopes": basetypes.ListType{
 			ElemType: types.StringType,
 		},

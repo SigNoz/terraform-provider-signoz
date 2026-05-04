@@ -103,12 +103,12 @@ func (t ConfigWechatConfigType) ValueFromObject(ctx context.Context, in basetype
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	corpIdAttribute, ok := attributes["corp_id"]
@@ -403,12 +403,12 @@ func NewConfigWechatConfigValue(attributeTypes map[string]attr.Type, attributes 
 		return NewConfigWechatConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	corpIdAttribute, ok := attributes["corp_id"]
@@ -647,7 +647,7 @@ type ConfigWechatConfigValue struct {
 	AgentId       basetypes.StringValue `tfsdk:"agent_id"`
 	ApiSecret     basetypes.StringValue `tfsdk:"api_secret"`
 	ApiSecretFile basetypes.StringValue `tfsdk:"api_secret_file"`
-	ApiUrl        basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl        basetypes.StringValue `tfsdk:"api_url"`
 	CorpId        basetypes.StringValue `tfsdk:"corp_id"`
 	HttpConfig    basetypes.ObjectValue `tfsdk:"http_config"`
 	Message       basetypes.StringValue `tfsdk:"message"`
@@ -668,9 +668,7 @@ func (v ConfigWechatConfigValue) ToTerraformValue(ctx context.Context) (tftypes.
 	attrTypes["agent_id"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["api_secret"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["api_secret_file"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["corp_id"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["http_config"] = basetypes.ObjectType{
 		AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
@@ -813,27 +811,6 @@ func (v ConfigWechatConfigValue) String() string {
 func (v ConfigWechatConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
 	var httpConfig basetypes.ObjectValue
 
 	if v.HttpConfig.IsNull() {
@@ -859,10 +836,8 @@ func (v ConfigWechatConfigValue) ToObjectValue(ctx context.Context) (basetypes.O
 		"agent_id":        basetypes.StringType{},
 		"api_secret":      basetypes.StringType{},
 		"api_secret_file": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"corp_id": basetypes.StringType{},
+		"api_url":         basetypes.StringType{},
+		"corp_id":         basetypes.StringType{},
 		"http_config": basetypes.ObjectType{
 			AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
 		},
@@ -888,7 +863,7 @@ func (v ConfigWechatConfigValue) ToObjectValue(ctx context.Context) (basetypes.O
 			"agent_id":        v.AgentId,
 			"api_secret":      v.ApiSecret,
 			"api_secret_file": v.ApiSecretFile,
-			"api_url":         apiUrl,
+			"api_url":         v.ApiUrl,
 			"corp_id":         v.CorpId,
 			"http_config":     httpConfig,
 			"message":         v.Message,
@@ -981,10 +956,8 @@ func (v ConfigWechatConfigValue) AttributeTypes(ctx context.Context) map[string]
 		"agent_id":        basetypes.StringType{},
 		"api_secret":      basetypes.StringType{},
 		"api_secret_file": basetypes.StringType{},
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
-		"corp_id": basetypes.StringType{},
+		"api_url":         basetypes.StringType{},
+		"corp_id":         basetypes.StringType{},
 		"http_config": basetypes.ObjectType{
 			AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
 		},

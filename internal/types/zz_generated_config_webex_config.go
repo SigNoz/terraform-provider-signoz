@@ -49,12 +49,12 @@ func (t ConfigWebexConfigType) ValueFromObject(ctx context.Context, in basetypes
 		return nil, diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	httpConfigAttribute, ok := attributes["http_config"]
@@ -216,12 +216,12 @@ func NewConfigWebexConfigValue(attributeTypes map[string]attr.Type, attributes m
 		return NewConfigWebexConfigValueUnknown(), diags
 	}
 
-	apiUrlVal, ok := apiUrlAttribute.(basetypes.ObjectValue)
+	apiUrlVal, ok := apiUrlAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_url expected to be basetypes.ObjectValue, was: %T`, apiUrlAttribute))
+			fmt.Sprintf(`api_url expected to be basetypes.StringValue, was: %T`, apiUrlAttribute))
 	}
 
 	httpConfigAttribute, ok := attributes["http_config"]
@@ -378,7 +378,7 @@ func (t ConfigWebexConfigType) ValueType(ctx context.Context) attr.Value {
 var _ basetypes.ObjectValuable = ConfigWebexConfigValue{}
 
 type ConfigWebexConfigValue struct {
-	ApiUrl       basetypes.ObjectValue `tfsdk:"api_url"`
+	ApiUrl       basetypes.StringValue `tfsdk:"api_url"`
 	HttpConfig   basetypes.ObjectValue `tfsdk:"http_config"`
 	Message      basetypes.StringValue `tfsdk:"message"`
 	RoomId       basetypes.StringValue `tfsdk:"room_id"`
@@ -392,9 +392,7 @@ func (v ConfigWebexConfigValue) ToTerraformValue(ctx context.Context) (tftypes.V
 	var val tftypes.Value
 	var err error
 
-	attrTypes["api_url"] = basetypes.ObjectType{
-		AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
+	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["http_config"] = basetypes.ObjectType{
 		AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -477,27 +475,6 @@ func (v ConfigWebexConfigValue) String() string {
 func (v ConfigWebexConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var apiUrl basetypes.ObjectValue
-
-	if v.ApiUrl.IsNull() {
-		apiUrl = types.ObjectNull(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectUnknown(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.ApiUrl.IsNull() && !v.ApiUrl.IsUnknown() {
-		apiUrl = types.ObjectValueMust(
-			ConfigUrltype2Value{}.AttributeTypes(ctx),
-			v.ApiUrl.Attributes(),
-		)
-	}
-
 	var httpConfig basetypes.ObjectValue
 
 	if v.HttpConfig.IsNull() {
@@ -520,9 +497,7 @@ func (v ConfigWebexConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 	}
 
 	attributeTypes := map[string]attr.Type{
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url": basetypes.StringType{},
 		"http_config": basetypes.ObjectType{
 			AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
 		},
@@ -542,7 +517,7 @@ func (v ConfigWebexConfigValue) ToObjectValue(ctx context.Context) (basetypes.Ob
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"api_url":       apiUrl,
+			"api_url":       v.ApiUrl,
 			"http_config":   httpConfig,
 			"message":       v.Message,
 			"room_id":       v.RoomId,
@@ -600,9 +575,7 @@ func (v ConfigWebexConfigValue) Type(ctx context.Context) attr.Type {
 
 func (v ConfigWebexConfigValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
-		"api_url": basetypes.ObjectType{
-			AttrTypes: ConfigUrltype2Value{}.AttributeTypes(ctx),
-		},
+		"api_url": basetypes.StringType{},
 		"http_config": basetypes.ObjectType{
 			AttrTypes: ConfigHttpclientConfigValue{}.AttributeTypes(ctx),
 		},
