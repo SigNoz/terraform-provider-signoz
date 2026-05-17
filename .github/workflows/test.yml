@@ -29,14 +29,10 @@ jobs:
           cache: true
       - run: go mod download
       - run: go build -v .
-
-  lint:
-    name: Lint
-    uses: signoz/primus.workflows/.github/workflows/go-lint.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      GO_VERSION: "1.25"
+      - name: Run linters
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12.2
 
   generate:
     runs-on: ubuntu-latest
