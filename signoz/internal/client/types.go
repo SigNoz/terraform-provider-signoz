@@ -1,6 +1,10 @@
 package client
 
-import "github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
+import (
+	"encoding/json"
+
+	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
+)
 
 // signozResponse - Maps the response data.
 type signozResponse struct {
@@ -8,6 +12,22 @@ type signozResponse struct {
 	Data      interface{} `json:"data"`
 	ErrorType string      `json:"errorType"`
 	Error     string      `json:"error"`
+}
+
+// parseStatusResponse decodes the SigNoz status envelope from a 2xx body.
+// Returns parsed=true with the envelope (caller still checks Status/Error);
+// parsed=false when the body is empty or not JSON, in which case treat as
+// success — doRequest already filtered non-2xx, and some endpoints (notably
+// PUT /api/v1/dashboards/{uuid}) return plain-text status rather than the
+// envelope. See https://github.com/SigNoz/terraform-provider-signoz/issues/71.
+func parseStatusResponse(body []byte) (response signozResponse, parsed bool) {
+	if len(body) == 0 {
+		return signozResponse{}, false
+	}
+	if err := json.Unmarshal(body, &response); err != nil {
+		return signozResponse{}, false
+	}
+	return response, true
 }
 
 // alertResponse - Maps the response data of GetAlert and CreateAlert.

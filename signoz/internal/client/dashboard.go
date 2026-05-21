@@ -118,13 +118,8 @@ func (c *Client) UpdateDashboard(ctx context.Context, dashboardUUID string, dash
 		return err
 	}
 
-	var bodyObj signozResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
-		return err
-	}
-
-	if bodyObj.Status != "success" || bodyObj.Error != "" {
+	bodyObj, parsed := parseStatusResponse(body)
+	if parsed && (bodyObj.Status != "success" || bodyObj.Error != "") {
 		tflog.Error(ctx, "UpdateDashboard: error while updating dashboard", map[string]any{
 			"error":     bodyObj.Error,
 			"errorType": bodyObj.ErrorType,

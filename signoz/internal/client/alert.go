@@ -118,13 +118,8 @@ func (c *Client) UpdateAlert(ctx context.Context, alertID string, alertPayload *
 		return err
 	}
 
-	var bodyObj signozResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
-		return err
-	}
-
-	if bodyObj.Status != "success" || bodyObj.Error != "" {
+	bodyObj, parsed := parseStatusResponse(body)
+	if parsed && (bodyObj.Status != "success" || bodyObj.Error != "") {
 		tflog.Error(ctx, "UpdateAlert: error while updating alert", map[string]any{
 			"error":     bodyObj.Error,
 			"errorType": bodyObj.ErrorType,
