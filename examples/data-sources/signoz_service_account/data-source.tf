@@ -1,3 +1,3 @@
-data "signoz_dashboard" "example" {
+data "signoz_service_account" "example" {
   id = "0192a9c2-1234-7abc-8def-0123456789ab"
 }

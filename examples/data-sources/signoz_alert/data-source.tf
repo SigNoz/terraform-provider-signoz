@@ -1,20 +1,3 @@
-terraform {
-  required_providers {
-    signoz = {
-      source = "registry.terraform.io/signoz/signoz"
-    }
-  }
-}
-
-provider "signoz" {
-  endpoint     = "http://localhost:3301"
-  access_token = "<SIGNOZ-API-KEY>"
-}
-
-data "signoz_alert" "get_alert" {
-  id = "5"
-}
-
-output "alert" {
-  value = data.signoz_alert.get_alert
+data "signoz_alert" "example" {
+  id = "0192a9c2-1234-7abc-8def-0123456789ab"
 }

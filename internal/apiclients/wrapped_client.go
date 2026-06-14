@@ -15,7 +15,7 @@ import (
 
 const (
 	// DefaultEndpoint is the SigNoz API URL used when none is configured.
-	DefaultEndpoint = "http://localhost:3301"
+	DefaultEndpoint = "http://localhost:8080"
 
 	// DefaultTimeout is the per-request HTTP timeout used when none is configured.
 	DefaultTimeout = 35 * time.Second

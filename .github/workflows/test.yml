@@ -53,6 +53,8 @@ jobs:
         run: |
           git diff --compact-summary --exit-code || \
             (echo; echo "Unexpected difference in directories after code generation. Run 'go generate ./...' command and commit."; exit 1)
+      - name: Validate docs
+        run: go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs validate -provider-name signoz
 
   # Run acceptance tests in a matrix with Terraform CLI versions
   test:
