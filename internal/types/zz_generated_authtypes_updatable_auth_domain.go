@@ -14,14 +14,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
-var _ basetypes.ObjectTypable = AuthtypesUpdateableAuthDomainType{}
+var _ basetypes.ObjectTypable = AuthtypesUpdatableAuthDomainType{}
 
-type AuthtypesUpdateableAuthDomainType struct {
+type AuthtypesUpdatableAuthDomainType struct {
 	basetypes.ObjectType
 }
 
-func (t AuthtypesUpdateableAuthDomainType) Equal(o attr.Type) bool {
-	other, ok := o.(AuthtypesUpdateableAuthDomainType)
+func (t AuthtypesUpdatableAuthDomainType) Equal(o attr.Type) bool {
+	other, ok := o.(AuthtypesUpdatableAuthDomainType)
 
 	if !ok {
 		return false
@@ -30,11 +30,11 @@ func (t AuthtypesUpdateableAuthDomainType) Equal(o attr.Type) bool {
 	return t.ObjectType.Equal(other.ObjectType)
 }
 
-func (t AuthtypesUpdateableAuthDomainType) String() string {
-	return "AuthtypesUpdateableAuthDomainType"
+func (t AuthtypesUpdatableAuthDomainType) String() string {
+	return "AuthtypesUpdatableAuthDomainType"
 }
 
-func (t AuthtypesUpdateableAuthDomainType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue) (basetypes.ObjectValuable, diag.Diagnostics) {
+func (t AuthtypesUpdatableAuthDomainType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue) (basetypes.ObjectValuable, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	attributes := in.Attributes()
@@ -61,25 +61,25 @@ func (t AuthtypesUpdateableAuthDomainType) ValueFromObject(ctx context.Context, 
 		return nil, diags
 	}
 
-	return AuthtypesUpdateableAuthDomainValue{
+	return AuthtypesUpdatableAuthDomainValue{
 		Config: configVal,
 		state:  attr.ValueStateKnown,
 	}, diags
 }
 
-func NewAuthtypesUpdateableAuthDomainValueNull() AuthtypesUpdateableAuthDomainValue {
-	return AuthtypesUpdateableAuthDomainValue{
+func NewAuthtypesUpdatableAuthDomainValueNull() AuthtypesUpdatableAuthDomainValue {
+	return AuthtypesUpdatableAuthDomainValue{
 		state: attr.ValueStateNull,
 	}
 }
 
-func NewAuthtypesUpdateableAuthDomainValueUnknown() AuthtypesUpdateableAuthDomainValue {
-	return AuthtypesUpdateableAuthDomainValue{
+func NewAuthtypesUpdatableAuthDomainValueUnknown() AuthtypesUpdatableAuthDomainValue {
+	return AuthtypesUpdatableAuthDomainValue{
 		state: attr.ValueStateUnknown,
 	}
 }
 
-func NewAuthtypesUpdateableAuthDomainValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (AuthtypesUpdateableAuthDomainValue, diag.Diagnostics) {
+func NewAuthtypesUpdatableAuthDomainValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (AuthtypesUpdatableAuthDomainValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	// Reference: https://github.com/hashicorp/terraform-plugin-framework/issues/521
@@ -90,11 +90,11 @@ func NewAuthtypesUpdateableAuthDomainValue(attributeTypes map[string]attr.Type, 
 
 		if !ok {
 			diags.AddError(
-				"Missing AuthtypesUpdateableAuthDomainValue Attribute Value",
-				"While creating a AuthtypesUpdateableAuthDomainValue value, a missing attribute value was detected. "+
-					"A AuthtypesUpdateableAuthDomainValue must contain values for all attributes, even if null or unknown. "+
+				"Missing AuthtypesUpdatableAuthDomainValue Attribute Value",
+				"While creating a AuthtypesUpdatableAuthDomainValue value, a missing attribute value was detected. "+
+					"A AuthtypesUpdatableAuthDomainValue must contain values for all attributes, even if null or unknown. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("AuthtypesUpdateableAuthDomainValue Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
+					fmt.Sprintf("AuthtypesUpdatableAuthDomainValue Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
 			)
 
 			continue
@@ -102,12 +102,12 @@ func NewAuthtypesUpdateableAuthDomainValue(attributeTypes map[string]attr.Type, 
 
 		if !attributeType.Equal(attribute.Type(ctx)) {
 			diags.AddError(
-				"Invalid AuthtypesUpdateableAuthDomainValue Attribute Type",
-				"While creating a AuthtypesUpdateableAuthDomainValue value, an invalid attribute value was detected. "+
-					"A AuthtypesUpdateableAuthDomainValue must use a matching attribute type for the value. "+
+				"Invalid AuthtypesUpdatableAuthDomainValue Attribute Type",
+				"While creating a AuthtypesUpdatableAuthDomainValue value, an invalid attribute value was detected. "+
+					"A AuthtypesUpdatableAuthDomainValue must use a matching attribute type for the value. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("AuthtypesUpdateableAuthDomainValue Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
-					fmt.Sprintf("AuthtypesUpdateableAuthDomainValue Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
+					fmt.Sprintf("AuthtypesUpdatableAuthDomainValue Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
+					fmt.Sprintf("AuthtypesUpdatableAuthDomainValue Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
 			)
 		}
 	}
@@ -117,17 +117,17 @@ func NewAuthtypesUpdateableAuthDomainValue(attributeTypes map[string]attr.Type, 
 
 		if !ok {
 			diags.AddError(
-				"Extra AuthtypesUpdateableAuthDomainValue Attribute Value",
-				"While creating a AuthtypesUpdateableAuthDomainValue value, an extra attribute value was detected. "+
-					"A AuthtypesUpdateableAuthDomainValue must not contain values beyond the expected attribute types. "+
+				"Extra AuthtypesUpdatableAuthDomainValue Attribute Value",
+				"While creating a AuthtypesUpdatableAuthDomainValue value, an extra attribute value was detected. "+
+					"A AuthtypesUpdatableAuthDomainValue must not contain values beyond the expected attribute types. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("Extra AuthtypesUpdateableAuthDomainValue Attribute Name: %s", name),
+					fmt.Sprintf("Extra AuthtypesUpdatableAuthDomainValue Attribute Name: %s", name),
 			)
 		}
 	}
 
 	if diags.HasError() {
-		return NewAuthtypesUpdateableAuthDomainValueUnknown(), diags
+		return NewAuthtypesUpdatableAuthDomainValueUnknown(), diags
 	}
 
 	configAttribute, ok := attributes["config"]
@@ -137,7 +137,7 @@ func NewAuthtypesUpdateableAuthDomainValue(attributeTypes map[string]attr.Type, 
 			"Attribute Missing",
 			`config is missing from object`)
 
-		return NewAuthtypesUpdateableAuthDomainValueUnknown(), diags
+		return NewAuthtypesUpdatableAuthDomainValueUnknown(), diags
 	}
 
 	configVal, ok := configAttribute.(basetypes.ObjectValue)
@@ -149,17 +149,17 @@ func NewAuthtypesUpdateableAuthDomainValue(attributeTypes map[string]attr.Type, 
 	}
 
 	if diags.HasError() {
-		return NewAuthtypesUpdateableAuthDomainValueUnknown(), diags
+		return NewAuthtypesUpdatableAuthDomainValueUnknown(), diags
 	}
 
-	return AuthtypesUpdateableAuthDomainValue{
+	return AuthtypesUpdatableAuthDomainValue{
 		Config: configVal,
 		state:  attr.ValueStateKnown,
 	}, diags
 }
 
-func NewAuthtypesUpdateableAuthDomainValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) AuthtypesUpdateableAuthDomainValue {
-	object, diags := NewAuthtypesUpdateableAuthDomainValue(attributeTypes, attributes)
+func NewAuthtypesUpdatableAuthDomainValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) AuthtypesUpdatableAuthDomainValue {
+	object, diags := NewAuthtypesUpdatableAuthDomainValue(attributeTypes, attributes)
 
 	if diags.HasError() {
 		// This could potentially be added to the diag package.
@@ -173,15 +173,15 @@ func NewAuthtypesUpdateableAuthDomainValueMust(attributeTypes map[string]attr.Ty
 				diagnostic.Detail()))
 		}
 
-		panic("NewAuthtypesUpdateableAuthDomainValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
+		panic("NewAuthtypesUpdatableAuthDomainValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
 	}
 
 	return object
 }
 
-func (t AuthtypesUpdateableAuthDomainType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+func (t AuthtypesUpdatableAuthDomainType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	if in.Type() == nil {
-		return NewAuthtypesUpdateableAuthDomainValueNull(), nil
+		return NewAuthtypesUpdatableAuthDomainValueNull(), nil
 	}
 
 	if !in.Type().Equal(t.TerraformType(ctx)) {
@@ -189,11 +189,11 @@ func (t AuthtypesUpdateableAuthDomainType) ValueFromTerraform(ctx context.Contex
 	}
 
 	if !in.IsKnown() {
-		return NewAuthtypesUpdateableAuthDomainValueUnknown(), nil
+		return NewAuthtypesUpdatableAuthDomainValueUnknown(), nil
 	}
 
 	if in.IsNull() {
-		return NewAuthtypesUpdateableAuthDomainValueNull(), nil
+		return NewAuthtypesUpdatableAuthDomainValueNull(), nil
 	}
 
 	attributes := map[string]attr.Value{}
@@ -216,21 +216,21 @@ func (t AuthtypesUpdateableAuthDomainType) ValueFromTerraform(ctx context.Contex
 		attributes[k] = a
 	}
 
-	return NewAuthtypesUpdateableAuthDomainValueMust(AuthtypesUpdateableAuthDomainValue{}.AttributeTypes(ctx), attributes), nil
+	return NewAuthtypesUpdatableAuthDomainValueMust(AuthtypesUpdatableAuthDomainValue{}.AttributeTypes(ctx), attributes), nil
 }
 
-func (t AuthtypesUpdateableAuthDomainType) ValueType(ctx context.Context) attr.Value {
-	return AuthtypesUpdateableAuthDomainValue{}
+func (t AuthtypesUpdatableAuthDomainType) ValueType(ctx context.Context) attr.Value {
+	return AuthtypesUpdatableAuthDomainValue{}
 }
 
-var _ basetypes.ObjectValuable = AuthtypesUpdateableAuthDomainValue{}
+var _ basetypes.ObjectValuable = AuthtypesUpdatableAuthDomainValue{}
 
-type AuthtypesUpdateableAuthDomainValue struct {
+type AuthtypesUpdatableAuthDomainValue struct {
 	Config basetypes.ObjectValue `tfsdk:"config"`
 	state  attr.ValueState
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+func (v AuthtypesUpdatableAuthDomainValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
 	attrTypes := make(map[string]tftypes.Type, 1)
 
 	var val tftypes.Value
@@ -268,19 +268,19 @@ func (v AuthtypesUpdateableAuthDomainValue) ToTerraformValue(ctx context.Context
 	}
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) IsNull() bool {
+func (v AuthtypesUpdatableAuthDomainValue) IsNull() bool {
 	return v.state == attr.ValueStateNull
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) IsUnknown() bool {
+func (v AuthtypesUpdatableAuthDomainValue) IsUnknown() bool {
 	return v.state == attr.ValueStateUnknown
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) String() string {
-	return "AuthtypesUpdateableAuthDomainValue"
+func (v AuthtypesUpdatableAuthDomainValue) String() string {
+	return "AuthtypesUpdatableAuthDomainValue"
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
+func (v AuthtypesUpdatableAuthDomainValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var config basetypes.ObjectValue
@@ -327,8 +327,8 @@ func (v AuthtypesUpdateableAuthDomainValue) ToObjectValue(ctx context.Context) (
 	return objVal, diags
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) Equal(o attr.Value) bool {
-	other, ok := o.(AuthtypesUpdateableAuthDomainValue)
+func (v AuthtypesUpdatableAuthDomainValue) Equal(o attr.Value) bool {
+	other, ok := o.(AuthtypesUpdatableAuthDomainValue)
 
 	if !ok {
 		return false
@@ -349,15 +349,15 @@ func (v AuthtypesUpdateableAuthDomainValue) Equal(o attr.Value) bool {
 	return true
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) Type(ctx context.Context) attr.Type {
-	return AuthtypesUpdateableAuthDomainType{
+func (v AuthtypesUpdatableAuthDomainValue) Type(ctx context.Context) attr.Type {
+	return AuthtypesUpdatableAuthDomainType{
 		basetypes.ObjectType{
 			AttrTypes: v.AttributeTypes(ctx),
 		},
 	}
 }
 
-func (v AuthtypesUpdateableAuthDomainValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
+func (v AuthtypesUpdatableAuthDomainValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
 		"config": basetypes.ObjectType{
 			AttrTypes: AuthtypesAuthDomainConfigValue{}.AttributeTypes(ctx),

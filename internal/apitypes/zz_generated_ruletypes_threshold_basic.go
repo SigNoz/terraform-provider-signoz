@@ -5,6 +5,6 @@ package apitypes
 
 // RuletypesThresholdBasic defines model for RuletypesThresholdBasic.
 type RuletypesThresholdBasic struct {
-	Kind *RuletypesThresholdKind       `json:"kind,omitempty"`
-	Spec *RuletypesBasicRuleThresholds `json:"spec,omitempty"`
+	Kind RuletypesThresholdKind        `json:"kind"`
+	Spec *RuletypesBasicRuleThresholds `json:"spec"`
 }

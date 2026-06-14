@@ -5,15 +5,13 @@ package apitypes
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 
 	"github.com/oapi-codegen/runtime"
 )
 
 // RuletypesRuleThresholdData defines model for RuletypesRuleThresholdData.
 type RuletypesRuleThresholdData struct {
-	Kind  RuletypesThresholdKind `json:"kind"`
-	Spec  interface{}            `json:"spec"`
 	union json.RawMessage
 }
 
@@ -26,6 +24,7 @@ func (t RuletypesRuleThresholdData) AsRuletypesThresholdBasic() (RuletypesThresh
 
 // FromRuletypesThresholdBasic overwrites any union data inside the RuletypesRuleThresholdData as the provided RuletypesThresholdBasic
 func (t *RuletypesRuleThresholdData) FromRuletypesThresholdBasic(v RuletypesThresholdBasic) error {
+	v.Kind = "basic"
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
@@ -33,6 +32,7 @@ func (t *RuletypesRuleThresholdData) FromRuletypesThresholdBasic(v RuletypesThre
 
 // MergeRuletypesThresholdBasic performs a merge with any union data inside the RuletypesRuleThresholdData, using the provided RuletypesThresholdBasic
 func (t *RuletypesRuleThresholdData) MergeRuletypesThresholdBasic(v RuletypesThresholdBasic) error {
+	v.Kind = "basic"
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -43,57 +43,33 @@ func (t *RuletypesRuleThresholdData) MergeRuletypesThresholdBasic(v RuletypesThr
 	return err
 }
 
-func (t RuletypesRuleThresholdData) MarshalJSON() ([]byte, error) {
-	b, err := t.union.MarshalJSON()
+func (t RuletypesRuleThresholdData) Discriminator() (string, error) {
+	var discriminator struct {
+		Discriminator string `json:"kind"`
+	}
+	err := json.Unmarshal(t.union, &discriminator)
+	return discriminator.Discriminator, err
+}
+
+func (t RuletypesRuleThresholdData) ValueByDiscriminator() (interface{}, error) {
+	discriminator, err := t.Discriminator()
 	if err != nil {
 		return nil, err
 	}
-	object := make(map[string]json.RawMessage)
-	if t.union != nil {
-		err = json.Unmarshal(b, &object)
-		if err != nil {
-			return nil, err
-		}
+	switch discriminator {
+	case "basic":
+		return t.AsRuletypesThresholdBasic()
+	default:
+		return nil, errors.New("unknown discriminator value: " + discriminator)
 	}
+}
 
-	object["kind"], err = json.Marshal(t.Kind)
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling 'kind': %w", err)
-	}
-
-	object["spec"], err = json.Marshal(t.Spec)
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling 'spec': %w", err)
-	}
-
-	b, err = json.Marshal(object)
+func (t RuletypesRuleThresholdData) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
 	return b, err
 }
 
 func (t *RuletypesRuleThresholdData) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
-	if err != nil {
-		return err
-	}
-	object := make(map[string]json.RawMessage)
-	err = json.Unmarshal(b, &object)
-	if err != nil {
-		return err
-	}
-
-	if raw, found := object["kind"]; found {
-		err = json.Unmarshal(raw, &t.Kind)
-		if err != nil {
-			return fmt.Errorf("error reading 'kind': %w", err)
-		}
-	}
-
-	if raw, found := object["spec"]; found {
-		err = json.Unmarshal(raw, &t.Spec)
-		if err != nil {
-			return fmt.Errorf("error reading 'spec': %w", err)
-		}
-	}
-
 	return err
 }

@@ -44,9 +44,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"client_secret": schema.StringAttribute{
-								Optional:  true,
-								Computed:  true,
-								Sensitive: true,
+								Optional: true,
+								Computed: true,
 							},
 							"domain_to_admin_email": schema.MapAttribute{
 								ElementType: types.StringType,
@@ -70,9 +69,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"service_account_json": schema.StringAttribute{
-								Optional:  true,
-								Computed:  true,
-								Sensitive: true,
+								Optional: true,
+								Computed: true,
 							},
 						},
 						CustomType: customtypes.AuthtypesGoogleConfigType{
@@ -117,9 +115,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 								Computed: true,
 							},
 							"client_secret": schema.StringAttribute{
-								Optional:  true,
-								Computed:  true,
-								Sensitive: true,
+								Optional: true,
+								Computed: true,
 							},
 							"get_user_info": schema.BoolAttribute{
 								Optional: true,
@@ -252,47 +249,6 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 					validators.ExactlyOneNestedAttribute("google_auth_config", "oidc_config", "saml_config"),
 				},
 			},
-			"google_auth_config": schema.SingleNestedAttribute{
-				Attributes: map[string]schema.Attribute{
-					"allowed_groups": schema.ListAttribute{
-						ElementType: types.StringType,
-						Computed:    true,
-					},
-					"client_id": schema.StringAttribute{
-						Computed: true,
-					},
-					"client_secret": schema.StringAttribute{
-						Computed:  true,
-						Sensitive: true,
-					},
-					"domain_to_admin_email": schema.MapAttribute{
-						ElementType: types.StringType,
-						Computed:    true,
-					},
-					"fetch_groups": schema.BoolAttribute{
-						Computed: true,
-					},
-					"fetch_transitive_group_membership": schema.BoolAttribute{
-						Computed: true,
-					},
-					"insecure_skip_email_verified": schema.BoolAttribute{
-						Computed: true,
-					},
-					"redirect_uri": schema.StringAttribute{
-						Computed: true,
-					},
-					"service_account_json": schema.StringAttribute{
-						Computed:  true,
-						Sensitive: true,
-					},
-				},
-				CustomType: customtypes.AuthtypesGoogleConfigType{
-					ObjectType: types.ObjectType{
-						AttrTypes: customtypes.AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
-					},
-				},
-				Computed: true,
-			},
 			"id": schema.StringAttribute{
 				Computed: true,
 			},
@@ -300,128 +256,7 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Computed: true,
 			},
-			"oidc_config": schema.SingleNestedAttribute{
-				Attributes: map[string]schema.Attribute{
-					"claim_mapping": schema.SingleNestedAttribute{
-						Attributes: map[string]schema.Attribute{
-							"email": schema.StringAttribute{
-								Computed: true,
-							},
-							"groups": schema.StringAttribute{
-								Computed: true,
-							},
-							"name": schema.StringAttribute{
-								Computed: true,
-							},
-							"role": schema.StringAttribute{
-								Computed: true,
-							},
-						},
-						CustomType: customtypes.AuthtypesAttributeMappingType{
-							ObjectType: types.ObjectType{
-								AttrTypes: customtypes.AuthtypesAttributeMappingValue{}.AttributeTypes(ctx),
-							},
-						},
-						Computed: true,
-					},
-					"client_id": schema.StringAttribute{
-						Computed: true,
-					},
-					"client_secret": schema.StringAttribute{
-						Computed:  true,
-						Sensitive: true,
-					},
-					"get_user_info": schema.BoolAttribute{
-						Computed: true,
-					},
-					"insecure_skip_email_verified": schema.BoolAttribute{
-						Computed: true,
-					},
-					"issuer": schema.StringAttribute{
-						Computed: true,
-					},
-					"issuer_alias": schema.StringAttribute{
-						Computed: true,
-					},
-				},
-				CustomType: customtypes.AuthtypesOidcconfigType{
-					ObjectType: types.ObjectType{
-						AttrTypes: customtypes.AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
-					},
-				},
-				Computed: true,
-			},
 			"org_id": schema.StringAttribute{
-				Computed: true,
-			},
-			"role_mapping": schema.SingleNestedAttribute{
-				Attributes: map[string]schema.Attribute{
-					"default_role": schema.StringAttribute{
-						Computed: true,
-					},
-					"group_mappings": schema.MapAttribute{
-						ElementType: types.StringType,
-						Computed:    true,
-					},
-					"use_role_attribute": schema.BoolAttribute{
-						Computed: true,
-					},
-				},
-				CustomType: customtypes.AuthtypesRoleMappingType{
-					ObjectType: types.ObjectType{
-						AttrTypes: customtypes.AuthtypesRoleMappingValue{}.AttributeTypes(ctx),
-					},
-				},
-				Computed: true,
-			},
-			"saml_config": schema.SingleNestedAttribute{
-				Attributes: map[string]schema.Attribute{
-					"attribute_mapping": schema.SingleNestedAttribute{
-						Attributes: map[string]schema.Attribute{
-							"email": schema.StringAttribute{
-								Computed: true,
-							},
-							"groups": schema.StringAttribute{
-								Computed: true,
-							},
-							"name": schema.StringAttribute{
-								Computed: true,
-							},
-							"role": schema.StringAttribute{
-								Computed: true,
-							},
-						},
-						CustomType: customtypes.AuthtypesAttributeMappingType{
-							ObjectType: types.ObjectType{
-								AttrTypes: customtypes.AuthtypesAttributeMappingValue{}.AttributeTypes(ctx),
-							},
-						},
-						Computed: true,
-					},
-					"insecure_skip_auth_nrequests_signed": schema.BoolAttribute{
-						Computed: true,
-					},
-					"saml_cert": schema.StringAttribute{
-						Computed: true,
-					},
-					"saml_entity": schema.StringAttribute{
-						Computed: true,
-					},
-					"saml_idp": schema.StringAttribute{
-						Computed: true,
-					},
-				},
-				CustomType: customtypes.AuthtypesSamlConfigType{
-					ObjectType: types.ObjectType{
-						AttrTypes: customtypes.AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
-					},
-				},
-				Computed: true,
-			},
-			"sso_enabled": schema.BoolAttribute{
-				Computed: true,
-			},
-			"sso_type": schema.StringAttribute{
 				Computed: true,
 			},
 		},
@@ -431,13 +266,7 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 type AuthDomainModel struct {
 	AuthNproviderInfo customtypes.AuthtypesAuthNproviderInfoValue `tfsdk:"auth_nprovider_info"`
 	Config            customtypes.AuthtypesAuthDomainConfigValue  `tfsdk:"config"`
-	GoogleAuthConfig  customtypes.AuthtypesGoogleConfigValue      `tfsdk:"google_auth_config"`
 	Id                types.String                                `tfsdk:"id"`
 	Name              types.String                                `tfsdk:"name"`
-	OidcConfig        customtypes.AuthtypesOidcconfigValue        `tfsdk:"oidc_config"`
 	OrgId             types.String                                `tfsdk:"org_id"`
-	RoleMapping       customtypes.AuthtypesRoleMappingValue       `tfsdk:"role_mapping"`
-	SamlConfig        customtypes.AuthtypesSamlConfigValue        `tfsdk:"saml_config"`
-	SsoEnabled        types.Bool                                  `tfsdk:"sso_enabled"`
-	SsoType           types.String                                `tfsdk:"sso_type"`
 }

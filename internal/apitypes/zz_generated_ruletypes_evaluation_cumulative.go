@@ -5,6 +5,6 @@ package apitypes
 
 // RuletypesEvaluationCumulative defines model for RuletypesEvaluationCumulative.
 type RuletypesEvaluationCumulative struct {
-	Kind *RuletypesEvaluationKind   `json:"kind,omitempty"`
-	Spec *RuletypesCumulativeWindow `json:"spec,omitempty"`
+	Kind RuletypesEvaluationKind   `json:"kind"`
+	Spec RuletypesCumulativeWindow `json:"spec"`
 }

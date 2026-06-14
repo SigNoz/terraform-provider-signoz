@@ -69,12 +69,12 @@ func (r *authDomainResource) Create(ctx context.Context, req resource.CreateRequ
 		resp.Diagnostics.AddError("Create auth_domain", err.Error())
 		return
 	}
-	if createResp.StatusCode()/100 != 2 || createResp.JSON200 == nil {
+	if createResp.StatusCode()/100 != 2 || createResp.JSON201 == nil {
 		resp.Diagnostics.AddError("Create auth_domain",
 			apiclients.ErrorFromResponse(createResp.HTTPResponse, createResp.Body).Error())
 		return
 	}
-	id := createResp.JSON200.Data.Id
+	id := createResp.JSON201.Data.Id
 
 	// Follow-up GET — the create response shape varies (full body,
 	// `{id}`-only, partial subset…). Always re-read so server-set
@@ -96,7 +96,7 @@ func (r *authDomainResource) Create(ctx context.Context, req resource.CreateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, next.ToResource())...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, authDomainResourceFromDS(next))...)
 }
 
 func (r *authDomainResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -132,7 +132,7 @@ func (r *authDomainResource) Read(ctx context.Context, req resource.ReadRequest,
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, next.ToResource())...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, authDomainResourceFromDS(next))...)
 }
 
 func (r *authDomainResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -143,7 +143,7 @@ func (r *authDomainResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	in, diags := conv.ExpandAuthtypesUpdateableAuthDomain(ctx, plan)
+	in, diags := conv.ExpandAuthtypesUpdatableAuthDomain(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -181,7 +181,7 @@ func (r *authDomainResource) Update(ctx context.Context, req resource.UpdateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, next.ToResource())...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, authDomainResourceFromDS(next))...)
 }
 
 func (r *authDomainResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -207,4 +207,17 @@ func (r *authDomainResource) Delete(ctx context.Context, req resource.DeleteRequ
 
 func (r *authDomainResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+// authDomainResourceFromDS narrows the wide datasource model down to the
+// resource model — drops any fields that exist in the datasource shape
+// but not in the resource shape (typically server-set audit fields).
+func authDomainResourceFromDS(ds *schemas.AuthDomainDataSourceModel) *schemas.AuthDomainModel {
+	return &schemas.AuthDomainModel{
+		AuthNproviderInfo: ds.AuthNproviderInfo,
+		Config:            ds.Config,
+		Id:                ds.Id,
+		Name:              ds.Name,
+		OrgId:             ds.OrgId,
+	}
 }

@@ -5,6 +5,6 @@ package apitypes
 
 // RuletypesEvaluationRolling defines model for RuletypesEvaluationRolling.
 type RuletypesEvaluationRolling struct {
-	Kind *RuletypesEvaluationKind `json:"kind,omitempty"`
-	Spec *RuletypesRollingWindow  `json:"spec,omitempty"`
+	Kind RuletypesEvaluationKind `json:"kind"`
+	Spec RuletypesRollingWindow  `json:"spec"`
 }

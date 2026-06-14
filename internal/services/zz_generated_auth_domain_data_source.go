@@ -73,5 +73,5 @@ func (d *authDomainDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, next.ToDataSource())...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, next)...)
 }

@@ -104,9 +104,26 @@ resources:
         - data
         - status
         - createdAt
-        - createdBy
         - updatedAt
-        - updatedBy
+  service_account:
+    create:
+      path: /api/v1/service_accounts
+      method: POST
+    read:
+      path: /api/v1/service_accounts/{id}
+      method: GET
+    update:
+      path: /api/v1/service_accounts/{id}
+      method: PUT
+    delete:
+      path: /api/v1/service_accounts/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - updatedAt
 
 data_sources:
   rule:
@@ -144,6 +161,14 @@ data_sources:
   auth_domain:
     read:
       path: /api/v1/domains/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+  service_account:
+    read:
+      path: /api/v1/service_accounts/{id}
       method: GET
     schema:
       ignores:

@@ -57,6 +57,24 @@ func (t AuthtypesGettableAuthDomainType) ValueFromObject(ctx context.Context, in
 			fmt.Sprintf(`auth_nprovider_info expected to be basetypes.ObjectValue, was: %T`, authNproviderInfoAttribute))
 	}
 
+	configAttribute, ok := attributes["config"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`config is missing from object`)
+
+		return nil, diags
+	}
+
+	configVal, ok := configAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`config expected to be basetypes.ObjectValue, was: %T`, configAttribute))
+	}
+
 	createdAtAttribute, ok := attributes["created_at"]
 
 	if !ok {
@@ -73,24 +91,6 @@ func (t AuthtypesGettableAuthDomainType) ValueFromObject(ctx context.Context, in
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`created_at expected to be basetypes.StringValue, was: %T`, createdAtAttribute))
-	}
-
-	googleAuthConfigAttribute, ok := attributes["google_auth_config"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`google_auth_config is missing from object`)
-
-		return nil, diags
-	}
-
-	googleAuthConfigVal, ok := googleAuthConfigAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`google_auth_config expected to be basetypes.ObjectValue, was: %T`, googleAuthConfigAttribute))
 	}
 
 	idAttribute, ok := attributes["id"]
@@ -129,24 +129,6 @@ func (t AuthtypesGettableAuthDomainType) ValueFromObject(ctx context.Context, in
 			fmt.Sprintf(`name expected to be basetypes.StringValue, was: %T`, nameAttribute))
 	}
 
-	oidcConfigAttribute, ok := attributes["oidc_config"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`oidc_config is missing from object`)
-
-		return nil, diags
-	}
-
-	oidcConfigVal, ok := oidcConfigAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`oidc_config expected to be basetypes.ObjectValue, was: %T`, oidcConfigAttribute))
-	}
-
 	orgIdAttribute, ok := attributes["org_id"]
 
 	if !ok {
@@ -163,78 +145,6 @@ func (t AuthtypesGettableAuthDomainType) ValueFromObject(ctx context.Context, in
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`org_id expected to be basetypes.StringValue, was: %T`, orgIdAttribute))
-	}
-
-	roleMappingAttribute, ok := attributes["role_mapping"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`role_mapping is missing from object`)
-
-		return nil, diags
-	}
-
-	roleMappingVal, ok := roleMappingAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`role_mapping expected to be basetypes.ObjectValue, was: %T`, roleMappingAttribute))
-	}
-
-	samlConfigAttribute, ok := attributes["saml_config"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`saml_config is missing from object`)
-
-		return nil, diags
-	}
-
-	samlConfigVal, ok := samlConfigAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`saml_config expected to be basetypes.ObjectValue, was: %T`, samlConfigAttribute))
-	}
-
-	ssoEnabledAttribute, ok := attributes["sso_enabled"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`sso_enabled is missing from object`)
-
-		return nil, diags
-	}
-
-	ssoEnabledVal, ok := ssoEnabledAttribute.(basetypes.BoolValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`sso_enabled expected to be basetypes.BoolValue, was: %T`, ssoEnabledAttribute))
-	}
-
-	ssoTypeAttribute, ok := attributes["sso_type"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`sso_type is missing from object`)
-
-		return nil, diags
-	}
-
-	ssoTypeVal, ok := ssoTypeAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`sso_type expected to be basetypes.StringValue, was: %T`, ssoTypeAttribute))
 	}
 
 	updatedAtAttribute, ok := attributes["updated_at"]
@@ -261,16 +171,11 @@ func (t AuthtypesGettableAuthDomainType) ValueFromObject(ctx context.Context, in
 
 	return AuthtypesGettableAuthDomainValue{
 		AuthNproviderInfo: authNproviderInfoVal,
+		Config:            configVal,
 		CreatedAt:         createdAtVal,
-		GoogleAuthConfig:  googleAuthConfigVal,
 		Id:                idVal,
 		Name:              nameVal,
-		OidcConfig:        oidcConfigVal,
 		OrgId:             orgIdVal,
-		RoleMapping:       roleMappingVal,
-		SamlConfig:        samlConfigVal,
-		SsoEnabled:        ssoEnabledVal,
-		SsoType:           ssoTypeVal,
 		UpdatedAt:         updatedAtVal,
 		state:             attr.ValueStateKnown,
 	}, diags
@@ -357,6 +262,24 @@ func NewAuthtypesGettableAuthDomainValue(attributeTypes map[string]attr.Type, at
 			fmt.Sprintf(`auth_nprovider_info expected to be basetypes.ObjectValue, was: %T`, authNproviderInfoAttribute))
 	}
 
+	configAttribute, ok := attributes["config"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`config is missing from object`)
+
+		return NewAuthtypesGettableAuthDomainValueUnknown(), diags
+	}
+
+	configVal, ok := configAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`config expected to be basetypes.ObjectValue, was: %T`, configAttribute))
+	}
+
 	createdAtAttribute, ok := attributes["created_at"]
 
 	if !ok {
@@ -373,24 +296,6 @@ func NewAuthtypesGettableAuthDomainValue(attributeTypes map[string]attr.Type, at
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`created_at expected to be basetypes.StringValue, was: %T`, createdAtAttribute))
-	}
-
-	googleAuthConfigAttribute, ok := attributes["google_auth_config"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`google_auth_config is missing from object`)
-
-		return NewAuthtypesGettableAuthDomainValueUnknown(), diags
-	}
-
-	googleAuthConfigVal, ok := googleAuthConfigAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`google_auth_config expected to be basetypes.ObjectValue, was: %T`, googleAuthConfigAttribute))
 	}
 
 	idAttribute, ok := attributes["id"]
@@ -429,24 +334,6 @@ func NewAuthtypesGettableAuthDomainValue(attributeTypes map[string]attr.Type, at
 			fmt.Sprintf(`name expected to be basetypes.StringValue, was: %T`, nameAttribute))
 	}
 
-	oidcConfigAttribute, ok := attributes["oidc_config"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`oidc_config is missing from object`)
-
-		return NewAuthtypesGettableAuthDomainValueUnknown(), diags
-	}
-
-	oidcConfigVal, ok := oidcConfigAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`oidc_config expected to be basetypes.ObjectValue, was: %T`, oidcConfigAttribute))
-	}
-
 	orgIdAttribute, ok := attributes["org_id"]
 
 	if !ok {
@@ -463,78 +350,6 @@ func NewAuthtypesGettableAuthDomainValue(attributeTypes map[string]attr.Type, at
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`org_id expected to be basetypes.StringValue, was: %T`, orgIdAttribute))
-	}
-
-	roleMappingAttribute, ok := attributes["role_mapping"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`role_mapping is missing from object`)
-
-		return NewAuthtypesGettableAuthDomainValueUnknown(), diags
-	}
-
-	roleMappingVal, ok := roleMappingAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`role_mapping expected to be basetypes.ObjectValue, was: %T`, roleMappingAttribute))
-	}
-
-	samlConfigAttribute, ok := attributes["saml_config"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`saml_config is missing from object`)
-
-		return NewAuthtypesGettableAuthDomainValueUnknown(), diags
-	}
-
-	samlConfigVal, ok := samlConfigAttribute.(basetypes.ObjectValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`saml_config expected to be basetypes.ObjectValue, was: %T`, samlConfigAttribute))
-	}
-
-	ssoEnabledAttribute, ok := attributes["sso_enabled"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`sso_enabled is missing from object`)
-
-		return NewAuthtypesGettableAuthDomainValueUnknown(), diags
-	}
-
-	ssoEnabledVal, ok := ssoEnabledAttribute.(basetypes.BoolValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`sso_enabled expected to be basetypes.BoolValue, was: %T`, ssoEnabledAttribute))
-	}
-
-	ssoTypeAttribute, ok := attributes["sso_type"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`sso_type is missing from object`)
-
-		return NewAuthtypesGettableAuthDomainValueUnknown(), diags
-	}
-
-	ssoTypeVal, ok := ssoTypeAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`sso_type expected to be basetypes.StringValue, was: %T`, ssoTypeAttribute))
 	}
 
 	updatedAtAttribute, ok := attributes["updated_at"]
@@ -561,16 +376,11 @@ func NewAuthtypesGettableAuthDomainValue(attributeTypes map[string]attr.Type, at
 
 	return AuthtypesGettableAuthDomainValue{
 		AuthNproviderInfo: authNproviderInfoVal,
+		Config:            configVal,
 		CreatedAt:         createdAtVal,
-		GoogleAuthConfig:  googleAuthConfigVal,
 		Id:                idVal,
 		Name:              nameVal,
-		OidcConfig:        oidcConfigVal,
 		OrgId:             orgIdVal,
-		RoleMapping:       roleMappingVal,
-		SamlConfig:        samlConfigVal,
-		SsoEnabled:        ssoEnabledVal,
-		SsoType:           ssoTypeVal,
 		UpdatedAt:         updatedAtVal,
 		state:             attr.ValueStateKnown,
 	}, diags
@@ -645,22 +455,17 @@ var _ basetypes.ObjectValuable = AuthtypesGettableAuthDomainValue{}
 
 type AuthtypesGettableAuthDomainValue struct {
 	AuthNproviderInfo basetypes.ObjectValue `tfsdk:"auth_nprovider_info"`
+	Config            basetypes.ObjectValue `tfsdk:"config"`
 	CreatedAt         basetypes.StringValue `tfsdk:"created_at"`
-	GoogleAuthConfig  basetypes.ObjectValue `tfsdk:"google_auth_config"`
 	Id                basetypes.StringValue `tfsdk:"id"`
 	Name              basetypes.StringValue `tfsdk:"name"`
-	OidcConfig        basetypes.ObjectValue `tfsdk:"oidc_config"`
 	OrgId             basetypes.StringValue `tfsdk:"org_id"`
-	RoleMapping       basetypes.ObjectValue `tfsdk:"role_mapping"`
-	SamlConfig        basetypes.ObjectValue `tfsdk:"saml_config"`
-	SsoEnabled        basetypes.BoolValue   `tfsdk:"sso_enabled"`
-	SsoType           basetypes.StringValue `tfsdk:"sso_type"`
 	UpdatedAt         basetypes.StringValue `tfsdk:"updated_at"`
 	state             attr.ValueState
 }
 
 func (v AuthtypesGettableAuthDomainValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 12)
+	attrTypes := make(map[string]tftypes.Type, 7)
 
 	var val tftypes.Value
 	var err error
@@ -668,31 +473,20 @@ func (v AuthtypesGettableAuthDomainValue) ToTerraformValue(ctx context.Context) 
 	attrTypes["auth_nprovider_info"] = basetypes.ObjectType{
 		AttrTypes: AuthtypesAuthNproviderInfoValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
-	attrTypes["created_at"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["google_auth_config"] = basetypes.ObjectType{
-		AttrTypes: AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
+	attrTypes["config"] = basetypes.ObjectType{
+		AttrTypes: AuthtypesAuthDomainConfigValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
+	attrTypes["created_at"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["id"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["name"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["oidc_config"] = basetypes.ObjectType{
-		AttrTypes: AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
 	attrTypes["org_id"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["role_mapping"] = basetypes.ObjectType{
-		AttrTypes: AuthtypesRoleMappingValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
-	attrTypes["saml_config"] = basetypes.ObjectType{
-		AttrTypes: AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
-	}.TerraformType(ctx)
-	attrTypes["sso_enabled"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["sso_type"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["updated_at"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 12)
+		vals := make(map[string]tftypes.Value, 7)
 
 		val, err = v.AuthNproviderInfo.ToTerraformValue(ctx)
 
@@ -702,6 +496,14 @@ func (v AuthtypesGettableAuthDomainValue) ToTerraformValue(ctx context.Context) 
 
 		vals["auth_nprovider_info"] = val
 
+		val, err = v.Config.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["config"] = val
+
 		val, err = v.CreatedAt.ToTerraformValue(ctx)
 
 		if err != nil {
@@ -709,14 +511,6 @@ func (v AuthtypesGettableAuthDomainValue) ToTerraformValue(ctx context.Context) 
 		}
 
 		vals["created_at"] = val
-
-		val, err = v.GoogleAuthConfig.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["google_auth_config"] = val
 
 		val, err = v.Id.ToTerraformValue(ctx)
 
@@ -734,14 +528,6 @@ func (v AuthtypesGettableAuthDomainValue) ToTerraformValue(ctx context.Context) 
 
 		vals["name"] = val
 
-		val, err = v.OidcConfig.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["oidc_config"] = val
-
 		val, err = v.OrgId.ToTerraformValue(ctx)
 
 		if err != nil {
@@ -749,38 +535,6 @@ func (v AuthtypesGettableAuthDomainValue) ToTerraformValue(ctx context.Context) 
 		}
 
 		vals["org_id"] = val
-
-		val, err = v.RoleMapping.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["role_mapping"] = val
-
-		val, err = v.SamlConfig.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["saml_config"] = val
-
-		val, err = v.SsoEnabled.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["sso_enabled"] = val
-
-		val, err = v.SsoType.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["sso_type"] = val
 
 		val, err = v.UpdatedAt.ToTerraformValue(ctx)
 
@@ -840,87 +594,24 @@ func (v AuthtypesGettableAuthDomainValue) ToObjectValue(ctx context.Context) (ba
 		)
 	}
 
-	var googleAuthConfig basetypes.ObjectValue
+	var config basetypes.ObjectValue
 
-	if v.GoogleAuthConfig.IsNull() {
-		googleAuthConfig = types.ObjectNull(
-			AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
+	if v.Config.IsNull() {
+		config = types.ObjectNull(
+			AuthtypesAuthDomainConfigValue{}.AttributeTypes(ctx),
 		)
 	}
 
-	if v.GoogleAuthConfig.IsUnknown() {
-		googleAuthConfig = types.ObjectUnknown(
-			AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
+	if v.Config.IsUnknown() {
+		config = types.ObjectUnknown(
+			AuthtypesAuthDomainConfigValue{}.AttributeTypes(ctx),
 		)
 	}
 
-	if !v.GoogleAuthConfig.IsNull() && !v.GoogleAuthConfig.IsUnknown() {
-		googleAuthConfig = types.ObjectValueMust(
-			AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
-			v.GoogleAuthConfig.Attributes(),
-		)
-	}
-
-	var oidcConfig basetypes.ObjectValue
-
-	if v.OidcConfig.IsNull() {
-		oidcConfig = types.ObjectNull(
-			AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.OidcConfig.IsUnknown() {
-		oidcConfig = types.ObjectUnknown(
-			AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.OidcConfig.IsNull() && !v.OidcConfig.IsUnknown() {
-		oidcConfig = types.ObjectValueMust(
-			AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
-			v.OidcConfig.Attributes(),
-		)
-	}
-
-	var roleMapping basetypes.ObjectValue
-
-	if v.RoleMapping.IsNull() {
-		roleMapping = types.ObjectNull(
-			AuthtypesRoleMappingValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.RoleMapping.IsUnknown() {
-		roleMapping = types.ObjectUnknown(
-			AuthtypesRoleMappingValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.RoleMapping.IsNull() && !v.RoleMapping.IsUnknown() {
-		roleMapping = types.ObjectValueMust(
-			AuthtypesRoleMappingValue{}.AttributeTypes(ctx),
-			v.RoleMapping.Attributes(),
-		)
-	}
-
-	var samlConfig basetypes.ObjectValue
-
-	if v.SamlConfig.IsNull() {
-		samlConfig = types.ObjectNull(
-			AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if v.SamlConfig.IsUnknown() {
-		samlConfig = types.ObjectUnknown(
-			AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
-		)
-	}
-
-	if !v.SamlConfig.IsNull() && !v.SamlConfig.IsUnknown() {
-		samlConfig = types.ObjectValueMust(
-			AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
-			v.SamlConfig.Attributes(),
+	if !v.Config.IsNull() && !v.Config.IsUnknown() {
+		config = types.ObjectValueMust(
+			AuthtypesAuthDomainConfigValue{}.AttributeTypes(ctx),
+			v.Config.Attributes(),
 		)
 	}
 
@@ -928,25 +619,14 @@ func (v AuthtypesGettableAuthDomainValue) ToObjectValue(ctx context.Context) (ba
 		"auth_nprovider_info": basetypes.ObjectType{
 			AttrTypes: AuthtypesAuthNproviderInfoValue{}.AttributeTypes(ctx),
 		},
+		"config": basetypes.ObjectType{
+			AttrTypes: AuthtypesAuthDomainConfigValue{}.AttributeTypes(ctx),
+		},
 		"created_at": basetypes.StringType{},
-		"google_auth_config": basetypes.ObjectType{
-			AttrTypes: AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
-		},
-		"id":   basetypes.StringType{},
-		"name": basetypes.StringType{},
-		"oidc_config": basetypes.ObjectType{
-			AttrTypes: AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
-		},
-		"org_id": basetypes.StringType{},
-		"role_mapping": basetypes.ObjectType{
-			AttrTypes: AuthtypesRoleMappingValue{}.AttributeTypes(ctx),
-		},
-		"saml_config": basetypes.ObjectType{
-			AttrTypes: AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
-		},
-		"sso_enabled": basetypes.BoolType{},
-		"sso_type":    basetypes.StringType{},
-		"updated_at":  basetypes.StringType{},
+		"id":         basetypes.StringType{},
+		"name":       basetypes.StringType{},
+		"org_id":     basetypes.StringType{},
+		"updated_at": basetypes.StringType{},
 	}
 
 	if v.IsNull() {
@@ -961,16 +641,11 @@ func (v AuthtypesGettableAuthDomainValue) ToObjectValue(ctx context.Context) (ba
 		attributeTypes,
 		map[string]attr.Value{
 			"auth_nprovider_info": authNproviderInfo,
+			"config":              config,
 			"created_at":          v.CreatedAt,
-			"google_auth_config":  googleAuthConfig,
 			"id":                  v.Id,
 			"name":                v.Name,
-			"oidc_config":         oidcConfig,
 			"org_id":              v.OrgId,
-			"role_mapping":        roleMapping,
-			"saml_config":         samlConfig,
-			"sso_enabled":         v.SsoEnabled,
-			"sso_type":            v.SsoType,
 			"updated_at":          v.UpdatedAt,
 		})
 
@@ -996,11 +671,11 @@ func (v AuthtypesGettableAuthDomainValue) Equal(o attr.Value) bool {
 		return false
 	}
 
-	if !v.CreatedAt.Equal(other.CreatedAt) {
+	if !v.Config.Equal(other.Config) {
 		return false
 	}
 
-	if !v.GoogleAuthConfig.Equal(other.GoogleAuthConfig) {
+	if !v.CreatedAt.Equal(other.CreatedAt) {
 		return false
 	}
 
@@ -1012,27 +687,7 @@ func (v AuthtypesGettableAuthDomainValue) Equal(o attr.Value) bool {
 		return false
 	}
 
-	if !v.OidcConfig.Equal(other.OidcConfig) {
-		return false
-	}
-
 	if !v.OrgId.Equal(other.OrgId) {
-		return false
-	}
-
-	if !v.RoleMapping.Equal(other.RoleMapping) {
-		return false
-	}
-
-	if !v.SamlConfig.Equal(other.SamlConfig) {
-		return false
-	}
-
-	if !v.SsoEnabled.Equal(other.SsoEnabled) {
-		return false
-	}
-
-	if !v.SsoType.Equal(other.SsoType) {
 		return false
 	}
 
@@ -1056,24 +711,13 @@ func (v AuthtypesGettableAuthDomainValue) AttributeTypes(ctx context.Context) ma
 		"auth_nprovider_info": basetypes.ObjectType{
 			AttrTypes: AuthtypesAuthNproviderInfoValue{}.AttributeTypes(ctx),
 		},
+		"config": basetypes.ObjectType{
+			AttrTypes: AuthtypesAuthDomainConfigValue{}.AttributeTypes(ctx),
+		},
 		"created_at": basetypes.StringType{},
-		"google_auth_config": basetypes.ObjectType{
-			AttrTypes: AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
-		},
-		"id":   basetypes.StringType{},
-		"name": basetypes.StringType{},
-		"oidc_config": basetypes.ObjectType{
-			AttrTypes: AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
-		},
-		"org_id": basetypes.StringType{},
-		"role_mapping": basetypes.ObjectType{
-			AttrTypes: AuthtypesRoleMappingValue{}.AttributeTypes(ctx),
-		},
-		"saml_config": basetypes.ObjectType{
-			AttrTypes: AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
-		},
-		"sso_enabled": basetypes.BoolType{},
-		"sso_type":    basetypes.StringType{},
-		"updated_at":  basetypes.StringType{},
+		"id":         basetypes.StringType{},
+		"name":       basetypes.StringType{},
+		"org_id":     basetypes.StringType{},
+		"updated_at": basetypes.StringType{},
 	}
 }
