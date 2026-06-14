@@ -9,10 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// StringPointer returns nil for null/unknown framework values, else a
-// pointer to the underlying string. Use for optional API fields where
-// omitting from the JSON body is semantically distinct from sending an
-// empty string.
+// StringPointer maps null/unknown to a nil pointer so the field is omitted from
+// the JSON body — distinct from sending an empty string.
 func StringPointer(v types.String) *string {
 	if v.IsNull() || v.IsUnknown() {
 		return nil
@@ -21,8 +19,6 @@ func StringPointer(v types.String) *string {
 	return &s
 }
 
-// StringFromPointer is the inverse of StringPointer: nil pointer becomes
-// a null framework value, non-nil becomes a known string.
 func StringFromPointer(p *string) types.String {
 	if p == nil {
 		return types.StringNull()
@@ -30,18 +26,8 @@ func StringFromPointer(p *string) types.String {
 	return types.StringValue(*p)
 }
 
-// ---------------------------------------------------------------------------
-// String slices (pointer-wrapped)
-// ---------------------------------------------------------------------------
-//
-// oapi-codegen emits optional array fields as `*[]E` so the JSON marshal
-// can distinguish "omitted" from "empty". The framework List has a
-// matching three-state encoding (null / unknown / known) so the
-// conversions are direct.
-
-// StringPointerSliceFromList extracts a *[]string from a framework
-// List<string>. Null/unknown → nil pointer; known empty → pointer to
-// empty slice; known with items → pointer to populated slice.
+// StringPointerSliceFromList maps a null/unknown list to a nil pointer (field
+// omitted); a known list — even empty — maps to a non-nil slice.
 func StringPointerSliceFromList(ctx context.Context, l types.List) (*[]string, diag.Diagnostics) {
 	if l.IsNull() || l.IsUnknown() {
 		return nil, nil
@@ -54,7 +40,6 @@ func StringPointerSliceFromList(ctx context.Context, l types.List) (*[]string, d
 	return &out, diags
 }
 
-// ListFromStringPointerSlice is the inverse of StringPointerSliceFromList.
 func ListFromStringPointerSlice(_ context.Context, p *[]string) (types.List, diag.Diagnostics) {
 	if p == nil {
 		return types.ListNull(types.StringType), nil
@@ -66,10 +51,9 @@ func ListFromStringPointerSlice(_ context.Context, p *[]string) (types.List, dia
 	return types.ListValue(types.StringType, elems)
 }
 
-// TypedStringPointerSliceFromList is StringPointerSliceFromList for any
-// `~string` enum type. Used for `*[]apitypes.RuletypesRepeatOn` and
-// friends — the wire type is a typed string slice but the framework
-// stores plain strings.
+// TypedStringPointerSliceFromList handles wire types that are a typed-string
+// slice (e.g. *[]apitypes.RuletypesRepeatOn) while the framework stores plain
+// strings.
 func TypedStringPointerSliceFromList[E ~string](ctx context.Context, l types.List) (*[]E, diag.Diagnostics) {
 	if l.IsNull() || l.IsUnknown() {
 		return nil, nil
@@ -86,7 +70,6 @@ func TypedStringPointerSliceFromList[E ~string](ctx context.Context, l types.Lis
 	return &out, diags
 }
 
-// ListFromTypedStringPointerSlice is the inverse of TypedStringPointerSliceFromList.
 func ListFromTypedStringPointerSlice[E ~string](_ context.Context, p *[]E) (types.List, diag.Diagnostics) {
 	if p == nil {
 		return types.ListNull(types.StringType), nil
@@ -98,8 +81,6 @@ func ListFromTypedStringPointerSlice[E ~string](_ context.Context, p *[]E) (type
 	return types.ListValue(types.StringType, elems)
 }
 
-// StringMapPointerFromMap extracts a *map[string]string from a framework
-// Map<string>. Same null/empty/known semantics as the slice helpers.
 func StringMapPointerFromMap(ctx context.Context, m types.Map) (*map[string]string, diag.Diagnostics) {
 	if m.IsNull() || m.IsUnknown() {
 		return nil, nil
@@ -112,7 +93,6 @@ func StringMapPointerFromMap(ctx context.Context, m types.Map) (*map[string]stri
 	return &out, diags
 }
 
-// MapFromStringPointerMap is the inverse of StringMapPointerFromMap.
 func MapFromStringPointerMap(_ context.Context, p *map[string]string) (types.Map, diag.Diagnostics) {
 	if p == nil {
 		return types.MapNull(types.StringType), nil
@@ -124,13 +104,11 @@ func MapFromStringPointerMap(_ context.Context, p *map[string]string) (types.Map
 	return types.MapValue(types.StringType, elems)
 }
 
-// InterfaceMapPointerFromMap projects a framework `Map<string>` onto a
-// `*map[string]interface{}`. Each map value is stored as the bare
-// string in the interface — that's what the server expects for the
-// "untyped object property bag" pattern (jira `custom_fields`,
-// pagerduty `details`, oauth2 `claims`). Lossy if the user wants
-// nested objects, but that surface isn't expressible through tfsdk
-// schemas anyway.
+// InterfaceMapPointerFromMap projects a framework Map<string> onto a
+// *map[string]interface{}, storing each value as a bare string. This is the
+// "untyped object property bag" the server expects (jira custom_fields,
+// pagerduty details, oauth2 claims); nested objects aren't expressible through
+// the tfsdk schema, so it's intentionally string-only.
 func InterfaceMapPointerFromMap(ctx context.Context, m types.Map) (*map[string]interface{}, diag.Diagnostics) {
 	if m.IsNull() || m.IsUnknown() {
 		return nil, nil
@@ -147,11 +125,9 @@ func InterfaceMapPointerFromMap(ctx context.Context, m types.Map) (*map[string]i
 	return &out, diags
 }
 
-// MapFromInterfaceMapPointer is the inverse. Each interface{} value is
-// projected onto a string: `string` passes through; `nil` becomes the
-// null framework value; everything else is `fmt.Sprintf("%v", x)` so
-// the framework state stays valid even when the server emits numbers
-// or booleans inside the bag.
+// MapFromInterfaceMapPointer coerces each value back to a string so framework
+// state stays valid when the server emits numbers or booleans in the bag: nil
+// becomes null, strings pass through, everything else uses fmt.Sprintf.
 func MapFromInterfaceMapPointer(_ context.Context, p *map[string]interface{}) (types.Map, diag.Diagnostics) {
 	if p == nil {
 		return types.MapNull(types.StringType), nil

@@ -1,8 +1,3 @@
-// Helpers used by the codegen-generated Expand/Flatten functions in
-// `conv/zz_generated_*.go` and the hand-written Layer 3 entry points.
-//
-// Only primitive ↔ wire conversions live here. Anything that touches a
-// specific customtype belongs in the per-customtype file.
 package convtypes
 
 import (
@@ -13,22 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// ---------------------------------------------------------------------------
-// Primitive scalars
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Time
-// ---------------------------------------------------------------------------
-//
-// SigNoz's wire format is RFC3339 (`format: date-time` in the OpenAPI
-// spec). Framework state holds these as strings — we round-trip through
-// time.Time using RFC3339Nano so any sub-second precision the server
-// sends survives.
-
-// TimeFromString parses a required RFC3339 string into a time.Time. A
-// null/unknown framework value is treated as a hard error — required
-// fields must be set.
+// TimeFromString parses a required RFC3339 timestamp; a null/unknown value is
+// an error.
 func TimeFromString(v types.String) (time.Time, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if v.IsNull() || v.IsUnknown() {
@@ -42,8 +23,8 @@ func TimeFromString(v types.String) (time.Time, diag.Diagnostics) {
 	return t, diags
 }
 
-// TimePointerFromString parses an optional RFC3339 string into a
-// *time.Time. Null/unknown → nil pointer.
+// TimePointerFromString is the optional counterpart to TimeFromString:
+// null/unknown yields a nil pointer instead of an error.
 func TimePointerFromString(v types.String) (*time.Time, diag.Diagnostics) {
 	if v.IsNull() || v.IsUnknown() {
 		return nil, nil
@@ -55,13 +36,12 @@ func TimePointerFromString(v types.String) (*time.Time, diag.Diagnostics) {
 	return &t, diags
 }
 
-// TimeStringFromValue formats a non-pointer time.Time. Always emits a
-// known string — the wire shape declared the field as required.
+// TimeStringFromValue formats to RFC3339Nano; the field is required so the
+// result is always a known string.
 func TimeStringFromValue(t time.Time) types.String {
 	return types.StringValue(t.Format(time.RFC3339Nano))
 }
 
-// TimeStringFromPointer formats a *time.Time. nil → null framework value.
 func TimeStringFromPointer(p *time.Time) types.String {
 	if p == nil {
 		return types.StringNull()
