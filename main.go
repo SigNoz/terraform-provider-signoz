@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	signozProvider "github.com/SigNoz/terraform-provider-signoz/signoz"
+	"github.com/SigNoz/terraform-provider-signoz/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -47,7 +47,7 @@ func main() {
 		Debug:   debug,
 	}
 
-	err := providerserver.Serve(context.Background(), signozProvider.New(terraformAgent, version), opts)
+	err := providerserver.Serve(context.Background(), provider.New(terraformAgent, version), opts)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

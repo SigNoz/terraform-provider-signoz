@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -58,11 +59,11 @@ func (d *dashboardDataSource) Configure(_ context.Context, req datasource.Config
 		return
 	}
 
-	client, ok := req.ProviderData.(*client.Client)
+	wc, ok := req.ProviderData.(*apiclients.WrappedClient)
 	if !ok {
 		addErr(
 			&resp.Diagnostics,
-			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. "+
+			fmt.Errorf("unexpected data source configure type. Expected *apiclients.WrappedClient, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
 			SigNozDashboard,
 		)
@@ -70,7 +71,7 @@ func (d *dashboardDataSource) Configure(_ context.Context, req datasource.Config
 		return
 	}
 
-	d.client = client
+	d.client = client.New(wc)
 }
 
 // Schema defines the schema for the data source.

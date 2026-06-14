@@ -1,7 +1,9 @@
 package apiclients
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -29,6 +31,11 @@ const (
 // time. Service code calls the generated methods via `.Gen` (e.g. `r.api.Gen.GetRoutePolicyByIDWithResponse(ctx, id)`).
 type WrappedClient struct {
 	Gen *ClientWithResponses
+
+	// host and doer back Do, the escape hatch for hand-written endpoints that
+	// aren't part of the generated client (the legacy alert/dashboard APIs).
+	host *url.URL
+	doer HttpRequestDoer
 }
 
 func New(endpoint, token, agent, version string, timeout time.Duration, retryMax int) (*WrappedClient, error) {
@@ -78,5 +85,47 @@ func New(endpoint, token, agent, version string, timeout time.Duration, retryMax
 		return nil, fmt.Errorf("build generated client: %w", err)
 	}
 
-	return &WrappedClient{Gen: gen}, nil
+	return &WrappedClient{Gen: gen, host: host, doer: doer}, nil
+}
+
+// BaseURL returns the configured server root without a trailing slash.
+func (c *WrappedClient) BaseURL() string {
+	return strings.TrimRight(c.host.String(), "/")
+}
+
+// Do issues a request to a hand-written endpoint that isn't part of the
+// generated client, through the same auth + retry + User-Agent transport. It
+// returns the response body on a 2xx and an *APIError otherwise. The legacy
+// alert/dashboard resources use it until those endpoints are generated.
+func (c *WrappedClient) Do(ctx context.Context, method, path string, body io.Reader) ([]byte, error) {
+	endpoint, err := url.JoinPath(c.BaseURL(), path)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, method, endpoint, body)
+	if err != nil {
+		return nil, err
+	}
+
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
+
+	resp, err := c.doer.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	raw, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode/100 != 2 {
+		return nil, ErrorFromResponse(resp, raw)
+	}
+
+	return raw, nil
 }

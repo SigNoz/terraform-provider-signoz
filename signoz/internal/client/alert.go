@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
@@ -19,23 +18,13 @@ const (
 
 // GetAlert - Returns specific alert.
 func (c *Client) GetAlert(ctx context.Context, alertID string) (*model.Alert, error) {
-	url, err := url.JoinPath(c.hostURL.String(), alertPath, alertID)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := c.doRequest(ctx, req)
+	body, err := c.wc.Do(ctx, http.MethodGet, alertPath+"/"+alertID, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var bodyObj alertResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
+	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		return nil, err
 	}
 
@@ -56,29 +45,20 @@ func (c *Client) GetAlert(ctx context.Context, alertID string) (*model.Alert, er
 
 // CreateAlert - Creates a new alert.
 func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*model.Alert, error) {
-	alertPayload.SetSourceIfEmpty(c.hostURL.String())
+	alertPayload.SetSourceIfEmpty(c.wc.BaseURL())
+
 	rb, err := json.Marshal(alertPayload)
 	if err != nil {
 		return nil, err
 	}
 
-	url, err := url.JoinPath(c.hostURL.String(), alertPath)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(string(rb)))
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := c.doRequest(ctx, req)
+	body, err := c.wc.Do(ctx, http.MethodPost, alertPath, strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
 
 	var bodyObj alertResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
+	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		return nil, err
 	}
 
@@ -88,6 +68,7 @@ func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*m
 			"errorType": bodyObj.ErrorType,
 			"data":      bodyObj.Data,
 		})
+
 		return nil, fmt.Errorf("error while creating alert: %s", bodyObj.Error)
 	}
 
@@ -98,29 +79,20 @@ func (c *Client) CreateAlert(ctx context.Context, alertPayload *model.Alert) (*m
 
 // UpdateAlert - Updates an existing alert.
 func (c *Client) UpdateAlert(ctx context.Context, alertID string, alertPayload *model.Alert) error {
-	alertPayload.SetSourceIfEmpty(c.hostURL.String())
+	alertPayload.SetSourceIfEmpty(c.wc.BaseURL())
+
 	rb, err := json.Marshal(alertPayload)
 	if err != nil {
 		return err
 	}
 
-	url, err := url.JoinPath(c.hostURL.String(), alertPath, alertID)
-	if err != nil {
-		return err
-	}
-	req, err := http.NewRequest(http.MethodPut, url, strings.NewReader(string(rb)))
-	if err != nil {
-		return err
-	}
-
-	body, err := c.doRequest(ctx, req)
+	body, err := c.wc.Do(ctx, http.MethodPut, alertPath+"/"+alertID, strings.NewReader(string(rb)))
 	if err != nil {
 		return err
 	}
 
 	var bodyObj signozResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
+	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		return err
 	}
 
@@ -130,6 +102,7 @@ func (c *Client) UpdateAlert(ctx context.Context, alertID string, alertPayload *
 			"errorType": bodyObj.ErrorType,
 			"data":      bodyObj.Data,
 		})
+
 		return fmt.Errorf("error while updating alert: %s", bodyObj.Error)
 	}
 
@@ -140,23 +113,13 @@ func (c *Client) UpdateAlert(ctx context.Context, alertID string, alertPayload *
 
 // DeleteAlert - Deletes an existing alert.
 func (c *Client) DeleteAlert(ctx context.Context, alertID string) error {
-	url, err := url.JoinPath(c.hostURL.String(), alertPath, alertID)
-	if err != nil {
-		return err
-	}
-	req, err := http.NewRequest(http.MethodDelete, url, nil)
-	if err != nil {
-		return err
-	}
-
-	body, err := c.doRequest(ctx, req)
+	body, err := c.wc.Do(ctx, http.MethodDelete, alertPath+"/"+alertID, nil)
 	if err != nil {
 		return err
 	}
 
 	var bodyObj signozResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
+	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		return err
 	}
 
@@ -166,6 +129,7 @@ func (c *Client) DeleteAlert(ctx context.Context, alertID string) error {
 			"errorType": bodyObj.ErrorType,
 			"data":      bodyObj.Data,
 		})
+
 		return fmt.Errorf("error while deleting alert: %s", bodyObj.Error)
 	}
 

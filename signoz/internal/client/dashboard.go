@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
@@ -19,23 +18,13 @@ const (
 
 // GetDashboard - Returns specific dashboard.
 func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*dashboardData, error) {
-	url, err := url.JoinPath(c.hostURL.String(), dashboardPath, dashboardUUID)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := c.doRequest(ctx, req)
+	body, err := c.wc.Do(ctx, http.MethodGet, dashboardPath+"/"+dashboardUUID, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var bodyObj dashboardResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
+	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		return nil, err
 	}
 
@@ -56,29 +45,20 @@ func (c *Client) GetDashboard(ctx context.Context, dashboardUUID string) (*dashb
 
 // CreateDashboard - Creates a new dashboard.
 func (c *Client) CreateDashboard(ctx context.Context, dashboardPayload *model.Dashboard) (*dashboardData, error) {
-	dashboardPayload.SetSourceIfEmpty(c.hostURL.String())
+	dashboardPayload.SetSourceIfEmpty(c.wc.BaseURL())
+
 	rb, err := json.Marshal(dashboardPayload)
 	if err != nil {
 		return nil, err
 	}
 
-	url, err := url.JoinPath(c.hostURL.String(), dashboardPath)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(string(rb)))
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := c.doRequest(ctx, req)
+	body, err := c.wc.Do(ctx, http.MethodPost, dashboardPath, strings.NewReader(string(rb)))
 	if err != nil {
 		return nil, err
 	}
 
 	var bodyObj dashboardResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
+	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		return nil, err
 	}
 
@@ -88,6 +68,7 @@ func (c *Client) CreateDashboard(ctx context.Context, dashboardPayload *model.Da
 			"errorType": bodyObj.ErrorType,
 			"data":      bodyObj.Data,
 		})
+
 		return nil, fmt.Errorf("error while creating dashboard: %s", bodyObj.Error)
 	}
 
@@ -98,29 +79,20 @@ func (c *Client) CreateDashboard(ctx context.Context, dashboardPayload *model.Da
 
 // UpdateDashboard - Updates an existing dashboard.
 func (c *Client) UpdateDashboard(ctx context.Context, dashboardUUID string, dashboardPayload *model.Dashboard) error {
-	dashboardPayload.SetSourceIfEmpty(c.hostURL.String())
+	dashboardPayload.SetSourceIfEmpty(c.wc.BaseURL())
+
 	rb, err := json.Marshal(dashboardPayload)
 	if err != nil {
 		return err
 	}
 
-	url, err := url.JoinPath(c.hostURL.String(), dashboardPath, dashboardUUID)
-	if err != nil {
-		return err
-	}
-	req, err := http.NewRequest(http.MethodPut, url, strings.NewReader(string(rb)))
-	if err != nil {
-		return err
-	}
-
-	body, err := c.doRequest(ctx, req)
+	body, err := c.wc.Do(ctx, http.MethodPut, dashboardPath+"/"+dashboardUUID, strings.NewReader(string(rb)))
 	if err != nil {
 		return err
 	}
 
 	var bodyObj signozResponse
-	err = json.Unmarshal(body, &bodyObj)
-	if err != nil {
+	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		return err
 	}
 
@@ -130,6 +102,7 @@ func (c *Client) UpdateDashboard(ctx context.Context, dashboardUUID string, dash
 			"errorType": bodyObj.ErrorType,
 			"data":      bodyObj.Data,
 		})
+
 		return fmt.Errorf("error while updating dashboard: %s", bodyObj.Error)
 	}
 
@@ -140,20 +113,12 @@ func (c *Client) UpdateDashboard(ctx context.Context, dashboardUUID string, dash
 
 // DeleteDashboard - Deletes an existing dashboard.
 func (c *Client) DeleteDashboard(ctx context.Context, dashboardUUID string) error {
-	url, err := url.JoinPath(c.hostURL.String(), dashboardPath, dashboardUUID)
-	if err != nil {
-		return err
-	}
-	req, err := http.NewRequest(http.MethodDelete, url, nil)
-	if err != nil {
-		return err
-	}
-
-	_, err = c.doRequest(ctx, req)
+	_, err := c.wc.Do(ctx, http.MethodDelete, dashboardPath+"/"+dashboardUUID, nil)
 	if err != nil {
 		return err
 	}
 
 	tflog.Debug(ctx, "DeleteDashboard: dashboard deleted", map[string]any{"dashboardUUID": dashboardUUID})
+
 	return nil
 }

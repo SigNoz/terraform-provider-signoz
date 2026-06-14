@@ -8,6 +8,7 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
 	"github.com/SigNoz/terraform-provider-signoz/internal/services"
+	"github.com/SigNoz/terraform-provider-signoz/signoz"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -132,6 +133,8 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 		services.NewPlannedMaintenanceResource,
 		services.NewRoutePolicyResource,
 		services.NewServiceAccountResource,
+		signoz.NewAlertResource,
+		signoz.NewDashboardResource,
 	}
 }
 
@@ -140,6 +143,8 @@ func (p *signozProvider) DataSources(_ context.Context) []func() datasource.Data
 		services.NewPlannedMaintenanceDataSource,
 		services.NewRoutePolicyDataSource,
 		services.NewServiceAccountDataSource,
+		signoz.NewAlertDataSource,
+		signoz.NewDashboardDataSource,
 	}
 }
 
