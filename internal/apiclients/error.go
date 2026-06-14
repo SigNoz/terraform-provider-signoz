@@ -9,6 +9,12 @@ import (
 	"github.com/SigNoz/terraform-provider-signoz/internal/apitypes"
 )
 
+// maxRawBody caps APIError.Raw. The Raw path only fires when the response
+// wasn't the JSON error envelope — typically a proxy's HTML page when upstream
+// is down — so a few hundred bytes is enough to identify the failure without
+// dumping a whole page into a Terraform diagnostic.
+const maxRawBody = 512
+
 type APIError struct {
 	StatusCode int
 	Raw        string
@@ -17,43 +23,28 @@ type APIError struct {
 
 func ErrorFromResponse(resp *http.Response, body []byte) *APIError {
 	if resp == nil {
-		return &APIError{Raw: strings.TrimSpace(string(body))}
+		return &APIError{Raw: rawBody(body)}
 	}
 
 	return decodeError(resp.StatusCode, body)
 }
 
 func (e *APIError) Error() string {
-	var b strings.Builder
-	fmt.Fprintf(&b, "signoz api: HTTP %d", e.StatusCode)
-
-	if e.Render == nil {
-		if e.Raw != "" {
-			fmt.Fprintf(&b, ": %s", e.Raw)
-		}
-		return b.String()
-	}
-
-	body := e.Render.Error
-	if body.Code != "" {
-		fmt.Fprintf(&b, " (%s)", body.Code)
-	}
-	if body.Message != "" {
-		fmt.Fprintf(&b, ": %s", body.Message)
-	}
-	if body.Errors != nil {
-		for _, d := range *body.Errors {
-			if d.Message != nil && *d.Message != "" {
-				fmt.Fprintf(&b, " | %s", *d.Message)
-			}
+	if e.Render != nil {
+		if pretty, err := json.MarshalIndent(e.Render, "", "  "); err == nil {
+			return fmt.Sprintf("signoz api: HTTP %d\n%s", e.StatusCode, pretty)
 		}
 	}
 
-	return b.String()
+	if e.Raw != "" {
+		return fmt.Sprintf("signoz api: HTTP %d: %s", e.StatusCode, e.Raw)
+	}
+
+	return fmt.Sprintf("signoz api: HTTP %d", e.StatusCode)
 }
 
 func decodeError(status int, raw []byte) *APIError {
-	out := &APIError{StatusCode: status, Raw: strings.TrimSpace(string(raw))}
+	out := &APIError{StatusCode: status, Raw: rawBody(raw)}
 
 	var re apitypes.RenderErrorResponse
 	if err := json.Unmarshal(raw, &re); err != nil {
@@ -65,4 +56,16 @@ func decodeError(status int, raw []byte) *APIError {
 	}
 
 	return out
+}
+
+// rawBody trims surrounding whitespace and caps the body at maxRawBody bytes so
+// an oversized non-envelope response (e.g. a proxy error page) doesn't bloat the
+// diagnostic.
+func rawBody(b []byte) string {
+	s := strings.TrimSpace(string(b))
+	if len(s) > maxRawBody {
+		return s[:maxRawBody] + "… (truncated)"
+	}
+
+	return s
 }
