@@ -17,6 +17,12 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// CreateDowntimeScheduleJSONRequestBody defines body for CreateDowntimeSchedule for application/json ContentType.
+type CreateDowntimeScheduleJSONRequestBody = apitypes.AlertmanagertypesPostablePlannedMaintenance
+
+// UpdateDowntimeScheduleByIDJSONRequestBody defines body for UpdateDowntimeScheduleByID for application/json ContentType.
+type UpdateDowntimeScheduleByIDJSONRequestBody = apitypes.AlertmanagertypesPostablePlannedMaintenance
+
 // CreateRoutePolicyJSONRequestBody defines body for CreateRoutePolicy for application/json ContentType.
 type CreateRoutePolicyJSONRequestBody = apitypes.AlertmanagertypesPostableRoutePolicy
 
@@ -96,6 +102,22 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// CreateDowntimeScheduleWithBody request with any body
+	CreateDowntimeScheduleWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateDowntimeSchedule(ctx context.Context, body CreateDowntimeScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteDowntimeScheduleByID request
+	DeleteDowntimeScheduleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetDowntimeScheduleByID request
+	GetDowntimeScheduleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateDowntimeScheduleByIDWithBody request with any body
+	UpdateDowntimeScheduleByIDWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateDowntimeScheduleByID(ctx context.Context, id string, body UpdateDowntimeScheduleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateRoutePolicyWithBody request with any body
 	CreateRoutePolicyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -111,6 +133,78 @@ type ClientInterface interface {
 	UpdateRoutePolicyWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateRoutePolicy(ctx context.Context, id string, body UpdateRoutePolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) CreateDowntimeScheduleWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDowntimeScheduleRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateDowntimeSchedule(ctx context.Context, body CreateDowntimeScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDowntimeScheduleRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteDowntimeScheduleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteDowntimeScheduleByIDRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetDowntimeScheduleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDowntimeScheduleByIDRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateDowntimeScheduleByIDWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDowntimeScheduleByIDRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateDowntimeScheduleByID(ctx context.Context, id string, body UpdateDowntimeScheduleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDowntimeScheduleByIDRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) CreateRoutePolicyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -183,6 +277,161 @@ func (c *Client) UpdateRoutePolicy(ctx context.Context, id string, body UpdateRo
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewCreateDowntimeScheduleRequest calls the generic CreateDowntimeSchedule builder with application/json body
+func NewCreateDowntimeScheduleRequest(server string, body CreateDowntimeScheduleJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateDowntimeScheduleRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateDowntimeScheduleRequestWithBody generates requests for CreateDowntimeSchedule with any type of body
+func NewCreateDowntimeScheduleRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/downtime_schedules")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteDowntimeScheduleByIDRequest generates requests for DeleteDowntimeScheduleByID
+func NewDeleteDowntimeScheduleByIDRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/downtime_schedules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetDowntimeScheduleByIDRequest generates requests for GetDowntimeScheduleByID
+func NewGetDowntimeScheduleByIDRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/downtime_schedules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateDowntimeScheduleByIDRequest calls the generic UpdateDowntimeScheduleByID builder with application/json body
+func NewUpdateDowntimeScheduleByIDRequest(server string, id string, body UpdateDowntimeScheduleByIDJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateDowntimeScheduleByIDRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateDowntimeScheduleByIDRequestWithBody generates requests for UpdateDowntimeScheduleByID with any type of body
+func NewUpdateDowntimeScheduleByIDRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v1/downtime_schedules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
 }
 
 // NewCreateRoutePolicyRequest calls the generic CreateRoutePolicy builder with application/json body
@@ -383,6 +632,22 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// CreateDowntimeScheduleWithBodyWithResponse request with any body
+	CreateDowntimeScheduleWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDowntimeScheduleResponse, error)
+
+	CreateDowntimeScheduleWithResponse(ctx context.Context, body CreateDowntimeScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDowntimeScheduleResponse, error)
+
+	// DeleteDowntimeScheduleByIDWithResponse request
+	DeleteDowntimeScheduleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteDowntimeScheduleByIDResponse, error)
+
+	// GetDowntimeScheduleByIDWithResponse request
+	GetDowntimeScheduleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetDowntimeScheduleByIDResponse, error)
+
+	// UpdateDowntimeScheduleByIDWithBodyWithResponse request with any body
+	UpdateDowntimeScheduleByIDWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDowntimeScheduleByIDResponse, error)
+
+	UpdateDowntimeScheduleByIDWithResponse(ctx context.Context, id string, body UpdateDowntimeScheduleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDowntimeScheduleByIDResponse, error)
+
 	// CreateRoutePolicyWithBodyWithResponse request with any body
 	CreateRoutePolicyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateRoutePolicyResponse, error)
 
@@ -398,6 +663,147 @@ type ClientWithResponsesInterface interface {
 	UpdateRoutePolicyWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateRoutePolicyResponse, error)
 
 	UpdateRoutePolicyWithResponse(ctx context.Context, id string, body UpdateRoutePolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateRoutePolicyResponse, error)
+}
+
+type CreateDowntimeScheduleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *struct {
+		Data   apitypes.AlertmanagertypesPlannedMaintenance `json:"data"`
+		Status string                                       `json:"status"`
+	}
+	JSON400 *apitypes.RenderErrorResponse
+	JSON401 *apitypes.RenderErrorResponse
+	JSON403 *apitypes.RenderErrorResponse
+	JSON500 *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateDowntimeScheduleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateDowntimeScheduleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateDowntimeScheduleResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteDowntimeScheduleByIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *apitypes.RenderErrorResponse
+	JSON403      *apitypes.RenderErrorResponse
+	JSON404      *apitypes.RenderErrorResponse
+	JSON500      *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteDowntimeScheduleByIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteDowntimeScheduleByIDResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteDowntimeScheduleByIDResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetDowntimeScheduleByIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data   apitypes.AlertmanagertypesPlannedMaintenance `json:"data"`
+		Status string                                       `json:"status"`
+	}
+	JSON401 *apitypes.RenderErrorResponse
+	JSON403 *apitypes.RenderErrorResponse
+	JSON404 *apitypes.RenderErrorResponse
+	JSON500 *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDowntimeScheduleByIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDowntimeScheduleByIDResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDowntimeScheduleByIDResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type UpdateDowntimeScheduleByIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *apitypes.RenderErrorResponse
+	JSON401      *apitypes.RenderErrorResponse
+	JSON403      *apitypes.RenderErrorResponse
+	JSON404      *apitypes.RenderErrorResponse
+	JSON500      *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateDowntimeScheduleByIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateDowntimeScheduleByIDResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateDowntimeScheduleByIDResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
 }
 
 type CreateRoutePolicyResponse struct {
@@ -545,6 +951,58 @@ func (r UpdateRoutePolicyResponse) ContentType() string {
 	return ""
 }
 
+// CreateDowntimeScheduleWithBodyWithResponse request with arbitrary body returning *CreateDowntimeScheduleResponse
+func (c *ClientWithResponses) CreateDowntimeScheduleWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDowntimeScheduleResponse, error) {
+	rsp, err := c.CreateDowntimeScheduleWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDowntimeScheduleResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateDowntimeScheduleWithResponse(ctx context.Context, body CreateDowntimeScheduleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDowntimeScheduleResponse, error) {
+	rsp, err := c.CreateDowntimeSchedule(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDowntimeScheduleResponse(rsp)
+}
+
+// DeleteDowntimeScheduleByIDWithResponse request returning *DeleteDowntimeScheduleByIDResponse
+func (c *ClientWithResponses) DeleteDowntimeScheduleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteDowntimeScheduleByIDResponse, error) {
+	rsp, err := c.DeleteDowntimeScheduleByID(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteDowntimeScheduleByIDResponse(rsp)
+}
+
+// GetDowntimeScheduleByIDWithResponse request returning *GetDowntimeScheduleByIDResponse
+func (c *ClientWithResponses) GetDowntimeScheduleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetDowntimeScheduleByIDResponse, error) {
+	rsp, err := c.GetDowntimeScheduleByID(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDowntimeScheduleByIDResponse(rsp)
+}
+
+// UpdateDowntimeScheduleByIDWithBodyWithResponse request with arbitrary body returning *UpdateDowntimeScheduleByIDResponse
+func (c *ClientWithResponses) UpdateDowntimeScheduleByIDWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDowntimeScheduleByIDResponse, error) {
+	rsp, err := c.UpdateDowntimeScheduleByIDWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateDowntimeScheduleByIDResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateDowntimeScheduleByIDWithResponse(ctx context.Context, id string, body UpdateDowntimeScheduleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDowntimeScheduleByIDResponse, error) {
+	rsp, err := c.UpdateDowntimeScheduleByID(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateDowntimeScheduleByIDResponse(rsp)
+}
+
 // CreateRoutePolicyWithBodyWithResponse request with arbitrary body returning *CreateRoutePolicyResponse
 func (c *ClientWithResponses) CreateRoutePolicyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateRoutePolicyResponse, error) {
 	rsp, err := c.CreateRoutePolicyWithBody(ctx, contentType, body, reqEditors...)
@@ -595,6 +1053,221 @@ func (c *ClientWithResponses) UpdateRoutePolicyWithResponse(ctx context.Context,
 		return nil, err
 	}
 	return ParseUpdateRoutePolicyResponse(rsp)
+}
+
+// ParseCreateDowntimeScheduleResponse parses an HTTP response from a CreateDowntimeScheduleWithResponse call
+func ParseCreateDowntimeScheduleResponse(rsp *http.Response) (*CreateDowntimeScheduleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateDowntimeScheduleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest struct {
+			Data   apitypes.AlertmanagertypesPlannedMaintenance `json:"data"`
+			Status string                                       `json:"status"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteDowntimeScheduleByIDResponse parses an HTTP response from a DeleteDowntimeScheduleByIDWithResponse call
+func ParseDeleteDowntimeScheduleByIDResponse(rsp *http.Response) (*DeleteDowntimeScheduleByIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteDowntimeScheduleByIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetDowntimeScheduleByIDResponse parses an HTTP response from a GetDowntimeScheduleByIDWithResponse call
+func ParseGetDowntimeScheduleByIDResponse(rsp *http.Response) (*GetDowntimeScheduleByIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDowntimeScheduleByIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data   apitypes.AlertmanagertypesPlannedMaintenance `json:"data"`
+			Status string                                       `json:"status"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateDowntimeScheduleByIDResponse parses an HTTP response from a UpdateDowntimeScheduleByIDWithResponse call
+func ParseUpdateDowntimeScheduleByIDResponse(rsp *http.Response) (*UpdateDowntimeScheduleByIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateDowntimeScheduleByIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseCreateRoutePolicyResponse parses an HTTP response from a CreateRoutePolicyWithResponse call
