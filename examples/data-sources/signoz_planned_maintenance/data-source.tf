@@ -1,3 +1,3 @@
 data "signoz_planned_maintenance" "example" {
-  id = "1"
+  id = "0192a9c2-1234-7abc-8def-0123456789ab"
 }

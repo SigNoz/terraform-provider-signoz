@@ -1,7 +1,7 @@
 resource "signoz_planned_maintenance" "weekly_db" {
   name        = "weekly-db-maintenance"
   description = "Silence database alerts during the weekly maintenance window."
-  alert_ids   = ["1", "2"]
+  alert_ids   = ["018f9b2a-1111-7000-8000-000000000001", "018f9b2a-1111-7000-8000-000000000002"]
 
   schedule = {
     timezone   = "UTC"

@@ -16,7 +16,7 @@ description: |-
 resource "signoz_planned_maintenance" "weekly_db" {
   name        = "weekly-db-maintenance"
   description = "Silence database alerts during the weekly maintenance window."
-  alert_ids   = ["1", "2"]
+  alert_ids   = ["018f9b2a-1111-7000-8000-000000000001", "018f9b2a-1111-7000-8000-000000000002"]
 
   schedule = {
     timezone   = "UTC"
@@ -83,6 +83,6 @@ Import is supported using the following syntax:
 The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
-# Planned maintenance windows are imported using their ID.
-terraform import signoz_planned_maintenance.weekly_db 1
+# Planned maintenance windows are imported using their UUID.
+terraform import signoz_planned_maintenance.weekly_db 0192a9c2-1234-7abc-8def-0123456789ab
 ```
