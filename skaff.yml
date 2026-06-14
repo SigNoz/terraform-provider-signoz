@@ -33,3 +33,7 @@ data_sources:
       ignores:
         - data
         - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy

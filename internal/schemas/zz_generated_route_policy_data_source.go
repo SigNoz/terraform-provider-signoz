@@ -17,12 +17,6 @@ func RoutePolicyDataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 				Computed:    true,
 			},
-			"created_at": schema.StringAttribute{
-				Computed: true,
-			},
-			"created_by": schema.StringAttribute{
-				Computed: true,
-			},
 			"description": schema.StringAttribute{
 				Computed: true,
 			},
@@ -42,26 +36,16 @@ func RoutePolicyDataSourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.StringType,
 				Computed:    true,
 			},
-			"updated_at": schema.StringAttribute{
-				Computed: true,
-			},
-			"updated_by": schema.StringAttribute{
-				Computed: true,
-			},
 		},
 	}
 }
 
 type RoutePolicyDataSourceModel struct {
 	Channels    types.List   `tfsdk:"channels"`
-	CreatedAt   types.String `tfsdk:"created_at"`
-	CreatedBy   types.String `tfsdk:"created_by"`
 	Description types.String `tfsdk:"description"`
 	Expression  types.String `tfsdk:"expression"`
 	Id          types.String `tfsdk:"id"`
 	Kind        types.String `tfsdk:"kind"`
 	Name        types.String `tfsdk:"name"`
 	Tags        types.List   `tfsdk:"tags"`
-	UpdatedAt   types.String `tfsdk:"updated_at"`
-	UpdatedBy   types.String `tfsdk:"updated_by"`
 }

@@ -61,15 +61,11 @@ func FlattenAlertmanagertypesGettableRoutePolicy(ctx context.Context, g *apitype
 
 	return &schemas.RoutePolicyDataSourceModel{
 		Channels:    channelsFlat,
-		CreatedAt:   convtypes.TimeStringFromValue(g.CreatedAt),
-		CreatedBy:   convtypes.StringFromPointer(g.CreatedBy),
 		Description: convtypes.StringFromPointer(g.Description),
 		Expression:  types.StringValue(g.Expression),
 		Id:          types.StringValue(g.Id),
 		Kind:        kindFlat,
 		Name:        types.StringValue(g.Name),
 		Tags:        tagsFlat,
-		UpdatedAt:   convtypes.TimeStringFromValue(g.UpdatedAt),
-		UpdatedBy:   convtypes.StringFromPointer(g.UpdatedBy),
 	}, diags
 }
