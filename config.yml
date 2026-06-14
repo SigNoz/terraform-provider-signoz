@@ -1,22 +1,7 @@
-# skaff codegen config — scoped to a single resource (route_policy).
-#
-# Source spec: SigNoz/signoz docs/api/openapi.yml
-# Generator:   SigNoz/skaff
-#
-# Regenerate (run from the skaff checkout so `go run` resolves the codegen
-# tools, pointing --openapi at the canonical spec and all paths at this repo):
-#
-#   skaff types      --openapi <spec> --config config.yml --output internal/types
-#   skaff schemas    --openapi <spec> --config config.yml --types-dir internal/types --output internal/schemas --package schemas --module github.com/SigNoz/terraform-provider-signoz
-#   skaff apitypes   --openapi <spec> --config config.yml --output internal/apitypes --package apitypes
-#   skaff client     --openapi <spec> --config config.yml --output internal/apiclients/zz_generated_client.go --package apiclients --apitypes-import .../internal/apitypes
-#   skaff layer3     --openapi <spec> --config config.yml --schemas-dir internal/schemas --apitypes-dir internal/apitypes --types-dir internal/types --output internal/convertors --package conv --apitypes-import .../apitypes --schemas-import .../schemas --customtypes-import .../types
-#   skaff services   --openapi <spec> --config config.yml --output internal/services --package services --schemas-dir internal/schemas --convertors-dir internal/convertors --apiclients-import .../apiclients --apitypes-import .../apitypes --schemas-import .../schemas --convertors-import .../convertors
-#   skaff convertors --types-dir internal/types --apitypes-dir internal/apitypes --output internal/convertors --package conv --apitypes-import .../apitypes --customtypes-import .../types --callers-dir internal/services
-#
-# route_policy's schema closure is all scalars / string lists + one enum, so it
-# needs no scaff oneOf rewrites, property_type overrides, or validators, and the
-# reachability filter prunes every Layer 2 convertor (Layer 3 covers it directly).
+# skaff codegen config — scoped to route_policy.
+# Source spec: SigNoz/signoz docs/api/openapi.yml · Generator: SigNoz/skaff
+# route_policy's schema closure is scalars / string lists + one enum, so it needs
+# no scaff oneOf rewrites, property_type overrides, or validators.
 
 provider:
   name: signoz
