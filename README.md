@@ -9,10 +9,7 @@
 
 # Terraform SigNoz Provider
 
-The **SigNoz Provider** lets [Terraform](https://terraform.io) manage
-[SigNoz](https://signoz.io) observability resources — alerts, dashboards,
-notification route policies, planned maintenance windows, and service accounts —
-as code, on both SigNoz Cloud and self-hosted deployments.
+The **SigNoz Provider** lets [Terraform](https://terraform.io) manage [SigNoz](https://signoz.io) observability resources as code, on both SigNoz Cloud and self-hosted deployments.
 
 📖 **[Provider documentation on the Terraform Registry](https://registry.terraform.io/providers/signoz/signoz/latest/docs)**
 
@@ -36,19 +33,10 @@ provider "signoz" {
   # environment variable to keep the secret out of configuration and state.
   access_token = var.signoz_access_token
 }
-
-resource "signoz_route_policy" "critical_to_oncall" {
-  name       = "route-critical-to-oncall"
-  expression = "severity == \"critical\""
-  channels   = ["oncall-slack"]
-}
 ```
 
-Create an access token from a
-[SigNoz service account](https://signoz.io/docs/manage/administrator-guide/iam/service-accounts/).
-See the
-[registry documentation](https://registry.terraform.io/providers/signoz/signoz/latest/docs)
-for every resource, data source, and example.
+Create an access token from a [SigNoz service account](https://signoz.io/docs/manage/administrator-guide/iam/service-accounts/).
+See the [registry documentation](https://registry.terraform.io/providers/signoz/signoz/latest/docs) for every resource, data source, and example.
 
 ## Requirements
 
