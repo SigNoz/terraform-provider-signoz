@@ -14,7 +14,7 @@ Fetches an alert from Signoz using its ID. The ID can be found in the URL of the
 
 ```terraform
 data "signoz_alert" "example" {
-  id = "5"
+  id = "0192a9c2-1234-7abc-8def-0123456789ab"
 }
 ```
 
