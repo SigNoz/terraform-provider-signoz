@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - main
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -35,3 +37,33 @@ jobs:
         env:
           TF_ACC: "1"
         run: go test -v -cover ./...
+
+  integration:
+    # Spins up a full SigNoz stack with foundry and runs the Terraform CRUD
+    # cycle over the examples. Heavy, so it is opt-in: add the
+    # 'safe-to-integrate' label to a PR, or trigger the workflow manually.
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'safe-to-integrate')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        with:
+          terraform_wrapper: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v4
+      - name: install foundryctl
+        run: |
+          curl -fsSL https://signoz.io/foundry.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: integration tests
+        run: |
+          cd tests
+          uv sync
+          uv run pytest -vv
