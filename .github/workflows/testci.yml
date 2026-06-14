@@ -1,0 +1,37 @@
+name: testci
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        terraform:
+          - "1.0.*"
+          - "1.6.*"
+          - "1.9.*"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        with:
+          terraform_version: ${{ matrix.terraform }}
+          terraform_wrapper: false
+      - name: go-deps
+        run: go mod download
+      - name: run
+        env:
+          TF_ACC: "1"
+        run: go test -v -cover ./...
