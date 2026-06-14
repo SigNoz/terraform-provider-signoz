@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    signoz = {
-      source = "registry.terraform.io/signoz/signoz"
-    }
-  }
-}
-
-provider "signoz" {
-  endpoint     = "http://localhost:3301"
-  access_token = "<SIGNOZ-API-KEY>"
-}
-
 // Refer to https://github.com/SigNoz/dashboards for more dashboard templates.
 
 resource "signoz_dashboard" "new_dashboard" {
@@ -220,8 +207,4 @@ resource "signoz_dashboard" "new_dashboard" {
       "yAxisUnit" : "none"
     },
   ])
-}
-
-output "dashboard_new" {
-  value = signoz_dashboard.new_dashboard
 }

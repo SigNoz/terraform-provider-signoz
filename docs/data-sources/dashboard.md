@@ -13,25 +13,8 @@ Fetches a dashboard from Signoz using its id. The id can be found in the URL of 
 ## Example Usage
 
 ```terraform
-terraform {
-  required_providers {
-    signoz = {
-      source = "registry.terraform.io/signoz/signoz"
-    }
-  }
-}
-
-provider "signoz" {
-  endpoint     = "http://localhost:3301"
-  access_token = "<SIGNOZ-API-KEY>"
-}
-
-data "signoz_dashboard" "get_dashboard" {
-  uuid = "<uuid>"
-}
-
-output "dashboard" {
-  value = data.signoz_dashboard.get_dashboard
+data "signoz_dashboard" "example" {
+  id = "0192a9c2-1234-7abc-8def-0123456789ab"
 }
 ```
 
