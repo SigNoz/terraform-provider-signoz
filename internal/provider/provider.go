@@ -27,6 +27,7 @@ const (
 var _ provider.Provider = (*signozProvider)(nil)
 
 type signozProvider struct {
+	name           string
 	terraformAgent string
 	version        string
 }
@@ -39,14 +40,14 @@ type signozProviderModel struct {
 }
 
 // New returns the framework provider constructor used by `main.go`.
-func New(terraformAgent, version string) func() provider.Provider {
+func New(terraformAgent, version, name string) func() provider.Provider {
 	return func() provider.Provider {
-		return &signozProvider{terraformAgent: terraformAgent, version: version}
+		return &signozProvider{terraformAgent: terraformAgent, version: version, name: name}
 	}
 }
 
-func (p *signozProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "signoz"
+func (p *signozProvider) Metadata(_ context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = p.name
 	resp.Version = p.version
 }
 
