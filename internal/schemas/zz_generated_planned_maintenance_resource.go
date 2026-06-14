@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	customtypes "github.com/SigNoz/terraform-provider-signoz/internal/types"
+	customtypes "github.com/SigNoz/terraform-provider-signoz/internal/customtypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
 
