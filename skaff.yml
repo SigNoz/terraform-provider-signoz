@@ -23,11 +23,44 @@ resources:
         - createdBy
         - updatedAt
         - updatedBy
+  planned_maintenance:
+    create:
+      path: /api/v1/downtime_schedules
+      method: POST
+    read:
+      path: /api/v1/downtime_schedules/{id}
+      method: GET
+    update:
+      path: /api/v1/downtime_schedules/{id}
+      method: PUT
+    delete:
+      path: /api/v1/downtime_schedules/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
 
 data_sources:
   route_policy:
     read:
       path: /api/v1/route_policies/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+  planned_maintenance:
+    read:
+      path: /api/v1/downtime_schedules/{id}
       method: GET
     schema:
       ignores:
