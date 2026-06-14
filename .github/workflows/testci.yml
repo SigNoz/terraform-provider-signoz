@@ -39,9 +39,6 @@ jobs:
         run: go test -v -cover ./...
 
   integration:
-    # Spins up a full SigNoz stack with foundry and runs the Terraform CRUD
-    # cycle over the examples. Heavy, so it is opt-in: add the
-    # 'safe-to-integrate' label to a PR, or trigger the workflow manually.
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'safe-to-integrate')
     runs-on: ubuntu-latest
     timeout-minutes: 45
