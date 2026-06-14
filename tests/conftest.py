@@ -3,6 +3,7 @@ import pytest
 pytest_plugins = [
     "fixtures.foundry",
     "fixtures.signoz",
+    "fixtures.terraform",
 ]
 
 
