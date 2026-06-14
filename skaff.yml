@@ -44,6 +44,28 @@ resources:
         - createdBy
         - updatedAt
         - updatedBy
+  service_account:
+    create:
+      path: /api/v1/service_accounts
+      method: POST
+    read:
+      path: /api/v1/service_accounts/{id}
+      method: GET
+    update:
+      path: /api/v1/service_accounts/{id}
+      method: PUT
+    delete:
+      path: /api/v1/service_accounts/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - serviceAccountRoles
 
 data_sources:
   route_policy:
@@ -70,3 +92,16 @@ data_sources:
         - createdBy
         - updatedAt
         - updatedBy
+  service_account:
+    read:
+      path: /api/v1/service_accounts/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - serviceAccountRoles
