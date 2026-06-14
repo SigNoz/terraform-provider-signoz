@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/SigNoz/terraform-provider-signoz/internal/apitypes"
 	"github.com/gojek/heimdall/v7"
 	"github.com/gojek/heimdall/v7/httpclient"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -129,62 +130,60 @@ func ErrorFromResponse(resp *http.Response, body []byte) *APIError {
 	return decodeError(resp.StatusCode, body)
 }
 
-type errorEnvelope struct {
-	Error  errorBody `json:"error"`
-	Status string    `json:"status"`
-}
-
-type errorBody struct {
-	Code    string                `json:"code"`
-	Errors  []errorBodyAdditional `json:"errors"`
-	Message string                `json:"message"`
-	URL     string                `json:"url"`
-}
-
-type errorBodyAdditional struct {
-	Message string `json:"message"`
-}
-
-// APIError is a non-2xx response from the SigNoz API.
+// APIError is a non-2xx response from the SigNoz API. It carries the decoded
+// `{error, status}` body in Render (nil when the body didn't match the
+// envelope) rather than copying its fields, so apitypes.RenderErrorResponse
+// stays the single source of truth. Raw is the unparsed body, kept for the
+// fallback case.
 type APIError struct {
 	StatusCode int
-	Code       string
-	Message    string
-	URL        string
-	Details    []string
 	Raw        string
+	Render     *apitypes.RenderErrorResponse
 }
 
 func (e *APIError) Error() string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "signoz api: HTTP %d", e.StatusCode)
-	if e.Code != "" {
-		fmt.Fprintf(&b, " (%s)", e.Code)
-	}
-	if e.Message != "" {
-		fmt.Fprintf(&b, ": %s", e.Message)
-	}
-	for _, d := range e.Details {
-		fmt.Fprintf(&b, " | %s", d)
-	}
-	if e.Message == "" && len(e.Details) == 0 && e.Raw != "" {
-		fmt.Fprintf(&b, ": %s", e.Raw)
-	}
-	return b.String()
-}
 
-func decodeError(status int, raw []byte) *APIError {
-	out := &APIError{StatusCode: status, Raw: strings.TrimSpace(string(raw))}
-	var env errorEnvelope
-	if err := json.Unmarshal(raw, &env); err == nil && (env.Error.Message != "" || env.Error.Code != "" || len(env.Error.Errors) > 0) {
-		out.Code = env.Error.Code
-		out.Message = env.Error.Message
-		out.URL = env.Error.URL
-		for _, e := range env.Error.Errors {
-			if e.Message != "" {
-				out.Details = append(out.Details, e.Message)
+	if e.Render == nil {
+		if e.Raw != "" {
+			fmt.Fprintf(&b, ": %s", e.Raw)
+		}
+		return b.String()
+	}
+
+	body := e.Render.Error
+	if body.Code != "" {
+		fmt.Fprintf(&b, " (%s)", body.Code)
+	}
+	if body.Message != "" {
+		fmt.Fprintf(&b, ": %s", body.Message)
+	}
+	if body.Errors != nil {
+		for _, d := range *body.Errors {
+			if d.Message != nil && *d.Message != "" {
+				fmt.Fprintf(&b, " | %s", *d.Message)
 			}
 		}
 	}
+
+	return b.String()
+}
+
+// decodeError parses SigNoz's `{error, status}` failure body into the same
+// `apitypes.RenderErrorResponse` the generated client decodes its JSON4xx/5xx
+// fields into. Render stays nil (and Raw carries the body) when it doesn't match.
+func decodeError(status int, raw []byte) *APIError {
+	out := &APIError{StatusCode: status, Raw: strings.TrimSpace(string(raw))}
+
+	var re apitypes.RenderErrorResponse
+	if err := json.Unmarshal(raw, &re); err != nil {
+		return out
+	}
+
+	if re.Error.Code != "" || re.Error.Message != "" || (re.Error.Errors != nil && len(*re.Error.Errors) > 0) {
+		out.Render = &re
+	}
+
 	return out
 }
