@@ -1,4 +1,4 @@
-package conv
+package convtypes
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 

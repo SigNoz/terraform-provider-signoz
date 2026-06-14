@@ -1,4 +1,4 @@
-package conv
+package convtypes
 
 import (
 	"context"

@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apitypes"
+	"github.com/SigNoz/terraform-provider-signoz/internal/convtypes"
 	"github.com/SigNoz/terraform-provider-signoz/internal/schemas"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -25,21 +26,21 @@ var _ = types.StringNull
 func ExpandAlertmanagertypesPostableRoutePolicy(ctx context.Context, m schemas.RoutePolicyModel) (*apitypes.AlertmanagertypesPostableRoutePolicy, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	channels, d := StringPointerSliceFromList(ctx, m.Channels)
+	channels, d := convtypes.StringPointerSliceFromList(ctx, m.Channels)
 	diags.Append(d...)
 	var kind *apitypes.AlertmanagertypesExpressionKind
 	if !m.Kind.IsNull() && !m.Kind.IsUnknown() {
 		x := apitypes.AlertmanagertypesExpressionKind(m.Kind.ValueString())
 		kind = &x
 	}
-	tags, d := StringPointerSliceFromList(ctx, m.Tags)
+	tags, d := convtypes.StringPointerSliceFromList(ctx, m.Tags)
 	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 	return &apitypes.AlertmanagertypesPostableRoutePolicy{
 		Channels:    channels,
-		Description: StringPointer(m.Description),
+		Description: convtypes.StringPointer(m.Description),
 		Expression:  m.Expression.ValueString(),
 		Kind:        kind,
 		Name:        m.Name.ValueString(),
@@ -56,7 +57,7 @@ func FlattenAlertmanagertypesGettableRoutePolicy(ctx context.Context, g *apitype
 		return nil, diags
 	}
 
-	channelsFlat, d := ListFromStringPointerSlice(ctx, g.Channels)
+	channelsFlat, d := convtypes.ListFromStringPointerSlice(ctx, g.Channels)
 	diags.Append(d...)
 	var kindFlat types.String
 	if g.Kind != nil {
@@ -64,7 +65,7 @@ func FlattenAlertmanagertypesGettableRoutePolicy(ctx context.Context, g *apitype
 	} else {
 		kindFlat = types.StringNull()
 	}
-	tagsFlat, d := ListFromStringPointerSlice(ctx, g.Tags)
+	tagsFlat, d := convtypes.ListFromStringPointerSlice(ctx, g.Tags)
 	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
@@ -72,15 +73,15 @@ func FlattenAlertmanagertypesGettableRoutePolicy(ctx context.Context, g *apitype
 
 	return &schemas.RoutePolicyDataSourceModel{
 		Channels:    channelsFlat,
-		CreatedAt:   TimeStringFromValue(g.CreatedAt),
-		CreatedBy:   StringFromPointer(g.CreatedBy),
-		Description: StringFromPointer(g.Description),
+		CreatedAt:   convtypes.TimeStringFromValue(g.CreatedAt),
+		CreatedBy:   convtypes.StringFromPointer(g.CreatedBy),
+		Description: convtypes.StringFromPointer(g.Description),
 		Expression:  types.StringValue(g.Expression),
 		Id:          types.StringValue(g.Id),
 		Kind:        kindFlat,
 		Name:        types.StringValue(g.Name),
 		Tags:        tagsFlat,
-		UpdatedAt:   TimeStringFromValue(g.UpdatedAt),
-		UpdatedBy:   StringFromPointer(g.UpdatedBy),
+		UpdatedAt:   convtypes.TimeStringFromValue(g.UpdatedAt),
+		UpdatedBy:   convtypes.StringFromPointer(g.UpdatedBy),
 	}, diags
 }

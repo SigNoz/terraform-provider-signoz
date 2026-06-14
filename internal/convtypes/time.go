@@ -3,7 +3,7 @@
 //
 // Only primitive ↔ wire conversions live here. Anything that touches a
 // specific customtype belongs in the per-customtype file.
-package conv
+package convtypes
 
 import (
 	"fmt"
