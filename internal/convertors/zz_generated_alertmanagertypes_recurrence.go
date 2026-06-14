@@ -7,7 +7,7 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apitypes"
 	"github.com/SigNoz/terraform-provider-signoz/internal/convtypes"
-	customtypes "github.com/SigNoz/terraform-provider-signoz/internal/customtypes"
+	"github.com/SigNoz/terraform-provider-signoz/internal/customtypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
