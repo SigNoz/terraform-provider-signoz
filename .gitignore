@@ -103,3 +103,6 @@ terragrunt-debug.tfvars.json
 CLAUDE.local.md
 .cache/
 .dev/
+
+### Agentic development (remove when comfortable) ###
+.claude/rules/*.md
