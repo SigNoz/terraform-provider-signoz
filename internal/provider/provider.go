@@ -1,7 +1,3 @@
-// Package provider exposes the SigNoz Terraform provider built on top of
-// terraform-plugin-framework. The provider configures a single
-// `*client.Client` and ships it to every resource and datasource via
-// `resp.ResourceData` / `resp.DataSourceData`.
 package provider
 
 import (
