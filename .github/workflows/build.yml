@@ -1,8 +1,4 @@
 name: build
-
-# Builds and publishes the signed release artifacts when a version tag (v*) is
-# pushed. GoReleaser produces the per-platform archives plus the GPG-signed
-# SHA256SUMS that the Terraform Registry requires to ingest a release.
 on:
   push:
     tags:
@@ -17,7 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # GoReleaser needs the full history (previous tags) for the changelog.
           fetch-depth: 0
       - uses: actions/setup-go@v5
         with:
