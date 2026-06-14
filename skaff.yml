@@ -1,0 +1,39 @@
+provider:
+  name: signoz
+
+resources:
+  route_policy:
+    create:
+      path: /api/v1/route_policies
+      method: POST
+    read:
+      path: /api/v1/route_policies/{id}
+      method: GET
+    update:
+      path: /api/v1/route_policies/{id}
+      method: PUT
+    delete:
+      path: /api/v1/route_policies/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+
+data_sources:
+  route_policy:
+    read:
+      path: /api/v1/route_policies/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
