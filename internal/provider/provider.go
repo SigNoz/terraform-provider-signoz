@@ -8,6 +8,7 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
 	"github.com/SigNoz/terraform-provider-signoz/internal/services"
+	"github.com/SigNoz/terraform-provider-signoz/signoz"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -26,6 +27,7 @@ const (
 var _ provider.Provider = (*signozProvider)(nil)
 
 type signozProvider struct {
+	name           string
 	terraformAgent string
 	version        string
 }
@@ -38,14 +40,14 @@ type signozProviderModel struct {
 }
 
 // New returns the framework provider constructor used by `main.go`.
-func New(terraformAgent, version string) func() provider.Provider {
+func New(terraformAgent, version, name string) func() provider.Provider {
 	return func() provider.Provider {
-		return &signozProvider{terraformAgent: terraformAgent, version: version}
+		return &signozProvider{terraformAgent: terraformAgent, version: version, name: name}
 	}
 }
 
-func (p *signozProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "signoz"
+func (p *signozProvider) Metadata(_ context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = p.name
 	resp.Version = p.version
 }
 
@@ -132,6 +134,8 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 		services.NewPlannedMaintenanceResource,
 		services.NewRoutePolicyResource,
 		services.NewServiceAccountResource,
+		signoz.NewAlertResource,
+		signoz.NewDashboardResource,
 	}
 }
 
@@ -140,6 +144,8 @@ func (p *signozProvider) DataSources(_ context.Context) []func() datasource.Data
 		services.NewPlannedMaintenanceDataSource,
 		services.NewRoutePolicyDataSource,
 		services.NewServiceAccountDataSource,
+		signoz.NewAlertDataSource,
+		signoz.NewDashboardDataSource,
 	}
 }
 

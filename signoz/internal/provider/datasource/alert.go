@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
@@ -61,11 +62,11 @@ func (d *alertDataSource) Configure(_ context.Context, req datasource.ConfigureR
 		return
 	}
 
-	client, ok := req.ProviderData.(*client.Client)
+	wc, ok := req.ProviderData.(*apiclients.WrappedClient)
 	if !ok {
 		addErr(
 			&resp.Diagnostics,
-			fmt.Errorf("unexpected data source configure type. Expected *client.Client, got: %T. "+
+			fmt.Errorf("unexpected data source configure type. Expected *apiclients.WrappedClient, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
 			SigNozAlert,
 		)
@@ -73,7 +74,7 @@ func (d *alertDataSource) Configure(_ context.Context, req datasource.ConfigureR
 		return
 	}
 
-	d.client = client
+	d.client = client.New(wc)
 }
 
 // Metadata returns the data source type name.

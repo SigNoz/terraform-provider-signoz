@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	signozProvider "github.com/SigNoz/terraform-provider-signoz/signoz"
+	"github.com/SigNoz/terraform-provider-signoz/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -29,8 +29,9 @@ var (
 )
 
 const (
-	registry       = "registry.terraform.io/SigNoz/signoz"
-	terraformAgent = "TF"
+	registry       = "registry.terraform.io/signoz/signoz"
+	terraformAgent = "terraform"
+	name           = "signoz"
 )
 
 func main() {
@@ -40,14 +41,11 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		// TODO: Update this string with the published name of your provider.
-		// Also update the tfplugindocs generate command to either remove the
-		// -provider-name flag or set its value to the updated provider name.
-		Address: "registry.terraform.io/signoz/signoz",
+		Address: registry,
 		Debug:   debug,
 	}
 
-	err := providerserver.Serve(context.Background(), signozProvider.New(terraformAgent, version), opts)
+	err := providerserver.Serve(context.Background(), provider.New(terraformAgent, version, name), opts)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

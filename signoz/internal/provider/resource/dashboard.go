@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
@@ -59,11 +60,11 @@ func (r *dashboardResource) Configure(_ context.Context, req resource.ConfigureR
 		return
 	}
 
-	client, ok := req.ProviderData.(*client.Client)
+	wc, ok := req.ProviderData.(*apiclients.WrappedClient)
 	if !ok {
 		addErr(
 			&resp.Diagnostics,
-			fmt.Errorf("unexpected resource configure type. Expected *client.Client, got: %T. "+
+			fmt.Errorf("unexpected resource configure type. Expected *apiclients.WrappedClient, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
 			operationConfigure, SigNozDashboard,
 		)
@@ -71,7 +72,7 @@ func (r *dashboardResource) Configure(_ context.Context, req resource.ConfigureR
 		return
 	}
 
-	r.client = client
+	r.client = client.New(wc)
 }
 
 // Metadata returns the resource type name.
