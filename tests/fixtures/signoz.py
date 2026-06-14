@@ -1,0 +1,128 @@
+"""Authenticate against a running SigNoz instance for the integration tests.
+
+The casting (casting.yaml) provisions a root user on first boot. We log in as
+that root user, then mint a service-account API key — the SigNoz access token
+the Terraform provider authenticates with.
+"""
+
+import time
+from dataclasses import dataclass
+
+import pytest
+import requests
+
+from fixtures.logger import setup_logger
+
+logger = setup_logger(__name__)
+
+# Must match the SIGNOZ_USER_ROOT_* values in casting.yaml.
+ROOT_EMAIL = "admin@integration.test"
+ROOT_PASSWORD = "password123Z$"
+
+# Service account minted for Terraform. signoz-admin so it can manage every
+# resource the provider exercises.
+SERVICE_ACCOUNT_NAME = "terraform-integration"
+SERVICE_ACCOUNT_ROLE = "signoz-admin"
+
+_TIMEOUT = 10
+
+
+@dataclass(frozen=True)
+class SigNoz:
+    """A reachable, authenticated SigNoz instance."""
+
+    endpoint: str
+    access_token: str
+
+
+def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: float = 240.0) -> str:
+    """Return a bearer access token for the root user.
+
+    Retries until SigNoz is up and the root user has been reconciled (it is
+    created asynchronously shortly after the container starts).
+    """
+    deadline = time.time() + ready_timeout
+    last = None
+
+    while time.time() < deadline:
+        try:
+            ctx = requests.get(
+                f"{endpoint}/api/v2/sessions/context",
+                params={"email": email, "ref": endpoint},
+                timeout=_TIMEOUT,
+            )
+            if ctx.status_code == 200 and ctx.json().get("data", {}).get("orgs"):
+                org_id = ctx.json()["data"]["orgs"][0]["id"]
+
+                login = requests.post(
+                    f"{endpoint}/api/v2/sessions/email_password",
+                    json={"email": email, "password": password, "orgId": org_id},
+                    timeout=_TIMEOUT,
+                )
+                if login.status_code == 200:
+                    logger.info("logged in as root user %s", email)
+                    return login.json()["data"]["accessToken"]
+
+                last = (login.status_code, login.text[:200])
+            else:
+                last = (ctx.status_code, ctx.text[:200])
+        except requests.RequestException as err:
+            last = err
+
+        time.sleep(3)
+
+    raise TimeoutError(f"could not log in as {email} within {ready_timeout}s (last={last})")
+
+
+def _bearer(token: str) -> dict:
+    return {"Authorization": f"Bearer {token}"}
+
+
+def mint_service_account_key(
+    endpoint: str,
+    bearer_token: str,
+    *,
+    name: str = SERVICE_ACCOUNT_NAME,
+    role: str = SERVICE_ACCOUNT_ROLE,
+) -> str:
+    """Create a service account, assign it a role, and return a fresh API key."""
+    sa = requests.post(
+        f"{endpoint}/api/v1/service_accounts",
+        json={"name": name},
+        headers=_bearer(bearer_token),
+        timeout=_TIMEOUT,
+    )
+    assert sa.status_code == 201, sa.text
+    sa_id = sa.json()["data"]["id"]
+
+    roles = requests.get(f"{endpoint}/api/v1/roles", headers=_bearer(bearer_token), timeout=_TIMEOUT)
+    assert roles.status_code == 200, roles.text
+    role_id = next(r["id"] for r in roles.json()["data"] if r["name"] == role)
+
+    assign = requests.post(
+        f"{endpoint}/api/v1/service_accounts/{sa_id}/roles",
+        json={"id": role_id},
+        headers=_bearer(bearer_token),
+        timeout=_TIMEOUT,
+    )
+    assert assign.status_code == 204, assign.text
+
+    key = requests.post(
+        f"{endpoint}/api/v1/service_accounts/{sa_id}/keys",
+        json={"name": "terraform-integration", "expiresAt": 0},
+        headers=_bearer(bearer_token),
+        timeout=_TIMEOUT,
+    )
+    assert key.status_code == 201, key.text
+
+    logger.info("minted service-account key for %s (role %s)", name, role)
+    return key.json()["data"]["key"]
+
+
+@pytest.fixture(scope="session")
+def signoz(signoz_endpoint: str) -> SigNoz:
+    """A SigNoz instance with a service-account access token for Terraform."""
+    bearer_token = _login_as_root(signoz_endpoint, ROOT_EMAIL, ROOT_PASSWORD)
+    access_token = mint_service_account_key(signoz_endpoint, bearer_token)
+
+    return SigNoz(endpoint=signoz_endpoint, access_token=access_token)

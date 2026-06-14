@@ -1,0 +1,17 @@
+apiVersion: v1alpha1
+kind: Installation
+metadata:
+  name: signoz
+spec:
+  deployment:
+    mode: docker
+    flavor: compose
+  signoz:
+    spec:
+      # Provision a root admin user on first boot so the integration tests can
+      # log in without the interactive /api/v1/register flow. These must match
+      # ROOT_EMAIL / ROOT_PASSWORD in fixtures/signoz.py.
+      env:
+        SIGNOZ_USER_ROOT_ENABLED: "true"
+        SIGNOZ_USER_ROOT_EMAIL: "admin@integration.test"
+        SIGNOZ_USER_ROOT_PASSWORD: "password123Z$"

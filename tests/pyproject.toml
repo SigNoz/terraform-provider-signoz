@@ -1,0 +1,21 @@
+[project]
+name = "terraform-provider-signoz-tests"
+version = "0.1.0"
+description = "Integration tests for the SigNoz Terraform provider"
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=8.0",
+    "requests>=2.32",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-ra -p no:warnings --import-mode=importlib"
+log_cli = true
+log_format = "%(asctime)s [%(levelname)s] (%(filename)s:%(lineno)s) %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
