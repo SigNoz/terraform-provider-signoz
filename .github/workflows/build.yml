@@ -1,0 +1,37 @@
+name: build
+
+# Builds and publishes the signed release artifacts when a version tag (v*) is
+# pushed. GoReleaser produces the per-platform archives plus the GPG-signed
+# SHA256SUMS that the Terraform Registry requires to ingest a release.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # GoReleaser needs the full history (previous tags) for the changelog.
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: import gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.PRIMUS_GPG_PRIVATE_KEY }}
+      - name: goreleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}

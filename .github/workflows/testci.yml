@@ -1,0 +1,41 @@
+name: testci
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    name: terraform acceptance tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # Terraform CLI versions to run the acceptance tests against.
+        terraform:
+          - "1.0.*"
+          - "1.6.*"
+          - "1.9.*"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ matrix.terraform }}
+          terraform_wrapper: false
+      - run: go mod download
+      # TF_ACC=1 runs the Terraform acceptance tests. They talk to a real SigNoz
+      # instance, so once tests land this needs SIGNOZ_ENDPOINT + SIGNOZ_ACCESS_TOKEN
+      # (added with the integration-test CI).
+      - name: acceptance tests
+        env:
+          TF_ACC: "1"
+        run: go test -v -cover -timeout 30m ./...
