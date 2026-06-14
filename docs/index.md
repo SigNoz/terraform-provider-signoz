@@ -8,8 +8,7 @@ description: |-
 
 [SigNoz](https://signoz.io) is an open-source observability platform for metrics, traces,
 and logs. The SigNoz provider is used to manage the resources supported by SigNoz — such
-as alerts, dashboards, notification routing, planned maintenance, and service accounts —
-as code, on both SigNoz Cloud and self-hosted deployments.
+as alerts and dashboards — as code, on both SigNoz Cloud and self-hosted deployments.
 
 Use the navigation to the left to read about the available resources and data sources.
 
@@ -19,11 +18,11 @@ The provider authenticates with a SigNoz API access token, sent on every request
 automation, create a
 [service account](https://signoz.io/docs/manage/administrator-guide/iam/service-accounts/)
 with a role that can manage your resources and use its API key. Provide the token with the
-`access_token` argument or the `SIGNOZ_ACCESS_TOKEN` environment variable — prefer the
+`access_token` argument or the `SIGNOZ_ACCESS_TOKEN` environment variable - prefer the
 environment variable so the secret stays out of your configuration and state.
 
 Set `endpoint` to the root URL of your SigNoz instance — your SigNoz Cloud region URL, or
-the UI URL of a self-hosted deployment (for example `http://localhost:3301`). It can also
+the UI URL of a self-hosted deployment (for example `http://localhost:8080`). It can also
 be set with `SIGNOZ_ENDPOINT`.
 
 ## Example Usage
@@ -32,7 +31,7 @@ be set with `SIGNOZ_ENDPOINT`.
 provider "signoz" {
   # Root URL of your SigNoz instance: a SigNoz Cloud region URL, or the UI URL of a
   # self-hosted deployment. Can also be set with the SIGNOZ_ENDPOINT environment variable.
-  endpoint = "http://localhost:3301"
+  endpoint = "http://localhost:8080"
 
   # API access token with the Admin role. Prefer the SIGNOZ_ACCESS_TOKEN environment
   # variable to keep the secret out of configuration and state.
@@ -46,6 +45,6 @@ provider "signoz" {
 ### Optional
 
 - `access_token` (String, Sensitive) SigNoz API access token. Read from SIGNOZ_ACCESS_TOKEN when unset.
-- `endpoint` (String) SigNoz API endpoint URL. Defaults to http://localhost:3301 or SIGNOZ_ENDPOINT.
+- `endpoint` (String) SigNoz API endpoint URL. Defaults to http://localhost:8080 or SIGNOZ_ENDPOINT.
 - `http_max_retry` (Number) Max HTTP retries on transient failures. Read from SIGNOZ_HTTP_MAX_RETRY when unset.
 - `http_timeout` (String) HTTP request timeout (Go duration, e.g. "35s"). Read from SIGNOZ_HTTP_TIMEOUT when unset.
