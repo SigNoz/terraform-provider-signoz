@@ -7,9 +7,8 @@ description: |-
 
 # SigNoz Provider v0.0.11 to v0.0.12 Upgrade Guide
 
-Version v0.0.12 of the SigNoz provider includes a breaking change to the
-`http_timeout` provider argument. This guide covers the change and the steps to
-upgrade from v0.0.11.
+Version v0.0.12 of the SigNoz provider includes breaking changes to the provider
+configuration. This guide covers each change and the steps to upgrade from v0.0.11.
 
 ## `http_timeout` is now a duration string
 
@@ -36,3 +35,18 @@ Update any `http_timeout` value in your provider configuration — or the
 `SIGNOZ_HTTP_TIMEOUT` environment variable — from a bare number of seconds to a Go
 duration string: `35` becomes `"35s"`, `90` becomes `"1m30s"`. Durations accept
 `s`, `m`, and `h` units. The default when unset is unchanged (`35s`).
+
+## The default endpoint is now `http://localhost:8080`
+
+When neither the `endpoint` argument nor the `SIGNOZ_ENDPOINT` environment variable
+is set, the provider now defaults to `http://localhost:8080` (the current SigNoz
+self-hosted default) instead of `http://localhost:3301`.
+
+This only affects configurations that relied on the default. If your instance still
+listens on `3301` — or any other address — set `endpoint` explicitly:
+
+```terraform
+provider "signoz" {
+  endpoint = "http://localhost:3301"
+}
+```
