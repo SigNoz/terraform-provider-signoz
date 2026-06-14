@@ -66,22 +66,6 @@ func FlattenAlertmanagertypesSchedule(ctx context.Context, in *apitypes.Alertman
 	return rv, diags
 }
 
-// alertmanagertypesScheduleValueFromObject lifts the raw basetypes.ObjectValue the
-// framework stores for a nested customtype into a typed customtypes.AlertmanagertypesScheduleValue
-// (structural cast, no field coercion); package-private, called by parent expanders.
-func alertmanagertypesScheduleValueFromObject(ctx context.Context, ov basetypes.ObjectValue) (customtypes.AlertmanagertypesScheduleValue, diag.Diagnostics) {
-	if ov.IsNull() {
-		return customtypes.NewAlertmanagertypesScheduleValueNull(), nil
-	}
-	if ov.IsUnknown() {
-		return customtypes.NewAlertmanagertypesScheduleValueUnknown(), nil
-	}
-	return customtypes.NewAlertmanagertypesScheduleValue(
-		customtypes.AlertmanagertypesScheduleValue{}.AttributeTypes(ctx),
-		ov.Attributes(),
-	)
-}
-
 func ExpandAlertmanagertypesScheduleList(ctx context.Context, l types.List) (*[]apitypes.AlertmanagertypesSchedule, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if l.IsNull() || l.IsUnknown() {
@@ -125,4 +109,20 @@ func FlattenAlertmanagertypesScheduleList(ctx context.Context, in *[]apitypes.Al
 	listVal, d := types.ListValue(elemType, elems)
 	diags.Append(d...)
 	return listVal, diags
+}
+
+// alertmanagertypesScheduleValueFromObject lifts the raw basetypes.ObjectValue the
+// framework stores for a nested customtype into a typed customtypes.AlertmanagertypesScheduleValue
+// (structural cast, no field coercion); package-private, called by parent expanders.
+func alertmanagertypesScheduleValueFromObject(ctx context.Context, ov basetypes.ObjectValue) (customtypes.AlertmanagertypesScheduleValue, diag.Diagnostics) {
+	if ov.IsNull() {
+		return customtypes.NewAlertmanagertypesScheduleValueNull(), nil
+	}
+	if ov.IsUnknown() {
+		return customtypes.NewAlertmanagertypesScheduleValueUnknown(), nil
+	}
+	return customtypes.NewAlertmanagertypesScheduleValue(
+		customtypes.AlertmanagertypesScheduleValue{}.AttributeTypes(ctx),
+		ov.Attributes(),
+	)
 }

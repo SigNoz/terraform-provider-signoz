@@ -56,22 +56,6 @@ func FlattenAlertmanagertypesRecurrence(ctx context.Context, in *apitypes.Alertm
 	return rv, diags
 }
 
-// alertmanagertypesRecurrenceValueFromObject lifts the raw basetypes.ObjectValue the
-// framework stores for a nested customtype into a typed customtypes.AlertmanagertypesRecurrenceValue
-// (structural cast, no field coercion); package-private, called by parent expanders.
-func alertmanagertypesRecurrenceValueFromObject(ctx context.Context, ov basetypes.ObjectValue) (customtypes.AlertmanagertypesRecurrenceValue, diag.Diagnostics) {
-	if ov.IsNull() {
-		return customtypes.NewAlertmanagertypesRecurrenceValueNull(), nil
-	}
-	if ov.IsUnknown() {
-		return customtypes.NewAlertmanagertypesRecurrenceValueUnknown(), nil
-	}
-	return customtypes.NewAlertmanagertypesRecurrenceValue(
-		customtypes.AlertmanagertypesRecurrenceValue{}.AttributeTypes(ctx),
-		ov.Attributes(),
-	)
-}
-
 func ExpandAlertmanagertypesRecurrenceList(ctx context.Context, l types.List) (*[]apitypes.AlertmanagertypesRecurrence, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if l.IsNull() || l.IsUnknown() {
@@ -115,4 +99,20 @@ func FlattenAlertmanagertypesRecurrenceList(ctx context.Context, in *[]apitypes.
 	listVal, d := types.ListValue(elemType, elems)
 	diags.Append(d...)
 	return listVal, diags
+}
+
+// alertmanagertypesRecurrenceValueFromObject lifts the raw basetypes.ObjectValue the
+// framework stores for a nested customtype into a typed customtypes.AlertmanagertypesRecurrenceValue
+// (structural cast, no field coercion); package-private, called by parent expanders.
+func alertmanagertypesRecurrenceValueFromObject(ctx context.Context, ov basetypes.ObjectValue) (customtypes.AlertmanagertypesRecurrenceValue, diag.Diagnostics) {
+	if ov.IsNull() {
+		return customtypes.NewAlertmanagertypesRecurrenceValueNull(), nil
+	}
+	if ov.IsUnknown() {
+		return customtypes.NewAlertmanagertypesRecurrenceValueUnknown(), nil
+	}
+	return customtypes.NewAlertmanagertypesRecurrenceValue(
+		customtypes.AlertmanagertypesRecurrenceValue{}.AttributeTypes(ctx),
+		ov.Attributes(),
+	)
 }
