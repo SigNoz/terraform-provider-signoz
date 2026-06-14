@@ -1,28 +1,30 @@
 ---
 page_title: "SigNoz Provider"
 description: |-
-  The SigNoz provider manages alerts, dashboards, and access control in SigNoz from Terraform.
+  The SigNoz provider manages SigNoz observability resources — alerts, dashboards, and more — with Terraform.
 ---
 
 # SigNoz Provider
 
-The SigNoz provider lets you manage [SigNoz](https://signoz.io) resources — alerts,
-dashboards, notification route policies, planned maintenance windows, and service
-accounts — as code. It works with both SigNoz Cloud and self-hosted deployments.
+[SigNoz](https://signoz.io) is an open-source observability platform for metrics, traces,
+and logs. The SigNoz provider is used to manage the resources supported by SigNoz — such
+as alerts, dashboards, notification routing, planned maintenance, and service accounts —
+as code, on both SigNoz Cloud and self-hosted deployments.
 
 Use the navigation to the left to read about the available resources and data sources.
 
 ## Authentication
 
-The provider authenticates with a SigNoz API access token, created in the SigNoz UI
-with the Admin role ([documentation](https://signoz.io/docs/userguide/access-token/)).
-Provide it with the `access_token` argument or the `SIGNOZ_ACCESS_TOKEN` environment
-variable — prefer the environment variable so the secret stays out of your
-configuration and state.
+The provider authenticates with a SigNoz API access token, sent on every request. For
+automation, create a
+[service account](https://signoz.io/docs/manage/administrator-guide/iam/service-accounts/)
+with a role that can manage your resources and use its API key. Provide the token with the
+`access_token` argument or the `SIGNOZ_ACCESS_TOKEN` environment variable — prefer the
+environment variable so the secret stays out of your configuration and state.
 
-Set `endpoint` to the root URL of your SigNoz instance — your SigNoz Cloud region URL,
-or the UI URL of a self-hosted deployment (for example `http://localhost:3301`). It can
-also be set with `SIGNOZ_ENDPOINT`.
+Set `endpoint` to the root URL of your SigNoz instance — your SigNoz Cloud region URL, or
+the UI URL of a self-hosted deployment (for example `http://localhost:3301`). It can also
+be set with `SIGNOZ_ENDPOINT`.
 
 ## Example Usage
 
