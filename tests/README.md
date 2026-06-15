@@ -17,7 +17,7 @@ Modelled on the pytest harness in the [SigNoz repo](https://github.com/SigNoz/si
    **API key**. That key is the SigNoz access token the provider authenticates with.
 3. **Exercise** — [`fixtures/terraform.py`](fixtures/terraform.py) builds the provider
    and points Terraform at it with a `dev_overrides` CLI config (no registry, no
-   `init`). [`integration/test_examples.py`](integration/test_examples.py) then stages
+   `init`). [`integration/tests/test_examples.py`](integration/tests/test_examples.py) then stages
    each `examples/resources/signoz_*` directory into its own workspace and runs
    `apply` → `plan -detailed-exitcode` (must be `0` — no drift) → `destroy`.
 

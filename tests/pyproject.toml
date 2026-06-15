@@ -15,6 +15,10 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+# A bare `pytest` run collects only the suites under integration/tests. The
+# bootstrap entrypoints (integration/bootstrap/setup.py) are excluded here and
+# run on demand by explicit path, e.g. `pytest integration/bootstrap/setup.py`.
+testpaths = ["integration/tests"]
 # test_*.py for the suites, plus setup.py for the bootstrap entrypoints.
 python_files = ["test_*.py", "setup.py"]
 addopts = "-ra -p no:warnings --import-mode=importlib"
