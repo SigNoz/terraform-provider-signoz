@@ -4,11 +4,28 @@ on:
   pull_request:
     branches:
       - main
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  fmtlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v4
+      - name: install
+        run: cd tests && uv sync
+      - name: fmt
+        run: cd tests && uv run ruff format --check .
+      - name: lint
+        run: cd tests && uv run ruff check .
+
   acceptance:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -35,3 +52,30 @@ jobs:
         env:
           TF_ACC: "1"
         run: go test -v -cover ./...
+
+  integration:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'safe-to-integrate')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        with:
+          terraform_wrapper: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v4
+      - name: install foundryctl
+        run: |
+          curl -fsSL https://signoz.io/foundry.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: integration tests
+        run: |
+          cd tests
+          uv sync
+          uv run pytest --basetemp=./tmp/
