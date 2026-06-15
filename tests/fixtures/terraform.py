@@ -7,6 +7,7 @@ local build.
 """
 
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -23,6 +24,20 @@ EXAMPLES = REPO_ROOT / "examples"
 # Provider source address; matches main.go's registry address and the
 # `source` used in the generated versions.tf.
 PROVIDER_SOURCE = "signoz/signoz"
+
+# Written into each workspace so Terraform resolves signoz_* resources to the
+# dev-overridden provider; the provider reads endpoint/token from the env.
+VERSIONS_TF = f"""\
+terraform {{
+  required_providers {{
+    signoz = {{
+      source = "{PROVIDER_SOURCE}"
+    }}
+  }}
+}}
+
+provider "signoz" {{}}
+"""
 
 
 @pytest.fixture(scope="session")
@@ -57,6 +72,19 @@ def tf_cli_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) 
     )
 
     return cfg
+
+
+@pytest.fixture
+def workspace(tmp_path: Path, request: pytest.FixtureRequest) -> Path:
+    """Stage a single example .tf file into an isolated workspace with provider config.
+
+    Driven by indirect parametrization: `request.param` is the .tf file to stage.
+    """
+    tf_file: Path = request.param
+    shutil.copy(tf_file, tmp_path / tf_file.name)
+
+    (tmp_path / "versions.tf").write_text(VERSIONS_TF)
+    return tmp_path
 
 
 class Terraform:

@@ -2,45 +2,23 @@
 
 Each `*.tf` file under `examples/resources/signoz_*` is exercised on its own (so
 the six signoz_alert files run one by one): apply (create), confirm there is no
-drift (`plan -detailed-exitcode` == 0), then destroy. Every file gets its own
-workspace and runs against the real SigNoz instance from the `signoz` fixture.
+drift (`plan -detailed-exitcode` == 0), then destroy. The `workspace` fixture
+(fixtures.terraform) stages each file into its own workspace and it runs against
+the real SigNoz instance from the `signoz` fixture.
 
 Data-source examples are not exercised here — they read an object by id, which
 does not exist on a fresh instance.
 """
 
-import shutil
 from pathlib import Path
 
 import pytest
 
 from fixtures.signoz import SigNoz
-from fixtures.terraform import EXAMPLES, PROVIDER_SOURCE, Terraform
+from fixtures.terraform import EXAMPLES, Terraform
 
 RESOURCE_FILES = sorted((EXAMPLES / "resources").glob("signoz_*/*.tf"))
 RESOURCE_IDS = [f"{p.parent.name}/{p.name}" for p in RESOURCE_FILES]
-
-VERSIONS_TF = f"""\
-terraform {{
-  required_providers {{
-    signoz = {{
-      source = "{PROVIDER_SOURCE}"
-    }}
-  }}
-}}
-
-provider "signoz" {{}}
-"""
-
-
-@pytest.fixture
-def workspace(tmp_path: Path, request: pytest.FixtureRequest) -> Path:
-    """Stage a single example .tf file into an isolated workspace with provider config."""
-    tf_file: Path = request.param
-    shutil.copy(tf_file, tmp_path / tf_file.name)
-
-    (tmp_path / "versions.tf").write_text(VERSIONS_TF)
-    return tmp_path
 
 
 @pytest.mark.parametrize("workspace", RESOURCE_FILES, ids=RESOURCE_IDS, indirect=True)
