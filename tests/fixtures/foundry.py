@@ -58,7 +58,7 @@ def cast(foundryctl: str) -> str:
 
     logger.info("casting SigNoz with %s (%s)", foundryctl, CASTING)
     subprocess.run(
-        [foundryctl, "cast", "-f", str(CASTING), "-p", str(POURS)],
+        [foundryctl, "cast", "--no-ledger", "-f", str(CASTING), "-p", str(POURS)],
         cwd=TESTS_DIR,
         check=True,
     )
