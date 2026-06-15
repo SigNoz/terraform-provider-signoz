@@ -2,6 +2,7 @@ import pytest
 
 pytest_plugins = [
     "fixtures.signoz",
+    "fixtures.channels",
     "fixtures.terraform",
 ]
 
