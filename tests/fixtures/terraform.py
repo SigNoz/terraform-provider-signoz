@@ -46,7 +46,9 @@ def terraform_bin(request: pytest.FixtureRequest) -> str:
 
 
 @pytest.fixture(scope="session")
-def provider_dir(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory) -> Path:
+def provider_dir(
+    request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory
+) -> Path:
     """Build the provider binary into a directory for Terraform dev_overrides."""
     go = request.config.getoption("--go-binary-path")
     out = tmp_path_factory.mktemp("provider-bin")
@@ -90,7 +92,9 @@ def workspace(tmp_path: Path, request: pytest.FixtureRequest) -> Path:
 class Terraform:
     """Runs the Terraform CLI in a workspace against the dev-override provider."""
 
-    def __init__(self, workdir: Path, cli_config: Path, signoz: SigNoz, binary: str = "terraform"):
+    def __init__(
+        self, workdir: Path, cli_config: Path, signoz: SigNoz, binary: str = "terraform"
+    ):
         self.workdir = workdir
         self.binary = binary
         self.env = {
@@ -116,16 +120,22 @@ class Terraform:
 
     def apply(self) -> subprocess.CompletedProcess:
         result = self._run("apply", "-auto-approve")
-        assert result.returncode == 0, f"apply failed:\n{result.stdout}\n{result.stderr}"
+        assert result.returncode == 0, (
+            f"apply failed:\n{result.stdout}\n{result.stderr}"
+        )
         return result
 
     def plan_exit_code(self) -> int:
         # -detailed-exitcode: 0 = no changes, 1 = error, 2 = changes (drift).
         result = self._run("plan", "-detailed-exitcode")
-        assert result.returncode in (0, 2), f"plan errored:\n{result.stdout}\n{result.stderr}"
+        assert result.returncode in (0, 2), (
+            f"plan errored:\n{result.stdout}\n{result.stderr}"
+        )
         return result.returncode
 
     def destroy(self) -> subprocess.CompletedProcess:
         result = self._run("destroy", "-auto-approve")
-        assert result.returncode == 0, f"destroy failed:\n{result.stdout}\n{result.stderr}"
+        assert result.returncode == 0, (
+            f"destroy failed:\n{result.stdout}\n{result.stderr}"
+        )
         return result

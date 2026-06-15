@@ -1,15 +1,3 @@
-"""Run every resource example file through a full Terraform CRUD cycle.
-
-Each `*.tf` file under `examples/resources/signoz_*` is exercised on its own (so
-the six signoz_alert files run one by one): apply (create), confirm there is no
-drift (`plan -detailed-exitcode` == 0), then destroy. The `workspace` fixture
-(fixtures.terraform) stages each file into its own workspace and it runs against
-the real SigNoz instance from the `signoz` fixture.
-
-Data-source examples are not exercised here — they read an object by id, which
-does not exist on a fresh instance.
-"""
-
 from pathlib import Path
 
 import pytest
@@ -22,7 +10,9 @@ RESOURCE_IDS = [f"{p.parent.name}/{p.name}" for p in RESOURCE_FILES]
 
 
 @pytest.mark.parametrize("workspace", RESOURCE_FILES, ids=RESOURCE_IDS, indirect=True)
-def test_resource_file_crud(workspace: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str):
+def test_resource_file_crud(
+    workspace: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str
+):
     terraform = Terraform(workspace, tf_cli_config, signoz, terraform_bin)
 
     # Create.

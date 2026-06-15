@@ -1,13 +1,3 @@
-"""Spin up / tear down a SigNoz environment with foundryctl.
-
-foundryctl (https://github.com/signoz/foundry) is the canonical SigNoz installer.
-`foundryctl cast` validates the toolchain, generates the deployment files into
-pours/, and brings SigNoz up (Docker Compose). Teardown is `docker compose down`
-on that generated compose file.
-
-Set SIGNOZ_ENDPOINT to point at an already-running instance and skip foundry.
-"""
-
 import os
 import shutil
 import subprocess
@@ -62,10 +52,16 @@ def cast(foundryctl: str) -> str:
         return external
 
     if shutil.which(foundryctl) is None:
-        pytest.skip(f"{foundryctl} not on PATH; set SIGNOZ_ENDPOINT to use an existing instance")
+        pytest.skip(
+            f"{foundryctl} not on PATH; set SIGNOZ_ENDPOINT to use an existing instance"
+        )
 
     logger.info("casting SigNoz with %s (%s)", foundryctl, CASTING)
-    subprocess.run([foundryctl, "cast", "-f", str(CASTING), "-p", str(POURS)], cwd=TESTS_DIR, check=True)
+    subprocess.run(
+        [foundryctl, "cast", "-f", str(CASTING), "-p", str(POURS)],
+        cwd=TESTS_DIR,
+        check=True,
+    )
 
     _wait_for_port(ENDPOINT)
     return ENDPOINT

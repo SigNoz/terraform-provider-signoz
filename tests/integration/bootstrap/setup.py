@@ -1,14 +1,3 @@
-"""Bootstrap entrypoints for managing the SigNoz environment out of band.
-
-Stand one up and keep it running:
-
-    pytest --reuse integration/bootstrap/setup.py::test_setup
-
-Tear the cached one down:
-
-    pytest --teardown integration/bootstrap/setup.py::test_teardown
-"""
-
 from http import HTTPStatus
 
 import requests

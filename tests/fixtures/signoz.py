@@ -26,8 +26,6 @@ ROOT_PASSWORD = "password123Z$"
 SERVICE_ACCOUNT_NAME = "terraform-integration"
 SERVICE_ACCOUNT_ROLE = "signoz-admin"
 
-_TIMEOUT = 10
-
 
 @dataclass(frozen=True)
 class SigNoz:
@@ -43,11 +41,9 @@ class SigNoz:
         return f"signoz(endpoint={self.endpoint})"
 
 
-def _restore(cache: dict) -> SigNoz:
-    return SigNoz(endpoint=cache["endpoint"], access_token=cache["access_token"])
-
-
-def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: float = 240.0) -> str:
+def _login_as_root(
+    endpoint: str, email: str, password: str, *, ready_timeout: float = 240.0
+) -> str:
     """Return a bearer access token for the root user.
 
     Retries until SigNoz is up and the root user has been reconciled (it is
@@ -61,7 +57,7 @@ def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: f
             ctx = requests.get(
                 f"{endpoint}/api/v2/sessions/context",
                 params={"email": email, "ref": endpoint},
-                timeout=_TIMEOUT,
+                timeout=10,
             )
             if ctx.status_code == 200 and ctx.json().get("data", {}).get("orgs"):
                 org_id = ctx.json()["data"]["orgs"][0]["id"]
@@ -69,7 +65,7 @@ def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: f
                 login = requests.post(
                     f"{endpoint}/api/v2/sessions/email_password",
                     json={"email": email, "password": password, "orgId": org_id},
-                    timeout=_TIMEOUT,
+                    timeout=10,
                 )
                 if login.status_code == 200:
                     logger.info("logged in as root user %s", email)
@@ -83,11 +79,9 @@ def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: f
 
         time.sleep(3)
 
-    raise TimeoutError(f"could not log in as {email} within {ready_timeout}s (last={last})")
-
-
-def _bearer(token: str) -> dict:
-    return {"Authorization": f"Bearer {token}"}
+    raise TimeoutError(
+        f"could not log in as {email} within {ready_timeout}s (last={last})"
+    )
 
 
 def mint_service_account_key(
@@ -101,29 +95,33 @@ def mint_service_account_key(
     sa = requests.post(
         f"{endpoint}/api/v1/service_accounts",
         json={"name": name},
-        headers=_bearer(bearer_token),
-        timeout=_TIMEOUT,
+        headers={"Authorization": f"Bearer {bearer_token}"},
+        timeout=10,
     )
     assert sa.status_code == 201, sa.text
     sa_id = sa.json()["data"]["id"]
 
-    roles = requests.get(f"{endpoint}/api/v1/roles", headers=_bearer(bearer_token), timeout=_TIMEOUT)
+    roles = requests.get(
+        f"{endpoint}/api/v1/roles",
+        headers={"Authorization": f"Bearer {bearer_token}"},
+        timeout=10,
+    )
     assert roles.status_code == 200, roles.text
     role_id = next(r["id"] for r in roles.json()["data"] if r["name"] == role)
 
     assign = requests.post(
         f"{endpoint}/api/v1/service_accounts/{sa_id}/roles",
         json={"id": role_id},
-        headers=_bearer(bearer_token),
-        timeout=_TIMEOUT,
+        headers={"Authorization": f"Bearer {bearer_token}"},
+        timeout=10,
     )
     assert assign.status_code == 204, assign.text
 
     key = requests.post(
         f"{endpoint}/api/v1/service_accounts/{sa_id}/keys",
         json={"name": "terraform-integration", "expiresAt": 0},
-        headers=_bearer(bearer_token),
-        timeout=_TIMEOUT,
+        headers={"Authorization": f"Bearer {bearer_token}"},
+        timeout=10,
     )
     assert key.status_code == 201, key.text
 
@@ -148,4 +146,7 @@ def signoz(request: pytest.FixtureRequest, pytestconfig: pytest.Config) -> SigNo
     def delete(_: SigNoz) -> None:
         foundry.teardown()
 
-    return reuse.wrap(request, pytestconfig, "signoz", empty, create, delete, _restore)
+    def restore(cache: dict) -> SigNoz:
+        return SigNoz(endpoint=cache["endpoint"], access_token=cache["access_token"])
+
+    return reuse.wrap(request, pytestconfig, "signoz", empty, create, delete, restore)

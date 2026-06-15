@@ -49,18 +49,28 @@ def wrap(  # noqa: PLR0913
     def finalizer():
         nonlocal resource
         if reuse(request):
-            logger.info("Skipping removal of %s", resource.__log__() if hasattr(resource, "__log__") else resource)
+            logger.info(
+                "Skipping removal of %s",
+                resource.__log__() if hasattr(resource, "__log__") else resource,
+            )
             return
 
         if teardown(request):
             existing_resource = pytestconfig.cache.get(key, None)
             if not existing_resource:
-                logger.info("Skipping removal of %s, no existing %s found. Maybe you ran teardown without reuse?", key, key)
+                logger.info(
+                    "Skipping removal of %s, no existing %s found. Maybe you ran teardown without reuse?",
+                    key,
+                    key,
+                )
                 return
 
             resource = restore(existing_resource)
 
-        logger.info("Removing %s", resource.__log__() if hasattr(resource, "__log__") else resource)
+        logger.info(
+            "Removing %s",
+            resource.__log__() if hasattr(resource, "__log__") else resource,
+        )
         delete(resource)
 
         pytestconfig.cache.set(key, None)
@@ -68,6 +78,8 @@ def wrap(  # noqa: PLR0913
     request.addfinalizer(finalizer)
 
     if reuse(request):
-        pytestconfig.cache.set(key, resource.__cache__() if hasattr(resource, "__cache__") else resource)
+        pytestconfig.cache.set(
+            key, resource.__cache__() if hasattr(resource, "__cache__") else resource
+        )
 
     return resource
