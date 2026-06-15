@@ -68,16 +68,14 @@ def tf_cli_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) 
 
 
 @pytest.fixture
-def workspace(tmp_path: Path, request: pytest.FixtureRequest) -> Path:
-    """Stage a single example .tf file into an isolated workspace with provider config.
-
-    Driven by indirect parametrization: `request.param` is the .tf file to stage.
-    """
+def workspace(tmp_path_factory: pytest.TempPathFactory, request: pytest.FixtureRequest) -> Path:
+    """Stage a single example .tf file into an isolated workspace with provider config."""
     tf_file: Path = request.param
-    shutil.copy(tf_file, tmp_path / tf_file.name)
+    workdir = tmp_path_factory.mktemp(f"{tf_file.parent.name}-{tf_file.stem}")
 
-    (tmp_path / "versions.tf").write_text(VERSIONS_TF)
-    return tmp_path
+    shutil.copy(tf_file, workdir / tf_file.name)
+    (workdir / "versions.tf").write_text(VERSIONS_TF)
+    return workdir
 
 
 class Terraform:
