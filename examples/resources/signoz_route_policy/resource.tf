@@ -3,6 +3,6 @@ resource "signoz_route_policy" "critical_to_oncall" {
   description = "Route critical payments alerts to the on-call channel."
   kind        = "policy"
   expression  = "service == \"payments\" && severity == \"critical\""
-  channels    = ["oncall-slack"]
+  channels    = ["slack"]
   tags        = ["team:platform"]
 }

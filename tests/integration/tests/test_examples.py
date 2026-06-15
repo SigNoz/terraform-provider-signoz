@@ -10,9 +10,7 @@ RESOURCE_IDS = [f"{p.parent.name}/{p.name}" for p in RESOURCE_FILES]
 
 
 @pytest.mark.parametrize("workspace", RESOURCE_FILES, ids=RESOURCE_IDS, indirect=True)
-def test_resource_file_crud(
-    workspace: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str
-):
+def test_resource_file_crud(workspace: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str):
     terraform = Terraform(workspace, tf_cli_config, signoz, terraform_bin)
 
     # Create.

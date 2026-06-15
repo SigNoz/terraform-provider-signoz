@@ -52,9 +52,7 @@ def cast(foundryctl: str) -> str:
         return external
 
     if shutil.which(foundryctl) is None:
-        pytest.skip(
-            f"{foundryctl} not on PATH; set SIGNOZ_ENDPOINT to use an existing instance"
-        )
+        pytest.skip(f"{foundryctl} not on PATH; set SIGNOZ_ENDPOINT to use an existing instance")
 
     logger.info("casting SigNoz with %s (%s)", foundryctl, CASTING)
     subprocess.run(

@@ -71,14 +71,14 @@ resource "signoz_alert" "tiered_thresholds" {
           op        = "above"
           matchType = "all_the_times"
           target    = 50
-          channels  = ["slack-kafka-info"]
+          channels  = ["slack"]
         },
         {
           name      = "critical"
           op        = "above"
           matchType = "all_the_times"
           target    = 200
-          channels  = ["slack-kafka-alerts", "pagerduty-kafka"]
+          channels  = ["slack", "pagerduty"]
         }
       ]
     }

@@ -13,6 +13,9 @@ dev = [
     "ruff>=0.8.0",
 ]
 
+[tool.ruff]
+line-length = 320
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 # A bare `pytest` run collects only the suites under integration/tests. The

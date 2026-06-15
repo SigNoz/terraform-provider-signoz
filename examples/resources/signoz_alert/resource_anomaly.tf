@@ -54,7 +54,7 @@ resource "signoz_alert" "metric_anomaly" {
     requiredNumPoints = 3
   })
 
-  preferred_channels = ["slack-ingestion"]
+  preferred_channels = ["slack"]
 
   labels = {
     severity = "warning"

@@ -41,9 +41,7 @@ class SigNoz:
         return f"signoz(endpoint={self.endpoint})"
 
 
-def _login_as_root(
-    endpoint: str, email: str, password: str, *, ready_timeout: float = 240.0
-) -> str:
+def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: float = 240.0) -> str:
     """Return a bearer access token for the root user.
 
     Retries until SigNoz is up and the root user has been reconciled (it is
@@ -79,9 +77,7 @@ def _login_as_root(
 
         time.sleep(3)
 
-    raise TimeoutError(
-        f"could not log in as {email} within {ready_timeout}s (last={last})"
-    )
+    raise TimeoutError(f"could not log in as {email} within {ready_timeout}s (last={last})")
 
 
 def mint_service_account_key(

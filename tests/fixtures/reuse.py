@@ -78,8 +78,6 @@ def wrap(  # noqa: PLR0913
     request.addfinalizer(finalizer)
 
     if reuse(request):
-        pytestconfig.cache.set(
-            key, resource.__cache__() if hasattr(resource, "__cache__") else resource
-        )
+        pytestconfig.cache.set(key, resource.__cache__() if hasattr(resource, "__cache__") else resource)
 
     return resource

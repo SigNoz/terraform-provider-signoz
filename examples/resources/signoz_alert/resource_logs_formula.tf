@@ -67,7 +67,7 @@ resource "signoz_alert" "logs_error_rate_formula" {
           op        = "above"
           matchType = "at_least_once"
           target    = 1
-          channels  = ["slack-payments"]
+          channels  = ["slack"]
         }
       ]
     }

@@ -35,7 +35,7 @@ resource "signoz_alert" "metric_promql" {
           op        = "above"
           matchType = "all_the_times"
           target    = 1000
-          channels  = ["slack-data-platform", "pagerduty-data"]
+          channels  = ["slack", "pagerduty"]
         }
       ]
     }

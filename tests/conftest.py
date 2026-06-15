@@ -11,15 +11,13 @@ def pytest_addoption(parser: pytest.Parser):
         "--reuse",
         action="store_true",
         default=False,
-        help="Reuse a cached SigNoz environment across runs instead of creating a new one. "
-        "Run e.g. `pytest --reuse integration/bootstrap/setup.py::test_setup` to stand one up.",
+        help="Reuse a cached SigNoz environment across runs instead of creating a new one. Run e.g. `pytest --reuse integration/bootstrap/setup.py::test_setup` to stand one up.",
     )
     parser.addoption(
         "--teardown",
         action="store_true",
         default=False,
-        help="Tear down the cached SigNoz environment. "
-        "Run `pytest --teardown integration/bootstrap/setup.py::test_teardown`.",
+        help="Tear down the cached SigNoz environment. Run `pytest --teardown integration/bootstrap/setup.py::test_teardown`.",
     )
     parser.addoption(
         "--foundry-binary-path",
