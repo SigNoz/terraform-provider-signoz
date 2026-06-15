@@ -1257,7 +1257,6 @@ func (r CreateServiceAccountResponse) ContentType() string {
 type DeleteServiceAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON204      *string
 	JSON401      *apitypes.RenderErrorResponse
 	JSON403      *apitypes.RenderErrorResponse
 	JSON404      *apitypes.RenderErrorResponse
@@ -1328,7 +1327,6 @@ func (r GetServiceAccountResponse) ContentType() string {
 type UpdateServiceAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON204      *string
 	JSON400      *apitypes.RenderErrorResponse
 	JSON401      *apitypes.RenderErrorResponse
 	JSON403      *apitypes.RenderErrorResponse
@@ -2034,13 +2032,6 @@ func ParseDeleteServiceAccountResponse(rsp *http.Response) (*DeleteServiceAccoun
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 204:
-		var dest string
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON204 = &dest
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest apitypes.RenderErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -2145,13 +2136,6 @@ func ParseUpdateServiceAccountResponse(rsp *http.Response) (*UpdateServiceAccoun
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 204:
-		var dest string
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON204 = &dest
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
 		var dest apitypes.RenderErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
