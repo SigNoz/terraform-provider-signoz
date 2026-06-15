@@ -26,13 +26,19 @@ PROVIDER_SOURCE = "signoz/signoz"
 
 
 @pytest.fixture(scope="session")
-def provider_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
+def terraform_bin(request: pytest.FixtureRequest) -> str:
+    return request.config.getoption("--terraform-binary-path")
+
+
+@pytest.fixture(scope="session")
+def provider_dir(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Build the provider binary into a directory for Terraform dev_overrides."""
+    go = request.config.getoption("--go-binary-path")
     out = tmp_path_factory.mktemp("provider-bin")
     binary = out / "terraform-provider-signoz"
 
-    logger.info("building provider -> %s", binary)
-    subprocess.run(["go", "build", "-o", str(binary), "."], cwd=REPO_ROOT, check=True)
+    logger.info("building provider with %s -> %s", go, binary)
+    subprocess.run([go, "build", "-o", str(binary), "."], cwd=REPO_ROOT, check=True)
 
     return out
 
@@ -56,8 +62,9 @@ def tf_cli_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) 
 class Terraform:
     """Runs the Terraform CLI in a workspace against the dev-override provider."""
 
-    def __init__(self, workdir: Path, cli_config: Path, signoz: SigNoz):
+    def __init__(self, workdir: Path, cli_config: Path, signoz: SigNoz, binary: str = "terraform"):
         self.workdir = workdir
+        self.binary = binary
         self.env = {
             **os.environ,
             "TF_CLI_CONFIG_FILE": str(cli_config),
@@ -70,7 +77,7 @@ class Terraform:
         # dev_overrides make `init` unnecessary (and it would error on the
         # missing dependency lock), so commands run directly.
         result = subprocess.run(
-            ["terraform", *args, "-no-color"],
+            [self.binary, *args, "-no-color"],
             cwd=self.workdir,
             env=self.env,
             text=True,

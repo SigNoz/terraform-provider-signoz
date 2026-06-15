@@ -1,12 +1,11 @@
-"""Spin up a SigNoz environment with foundryctl for the test session.
+"""Spin up / tear down a SigNoz environment with foundryctl.
 
-foundryctl (https://github.com/signoz/foundry) is the canonical SigNoz
-installer. `foundryctl cast` runs the full pipeline (validate + generate +
-deploy); for the docker/compose flavour that brings SigNoz up on :8080. Teardown
-is `docker compose down` on the generated compose file under pours/.
+foundryctl (https://github.com/signoz/foundry) is the canonical SigNoz installer.
+`foundryctl cast` validates the toolchain, generates the deployment files into
+pours/, and brings SigNoz up (Docker Compose). Teardown is `docker compose down`
+on that generated compose file.
 
-Set SIGNOZ_ENDPOINT to point the suite at an already-running instance and skip
-foundry entirely (useful for local iteration).
+Set SIGNOZ_ENDPOINT to point at an already-running instance and skip foundry.
 """
 
 import os
@@ -23,7 +22,6 @@ from fixtures.logger import setup_logger
 logger = setup_logger(__name__)
 
 ENDPOINT = "http://localhost:8080"
-FOUNDRYCTL = os.environ.get("FOUNDRYCTL_BIN", "foundryctl")
 
 TESTS_DIR = Path(__file__).resolve().parent.parent
 CASTING = TESTS_DIR / "casting.yaml"
@@ -47,45 +45,37 @@ def _wait_for_port(endpoint: str, timeout: float = 240.0) -> None:
     raise TimeoutError(f"{endpoint} did not respond within {timeout}s (last={last})")
 
 
-def _compose_file() -> Path:
+def compose_file() -> Path | None:
     candidates = sorted(POURS.rglob("compose.yaml"))
-    if not candidates:
-        raise FileNotFoundError(f"no compose.yaml generated under {POURS}")
-
-    return candidates[0]
+    return candidates[0] if candidates else None
 
 
-def _teardown() -> None:
-    try:
-        compose = _compose_file()
-    except FileNotFoundError:
-        return
+def cast(foundryctl: str) -> str:
+    """Bring up SigNoz and return its endpoint.
 
-    subprocess.run(["docker", "compose", "-f", str(compose), "down", "-v"], check=False)
-    shutil.rmtree(POURS, ignore_errors=True)
-
-
-@pytest.fixture(scope="session")
-def signoz_endpoint(pytestconfig: pytest.Config):
-    """Yield the base URL of a running SigNoz instance for the session."""
+    No-op when SIGNOZ_ENDPOINT is set (an existing instance is used as-is).
+    """
     external = os.environ.get("SIGNOZ_ENDPOINT")
     if external:
         logger.info("using existing SigNoz at %s (SIGNOZ_ENDPOINT set)", external)
         _wait_for_port(external)
-        yield external
+        return external
+
+    if shutil.which(foundryctl) is None:
+        pytest.skip(f"{foundryctl} not on PATH; set SIGNOZ_ENDPOINT to use an existing instance")
+
+    logger.info("casting SigNoz with %s (%s)", foundryctl, CASTING)
+    subprocess.run([foundryctl, "cast", "-f", str(CASTING), "-p", str(POURS)], cwd=TESTS_DIR, check=True)
+
+    _wait_for_port(ENDPOINT)
+    return ENDPOINT
+
+
+def teardown() -> None:
+    """`docker compose down` the cast environment and remove pours/."""
+    compose = compose_file()
+    if compose is None:
         return
 
-    if shutil.which(FOUNDRYCTL) is None:
-        pytest.skip(f"{FOUNDRYCTL} not on PATH; set SIGNOZ_ENDPOINT to use an existing instance")
-
-    logger.info("casting SigNoz with foundryctl (%s)", CASTING)
-    subprocess.run([FOUNDRYCTL, "cast", "-f", str(CASTING), "-p", str(POURS)], cwd=TESTS_DIR, check=True)
-
-    try:
-        _wait_for_port(ENDPOINT)
-        yield ENDPOINT
-    finally:
-        if pytestconfig.getoption("--keep-env"):
-            logger.info("--keep-env set; leaving SigNoz running (teardown: docker compose -f %s down -v)", _compose_file())
-        else:
-            _teardown()
+    subprocess.run(["docker", "compose", "-f", str(compose), "down", "-v"], check=False)
+    shutil.rmtree(POURS, ignore_errors=True)

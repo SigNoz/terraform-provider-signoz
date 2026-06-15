@@ -43,9 +43,14 @@ uv run pytest -vv
 
 Useful flags / env:
 
+- `--reuse` — reuse a cached SigNoz environment across runs (skip create + teardown).
+  Stand one up once with
+  `uv run pytest --reuse integration/bootstrap/setup.py::test_setup`, then iterate.
+- `--teardown` — tear the cached environment back down:
+  `uv run pytest --teardown integration/bootstrap/setup.py::test_teardown`.
+- `--foundry-binary-path` / `--terraform-binary-path` / `--go-binary-path` — point at
+  specific binaries (default `foundryctl` / `terraform` / `go`).
 - `SIGNOZ_ENDPOINT=http://...` — test against an already-running SigNoz and skip foundry.
-- `--keep-env` — leave the environment running after the run (skip teardown).
-- `FOUNDRYCTL_BIN=/path/to/foundryctl` — override the foundry binary.
 
 > The root user credentials in `casting.yaml` and `fixtures/signoz.py`
 > (`ROOT_EMAIL` / `ROOT_PASSWORD`) must stay in sync.

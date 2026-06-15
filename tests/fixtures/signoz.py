@@ -1,8 +1,9 @@
-"""Authenticate against a running SigNoz instance for the integration tests.
+"""Provide a reachable, authenticated SigNoz instance to the integration tests.
 
-The casting (casting.yaml) provisions a root user on first boot. We log in as
-that root user, then mint a service-account API key — the SigNoz access token
-the Terraform provider authenticates with.
+The casting provisions a root user on first boot. We log in as that root user,
+mint a service-account API key (the token the Terraform provider authenticates
+with), and hand back a SigNoz handle. The whole environment is created/torn down
+through the --reuse / --teardown machinery in fixtures.reuse.
 """
 
 import time
@@ -11,6 +12,7 @@ from dataclasses import dataclass
 import pytest
 import requests
 
+from fixtures import foundry, reuse
 from fixtures.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -33,6 +35,16 @@ class SigNoz:
 
     endpoint: str
     access_token: str
+
+    def __cache__(self) -> dict:
+        return {"endpoint": self.endpoint, "access_token": self.access_token}
+
+    def __log__(self) -> str:
+        return f"signoz(endpoint={self.endpoint})"
+
+
+def _restore(cache: dict) -> SigNoz:
+    return SigNoz(endpoint=cache["endpoint"], access_token=cache["access_token"])
 
 
 def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: float = 240.0) -> str:
@@ -120,9 +132,20 @@ def mint_service_account_key(
 
 
 @pytest.fixture(scope="session")
-def signoz(signoz_endpoint: str) -> SigNoz:
+def signoz(request: pytest.FixtureRequest, pytestconfig: pytest.Config) -> SigNoz:
     """A SigNoz instance with a service-account access token for Terraform."""
-    bearer_token = _login_as_root(signoz_endpoint, ROOT_EMAIL, ROOT_PASSWORD)
-    access_token = mint_service_account_key(signoz_endpoint, bearer_token)
+    foundryctl = request.config.getoption("--foundry-binary-path")
 
-    return SigNoz(endpoint=signoz_endpoint, access_token=access_token)
+    def empty() -> SigNoz:
+        return SigNoz(endpoint="", access_token="")
+
+    def create() -> SigNoz:
+        endpoint = foundry.cast(foundryctl)
+        bearer_token = _login_as_root(endpoint, ROOT_EMAIL, ROOT_PASSWORD)
+        access_token = mint_service_account_key(endpoint, bearer_token)
+        return SigNoz(endpoint=endpoint, access_token=access_token)
+
+    def delete(_: SigNoz) -> None:
+        foundry.teardown()
+
+    return reuse.wrap(request, pytestconfig, "signoz", empty, create, delete, _restore)

@@ -44,8 +44,8 @@ def workspace(tmp_path: Path, request: pytest.FixtureRequest) -> Path:
 
 
 @pytest.mark.parametrize("workspace", RESOURCE_DIRS, ids=RESOURCE_IDS, indirect=True)
-def test_resource_example_crud(workspace: Path, tf_cli_config: Path, signoz: SigNoz):
-    terraform = Terraform(workspace, tf_cli_config, signoz)
+def test_resource_example_crud(workspace: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str):
+    terraform = Terraform(workspace, tf_cli_config, signoz, terraform_bin)
 
     # Create.
     terraform.apply()
