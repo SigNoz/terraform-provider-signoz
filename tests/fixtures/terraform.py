@@ -9,6 +9,7 @@ local build.
 import os
 import shutil
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -68,14 +69,17 @@ def tf_cli_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) 
 
 
 @pytest.fixture
-def workspace(tmp_path_factory: pytest.TempPathFactory, request: pytest.FixtureRequest) -> Path:
-    """Stage a single example .tf file into an isolated workspace with provider config."""
-    tf_file: Path = request.param
-    workdir = tmp_path_factory.mktemp(f"{tf_file.parent.name}-{tf_file.stem}")
+def workspace(tmp_path_factory: pytest.TempPathFactory) -> Callable[[Path], Path]:
+    """Return a factory that stages an example .tf file into its own workspace with provider config."""
 
-    shutil.copy(tf_file, workdir / tf_file.name)
-    (workdir / "versions.tf").write_text(VERSIONS_TF)
-    return workdir
+    def stage(tf_file: Path) -> Path:
+        workdir = tmp_path_factory.mktemp(f"{tf_file.parent.name}-{tf_file.stem}")
+
+        shutil.copy(tf_file, workdir / tf_file.name)
+        (workdir / "versions.tf").write_text(VERSIONS_TF)
+        return workdir
+
+    return stage
 
 
 class Terraform:
