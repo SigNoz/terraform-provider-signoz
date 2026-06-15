@@ -8,20 +8,21 @@ from fixtures.terraform import EXAMPLES, Terraform
 
 RESOURCE_FILES = sorted((EXAMPLES / "resources").glob("signoz_*/*.tf"))
 
-# Resource directories whose examples are skipped, keyed to the reason. The
-# integration run surfaced provider/API issues for these.
-SKIPPED_RESOURCES = {
+# Examples to skip, keyed by resource directory (skips every file in it) or by
+# "<resource>/<file>" (skips just that one file) -> reason. The integration run
+# surfaced provider/API issues for these.
+SKIPPED = {
     "signoz_alert": "provider returns unknown values for computed fields after apply",
     "signoz_dashboard": "provider produces an inconsistent result after apply",
-    "signoz_planned_maintenance": "schedule / alert_ids rejected by the API (HTTP 500)",
+    "signoz_planned_maintenance/resource.tf": "alert_ids reference non-existent rules (API 500)",
 }
 
 
 def _case(tf_file: Path):
-    resource = tf_file.parent.name
-    marks = [pytest.mark.skip(reason=SKIPPED_RESOURCES[resource])] if resource in SKIPPED_RESOURCES else []
+    reason = SKIPPED.get(tf_file.parent.name) or SKIPPED.get(f"{tf_file.parent.name}/{tf_file.name}")
+    marks = [pytest.mark.skip(reason=reason)] if reason else []
 
-    return pytest.param(tf_file, id=f"{resource}/{tf_file.name}", marks=marks)
+    return pytest.param(tf_file, id=f"{tf_file.parent.name}/{tf_file.name}", marks=marks)
 
 
 @pytest.mark.parametrize("tf_file", [_case(tf_file) for tf_file in RESOURCE_FILES])
