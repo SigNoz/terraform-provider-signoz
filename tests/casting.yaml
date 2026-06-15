@@ -6,6 +6,8 @@ spec:
   deployment:
     mode: docker
     flavor: compose
+  metastore:
+    kind: sqlite
   signoz:
     spec:
       # Provision a root admin user on first boot so the integration tests can
