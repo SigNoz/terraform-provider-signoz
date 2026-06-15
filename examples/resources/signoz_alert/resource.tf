@@ -52,7 +52,7 @@ resource "signoz_alert" "metric_threshold_single" {
           op        = "above"
           matchType = "all_the_times"
           target    = 0.8
-          channels  = ["slack", "pagerduty"]
+          channels  = ["slack-platform", "pagerduty-oncall"]
         }
       ]
     }

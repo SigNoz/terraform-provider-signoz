@@ -47,7 +47,7 @@ resource "signoz_alert" "traces_threshold_latency" {
           matchType  = "at_least_once"
           target     = 5
           targetUnit = "s"
-          channels   = ["slack"]
+          channels   = ["slack-search"]
         }
       ]
     }
