@@ -66,6 +66,29 @@ resources:
         - updatedAt
         - updatedBy
         - serviceAccountRoles
+  user:
+    create:
+      path: /api/v2/users
+      method: POST
+    read:
+      path: /api/v2/users/{id}
+      method: GET
+    update:
+      path: /api/v2/users/{id}
+      method: PUT
+    delete:
+      path: /api/v2/users/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - userRoles
+        - frontendBaseUrl
 
 data_sources:
   route_policy:
@@ -105,3 +128,17 @@ data_sources:
         - updatedAt
         - updatedBy
         - serviceAccountRoles
+  user:
+    read:
+      path: /api/v2/users/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - userRoles
+        - frontendBaseUrl
