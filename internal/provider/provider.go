@@ -134,6 +134,7 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 		services.NewPlannedMaintenanceResource,
 		services.NewRoutePolicyResource,
 		services.NewServiceAccountResource,
+		services.NewUserResource,
 		signoz.NewAlertResource,
 		signoz.NewDashboardResource,
 	}
@@ -144,6 +145,7 @@ func (p *signozProvider) DataSources(_ context.Context) []func() datasource.Data
 		services.NewPlannedMaintenanceDataSource,
 		services.NewRoutePolicyDataSource,
 		services.NewServiceAccountDataSource,
+		services.NewUserDataSource,
 		signoz.NewAlertDataSource,
 		signoz.NewDashboardDataSource,
 	}
