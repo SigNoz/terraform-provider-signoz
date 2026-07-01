@@ -80,6 +80,27 @@ def _login_as_root(endpoint: str, email: str, password: str, *, ready_timeout: f
     raise TimeoutError(f"could not log in as {email} within {ready_timeout}s (last={last})")
 
 
+def apply_license(endpoint: str, bearer_token: str, license_key: str) -> None:
+    """Apply a license key to a freshly started SigNoz via the admin API.
+
+    No-op when no key is given, so community-only runs (and forks without the
+    secret) still work.
+    """
+    if not license_key:
+        logger.info("no license key provided; skipping license application")
+        return
+
+    resp = requests.post(
+        f"{endpoint}/api/v3/licenses",
+        json={"key": license_key},
+        headers={"Authorization": f"Bearer {bearer_token}"},
+        timeout=30,
+    )
+    assert resp.status_code == 202, resp.text
+
+    logger.info("applied SigNoz license")
+
+
 def mint_service_account_key(
     endpoint: str,
     bearer_token: str,
@@ -136,6 +157,9 @@ def signoz(request: pytest.FixtureRequest, pytestconfig: pytest.Config) -> SigNo
     def create() -> SigNoz:
         endpoint = foundry.cast(foundryctl)
         bearer_token = _login_as_root(endpoint, ROOT_EMAIL, ROOT_PASSWORD)
+
+        apply_license(endpoint, bearer_token, request.config.getoption("--license-key"))
+
         access_token = mint_service_account_key(endpoint, bearer_token)
         return SigNoz(endpoint=endpoint, access_token=access_token)
 
