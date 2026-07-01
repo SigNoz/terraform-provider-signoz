@@ -89,6 +89,27 @@ resources:
         - updatedBy
         - userRoles
         - frontendBaseUrl
+  role:
+    create:
+      path: /api/v1/roles
+      method: POST
+    read:
+      path: /api/v1/roles/{id}
+      method: GET
+    update:
+      path: /api/v1/roles/{id}
+      method: PUT
+    delete:
+      path: /api/v1/roles/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
 
 data_sources:
   route_policy:
@@ -142,3 +163,15 @@ data_sources:
         - updatedBy
         - userRoles
         - frontendBaseUrl
+  role:
+    read:
+      path: /api/v1/roles/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
