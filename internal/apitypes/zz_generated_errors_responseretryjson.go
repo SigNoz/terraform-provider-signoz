@@ -5,5 +5,5 @@ package apitypes
 
 // ErrorsResponseretryjson defines model for ErrorsResponseretryjson.
 type ErrorsResponseretryjson struct {
-	Delay *TimeDuration `json:"delay,omitempty"`
+	Delay TimeDuration `json:"delay"`
 }
