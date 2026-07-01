@@ -57,22 +57,22 @@ func (t CoretypesResourceRefType) ValueFromObject(ctx context.Context, in basety
 			fmt.Sprintf(`kind expected to be basetypes.StringValue, was: %T`, kindAttribute))
 	}
 
-	type_Attribute, ok := attributes["type_"]
+	typeAttribute, ok := attributes["type"]
 
 	if !ok {
 		diags.AddError(
 			"Attribute Missing",
-			`type_ is missing from object`)
+			`type is missing from object`)
 
 		return nil, diags
 	}
 
-	type_Val, ok := type_Attribute.(basetypes.StringValue)
+	typeVal, ok := typeAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`type_ expected to be basetypes.StringValue, was: %T`, type_Attribute))
+			fmt.Sprintf(`type expected to be basetypes.StringValue, was: %T`, typeAttribute))
 	}
 
 	if diags.HasError() {
@@ -80,9 +80,9 @@ func (t CoretypesResourceRefType) ValueFromObject(ctx context.Context, in basety
 	}
 
 	return CoretypesResourceRefValue{
-		Kind:  kindVal,
-		Type_: type_Val,
-		state: attr.ValueStateKnown,
+		Kind:                     kindVal,
+		CoretypesResourceRefType: typeVal,
+		state:                    attr.ValueStateKnown,
 	}, diags
 }
 
@@ -167,22 +167,22 @@ func NewCoretypesResourceRefValue(attributeTypes map[string]attr.Type, attribute
 			fmt.Sprintf(`kind expected to be basetypes.StringValue, was: %T`, kindAttribute))
 	}
 
-	type_Attribute, ok := attributes["type_"]
+	typeAttribute, ok := attributes["type"]
 
 	if !ok {
 		diags.AddError(
 			"Attribute Missing",
-			`type_ is missing from object`)
+			`type is missing from object`)
 
 		return NewCoretypesResourceRefValueUnknown(), diags
 	}
 
-	type_Val, ok := type_Attribute.(basetypes.StringValue)
+	typeVal, ok := typeAttribute.(basetypes.StringValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`type_ expected to be basetypes.StringValue, was: %T`, type_Attribute))
+			fmt.Sprintf(`type expected to be basetypes.StringValue, was: %T`, typeAttribute))
 	}
 
 	if diags.HasError() {
@@ -190,9 +190,9 @@ func NewCoretypesResourceRefValue(attributeTypes map[string]attr.Type, attribute
 	}
 
 	return CoretypesResourceRefValue{
-		Kind:  kindVal,
-		Type_: type_Val,
-		state: attr.ValueStateKnown,
+		Kind:                     kindVal,
+		CoretypesResourceRefType: typeVal,
+		state:                    attr.ValueStateKnown,
 	}, diags
 }
 
@@ -264,9 +264,9 @@ func (t CoretypesResourceRefType) ValueType(ctx context.Context) attr.Value {
 var _ basetypes.ObjectValuable = CoretypesResourceRefValue{}
 
 type CoretypesResourceRefValue struct {
-	Kind  basetypes.StringValue `tfsdk:"kind"`
-	Type_ basetypes.StringValue `tfsdk:"type_"`
-	state attr.ValueState
+	Kind                     basetypes.StringValue `tfsdk:"kind"`
+	CoretypesResourceRefType basetypes.StringValue `tfsdk:"type"`
+	state                    attr.ValueState
 }
 
 func (v CoretypesResourceRefValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
@@ -276,7 +276,7 @@ func (v CoretypesResourceRefValue) ToTerraformValue(ctx context.Context) (tftype
 	var err error
 
 	attrTypes["kind"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["type_"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["type"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
@@ -292,13 +292,13 @@ func (v CoretypesResourceRefValue) ToTerraformValue(ctx context.Context) (tftype
 
 		vals["kind"] = val
 
-		val, err = v.Type_.ToTerraformValue(ctx)
+		val, err = v.CoretypesResourceRefType.ToTerraformValue(ctx)
 
 		if err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
 
-		vals["type_"] = val
+		vals["type"] = val
 
 		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
@@ -330,8 +330,8 @@ func (v CoretypesResourceRefValue) ToObjectValue(ctx context.Context) (basetypes
 	var diags diag.Diagnostics
 
 	attributeTypes := map[string]attr.Type{
-		"kind":  basetypes.StringType{},
-		"type_": basetypes.StringType{},
+		"kind": basetypes.StringType{},
+		"type": basetypes.StringType{},
 	}
 
 	if v.IsNull() {
@@ -345,8 +345,8 @@ func (v CoretypesResourceRefValue) ToObjectValue(ctx context.Context) (basetypes
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"kind":  v.Kind,
-			"type_": v.Type_,
+			"kind": v.Kind,
+			"type": v.CoretypesResourceRefType,
 		})
 
 	return objVal, diags
@@ -371,7 +371,7 @@ func (v CoretypesResourceRefValue) Equal(o attr.Value) bool {
 		return false
 	}
 
-	if !v.Type_.Equal(other.Type_) {
+	if !v.CoretypesResourceRefType.Equal(other.CoretypesResourceRefType) {
 		return false
 	}
 
@@ -388,7 +388,7 @@ func (v CoretypesResourceRefValue) Type(ctx context.Context) attr.Type {
 
 func (v CoretypesResourceRefValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
-		"kind":  basetypes.StringType{},
-		"type_": basetypes.StringType{},
+		"kind": basetypes.StringType{},
+		"type": basetypes.StringType{},
 	}
 }

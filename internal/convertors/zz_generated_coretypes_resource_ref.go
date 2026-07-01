@@ -24,7 +24,7 @@ func ExpandCoretypesResourceRef(ctx context.Context, v customtypes.CoretypesReso
 	}
 	return &apitypes.CoretypesResourceRef{
 		Kind: apitypes.CoretypesKind(v.Kind.ValueString()),
-		Type: apitypes.CoretypesType(v.Type_.ValueString()),
+		Type: apitypes.CoretypesType(v.CoretypesResourceRefType.ValueString()),
 	}, diags
 }
 
@@ -41,8 +41,8 @@ func FlattenCoretypesResourceRef(ctx context.Context, in *apitypes.CoretypesReso
 	rv, d := customtypes.NewCoretypesResourceRefValue(
 		customtypes.CoretypesResourceRefValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
-			"kind":  types.StringValue(string(in.Kind)),
-			"type_": types.StringValue(string(in.Type)),
+			"kind": types.StringValue(string(in.Kind)),
+			"type": types.StringValue(string(in.Type)),
 		},
 	)
 	diags.Append(d...)
