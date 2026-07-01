@@ -78,4 +78,4 @@ jobs:
         run: |
           cd tests
           uv sync
-          uv run pytest --basetemp=./tmp/
+          uv run pytest --basetemp=./tmp/ --license-key "${{ secrets.PRIMUS_LICENSE_KEY }}"

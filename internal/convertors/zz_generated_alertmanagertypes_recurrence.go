@@ -101,6 +101,52 @@ func FlattenAlertmanagertypesRecurrenceList(ctx context.Context, in *[]apitypes.
 	return listVal, diags
 }
 
+func ExpandAlertmanagertypesRecurrenceMap(ctx context.Context, m types.Map) (*map[string]apitypes.AlertmanagertypesRecurrence, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	if m.IsNull() || m.IsUnknown() {
+		return nil, diags
+	}
+	out := make(map[string]apitypes.AlertmanagertypesRecurrence, len(m.Elements()))
+	for k, el := range m.Elements() {
+		sv, ok := el.(customtypes.AlertmanagertypesRecurrenceValue)
+		if !ok {
+			diags.AddError("Unexpected map element type",
+				fmt.Sprintf("element %q: expected customtypes.AlertmanagertypesRecurrenceValue, got %T", k, el))
+			return nil, diags
+		}
+		one, d := ExpandAlertmanagertypesRecurrence(ctx, sv)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if one != nil {
+			out[k] = *one
+		}
+	}
+	return &out, diags
+}
+
+func FlattenAlertmanagertypesRecurrenceMap(ctx context.Context, in *map[string]apitypes.AlertmanagertypesRecurrence) (types.Map, diag.Diagnostics) {
+	elemType := customtypes.AlertmanagertypesRecurrenceValue{}.Type(ctx)
+	if in == nil {
+		return types.MapNull(elemType), nil
+	}
+	var diags diag.Diagnostics
+	elems := make(map[string]attr.Value, len(*in))
+	for k := range *in {
+		v := (*in)[k]
+		sv, d := FlattenAlertmanagertypesRecurrence(ctx, &v)
+		diags.Append(d...)
+		if diags.HasError() {
+			return types.MapUnknown(elemType), diags
+		}
+		elems[k] = sv
+	}
+	mapVal, d := types.MapValue(elemType, elems)
+	diags.Append(d...)
+	return mapVal, diags
+}
+
 // alertmanagertypesRecurrenceValueFromObject lifts the raw basetypes.ObjectValue the
 // framework stores for a nested customtype into a typed customtypes.AlertmanagertypesRecurrenceValue
 // (structural cast, no field coercion); package-private, called by parent expanders.

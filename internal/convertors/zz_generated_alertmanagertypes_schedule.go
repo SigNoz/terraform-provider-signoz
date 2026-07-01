@@ -111,6 +111,52 @@ func FlattenAlertmanagertypesScheduleList(ctx context.Context, in *[]apitypes.Al
 	return listVal, diags
 }
 
+func ExpandAlertmanagertypesScheduleMap(ctx context.Context, m types.Map) (*map[string]apitypes.AlertmanagertypesSchedule, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	if m.IsNull() || m.IsUnknown() {
+		return nil, diags
+	}
+	out := make(map[string]apitypes.AlertmanagertypesSchedule, len(m.Elements()))
+	for k, el := range m.Elements() {
+		sv, ok := el.(customtypes.AlertmanagertypesScheduleValue)
+		if !ok {
+			diags.AddError("Unexpected map element type",
+				fmt.Sprintf("element %q: expected customtypes.AlertmanagertypesScheduleValue, got %T", k, el))
+			return nil, diags
+		}
+		one, d := ExpandAlertmanagertypesSchedule(ctx, sv)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if one != nil {
+			out[k] = *one
+		}
+	}
+	return &out, diags
+}
+
+func FlattenAlertmanagertypesScheduleMap(ctx context.Context, in *map[string]apitypes.AlertmanagertypesSchedule) (types.Map, diag.Diagnostics) {
+	elemType := customtypes.AlertmanagertypesScheduleValue{}.Type(ctx)
+	if in == nil {
+		return types.MapNull(elemType), nil
+	}
+	var diags diag.Diagnostics
+	elems := make(map[string]attr.Value, len(*in))
+	for k := range *in {
+		v := (*in)[k]
+		sv, d := FlattenAlertmanagertypesSchedule(ctx, &v)
+		diags.Append(d...)
+		if diags.HasError() {
+			return types.MapUnknown(elemType), diags
+		}
+		elems[k] = sv
+	}
+	mapVal, d := types.MapValue(elemType, elems)
+	diags.Append(d...)
+	return mapVal, diags
+}
+
 // alertmanagertypesScheduleValueFromObject lifts the raw basetypes.ObjectValue the
 // framework stores for a nested customtype into a typed customtypes.AlertmanagertypesScheduleValue
 // (structural cast, no field coercion); package-private, called by parent expanders.

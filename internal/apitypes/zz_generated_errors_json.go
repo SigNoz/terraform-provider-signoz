@@ -5,11 +5,11 @@ package apitypes
 
 // ErrorsJSON defines model for ErrorsJSON.
 type ErrorsJSON struct {
-	Code        string                           `json:"code"`
-	Errors      *[]ErrorsResponseerroradditional `json:"errors,omitempty"`
-	Message     string                           `json:"message"`
-	Retry       *ErrorsResponseretryjson         `json:"retry,omitempty"`
-	Suggestions *[]string                        `json:"suggestions,omitempty"`
-	Type        *string                          `json:"type,omitempty"`
-	Url         *string                          `json:"url,omitempty"`
+	Code        string                          `json:"code"`
+	Errors      []ErrorsResponseerroradditional `json:"errors"`
+	Message     string                          `json:"message"`
+	Retry       *ErrorsResponseretryjson        `json:"retry,omitempty"`
+	Suggestions []string                        `json:"suggestions"`
+	Type        string                          `json:"type"`
+	Url         *string                         `json:"url,omitempty"`
 }

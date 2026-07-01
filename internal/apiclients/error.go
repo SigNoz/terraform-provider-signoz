@@ -51,7 +51,7 @@ func decodeError(status int, raw []byte) *APIError {
 		return out
 	}
 
-	if re.Error.Code != "" || re.Error.Message != "" || (re.Error.Errors != nil && len(*re.Error.Errors) > 0) {
+	if re.Error.Code != "" || re.Error.Message != "" || len(re.Error.Errors) > 0 {
 		out.Render = &re
 	}
 

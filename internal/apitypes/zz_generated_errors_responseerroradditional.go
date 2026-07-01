@@ -5,6 +5,6 @@ package apitypes
 
 // ErrorsResponseerroradditional defines model for ErrorsResponseerroradditional.
 type ErrorsResponseerroradditional struct {
-	Message     *string   `json:"message,omitempty"`
-	Suggestions *[]string `json:"suggestions,omitempty"`
+	Message     string   `json:"message"`
+	Suggestions []string `json:"suggestions"`
 }

@@ -38,3 +38,9 @@ def pytest_addoption(parser: pytest.Parser):
         default="go",
         help="Path to the go binary used to build the provider under test.",
     )
+    parser.addoption(
+        "--license-key",
+        action="store",
+        default="",
+        help="SigNoz license key applied after startup; empty skips license application.",
+    )
