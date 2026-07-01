@@ -23,7 +23,7 @@ resource "signoz_role" "serviceaccount_reader" {
 
       object_group = {
         resource = {
-          type = "metaresource"
+          type = "serviceaccount"
           kind = "serviceaccount"
         }
 
