@@ -1,6 +1,6 @@
-resource "signoz_role" "editor" {
-  name        = "editor"
-  description = "Can view dashboards across the org"
+resource "signoz_role" "serviceaccount_reader" {
+  name        = "serviceaccount_reader"
+  description = "Read-only access to service accounts"
 
   transaction_groups = [
     {
@@ -8,8 +8,8 @@ resource "signoz_role" "editor" {
 
       object_group = {
         resource = {
-          type = "telemetryresource"
-          kind = "dashboard"
+          type = "metaresource"
+          kind = "serviceaccount"
         }
 
         selectors = ["*"]

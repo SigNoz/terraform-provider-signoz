@@ -1,2 +1,2 @@
 # Roles are imported using their ID.
-terraform import signoz_role.editor 0192a9c2-1234-7abc-8def-0123456789ab
+terraform import signoz_role.serviceaccount_reader 0192a9c2-1234-7abc-8def-0123456789ab
