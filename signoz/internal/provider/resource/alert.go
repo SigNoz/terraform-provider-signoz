@@ -307,12 +307,15 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 			Summary:     plan.Summary.ValueString(),
 		},
 		BroadcastToAll: plan.BroadcastToAll.ValueBool(),
-		EvalWindow:     plan.EvalWindow.ValueString(),
-		Frequency:      plan.Frequency.ValueString(),
-		RuleType:       plan.RuleType.ValueString(),
-		Source:         plan.Source.ValueString(),
-		Version:        plan.Version.ValueString(),
-		SchemaVersion:  plan.SchemaVersion.ValueString(),
+		// Update sends Disabled in its payload; Create must too.
+		// Otherwise a `disabled = true` alert is created enabled, and the response (disabled=false) is inconsistent with the plan — which taints the resource and forces a destroy+recreate.
+		Disabled:      plan.Disabled.ValueBool(),
+		EvalWindow:    plan.EvalWindow.ValueString(),
+		Frequency:     plan.Frequency.ValueString(),
+		RuleType:      plan.RuleType.ValueString(),
+		Source:        plan.Source.ValueString(),
+		Version:       plan.Version.ValueString(),
+		SchemaVersion: plan.SchemaVersion.ValueString(),
 	}
 
 	err := alertPayload.SetCondition(plan.Condition)
@@ -358,6 +361,9 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.ID = types.StringValue(alert.ID)
 	plan.BroadcastToAll = types.BoolValue(alert.BroadcastToAll)
 	plan.Disabled = types.BoolValue(alert.Disabled)
+	// rule_type is Optional+Computed with no default, so it plans as "known after apply" when omitted from config.
+	// Like preferred_channels, Create must read it back from the response or it stays unknown after apply and churns the resource.
+	plan.RuleType = types.StringValue(alert.RuleType)
 	plan.Source = types.StringValue(alert.Source)
 	plan.State = types.StringValue(alert.State)
 	plan.SchemaVersion = types.StringValue(alert.SchemaVersion)
@@ -376,6 +382,13 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	var diagLabels diag.Diagnostics
 	plan.Labels, diagLabels = alert.LabelsToTerraform()
 	resp.Diagnostics.Append(diagLabels...)
+
+	// preferred_channels is Optional+Computed, so it plans as "known after apply" when omitted from config.
+	// Create must populate it from the response, as Read and Update already do.
+	// Leaving it unknown makes Terraform reject the apply, taint the resource, and destroy+recreate it — churning the rule ID on every apply.
+	var diagPreferredChannels diag.Diagnostics
+	plan.PreferredChannels, diagPreferredChannels = alert.PreferredChannelsToTerraform()
+	resp.Diagnostics.Append(diagPreferredChannels...)
 
 	if alert.SchemaVersion != "" && alert.SchemaVersion != "v1" {
 		plan.NotificationSettings, diagLabels = alert.NotificationSettingsToTerraform(ctx)

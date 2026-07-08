@@ -6,6 +6,7 @@ declares a `dev_overrides` block. dev_overrides bypass the registry and the
 local build.
 """
 
+import json
 import os
 import shutil
 import subprocess
@@ -124,3 +125,30 @@ class Terraform:
         result = self._run("destroy", "-auto-approve")
         assert result.returncode == 0, f"destroy failed:\n{result.stdout}\n{result.stderr}"
         return result
+
+    def state_resource(self, resource_type: str) -> dict:
+        """Return the attribute values of the first resource of the given type in the current state."""
+        result = self._run("show", "-json")
+        assert result.returncode == 0, f"show failed:\n{result.stdout}\n{result.stderr}"
+        state = json.loads(result.stdout)
+        for res in state.get("values", {}).get("root_module", {}).get("resources", []):
+            if res.get("type") == resource_type:
+                return res["values"]
+        raise AssertionError(f"no {resource_type} resource found in state")
+
+    def state_resource_id(self, resource_type: str) -> str:
+        return self.state_resource(resource_type)["id"]
+
+    def _run_raw(self, *args: str) -> subprocess.CompletedProcess:
+        """Like _run but without appending -no-color, for commands where flag position matters."""
+        result = subprocess.run([self.binary, *args], cwd=self.workdir, env=self.env, text=True, capture_output=True)
+        logger.info("terraform %s -> %d", " ".join(args), result.returncode)
+        return result
+
+    def state_rm(self, address: str) -> None:
+        result = self._run_raw("state", "rm", "-no-color", address)
+        assert result.returncode == 0, f"state rm failed:\n{result.stdout}\n{result.stderr}"
+
+    def import_resource(self, address: str, resource_id: str) -> None:
+        result = self._run_raw("import", "-no-color", "-input=false", address, resource_id)
+        assert result.returncode == 0, f"import failed:\n{result.stdout}\n{result.stderr}"
