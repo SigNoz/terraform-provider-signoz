@@ -229,12 +229,12 @@ func (t RuletypesRuleConditionType) ValueFromObject(ctx context.Context, in base
 		return nil, diags
 	}
 
-	targetVal, ok := targetAttribute.(basetypes.NumberValue)
+	targetVal, ok := targetAttribute.(basetypes.Float64Value)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`target expected to be basetypes.NumberValue, was: %T`, targetAttribute))
+			fmt.Sprintf(`target expected to be basetypes.Float64Value, was: %T`, targetAttribute))
 	}
 
 	targetUnitAttribute, ok := attributes["target_unit"]
@@ -548,12 +548,12 @@ func NewRuletypesRuleConditionValue(attributeTypes map[string]attr.Type, attribu
 		return NewRuletypesRuleConditionValueUnknown(), diags
 	}
 
-	targetVal, ok := targetAttribute.(basetypes.NumberValue)
+	targetVal, ok := targetAttribute.(basetypes.Float64Value)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`target expected to be basetypes.NumberValue, was: %T`, targetAttribute))
+			fmt.Sprintf(`target expected to be basetypes.Float64Value, was: %T`, targetAttribute))
 	}
 
 	targetUnitAttribute, ok := attributes["target_unit"]
@@ -682,19 +682,19 @@ func (t RuletypesRuleConditionType) ValueType(ctx context.Context) attr.Value {
 var _ basetypes.ObjectValuable = RuletypesRuleConditionValue{}
 
 type RuletypesRuleConditionValue struct {
-	AbsentFor         basetypes.Int64Value  `tfsdk:"absent_for"`
-	AlertOnAbsent     basetypes.BoolValue   `tfsdk:"alert_on_absent"`
-	Algorithm         basetypes.StringValue `tfsdk:"algorithm"`
-	CompositeQuery    basetypes.ObjectValue `tfsdk:"composite_query"`
-	MatchType         basetypes.StringValue `tfsdk:"match_type"`
-	Op                basetypes.StringValue `tfsdk:"op"`
-	RequireMinPoints  basetypes.BoolValue   `tfsdk:"require_min_points"`
-	RequiredNumPoints basetypes.Int64Value  `tfsdk:"required_num_points"`
-	Seasonality       basetypes.StringValue `tfsdk:"seasonality"`
-	SelectedQueryName basetypes.StringValue `tfsdk:"selected_query_name"`
-	Target            basetypes.NumberValue `tfsdk:"target"`
-	TargetUnit        basetypes.StringValue `tfsdk:"target_unit"`
-	Thresholds        basetypes.ObjectValue `tfsdk:"thresholds"`
+	AbsentFor         basetypes.Int64Value   `tfsdk:"absent_for"`
+	AlertOnAbsent     basetypes.BoolValue    `tfsdk:"alert_on_absent"`
+	Algorithm         basetypes.StringValue  `tfsdk:"algorithm"`
+	CompositeQuery    basetypes.ObjectValue  `tfsdk:"composite_query"`
+	MatchType         basetypes.StringValue  `tfsdk:"match_type"`
+	Op                basetypes.StringValue  `tfsdk:"op"`
+	RequireMinPoints  basetypes.BoolValue    `tfsdk:"require_min_points"`
+	RequiredNumPoints basetypes.Int64Value   `tfsdk:"required_num_points"`
+	Seasonality       basetypes.StringValue  `tfsdk:"seasonality"`
+	SelectedQueryName basetypes.StringValue  `tfsdk:"selected_query_name"`
+	Target            basetypes.Float64Value `tfsdk:"target"`
+	TargetUnit        basetypes.StringValue  `tfsdk:"target_unit"`
+	Thresholds        basetypes.ObjectValue  `tfsdk:"thresholds"`
 	state             attr.ValueState
 }
 
@@ -716,7 +716,7 @@ func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tfty
 	attrTypes["required_num_points"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["seasonality"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["selected_query_name"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["target"] = basetypes.NumberType{}.TerraformType(ctx)
+	attrTypes["target"] = basetypes.Float64Type{}.TerraformType(ctx)
 	attrTypes["target_unit"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["thresholds"] = basetypes.ObjectType{
 		AttrTypes: RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
@@ -916,7 +916,7 @@ func (v RuletypesRuleConditionValue) ToObjectValue(ctx context.Context) (basetyp
 		"required_num_points": basetypes.Int64Type{},
 		"seasonality":         basetypes.StringType{},
 		"selected_query_name": basetypes.StringType{},
-		"target":              basetypes.NumberType{},
+		"target":              basetypes.Float64Type{},
 		"target_unit":         basetypes.StringType{},
 		"thresholds": basetypes.ObjectType{
 			AttrTypes: RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
@@ -1044,7 +1044,7 @@ func (v RuletypesRuleConditionValue) AttributeTypes(ctx context.Context) map[str
 		"required_num_points": basetypes.Int64Type{},
 		"seasonality":         basetypes.StringType{},
 		"selected_query_name": basetypes.StringType{},
-		"target":              basetypes.NumberType{},
+		"target":              basetypes.Float64Type{},
 		"target_unit":         basetypes.StringType{},
 		"thresholds": basetypes.ObjectType{
 			AttrTypes: RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),

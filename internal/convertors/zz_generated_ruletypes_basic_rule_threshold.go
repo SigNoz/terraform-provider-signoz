@@ -30,8 +30,8 @@ func ExpandRuletypesBasicRuleThreshold(ctx context.Context, v customtypes.Rulety
 		MatchType:      apitypes.RuletypesMatchType(v.MatchType.ValueString()),
 		Name:           v.Name.ValueString(),
 		Op:             apitypes.RuletypesCompareOperator(v.Op.ValueString()),
-		RecoveryTarget: convtypes.NumberFloat32Pointer(v.RecoveryTarget),
-		Target:         convtypes.NumberFloat32Pointer(v.Target),
+		RecoveryTarget: convtypes.Float64Pointer(v.RecoveryTarget),
+		Target:         convtypes.Float64Pointer(v.Target),
 		TargetUnit:     convtypes.StringPointer(v.TargetUnit),
 	}, diags
 }
@@ -55,8 +55,8 @@ func FlattenRuletypesBasicRuleThreshold(ctx context.Context, in *apitypes.Rulety
 			"match_type":      types.StringValue(string(in.MatchType)),
 			"name":            types.StringValue(in.Name),
 			"op":              types.StringValue(string(in.Op)),
-			"recovery_target": convtypes.NumberFloat32FromPointer(in.RecoveryTarget),
-			"target":          convtypes.NumberFloat32FromPointer(in.Target),
+			"recovery_target": convtypes.Float64FromPointer(in.RecoveryTarget),
+			"target":          convtypes.Float64FromPointer(in.Target),
 			"target_unit":     convtypes.StringFromPointer(in.TargetUnit),
 		},
 	)

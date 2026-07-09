@@ -56,7 +56,7 @@ func ExpandRuletypesRuleCondition(ctx context.Context, v customtypes.RuletypesRu
 		RequiredNumPoints: convtypes.IntPointer(v.RequiredNumPoints),
 		Seasonality:       seasonality,
 		SelectedQueryName: convtypes.StringPointer(v.SelectedQueryName),
-		Target:            convtypes.NumberFloat32Pointer(v.Target),
+		Target:            convtypes.Float64Pointer(v.Target),
 		TargetUnit:        convtypes.StringPointer(v.TargetUnit),
 		Thresholds:        thresholds,
 	}
@@ -115,7 +115,7 @@ func FlattenRuletypesRuleCondition(ctx context.Context, in *apitypes.RuletypesRu
 			"required_num_points": convtypes.IntFromPointer(in.RequiredNumPoints),
 			"seasonality":         seasonalityFlat,
 			"selected_query_name": convtypes.StringFromPointer(in.SelectedQueryName),
-			"target":              convtypes.NumberFloat32FromPointer(in.Target),
+			"target":              convtypes.Float64FromPointer(in.Target),
 			"target_unit":         convtypes.StringFromPointer(in.TargetUnit),
 			"thresholds":          thresholdsFlat,
 		},

@@ -2750,7 +2750,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						Optional: true,
 						Computed: true,
 					},
-					"target": schema.NumberAttribute{
+					"target": schema.Float64Attribute{
 						Optional: true,
 						Computed: true,
 					},
@@ -2805,11 +2805,11 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 														),
 													},
 												},
-												"recovery_target": schema.NumberAttribute{
+												"recovery_target": schema.Float64Attribute{
 													Optional: true,
 													Computed: true,
 												},
-												"target": schema.NumberAttribute{
+												"target": schema.Float64Attribute{
 													Required: true,
 												},
 												"target_unit": schema.StringAttribute{

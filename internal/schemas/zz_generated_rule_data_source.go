@@ -1632,7 +1632,7 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 					"selected_query_name": schema.StringAttribute{
 						Computed: true,
 					},
-					"target": schema.NumberAttribute{
+					"target": schema.Float64Attribute{
 						Computed: true,
 					},
 					"target_unit": schema.StringAttribute{
@@ -1661,10 +1661,10 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 												"op": schema.StringAttribute{
 													Computed: true,
 												},
-												"recovery_target": schema.NumberAttribute{
+												"recovery_target": schema.Float64Attribute{
 													Computed: true,
 												},
-												"target": schema.NumberAttribute{
+												"target": schema.Float64Attribute{
 													Computed: true,
 												},
 												"target_unit": schema.StringAttribute{

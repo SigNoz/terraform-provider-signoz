@@ -15,7 +15,7 @@ type RuletypesRuleCondition struct {
 	RequiredNumPoints *int                         `json:"requiredNumPoints,omitempty"`
 	Seasonality       *RuletypesSeasonality        `json:"seasonality,omitempty"`
 	SelectedQueryName *string                      `json:"selectedQueryName,omitempty"`
-	Target            *float32                     `json:"target,omitempty"`
+	Target            *float64                     `json:"target,omitempty"`
 	TargetUnit        *string                      `json:"targetUnit,omitempty"`
 	Thresholds        *RuletypesRuleThresholdData  `json:"thresholds,omitempty"`
 }

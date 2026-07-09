@@ -9,7 +9,7 @@ type RuletypesBasicRuleThreshold struct {
 	MatchType      RuletypesMatchType       `json:"matchType"`
 	Name           string                   `json:"name"`
 	Op             RuletypesCompareOperator `json:"op"`
-	RecoveryTarget *float32                 `json:"recoveryTarget,omitempty"`
-	Target         *float32                 `json:"target"`
+	RecoveryTarget *float64                 `json:"recoveryTarget,omitempty"`
+	Target         *float64                 `json:"target"`
 	TargetUnit     *string                  `json:"targetUnit,omitempty"`
 }

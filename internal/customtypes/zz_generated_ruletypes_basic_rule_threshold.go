@@ -121,12 +121,12 @@ func (t RuletypesBasicRuleThresholdType) ValueFromObject(ctx context.Context, in
 		return nil, diags
 	}
 
-	recoveryTargetVal, ok := recoveryTargetAttribute.(basetypes.NumberValue)
+	recoveryTargetVal, ok := recoveryTargetAttribute.(basetypes.Float64Value)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`recovery_target expected to be basetypes.NumberValue, was: %T`, recoveryTargetAttribute))
+			fmt.Sprintf(`recovery_target expected to be basetypes.Float64Value, was: %T`, recoveryTargetAttribute))
 	}
 
 	targetAttribute, ok := attributes["target"]
@@ -139,12 +139,12 @@ func (t RuletypesBasicRuleThresholdType) ValueFromObject(ctx context.Context, in
 		return nil, diags
 	}
 
-	targetVal, ok := targetAttribute.(basetypes.NumberValue)
+	targetVal, ok := targetAttribute.(basetypes.Float64Value)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`target expected to be basetypes.NumberValue, was: %T`, targetAttribute))
+			fmt.Sprintf(`target expected to be basetypes.Float64Value, was: %T`, targetAttribute))
 	}
 
 	targetUnitAttribute, ok := attributes["target_unit"]
@@ -326,12 +326,12 @@ func NewRuletypesBasicRuleThresholdValue(attributeTypes map[string]attr.Type, at
 		return NewRuletypesBasicRuleThresholdValueUnknown(), diags
 	}
 
-	recoveryTargetVal, ok := recoveryTargetAttribute.(basetypes.NumberValue)
+	recoveryTargetVal, ok := recoveryTargetAttribute.(basetypes.Float64Value)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`recovery_target expected to be basetypes.NumberValue, was: %T`, recoveryTargetAttribute))
+			fmt.Sprintf(`recovery_target expected to be basetypes.Float64Value, was: %T`, recoveryTargetAttribute))
 	}
 
 	targetAttribute, ok := attributes["target"]
@@ -344,12 +344,12 @@ func NewRuletypesBasicRuleThresholdValue(attributeTypes map[string]attr.Type, at
 		return NewRuletypesBasicRuleThresholdValueUnknown(), diags
 	}
 
-	targetVal, ok := targetAttribute.(basetypes.NumberValue)
+	targetVal, ok := targetAttribute.(basetypes.Float64Value)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`target expected to be basetypes.NumberValue, was: %T`, targetAttribute))
+			fmt.Sprintf(`target expected to be basetypes.Float64Value, was: %T`, targetAttribute))
 	}
 
 	targetUnitAttribute, ok := attributes["target_unit"]
@@ -454,13 +454,13 @@ func (t RuletypesBasicRuleThresholdType) ValueType(ctx context.Context) attr.Val
 var _ basetypes.ObjectValuable = RuletypesBasicRuleThresholdValue{}
 
 type RuletypesBasicRuleThresholdValue struct {
-	Channels       basetypes.ListValue   `tfsdk:"channels"`
-	MatchType      basetypes.StringValue `tfsdk:"match_type"`
-	Name           basetypes.StringValue `tfsdk:"name"`
-	Op             basetypes.StringValue `tfsdk:"op"`
-	RecoveryTarget basetypes.NumberValue `tfsdk:"recovery_target"`
-	Target         basetypes.NumberValue `tfsdk:"target"`
-	TargetUnit     basetypes.StringValue `tfsdk:"target_unit"`
+	Channels       basetypes.ListValue    `tfsdk:"channels"`
+	MatchType      basetypes.StringValue  `tfsdk:"match_type"`
+	Name           basetypes.StringValue  `tfsdk:"name"`
+	Op             basetypes.StringValue  `tfsdk:"op"`
+	RecoveryTarget basetypes.Float64Value `tfsdk:"recovery_target"`
+	Target         basetypes.Float64Value `tfsdk:"target"`
+	TargetUnit     basetypes.StringValue  `tfsdk:"target_unit"`
 	state          attr.ValueState
 }
 
@@ -476,8 +476,8 @@ func (v RuletypesBasicRuleThresholdValue) ToTerraformValue(ctx context.Context) 
 	attrTypes["match_type"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["name"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["op"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["recovery_target"] = basetypes.NumberType{}.TerraformType(ctx)
-	attrTypes["target"] = basetypes.NumberType{}.TerraformType(ctx)
+	attrTypes["recovery_target"] = basetypes.Float64Type{}.TerraformType(ctx)
+	attrTypes["target"] = basetypes.Float64Type{}.TerraformType(ctx)
 	attrTypes["target_unit"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
@@ -591,8 +591,8 @@ func (v RuletypesBasicRuleThresholdValue) ToObjectValue(ctx context.Context) (ba
 			"match_type":      basetypes.StringType{},
 			"name":            basetypes.StringType{},
 			"op":              basetypes.StringType{},
-			"recovery_target": basetypes.NumberType{},
-			"target":          basetypes.NumberType{},
+			"recovery_target": basetypes.Float64Type{},
+			"target":          basetypes.Float64Type{},
 			"target_unit":     basetypes.StringType{},
 		}), diags
 	}
@@ -604,8 +604,8 @@ func (v RuletypesBasicRuleThresholdValue) ToObjectValue(ctx context.Context) (ba
 		"match_type":      basetypes.StringType{},
 		"name":            basetypes.StringType{},
 		"op":              basetypes.StringType{},
-		"recovery_target": basetypes.NumberType{},
-		"target":          basetypes.NumberType{},
+		"recovery_target": basetypes.Float64Type{},
+		"target":          basetypes.Float64Type{},
 		"target_unit":     basetypes.StringType{},
 	}
 
@@ -694,8 +694,8 @@ func (v RuletypesBasicRuleThresholdValue) AttributeTypes(ctx context.Context) ma
 		"match_type":      basetypes.StringType{},
 		"name":            basetypes.StringType{},
 		"op":              basetypes.StringType{},
-		"recovery_target": basetypes.NumberType{},
-		"target":          basetypes.NumberType{},
+		"recovery_target": basetypes.Float64Type{},
+		"target":          basetypes.Float64Type{},
 		"target_unit":     basetypes.StringType{},
 	}
 }
