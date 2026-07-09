@@ -5,8 +5,8 @@ package apitypes
 
 // AuthtypesPostableUser defines model for AuthtypesPostableUser.
 type AuthtypesPostableUser struct {
-	DisplayName     *string                      `json:"displayName,omitempty"`
-	Email           string                       `json:"email"`
-	FrontendBaseUrl *string                      `json:"frontendBaseUrl,omitempty"`
-	UserRoles       *[]AuthtypesPostableUserRole `json:"userRoles,omitempty"`
+	DisplayName     *string                                `json:"displayName,omitempty"`
+	Email           string                                 `json:"email"`
+	FrontendBaseUrl *string                                `json:"frontendBaseUrl,omitempty"`
+	UserRoles       *[]AuthtypesDeprecatedPostableUserRole `json:"userRoles,omitempty"`
 }

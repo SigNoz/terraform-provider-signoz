@@ -17,3 +17,7 @@ spec:
         SIGNOZ_USER_ROOT_ENABLED: "true"
         SIGNOZ_USER_ROOT_EMAIL: "admin@integration.test"
         SIGNOZ_USER_ROOT_PASSWORD: "password123Z$"
+        # sqlstore.sqlite.transaction_mode — take the sqlite write lock at
+        # BEGIN instead of on first write, avoiding "database is locked"
+        # errors under concurrent test writes.
+        SIGNOZ_SQLSTORE_SQLITE_TRANSACTION__MODE: "immediate"
