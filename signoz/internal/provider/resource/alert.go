@@ -8,6 +8,7 @@ import (
 	"regexp"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
+	"github.com/SigNoz/terraform-provider-signoz/internal/customtypes"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/client"
 	"github.com/SigNoz/terraform-provider-signoz/signoz/internal/model"
@@ -44,30 +45,30 @@ type alertResource struct {
 
 // alertResourceModel maps the resource schema data.
 type alertResourceModel struct {
-	ID                   types.String `tfsdk:"id"`
-	Alert                types.String `tfsdk:"alert"`
-	AlertType            types.String `tfsdk:"alert_type"`
-	BroadcastToAll       types.Bool   `tfsdk:"broadcast_to_all"`
-	Condition            types.String `tfsdk:"condition"`
-	Description          types.String `tfsdk:"description"`
-	Disabled             types.Bool   `tfsdk:"disabled"`
-	EvalWindow           types.String `tfsdk:"eval_window"`
-	Frequency            types.String `tfsdk:"frequency"`
-	Labels               types.Map    `tfsdk:"labels"`
-	PreferredChannels    types.List   `tfsdk:"preferred_channels"`
-	RuleType             types.String `tfsdk:"rule_type"`
-	Severity             types.String `tfsdk:"severity"`
-	Source               types.String `tfsdk:"source"`
-	State                types.String `tfsdk:"state"`
-	Summary              types.String `tfsdk:"summary"`
-	Version              types.String `tfsdk:"version"`
-	SchemaVersion        types.String `tfsdk:"schema_version"`
-	NotificationSettings types.Object `tfsdk:"notification_settings"`
-	Evaluation           types.String `tfsdk:"evaluation"`
-	CreateAt             types.String `tfsdk:"create_at"`
-	CreateBy             types.String `tfsdk:"create_by"`
-	UpdateAt             types.String `tfsdk:"update_at"`
-	UpdateBy             types.String `tfsdk:"update_by"`
+	ID                   types.String               `tfsdk:"id"`
+	Alert                types.String               `tfsdk:"alert"`
+	AlertType            types.String               `tfsdk:"alert_type"`
+	BroadcastToAll       types.Bool                 `tfsdk:"broadcast_to_all"`
+	Condition            customtypes.NormalizedJSON `tfsdk:"condition"`
+	Description          types.String               `tfsdk:"description"`
+	Disabled             types.Bool                 `tfsdk:"disabled"`
+	EvalWindow           types.String               `tfsdk:"eval_window"`
+	Frequency            types.String               `tfsdk:"frequency"`
+	Labels               types.Map                  `tfsdk:"labels"`
+	PreferredChannels    types.List                 `tfsdk:"preferred_channels"`
+	RuleType             types.String               `tfsdk:"rule_type"`
+	Severity             types.String               `tfsdk:"severity"`
+	Source               types.String               `tfsdk:"source"`
+	State                types.String               `tfsdk:"state"`
+	Summary              types.String               `tfsdk:"summary"`
+	Version              types.String               `tfsdk:"version"`
+	SchemaVersion        types.String               `tfsdk:"schema_version"`
+	NotificationSettings types.Object               `tfsdk:"notification_settings"`
+	Evaluation           customtypes.NormalizedJSON `tfsdk:"evaluation"`
+	CreateAt             types.String               `tfsdk:"create_at"`
+	CreateBy             types.String               `tfsdk:"create_by"`
+	UpdateAt             types.String               `tfsdk:"update_at"`
+	UpdateBy             types.String               `tfsdk:"update_by"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -121,6 +122,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				DeprecationMessage: "This field is no longer needed and will be ignored",
 			},
 			attr.Condition: schema.StringAttribute{
+				CustomType:  customtypes.NormalizedJSONType{},
 				Required:    true,
 				Description: "Condition of the alert.",
 			},
@@ -258,6 +260,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				},
 			},
 			attr.Evaluation: schema.StringAttribute{
+				CustomType:  customtypes.NormalizedJSONType{},
 				Optional:    true,
 				Computed:    true,
 				Description: "Evaluation settings for the alert (JSON). Only used when schema_version is v2 or higher.",
@@ -320,7 +323,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 		SchemaVersion: plan.SchemaVersion.ValueString(),
 	}
 
-	err := alertPayload.SetCondition(plan.Condition)
+	err := alertPayload.SetCondition(types.StringValue(plan.Condition.ValueString()))
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
 		return
@@ -335,7 +338,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
-		err := alertPayload.SetEvaluation(plan.Evaluation)
+		err := alertPayload.SetEvaluation(types.StringValue(plan.Evaluation.ValueString()))
 		if err != nil {
 			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
 			return
@@ -374,12 +377,14 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
-	//As condition is JSON string, updated response contains extra keys
-	plan.Condition, err = alertPayload.ConditionToTerraform()
+	// condition/evaluation use customtypes.NormalizedJSON, whose semantic equality ignores the server's
+	// added empty/null keys and reordering — so storing the value as-is does not register as drift.
+	conditionTF, err := alertPayload.ConditionToTerraform()
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
 		return
 	}
+	plan.Condition = customtypes.NewNormalizedJSONValue(conditionTF.ValueString())
 
 	var diagLabels diag.Diagnostics
 	plan.Labels, diagLabels = alert.LabelsToTerraform()
@@ -396,15 +401,15 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 		plan.NotificationSettings, diagLabels = alert.NotificationSettingsToTerraform(ctx)
 		resp.Diagnostics.Append(diagLabels...)
 
-		var evalErr error
-		plan.Evaluation, evalErr = alert.EvaluationToTerraform()
+		evaluationTF, evalErr := alert.EvaluationToTerraform()
 		if evalErr != nil {
 			addErr(&resp.Diagnostics, evalErr, operationCreate, SigNozAlert)
 		}
+		plan.Evaluation = customtypes.NewNormalizedJSONValue(evaluationTF.ValueString())
 	} else {
 		plan.NotificationSettings = types.ObjectNull(
 			attr.NotificationSettingsAttrTypes())
-		plan.Evaluation = types.StringNull()
+		plan.Evaluation = customtypes.NewNormalizedJSONNull()
 	}
 
 	// Set state to populated data.
@@ -459,11 +464,12 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.UpdateBy = types.StringValue(alert.UpdateBy)
 	state.SchemaVersion = types.StringValue(alert.SchemaVersion)
 
-	state.Condition, err = alert.ConditionToTerraform()
+	conditionTF, err := alert.ConditionToTerraform()
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
 		return
 	}
+	state.Condition = customtypes.NewNormalizedJSONValue(conditionTF.ValueString())
 
 	var diagLabelsRead diag.Diagnostics
 	state.Labels, diagLabelsRead = alert.LabelsToTerraform()
@@ -481,15 +487,16 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 			return
 		}
 
-		state.Evaluation, err = alert.EvaluationToTerraform()
-		if err != nil {
-			addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
+		evaluationTF, evalErr := alert.EvaluationToTerraform()
+		if evalErr != nil {
+			addErr(&resp.Diagnostics, evalErr, operationRead, SigNozAlert)
 			return
 		}
+		state.Evaluation = customtypes.NewNormalizedJSONValue(evaluationTF.ValueString())
 	} else {
 		state.NotificationSettings = types.ObjectNull(
 			attr.NotificationSettingsAttrTypes())
-		state.Evaluation = types.StringNull()
+		state.Evaluation = customtypes.NewNormalizedJSONNull()
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
@@ -536,7 +543,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		UpdateBy:       state.UpdateBy.ValueString(),
 	}
 
-	err = alertUpdate.SetCondition(plan.Condition)
+	err = alertUpdate.SetCondition(types.StringValue(plan.Condition.ValueString()))
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
@@ -553,7 +560,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	}
 
 	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
-		err := alertUpdate.SetEvaluation(plan.Evaluation)
+		err := alertUpdate.SetEvaluation(types.StringValue(plan.Evaluation.ValueString()))
 		if err != nil {
 			addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 			return
@@ -598,12 +605,12 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
-	//As condition is JSON string, updated response contains extra keys
-	plan.Condition, err = alertUpdate.ConditionToTerraform()
+	conditionTF, err := alertUpdate.ConditionToTerraform()
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 		return
 	}
+	plan.Condition = customtypes.NewNormalizedJSONValue(conditionTF.ValueString())
 
 	var diagLabelsUpdate diag.Diagnostics
 	plan.Labels, diagLabelsUpdate = alert.LabelsToTerraform()
@@ -621,15 +628,16 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 			return
 		}
 
-		plan.Evaluation, err = alert.EvaluationToTerraform()
-		if err != nil {
-			addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		evaluationTF, evalErr := alert.EvaluationToTerraform()
+		if evalErr != nil {
+			addErr(&resp.Diagnostics, evalErr, operationUpdate, SigNozAlert)
 			return
 		}
+		plan.Evaluation = customtypes.NewNormalizedJSONValue(evaluationTF.ValueString())
 	} else {
 		plan.NotificationSettings = types.ObjectNull(
 			attr.NotificationSettingsAttrTypes())
-		plan.Evaluation = types.StringNull()
+		plan.Evaluation = customtypes.NewNormalizedJSONNull()
 	}
 
 	// Set refreshed state.

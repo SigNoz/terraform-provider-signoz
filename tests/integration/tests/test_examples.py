@@ -11,11 +11,7 @@ RESOURCE_FILES = sorted((EXAMPLES / "resources").glob("signoz_*/*.tf"))
 # Example files to skip, keyed by "<resource>/<file>" -> reason. The integration
 # run surfaced provider/API issues for these.
 SKIPPED = {
-    "signoz_alert/resource.tf": "provider returns unknown values for computed fields after apply",
-    "signoz_alert/resource_logs_formula.tf": "provider returns unknown values for computed fields after apply",
-    "signoz_alert/resource_promql.tf": "provider returns unknown values for computed fields after apply",
-    "signoz_alert/resource_tiered.tf": "provider returns unknown values for computed fields after apply",
-    "signoz_alert/resource_traces_latency.tf": "provider returns unknown values for computed fields after apply",
+    # anomaly needs the rule_type allow-list AND the labels/severity round-trip fix (tracked separately).
     "signoz_alert/resource_anomaly.tf": 'provider rejects rule_type "anomaly_rule"',
     "signoz_dashboard/resource.tf": "provider produces an inconsistent result after apply",
     "signoz_planned_maintenance/resource.tf": "alert_ids reference non-existent rules (API 500)",
