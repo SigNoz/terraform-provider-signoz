@@ -148,6 +148,29 @@ resources:
         - createdBy
         - updatedAt
         - updatedBy
+  dashboard:
+    create:
+      path: /api/v2/dashboards
+      method: POST
+    read:
+      path: /api/v2/dashboards/{id}
+      method: GET
+    update:
+      path: /api/v2/dashboards/{id}
+      method: PUT
+    delete:
+      path: /api/v2/dashboards/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - source
+        - generateName
 
 data_sources:
   route_policy:
@@ -239,3 +262,16 @@ data_sources:
         - createdBy
         - updatedAt
         - updatedBy
+  dashboard:
+    read:
+      path: /api/v2/dashboards/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - source
