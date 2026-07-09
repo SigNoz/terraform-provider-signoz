@@ -68,7 +68,6 @@ func (d *alertDataSource) Configure(_ context.Context, req datasource.ConfigureR
 			&resp.Diagnostics,
 			fmt.Errorf("unexpected data source configure type. Expected *apiclients.WrappedClient, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
-			SigNozAlert,
 		)
 
 		return
@@ -220,7 +219,7 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	alert, err := d.client.GetAlert(ctx, data.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, fmt.Errorf("unable to read SigNoz alert: %s", err.Error()), SigNozAlert)
+		addErr(&resp.Diagnostics, fmt.Errorf("unable to read SigNoz alert: %s", err.Error()))
 		return
 	}
 
@@ -242,7 +241,7 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 	data.Condition, err = alert.ConditionToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, SigNozAlert)
+		addErr(&resp.Diagnostics, err)
 		return
 	}
 
@@ -260,7 +259,7 @@ func (d *alertDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 
 		data.Evaluation, err = alert.EvaluationToTerraform()
 		if err != nil {
-			addErr(&resp.Diagnostics, err, SigNozAlert)
+			addErr(&resp.Diagnostics, err)
 			return
 		}
 	} else {

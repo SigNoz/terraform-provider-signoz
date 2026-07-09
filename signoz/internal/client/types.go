@@ -18,20 +18,5 @@ type alertResponse struct {
 	Data      model.Alert `json:"data"`
 }
 
-// dashboardRespose - Maps the response data of CreateDashboard and GetDashboard.
-type dashboardResponse struct {
-	Status    string        `json:"status"`
-	Error     string        `json:"error,omitempty"`
-	ErrorType string        `json:"errorType,omitempty"`
-	Data      dashboardData `json:"data"`
-}
-
-type dashboardData struct {
-	CreatedAt string          `json:"createdAt"`
-	CreatedBy string          `json:"createdBy"`
-	ID        string          `json:"id"`
-	Locked    bool            `json:"locked"`
-	UpdatedAt string          `json:"updatedAt"`
-	UpdatedBy string          `json:"updatedBy"`
-	Data      model.Dashboard `json:"data"`
-}
+// alertResponse and signozResponse are the only response shapes still in use;
+// the dashboard response types were removed with the v1 dashboard resource.

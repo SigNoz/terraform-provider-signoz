@@ -7,13 +7,13 @@ import (
 )
 
 // addErr adds an error to the diagnostics.
-func addErr(diagnostics *diag.Diagnostics, err error, resource string) {
+func addErr(diagnostics *diag.Diagnostics, err error) {
 	if err == nil {
 		return
 	}
 
 	diagnostics.AddError(
-		fmt.Sprintf("failed to %s %s", operationRead, resource),
+		fmt.Sprintf("failed to %s %s", operationRead, SigNozAlert),
 		err.Error(),
 	)
 }

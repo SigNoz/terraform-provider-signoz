@@ -80,7 +80,7 @@ func (r *alertResource) Configure(_ context.Context, req resource.ConfigureReque
 			&resp.Diagnostics,
 			fmt.Errorf("unexpected resource configure type. Expected *apiclients.WrappedClient, got: %T. "+
 				"Please report this issue to the provider developers", req.ProviderData),
-			operationConfigure, SigNozAlert,
+			operationConfigure,
 		)
 
 		return
@@ -318,14 +318,14 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 	err := alertPayload.SetCondition(plan.Condition)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationCreate)
 		return
 	}
 
 	if !utils.IsNullOrUnknown(plan.NotificationSettings) {
 		err := alertPayload.SetNotificationSettings(ctx, plan.NotificationSettings)
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationCreate)
 			return
 		}
 	}
@@ -333,7 +333,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
 		err := alertPayload.SetEvaluation(plan.Evaluation)
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationCreate)
 			return
 		}
 	}
@@ -370,7 +370,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	//As condition is JSON string, updated response contains extra keys
 	plan.Condition, err = alertPayload.ConditionToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationCreate)
 		return
 	}
 
@@ -385,7 +385,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 		var evalErr error
 		plan.Evaluation, evalErr = alert.EvaluationToTerraform()
 		if evalErr != nil {
-			addErr(&resp.Diagnostics, evalErr, operationCreate, SigNozAlert)
+			addErr(&resp.Diagnostics, evalErr, operationCreate)
 		}
 	} else {
 		plan.NotificationSettings = types.ObjectNull(
@@ -414,7 +414,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	// Get refreshed alert from SigNoz.
 	alert, err := r.client.GetAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationRead)
 		return
 	}
 
@@ -440,7 +440,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	state.Condition, err = alert.ConditionToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationRead)
 		return
 	}
 
@@ -462,7 +462,7 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 		state.Evaluation, err = alert.EvaluationToTerraform()
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationRead)
 			return
 		}
 	} else {
@@ -517,7 +517,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 	err = alertUpdate.SetCondition(plan.Condition)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
@@ -526,7 +526,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if !utils.IsNullOrUnknown(plan.NotificationSettings) {
 		err := alertUpdate.SetNotificationSettings(ctx, plan.NotificationSettings)
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationCreate)
 			return
 		}
 	}
@@ -534,7 +534,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
 		err := alertUpdate.SetEvaluation(plan.Evaluation)
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationCreate)
 			return
 		}
 	}
@@ -545,14 +545,14 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	// Update existing alert.
 	err = r.client.UpdateAlert(ctx, state.ID.ValueString(), alertUpdate)
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
 	// Fetch updated alert.
 	alert, err := r.client.GetAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
@@ -580,7 +580,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	//As condition is JSON string, updated response contains extra keys
 	plan.Condition, err = alertUpdate.ConditionToTerraform()
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationUpdate)
 		return
 	}
 
@@ -602,7 +602,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 		plan.Evaluation, err = alert.EvaluationToTerraform()
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationUpdate)
 			return
 		}
 	} else {
@@ -630,7 +630,7 @@ func (r *alertResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	// Delete existing alert.
 	err := r.client.DeleteAlert(ctx, state.ID.ValueString())
 	if err != nil {
-		addErr(&resp.Diagnostics, err, operationDelete, SigNozAlert)
+		addErr(&resp.Diagnostics, err, operationDelete)
 		return
 	}
 }
