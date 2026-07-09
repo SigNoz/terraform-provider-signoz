@@ -64,7 +64,7 @@ resource "signoz_rule" "pod_cpu" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack-platform", "pagerduty-oncall"]
+            channels   = ["slack", "pagerduty"]
             match_type = "all_the_times"
             name       = "critical"
             op         = "above"
