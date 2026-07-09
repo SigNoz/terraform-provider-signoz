@@ -223,3 +223,47 @@ def test_alert_example_creates_without_unknown_values(
         assert terraform.state_resource_id("signoz_alert")
     finally:
         terraform.destroy()
+
+
+# The evaluation block from ALERT_TF, and a malformed replacement that makes SetEvaluation fail during
+# Update (evaluation is a plain string attribute with no schema validation, so it reaches the provider).
+_VALID_EVALUATION = """  evaluation = jsonencode({
+    kind = "rolling"
+    spec = { evalWindow = "5m", frequency = "1m" }
+  })"""
+_BROKEN_EVALUATION = '  evaluation = "{ not valid json"'
+
+
+def test_alert_update_error_reports_update_operation(
+    tmp_path: Path,
+    tf_cli_config: Path,
+    signoz: SigNoz,
+    terraform_bin: str,
+    webhook_channels: tuple[str, ...],
+):
+    """A failure during Update must be reported as an "update" error, not "create".
+
+    Two Update error paths (SetNotificationSettings / SetEvaluation) passed operationCreate to addErr,
+    so an update-time failure surfaced as "failed to create signoz_alert". This drives a real update
+    failure (malformed evaluation JSON) and asserts the diagnostic is labeled with the update operation.
+    """
+    assert _VALID_EVALUATION in ALERT_TF, "evaluation anchor drifted from ALERT_TF"
+
+    workdir = tmp_path / "ws"
+    workdir.mkdir()
+    (workdir / "versions.tf").write_text(VERSIONS_TF)
+    (workdir / "alert.tf").write_text(ALERT_TF.replace("__DESC__", "err"))
+
+    terraform = Terraform(workdir, tf_cli_config, signoz, terraform_bin)
+    terraform.apply()
+
+    try:
+        broken = ALERT_TF.replace("__DESC__", "err").replace(_VALID_EVALUATION, _BROKEN_EVALUATION)
+        (workdir / "alert.tf").write_text(broken)
+
+        result = terraform.apply_expecting_failure()
+        output = result.stdout + result.stderr
+        assert "failed to update" in output, f"update failure not labeled 'update':\n{output}"
+        assert "failed to create" not in output, f"update failure mislabeled as 'create':\n{output}"
+    finally:
+        terraform.destroy()

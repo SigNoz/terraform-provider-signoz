@@ -538,7 +538,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if !utils.IsNullOrUnknown(plan.NotificationSettings) {
 		err := alertUpdate.SetNotificationSettings(ctx, plan.NotificationSettings)
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 			return
 		}
 	}
@@ -546,7 +546,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	if !plan.Evaluation.IsNull() && plan.Evaluation.ValueString() != "" {
 		err := alertUpdate.SetEvaluation(plan.Evaluation)
 		if err != nil {
-			addErr(&resp.Diagnostics, err, operationCreate, SigNozAlert)
+			addErr(&resp.Diagnostics, err, operationUpdate, SigNozAlert)
 			return
 		}
 	}

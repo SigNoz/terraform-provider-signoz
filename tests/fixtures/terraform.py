@@ -115,6 +115,11 @@ class Terraform:
         assert result.returncode == 0, f"apply failed:\n{result.stdout}\n{result.stderr}"
         return result
 
+    def apply_expecting_failure(self) -> subprocess.CompletedProcess:
+        result = self._run("apply", "-auto-approve")
+        assert result.returncode != 0, f"expected apply to fail but it succeeded:\n{result.stdout}"
+        return result
+
     def plan_exit_code(self) -> int:
         # -detailed-exitcode: 0 = no changes, 1 = error, 2 = changes (drift).
         result = self._run("plan", "-detailed-exitcode")
