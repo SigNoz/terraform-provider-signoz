@@ -17,7 +17,6 @@ SKIPPED = {
     "signoz_alert/resource_tiered.tf": "provider returns unknown values for computed fields after apply",
     "signoz_alert/resource_traces_latency.tf": "provider returns unknown values for computed fields after apply",
     "signoz_alert/resource_anomaly.tf": 'provider rejects rule_type "anomaly_rule"',
-    "signoz_dashboard/resource.tf": "provider produces an inconsistent result after apply",
     "signoz_planned_maintenance/resource.tf": "alert_ids reference non-existent rules (API 500)",
 }
 
