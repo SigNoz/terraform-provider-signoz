@@ -1,5 +1,5 @@
 resource "signoz_user" "engineer" {
-  email = "engineer@example.com"
+  email = "engineer.reader@example.com"
 }
 
 resource "signoz_role" "serviceaccount_reader" {
