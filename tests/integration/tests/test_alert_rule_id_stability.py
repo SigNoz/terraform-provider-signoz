@@ -14,6 +14,7 @@ import re
 from pathlib import Path
 
 import pytest
+import requests
 
 from fixtures.signoz import SigNoz
 from fixtures.terraform import EXAMPLES, VERSIONS_TF, Terraform
@@ -265,5 +266,125 @@ def test_alert_update_error_reports_update_operation(
         output = result.stdout + result.stderr
         assert "failed to update" in output, f"update failure not labeled 'update':\n{output}"
         assert "failed to create" not in output, f"update failure mislabeled as 'create':\n{output}"
+    finally:
+        terraform.destroy()
+
+
+def _delete_alert_out_of_band(signoz: SigNoz, rule_id: str) -> None:
+    resp = requests.delete(
+        f"{signoz.endpoint}/api/v1/rules/{rule_id}",
+        headers={"SIGNOZ-API-KEY": signoz.access_token},
+        timeout=10,
+    )
+    assert resp.status_code == 200, resp.text
+
+
+def test_alert_read_recreates_after_out_of_band_delete(
+    tmp_path: Path,
+    tf_cli_config: Path,
+    signoz: SigNoz,
+    terraform_bin: str,
+    webhook_channels: tuple[str, ...],
+):
+    """If the alert is deleted outside Terraform, a refresh must plan a recreate — not hard-error.
+
+    Read previously turned any GetAlert failure into an error, so a 404 wedged every future plan/apply.
+    """
+    workdir = tmp_path / "ws"
+    workdir.mkdir()
+    (workdir / "versions.tf").write_text(VERSIONS_TF)
+    (workdir / "alert.tf").write_text(ALERT_TF.replace("__DESC__", "oob-read"))
+
+    terraform = Terraform(workdir, tf_cli_config, signoz, terraform_bin)
+    terraform.apply()
+    rule_id = terraform.state_resource_id("signoz_alert")
+
+    try:
+        _delete_alert_out_of_band(signoz, rule_id)
+        # Refreshing must not error; it should detect the deletion and plan a recreate (exit code 2).
+        assert terraform.plan_exit_code() == 2, "expected a recreate plan after out-of-band deletion"
+        terraform.apply()
+        new_id = terraform.state_resource_id("signoz_alert")
+        assert new_id and new_id != rule_id, "alert was not recreated after out-of-band deletion"
+    finally:
+        terraform.destroy()
+
+
+def test_alert_destroy_tolerates_out_of_band_delete(
+    tmp_path: Path,
+    tf_cli_config: Path,
+    signoz: SigNoz,
+    terraform_bin: str,
+    webhook_channels: tuple[str, ...],
+):
+    """`terraform destroy` must succeed even if the alert was already deleted out of band."""
+    workdir = tmp_path / "ws"
+    workdir.mkdir()
+    (workdir / "versions.tf").write_text(VERSIONS_TF)
+    (workdir / "alert.tf").write_text(ALERT_TF.replace("__DESC__", "oob-destroy"))
+
+    terraform = Terraform(workdir, tf_cli_config, signoz, terraform_bin)
+    terraform.apply()
+    rule_id = terraform.state_resource_id("signoz_alert")
+
+    _delete_alert_out_of_band(signoz, rule_id)
+    # Pre-fix, destroy's refresh hit a 404 and hard-errored, leaving the resource stuck in state.
+    terraform.destroy()
+
+
+def test_alert_preferred_channels_set_round_trips(
+    tmp_path: Path,
+    tf_cli_config: Path,
+    signoz: SigNoz,
+    terraform_bin: str,
+    webhook_channels: tuple[str, ...],
+):
+    """Setting preferred_channels explicitly must round-trip and stay stable across an update."""
+    cfg = ALERT_TF.replace("__DESC__", "pc").replace(
+        "  disabled       = true", '  disabled       = true\n  preferred_channels = ["slack"]'
+    )
+    workdir = tmp_path / "ws"
+    workdir.mkdir()
+    (workdir / "versions.tf").write_text(VERSIONS_TF)
+    (workdir / "alert.tf").write_text(cfg)
+
+    terraform = Terraform(workdir, tf_cli_config, signoz, terraform_bin)
+    terraform.apply()
+    created = terraform.state_resource("signoz_alert")
+    assert created["preferred_channels"] == ["slack"], created["preferred_channels"]
+    rule_id = created["id"]
+
+    try:
+        (workdir / "alert.tf").write_text(cfg.replace('description    = "pc"', 'description    = "pc2"'))
+        terraform.apply()
+        assert terraform.state_resource_id("signoz_alert") == rule_id
+    finally:
+        terraform.destroy()
+
+
+def test_alert_condition_update_in_place(
+    tmp_path: Path,
+    tf_cli_config: Path,
+    signoz: SigNoz,
+    terraform_bin: str,
+    webhook_channels: tuple[str, ...],
+):
+    """Changing the condition must update in place and preserve the rule ID."""
+    workdir = tmp_path / "ws"
+    workdir.mkdir()
+    (workdir / "versions.tf").write_text(VERSIONS_TF)
+    (workdir / "alert.tf").write_text(ALERT_TF.replace("__DESC__", "cond"))
+
+    terraform = Terraform(workdir, tf_cli_config, signoz, terraform_bin)
+    terraform.apply()
+    rule_id = terraform.state_resource_id("signoz_alert")
+
+    try:
+        # Change the threshold target inside the condition JSON.
+        changed = ALERT_TF.replace("__DESC__", "cond").replace("target     = 10", "target     = 12")
+        assert "target     = 12" in changed, "condition target anchor drifted from ALERT_TF"
+        (workdir / "alert.tf").write_text(changed)
+        terraform.apply()
+        assert terraform.state_resource_id("signoz_alert") == rule_id, "condition change churned the rule ID"
     finally:
         terraform.destroy()

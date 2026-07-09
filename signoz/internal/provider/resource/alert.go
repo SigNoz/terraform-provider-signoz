@@ -2,7 +2,9 @@ package resource
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"regexp"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
@@ -426,6 +428,13 @@ func (r *alertResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	// Get refreshed alert from SigNoz.
 	alert, err := r.client.GetAlert(ctx, state.ID.ValueString())
 	if err != nil {
+		// If the alert was deleted out of band, drop it from state so Terraform plans a recreate
+		// instead of erroring on every subsequent plan/apply (and so destroy can proceed).
+		var apiErr *apiclients.APIError
+		if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		addErr(&resp.Diagnostics, err, operationRead, SigNozAlert)
 		return
 	}
@@ -642,6 +651,11 @@ func (r *alertResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	// Delete existing alert.
 	err := r.client.DeleteAlert(ctx, state.ID.ValueString())
 	if err != nil {
+		// An already-deleted alert (404) is not an error — delete is idempotent.
+		var apiErr *apiclients.APIError
+		if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+			return
+		}
 		addErr(&resp.Diagnostics, err, operationDelete, SigNozAlert)
 		return
 	}
