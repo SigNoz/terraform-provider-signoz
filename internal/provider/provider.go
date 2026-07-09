@@ -136,6 +136,7 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 		services.NewRoutePolicyResource,
 		services.NewServiceAccountResource,
 		services.NewUserResource,
+		services.NewUserRoleResource,
 		signoz.NewAlertResource,
 		signoz.NewDashboardResource,
 	}
@@ -148,6 +149,7 @@ func (p *signozProvider) DataSources(_ context.Context) []func() datasource.Data
 		services.NewRoutePolicyDataSource,
 		services.NewServiceAccountDataSource,
 		services.NewUserDataSource,
+		services.NewUserRoleDataSource,
 		signoz.NewAlertDataSource,
 		signoz.NewDashboardDataSource,
 	}
