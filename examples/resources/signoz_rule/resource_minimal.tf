@@ -53,9 +53,5 @@ resource "signoz_rule" "minimal" {
     }
   }
 
-  notification_settings = {
-    renotify = {
-      enabled = false
-    }
-  }
+  notification_settings = {}
 }
