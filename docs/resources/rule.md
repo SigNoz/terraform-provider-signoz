@@ -122,14 +122,16 @@ resource "signoz_rule" "pod_cpu" {
 ```
 
 ```terraform
-# Minimal rule: only the attributes the schema marks required, plus the query
-# body the server needs to parse the payload. Every optional field (evaluation,
-# thresholds, notification_settings, labels, annotations, description, ...) is
-# omitted. Uses a PromQL query, the simplest query kind (no builder signal).
+# Minimal rule accepted by the v2 rules API. For schema_version = "v2alpha1"
+# the server requires version = "v5", a query, thresholds, evaluation, and
+# notification_settings. Optional fields (labels, annotations, description,
+# per-threshold channels, ...) are omitted.
 resource "signoz_rule" "minimal" {
-  alert      = "minimal-required-only"
-  alert_type = "METRIC_BASED_ALERT"
-  rule_type  = "promql_rule"
+  alert          = "minimal-required-only"
+  alert_type     = "METRIC_BASED_ALERT"
+  rule_type      = "promql_rule"
+  version        = "v5"
+  schema_version = "v2alpha1"
 
   condition = {
     composite_query = {
@@ -147,6 +149,36 @@ resource "signoz_rule" "minimal" {
           }
         }
       ]
+    }
+
+    thresholds = {
+      basic = {
+        kind = "basic"
+        spec = [
+          {
+            name       = "critical"
+            op         = "above"
+            match_type = "at_least_once"
+            target     = 1
+          }
+        ]
+      }
+    }
+  }
+
+  evaluation = {
+    rolling = {
+      kind = "rolling"
+      spec = {
+        eval_window = "5m"
+        frequency   = "1m"
+      }
+    }
+  }
+
+  notification_settings = {
+    renotify = {
+      enabled = false
     }
   }
 }
