@@ -111,42 +111,6 @@ func (t RuletypesRuleConditionType) ValueFromObject(ctx context.Context, in base
 			fmt.Sprintf(`composite_query expected to be basetypes.ObjectValue, was: %T`, compositeQueryAttribute))
 	}
 
-	matchTypeAttribute, ok := attributes["match_type"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`match_type is missing from object`)
-
-		return nil, diags
-	}
-
-	matchTypeVal, ok := matchTypeAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`match_type expected to be basetypes.StringValue, was: %T`, matchTypeAttribute))
-	}
-
-	opAttribute, ok := attributes["op"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`op is missing from object`)
-
-		return nil, diags
-	}
-
-	opVal, ok := opAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`op expected to be basetypes.StringValue, was: %T`, opAttribute))
-	}
-
 	requireMinPointsAttribute, ok := attributes["require_min_points"]
 
 	if !ok {
@@ -219,42 +183,6 @@ func (t RuletypesRuleConditionType) ValueFromObject(ctx context.Context, in base
 			fmt.Sprintf(`selected_query_name expected to be basetypes.StringValue, was: %T`, selectedQueryNameAttribute))
 	}
 
-	targetAttribute, ok := attributes["target"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`target is missing from object`)
-
-		return nil, diags
-	}
-
-	targetVal, ok := targetAttribute.(basetypes.Float64Value)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`target expected to be basetypes.Float64Value, was: %T`, targetAttribute))
-	}
-
-	targetUnitAttribute, ok := attributes["target_unit"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`target_unit is missing from object`)
-
-		return nil, diags
-	}
-
-	targetUnitVal, ok := targetUnitAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`target_unit expected to be basetypes.StringValue, was: %T`, targetUnitAttribute))
-	}
-
 	thresholdsAttribute, ok := attributes["thresholds"]
 
 	if !ok {
@@ -282,14 +210,10 @@ func (t RuletypesRuleConditionType) ValueFromObject(ctx context.Context, in base
 		AlertOnAbsent:     alertOnAbsentVal,
 		Algorithm:         algorithmVal,
 		CompositeQuery:    compositeQueryVal,
-		MatchType:         matchTypeVal,
-		Op:                opVal,
 		RequireMinPoints:  requireMinPointsVal,
 		RequiredNumPoints: requiredNumPointsVal,
 		Seasonality:       seasonalityVal,
 		SelectedQueryName: selectedQueryNameVal,
-		Target:            targetVal,
-		TargetUnit:        targetUnitVal,
 		Thresholds:        thresholdsVal,
 		state:             attr.ValueStateKnown,
 	}, diags
@@ -430,42 +354,6 @@ func NewRuletypesRuleConditionValue(attributeTypes map[string]attr.Type, attribu
 			fmt.Sprintf(`composite_query expected to be basetypes.ObjectValue, was: %T`, compositeQueryAttribute))
 	}
 
-	matchTypeAttribute, ok := attributes["match_type"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`match_type is missing from object`)
-
-		return NewRuletypesRuleConditionValueUnknown(), diags
-	}
-
-	matchTypeVal, ok := matchTypeAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`match_type expected to be basetypes.StringValue, was: %T`, matchTypeAttribute))
-	}
-
-	opAttribute, ok := attributes["op"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`op is missing from object`)
-
-		return NewRuletypesRuleConditionValueUnknown(), diags
-	}
-
-	opVal, ok := opAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`op expected to be basetypes.StringValue, was: %T`, opAttribute))
-	}
-
 	requireMinPointsAttribute, ok := attributes["require_min_points"]
 
 	if !ok {
@@ -538,42 +426,6 @@ func NewRuletypesRuleConditionValue(attributeTypes map[string]attr.Type, attribu
 			fmt.Sprintf(`selected_query_name expected to be basetypes.StringValue, was: %T`, selectedQueryNameAttribute))
 	}
 
-	targetAttribute, ok := attributes["target"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`target is missing from object`)
-
-		return NewRuletypesRuleConditionValueUnknown(), diags
-	}
-
-	targetVal, ok := targetAttribute.(basetypes.Float64Value)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`target expected to be basetypes.Float64Value, was: %T`, targetAttribute))
-	}
-
-	targetUnitAttribute, ok := attributes["target_unit"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`target_unit is missing from object`)
-
-		return NewRuletypesRuleConditionValueUnknown(), diags
-	}
-
-	targetUnitVal, ok := targetUnitAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`target_unit expected to be basetypes.StringValue, was: %T`, targetUnitAttribute))
-	}
-
 	thresholdsAttribute, ok := attributes["thresholds"]
 
 	if !ok {
@@ -601,14 +453,10 @@ func NewRuletypesRuleConditionValue(attributeTypes map[string]attr.Type, attribu
 		AlertOnAbsent:     alertOnAbsentVal,
 		Algorithm:         algorithmVal,
 		CompositeQuery:    compositeQueryVal,
-		MatchType:         matchTypeVal,
-		Op:                opVal,
 		RequireMinPoints:  requireMinPointsVal,
 		RequiredNumPoints: requiredNumPointsVal,
 		Seasonality:       seasonalityVal,
 		SelectedQueryName: selectedQueryNameVal,
-		Target:            targetVal,
-		TargetUnit:        targetUnitVal,
 		Thresholds:        thresholdsVal,
 		state:             attr.ValueStateKnown,
 	}, diags
@@ -682,24 +530,20 @@ func (t RuletypesRuleConditionType) ValueType(ctx context.Context) attr.Value {
 var _ basetypes.ObjectValuable = RuletypesRuleConditionValue{}
 
 type RuletypesRuleConditionValue struct {
-	AbsentFor         basetypes.Int64Value   `tfsdk:"absent_for"`
-	AlertOnAbsent     basetypes.BoolValue    `tfsdk:"alert_on_absent"`
-	Algorithm         basetypes.StringValue  `tfsdk:"algorithm"`
-	CompositeQuery    basetypes.ObjectValue  `tfsdk:"composite_query"`
-	MatchType         basetypes.StringValue  `tfsdk:"match_type"`
-	Op                basetypes.StringValue  `tfsdk:"op"`
-	RequireMinPoints  basetypes.BoolValue    `tfsdk:"require_min_points"`
-	RequiredNumPoints basetypes.Int64Value   `tfsdk:"required_num_points"`
-	Seasonality       basetypes.StringValue  `tfsdk:"seasonality"`
-	SelectedQueryName basetypes.StringValue  `tfsdk:"selected_query_name"`
-	Target            basetypes.Float64Value `tfsdk:"target"`
-	TargetUnit        basetypes.StringValue  `tfsdk:"target_unit"`
-	Thresholds        basetypes.ObjectValue  `tfsdk:"thresholds"`
+	AbsentFor         basetypes.Int64Value  `tfsdk:"absent_for"`
+	AlertOnAbsent     basetypes.BoolValue   `tfsdk:"alert_on_absent"`
+	Algorithm         basetypes.StringValue `tfsdk:"algorithm"`
+	CompositeQuery    basetypes.ObjectValue `tfsdk:"composite_query"`
+	RequireMinPoints  basetypes.BoolValue   `tfsdk:"require_min_points"`
+	RequiredNumPoints basetypes.Int64Value  `tfsdk:"required_num_points"`
+	Seasonality       basetypes.StringValue `tfsdk:"seasonality"`
+	SelectedQueryName basetypes.StringValue `tfsdk:"selected_query_name"`
+	Thresholds        basetypes.ObjectValue `tfsdk:"thresholds"`
 	state             attr.ValueState
 }
 
 func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 13)
+	attrTypes := make(map[string]tftypes.Type, 9)
 
 	var val tftypes.Value
 	var err error
@@ -710,14 +554,10 @@ func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tfty
 	attrTypes["composite_query"] = basetypes.ObjectType{
 		AttrTypes: RuletypesAlertCompositeQueryValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
-	attrTypes["match_type"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["op"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["require_min_points"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["required_num_points"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["seasonality"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["selected_query_name"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["target"] = basetypes.Float64Type{}.TerraformType(ctx)
-	attrTypes["target_unit"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["thresholds"] = basetypes.ObjectType{
 		AttrTypes: RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -726,7 +566,7 @@ func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tfty
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 13)
+		vals := make(map[string]tftypes.Value, 9)
 
 		val, err = v.AbsentFor.ToTerraformValue(ctx)
 
@@ -760,22 +600,6 @@ func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tfty
 
 		vals["composite_query"] = val
 
-		val, err = v.MatchType.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["match_type"] = val
-
-		val, err = v.Op.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["op"] = val
-
 		val, err = v.RequireMinPoints.ToTerraformValue(ctx)
 
 		if err != nil {
@@ -807,22 +631,6 @@ func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tfty
 		}
 
 		vals["selected_query_name"] = val
-
-		val, err = v.Target.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["target"] = val
-
-		val, err = v.TargetUnit.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["target_unit"] = val
 
 		val, err = v.Thresholds.ToTerraformValue(ctx)
 
@@ -910,14 +718,10 @@ func (v RuletypesRuleConditionValue) ToObjectValue(ctx context.Context) (basetyp
 		"composite_query": basetypes.ObjectType{
 			AttrTypes: RuletypesAlertCompositeQueryValue{}.AttributeTypes(ctx),
 		},
-		"match_type":          basetypes.StringType{},
-		"op":                  basetypes.StringType{},
 		"require_min_points":  basetypes.BoolType{},
 		"required_num_points": basetypes.Int64Type{},
 		"seasonality":         basetypes.StringType{},
 		"selected_query_name": basetypes.StringType{},
-		"target":              basetypes.Float64Type{},
-		"target_unit":         basetypes.StringType{},
 		"thresholds": basetypes.ObjectType{
 			AttrTypes: RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
 		},
@@ -938,14 +742,10 @@ func (v RuletypesRuleConditionValue) ToObjectValue(ctx context.Context) (basetyp
 			"alert_on_absent":     v.AlertOnAbsent,
 			"algorithm":           v.Algorithm,
 			"composite_query":     compositeQuery,
-			"match_type":          v.MatchType,
-			"op":                  v.Op,
 			"require_min_points":  v.RequireMinPoints,
 			"required_num_points": v.RequiredNumPoints,
 			"seasonality":         v.Seasonality,
 			"selected_query_name": v.SelectedQueryName,
-			"target":              v.Target,
-			"target_unit":         v.TargetUnit,
 			"thresholds":          thresholds,
 		})
 
@@ -983,14 +783,6 @@ func (v RuletypesRuleConditionValue) Equal(o attr.Value) bool {
 		return false
 	}
 
-	if !v.MatchType.Equal(other.MatchType) {
-		return false
-	}
-
-	if !v.Op.Equal(other.Op) {
-		return false
-	}
-
 	if !v.RequireMinPoints.Equal(other.RequireMinPoints) {
 		return false
 	}
@@ -1004,14 +796,6 @@ func (v RuletypesRuleConditionValue) Equal(o attr.Value) bool {
 	}
 
 	if !v.SelectedQueryName.Equal(other.SelectedQueryName) {
-		return false
-	}
-
-	if !v.Target.Equal(other.Target) {
-		return false
-	}
-
-	if !v.TargetUnit.Equal(other.TargetUnit) {
 		return false
 	}
 
@@ -1038,14 +822,10 @@ func (v RuletypesRuleConditionValue) AttributeTypes(ctx context.Context) map[str
 		"composite_query": basetypes.ObjectType{
 			AttrTypes: RuletypesAlertCompositeQueryValue{}.AttributeTypes(ctx),
 		},
-		"match_type":          basetypes.StringType{},
-		"op":                  basetypes.StringType{},
 		"require_min_points":  basetypes.BoolType{},
 		"required_num_points": basetypes.Int64Type{},
 		"seasonality":         basetypes.StringType{},
 		"selected_query_name": basetypes.StringType{},
-		"target":              basetypes.Float64Type{},
-		"target_unit":         basetypes.StringType{},
 		"thresholds": basetypes.ObjectType{
 			AttrTypes: RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
 		},

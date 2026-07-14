@@ -215,14 +215,10 @@ Optional:
 - `absent_for` (Number)
 - `alert_on_absent` (Boolean)
 - `algorithm` (String)
-- `match_type` (String)
-- `op` (String)
 - `require_min_points` (Boolean)
 - `required_num_points` (Number)
 - `seasonality` (String)
 - `selected_query_name` (String)
-- `target` (Number)
-- `target_unit` (String)
 - `thresholds` (Attributes) (see [below for nested schema](#nestedatt--condition--thresholds))
 
 <a id="nestedatt--condition--composite_query"></a>

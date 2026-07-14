@@ -198,6 +198,10 @@ resources:
         - evalWindow
         - frequency
         - preferredChannels
+        - condition.op
+        - condition.matchType
+        - condition.target
+        - condition.targetUnit
 
 data_sources:
   route_policy:
@@ -320,3 +324,7 @@ data_sources:
         - evalWindow
         - frequency
         - preferredChannels
+        - condition.op
+        - condition.matchType
+        - condition.target
+        - condition.targetUnit

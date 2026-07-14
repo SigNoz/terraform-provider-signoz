@@ -2701,32 +2701,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						},
 						Required: true,
 					},
-					"match_type": schema.StringAttribute{
-						Optional: true,
-						Computed: true,
-						Validators: []validator.String{
-							stringvalidator.OneOf(
-								"at_least_once",
-								"all_the_times",
-								"on_average",
-								"in_total",
-								"last",
-							),
-						},
-					},
-					"op": schema.StringAttribute{
-						Optional: true,
-						Computed: true,
-						Validators: []validator.String{
-							stringvalidator.OneOf(
-								"above",
-								"below",
-								"equal",
-								"not_equal",
-								"outside_bounds",
-							),
-						},
-					},
 					"require_min_points": schema.BoolAttribute{
 						Optional: true,
 						Computed: true,
@@ -2747,14 +2721,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"selected_query_name": schema.StringAttribute{
-						Optional: true,
-						Computed: true,
-					},
-					"target": schema.Float64Attribute{
-						Optional: true,
-						Computed: true,
-					},
-					"target_unit": schema.StringAttribute{
 						Optional: true,
 						Computed: true,
 					},

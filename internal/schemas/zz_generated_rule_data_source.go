@@ -1614,12 +1614,6 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						Computed: true,
 					},
-					"match_type": schema.StringAttribute{
-						Computed: true,
-					},
-					"op": schema.StringAttribute{
-						Computed: true,
-					},
 					"require_min_points": schema.BoolAttribute{
 						Computed: true,
 					},
@@ -1630,12 +1624,6 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"selected_query_name": schema.StringAttribute{
-						Computed: true,
-					},
-					"target": schema.Float64Attribute{
-						Computed: true,
-					},
-					"target_unit": schema.StringAttribute{
 						Computed: true,
 					},
 					"thresholds": schema.SingleNestedAttribute{
