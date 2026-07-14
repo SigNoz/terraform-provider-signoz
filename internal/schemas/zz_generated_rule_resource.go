@@ -7,6 +7,7 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/validators"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -2678,6 +2679,9 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								Required: true,
+								Validators: []validator.List{
+									listvalidator.SizeAtLeast(1),
+								},
 							},
 							"query_type": schema.StringAttribute{
 								Required: true,
@@ -2721,8 +2725,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"selected_query_name": schema.StringAttribute{
-						Optional: true,
-						Computed: true,
+						Required: true,
 					},
 					"thresholds": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
@@ -2806,8 +2809,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 								AttrTypes: customtypes.RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
 							},
 						},
-						Optional: true,
-						Computed: true,
+						Required: true,
 						Validators: []validator.Object{
 							validators.ExactlyOneNestedAttribute("basic"),
 						},
@@ -2945,8 +2947,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.RuletypesEvaluationEnvelopeValue{}.AttributeTypes(ctx),
 					},
 				},
-				Optional: true,
-				Computed: true,
+				Required: true,
 				Validators: []validator.Object{
 					validators.ExactlyOneNestedAttribute("cumulative", "rolling"),
 				},
@@ -3004,8 +3005,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.RuletypesNotificationSettingsValue{}.AttributeTypes(ctx),
 					},
 				},
-				Optional: true,
-				Computed: true,
+				Required: true,
 			},
 			"rule_type": schema.StringAttribute{
 				Required: true,
@@ -3018,8 +3018,12 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"schema_version": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
+				Required: true,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"v2alpha1",
+					),
+				},
 			},
 		},
 	}

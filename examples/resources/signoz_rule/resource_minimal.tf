@@ -40,6 +40,8 @@ resource "signoz_rule" "minimal" {
         ]
       }
     }
+
+    selected_query_name = "A"
   }
 
   evaluation = {

@@ -43,11 +43,13 @@ func ExpandRuletypesRuleCondition(ctx context.Context, v customtypes.RuletypesRu
 		RequireMinPoints:  convtypes.BoolPointer(v.RequireMinPoints),
 		RequiredNumPoints: convtypes.IntPointer(v.RequiredNumPoints),
 		Seasonality:       seasonality,
-		SelectedQueryName: convtypes.StringPointer(v.SelectedQueryName),
-		Thresholds:        thresholds,
+		SelectedQueryName: v.SelectedQueryName.ValueString(),
 	}
 	if compositeQuery != nil {
 		out.CompositeQuery = *compositeQuery
+	}
+	if thresholds != nil {
+		out.Thresholds = *thresholds
 	}
 	return out, diags
 }
@@ -68,7 +70,7 @@ func FlattenRuletypesRuleCondition(ctx context.Context, in *apitypes.RuletypesRu
 	} else {
 		seasonalityFlat = types.StringNull()
 	}
-	thresholdsFlatTyped, d := FlattenRuletypesRuleThresholdData(ctx, in.Thresholds)
+	thresholdsFlatTyped, d := FlattenRuletypesRuleThresholdData(ctx, &in.Thresholds)
 	diags.Append(d...)
 	thresholdsFlat, d := thresholdsFlatTyped.ToObjectValue(ctx)
 	diags.Append(d...)
@@ -86,7 +88,7 @@ func FlattenRuletypesRuleCondition(ctx context.Context, in *apitypes.RuletypesRu
 			"require_min_points":  convtypes.BoolFromPointer(in.RequireMinPoints),
 			"required_num_points": convtypes.IntFromPointer(in.RequiredNumPoints),
 			"seasonality":         seasonalityFlat,
-			"selected_query_name": convtypes.StringFromPointer(in.SelectedQueryName),
+			"selected_query_name": types.StringValue(in.SelectedQueryName),
 			"thresholds":          thresholdsFlat,
 		},
 	)

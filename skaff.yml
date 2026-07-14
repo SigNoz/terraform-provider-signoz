@@ -193,15 +193,6 @@ resources:
         - updatedAt
         - updatedBy
         - state
-        - version
-        - source
-        - evalWindow
-        - frequency
-        - preferredChannels
-        - condition.op
-        - condition.matchType
-        - condition.target
-        - condition.targetUnit
 
 data_sources:
   route_policy:
@@ -319,12 +310,3 @@ data_sources:
         - updatedAt
         - updatedBy
         - state
-        - version
-        - source
-        - evalWindow
-        - frequency
-        - preferredChannels
-        - condition.op
-        - condition.matchType
-        - condition.target
-        - condition.targetUnit
