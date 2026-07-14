@@ -117,20 +117,18 @@ resource "signoz_rule" "pod_cpu" {
   }
 
   schema_version = "v2alpha1"
-  version        = "v5"
 }
 ```
 
 ```terraform
 # Minimal rule accepted by the v2 rules API. For schema_version = "v2alpha1"
-# the server requires version = "v5", a query, thresholds (each with at least
-# one channel to route to), evaluation, and notification_settings. Optional
-# fields (labels, annotations, description, ...) are omitted.
+# the server requires a query, thresholds (each with at least one channel to
+# route to), evaluation, and notification_settings. Optional fields (labels,
+# annotations, description, ...) are omitted.
 resource "signoz_rule" "minimal" {
   alert          = "minimal-required-only"
   alert_type     = "METRIC_BASED_ALERT"
   rule_type      = "promql_rule"
-  version        = "v5"
   schema_version = "v2alpha1"
 
   condition = {
@@ -196,15 +194,10 @@ resource "signoz_rule" "minimal" {
 - `annotations` (Map of String)
 - `description` (String)
 - `disabled` (Boolean)
-- `eval_window` (String)
 - `evaluation` (Attributes) (see [below for nested schema](#nestedatt--evaluation))
-- `frequency` (String)
 - `labels` (Map of String)
 - `notification_settings` (Attributes) (see [below for nested schema](#nestedatt--notification_settings))
-- `preferred_channels` (List of String)
 - `schema_version` (String)
-- `source` (String)
-- `version` (String)
 
 ### Read-Only
 

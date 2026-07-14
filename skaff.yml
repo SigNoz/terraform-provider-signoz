@@ -193,6 +193,11 @@ resources:
         - updatedAt
         - updatedBy
         - state
+        - version
+        - source
+        - evalWindow
+        - frequency
+        - preferredChannels
 
 data_sources:
   route_policy:
@@ -310,3 +315,8 @@ data_sources:
         - updatedAt
         - updatedBy
         - state
+        - version
+        - source
+        - evalWindow
+        - frequency
+        - preferredChannels

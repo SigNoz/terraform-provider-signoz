@@ -1,12 +1,11 @@
 # Minimal rule accepted by the v2 rules API. For schema_version = "v2alpha1"
-# the server requires version = "v5", a query, thresholds (each with at least
-# one channel to route to), evaluation, and notification_settings. Optional
-# fields (labels, annotations, description, ...) are omitted.
+# the server requires a query, thresholds (each with at least one channel to
+# route to), evaluation, and notification_settings. Optional fields (labels,
+# annotations, description, ...) are omitted.
 resource "signoz_rule" "minimal" {
   alert          = "minimal-required-only"
   alert_type     = "METRIC_BASED_ALERT"
   rule_type      = "promql_rule"
-  version        = "v5"
   schema_version = "v2alpha1"
 
   condition = {

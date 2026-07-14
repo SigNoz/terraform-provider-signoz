@@ -27,8 +27,6 @@ func ExpandRuletypesPostableRule(ctx context.Context, m schemas.RuleModel) (*api
 	diags.Append(d...)
 	notificationSettings, d := ExpandRuletypesNotificationSettings(ctx, m.NotificationSettings)
 	diags.Append(d...)
-	preferredChannels, d := convtypes.StringPointerSliceFromList(ctx, m.PreferredChannels)
-	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -38,16 +36,11 @@ func ExpandRuletypesPostableRule(ctx context.Context, m schemas.RuleModel) (*api
 		Annotations:          annotations,
 		Description:          convtypes.StringPointer(m.Description),
 		Disabled:             convtypes.BoolPointer(m.Disabled),
-		EvalWindow:           convtypes.StringPointer(m.EvalWindow),
 		Evaluation:           evaluation,
-		Frequency:            convtypes.StringPointer(m.Frequency),
 		Labels:               labels,
 		NotificationSettings: notificationSettings,
-		PreferredChannels:    preferredChannels,
 		RuleType:             apitypes.RuletypesRuleType(m.RuleType.ValueString()),
 		SchemaVersion:        convtypes.StringPointer(m.SchemaVersion),
-		Source:               convtypes.StringPointer(m.Source),
-		Version:              convtypes.StringPointer(m.Version),
 	}
 	if condition != nil {
 		out.Condition = *condition
@@ -71,8 +64,6 @@ func FlattenRuletypesRule(ctx context.Context, g *apitypes.RuletypesRule) (*sche
 	diags.Append(d...)
 	notificationSettingsFlat, d := FlattenRuletypesNotificationSettings(ctx, g.NotificationSettings)
 	diags.Append(d...)
-	preferredChannelsFlat, d := convtypes.ListFromStringPointerSlice(ctx, g.PreferredChannels)
-	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
@@ -84,16 +75,11 @@ func FlattenRuletypesRule(ctx context.Context, g *apitypes.RuletypesRule) (*sche
 		Condition:            conditionFlat,
 		Description:          convtypes.StringFromPointer(g.Description),
 		Disabled:             convtypes.BoolFromPointer(g.Disabled),
-		EvalWindow:           convtypes.StringFromPointer(g.EvalWindow),
 		Evaluation:           evaluationFlat,
-		Frequency:            convtypes.StringFromPointer(g.Frequency),
 		Id:                   types.StringValue(g.Id),
 		Labels:               labelsFlat,
 		NotificationSettings: notificationSettingsFlat,
-		PreferredChannels:    preferredChannelsFlat,
 		RuleType:             types.StringValue(string(g.RuleType)),
 		SchemaVersion:        convtypes.StringFromPointer(g.SchemaVersion),
-		Source:               convtypes.StringFromPointer(g.Source),
-		Version:              convtypes.StringFromPointer(g.Version),
 	}, diags
 }

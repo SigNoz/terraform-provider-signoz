@@ -2862,10 +2862,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Computed: true,
 			},
-			"eval_window": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-			},
 			"evaluation": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"cumulative": schema.SingleNestedAttribute{
@@ -2989,10 +2985,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 					validators.ExactlyOneNestedAttribute("cumulative", "rolling"),
 				},
 			},
-			"frequency": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-			},
 			"id": schema.StringAttribute{
 				Computed: true,
 			},
@@ -3049,11 +3041,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Computed: true,
 			},
-			"preferred_channels": schema.ListAttribute{
-				ElementType: types.StringType,
-				Optional:    true,
-				Computed:    true,
-			},
 			"rule_type": schema.StringAttribute{
 				Required: true,
 				Validators: []validator.String{
@@ -3068,14 +3055,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Computed: true,
 			},
-			"source": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-			},
-			"version": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-			},
 		},
 	}
 }
@@ -3087,15 +3066,10 @@ type RuleModel struct {
 	Condition            customtypes.RuletypesRuleConditionValue        `tfsdk:"condition"`
 	Description          types.String                                   `tfsdk:"description"`
 	Disabled             types.Bool                                     `tfsdk:"disabled"`
-	EvalWindow           types.String                                   `tfsdk:"eval_window"`
 	Evaluation           customtypes.RuletypesEvaluationEnvelopeValue   `tfsdk:"evaluation"`
-	Frequency            types.String                                   `tfsdk:"frequency"`
 	Id                   types.String                                   `tfsdk:"id"`
 	Labels               types.Map                                      `tfsdk:"labels"`
 	NotificationSettings customtypes.RuletypesNotificationSettingsValue `tfsdk:"notification_settings"`
-	PreferredChannels    types.List                                     `tfsdk:"preferred_channels"`
 	RuleType             types.String                                   `tfsdk:"rule_type"`
 	SchemaVersion        types.String                                   `tfsdk:"schema_version"`
-	Source               types.String                                   `tfsdk:"source"`
-	Version              types.String                                   `tfsdk:"version"`
 }

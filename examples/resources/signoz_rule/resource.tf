@@ -102,5 +102,4 @@ resource "signoz_rule" "pod_cpu" {
   }
 
   schema_version = "v2alpha1"
-  version        = "v5"
 }

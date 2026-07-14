@@ -29,17 +29,12 @@ data "signoz_rule" "example" {
 - `condition` (Attributes) (see [below for nested schema](#nestedatt--condition))
 - `description` (String)
 - `disabled` (Boolean)
-- `eval_window` (String)
 - `evaluation` (Attributes) (see [below for nested schema](#nestedatt--evaluation))
-- `frequency` (String)
 - `id` (String) The ID of this resource.
 - `labels` (Map of String)
 - `notification_settings` (Attributes) (see [below for nested schema](#nestedatt--notification_settings))
-- `preferred_channels` (List of String)
 - `rule_type` (String)
 - `schema_version` (String)
-- `source` (String)
-- `version` (String)
 
 <a id="nestedatt--condition"></a>
 ### Nested Schema for `condition`
