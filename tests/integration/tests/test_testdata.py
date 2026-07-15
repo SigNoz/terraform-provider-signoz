@@ -31,21 +31,9 @@ from fixtures.terraform import TESTDATA, VERSIONS_TF, Terraform
 # resources/signoz_<name>/<NN>/ — each two-digit dir is one scenario.
 SCENARIOS = sorted(p for p in (TESTDATA / "resources").glob("signoz_*/[0-9][0-9]") if p.is_dir())
 
-# Scenarios to skip, keyed by "<resource>/<NN>" -> reason. Populate from an
-# integration run when a scenario surfaces a provider/API issue rather than a
-# bug in the config itself.
-SKIPPED: dict[str, str] = {}
-
 
 def _id(scenario: Path) -> str:
     return f"{scenario.parent.name}/{scenario.name}"
-
-
-def _case(scenario: Path):
-    sid = _id(scenario)
-    marks = [pytest.mark.skip(reason=SKIPPED[sid])] if sid in SKIPPED else []
-
-    return pytest.param(scenario, id=sid, marks=marks)
 
 
 def _base_step(scenario: Path) -> Path:
@@ -59,7 +47,7 @@ def _patch_steps(scenario: Path) -> list[Path]:
     return sorted(scenario.glob("*-jsonpatch.json"))
 
 
-@pytest.mark.parametrize("scenario", [_case(scenario) for scenario in SCENARIOS])
+@pytest.mark.parametrize("scenario", SCENARIOS, ids=_id)
 def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str, webhook_channels: tuple[str, ...]):
     base = _base_step(scenario)
     patches = _patch_steps(scenario)
