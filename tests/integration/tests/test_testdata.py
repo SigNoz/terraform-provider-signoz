@@ -32,25 +32,13 @@ from fixtures.terraform import TESTDATA, VERSIONS_TF, Terraform
 SCENARIOS = sorted(p for p in (TESTDATA / "resources").glob("signoz_*/[0-9][0-9]") if p.is_dir())
 
 
-def _id(scenario: Path) -> str:
-    return f"{scenario.parent.name}/{scenario.name}"
-
-
-def _base_step(scenario: Path) -> Path:
+@pytest.mark.parametrize("scenario", SCENARIOS, ids=[f"{s.parent.name}/{s.name}" for s in SCENARIOS])
+def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str, webhook_channels: tuple[str, ...]):
     bases = [p for p in scenario.iterdir() if p.name.endswith((".tf", ".tf.json")) and not p.name.endswith("-jsonpatch.json")]
     assert len(bases) == 1, f"{scenario}: expected exactly one base .tf/.tf.json, found {sorted(p.name for p in bases)}"
 
-    return bases[0]
-
-
-def _patch_steps(scenario: Path) -> list[Path]:
-    return sorted(scenario.glob("*-jsonpatch.json"))
-
-
-@pytest.mark.parametrize("scenario", SCENARIOS, ids=_id)
-def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str, webhook_channels: tuple[str, ...]):
-    base = _base_step(scenario)
-    patches = _patch_steps(scenario)
+    base = bases[0]
+    patches = sorted(scenario.glob("*-jsonpatch.json"))
     is_json = base.name.endswith(".tf.json")
 
     assert is_json or not patches, f"{scenario}: JSON patches require a .tf.json base, got {base.name}"
