@@ -1,36 +1,100 @@
-from collections.abc import Callable
+"""End-to-end lifecycle tests for every scenario under testdata/.
+
+Each numbered directory under testdata/resources/signoz_<name>/ is one scenario:
+a single base config plus, optionally, ordered JSON-patch edits.
+
+    signoz_rule/00/
+      01-<name>.tf            # base config (HCL or Terraform JSON)
+
+    signoz_rule/01/
+      01-<name>.tf.json       # base config (Terraform JSON syntax)
+      02-jsonpatch.json       # RFC 6902 patch applied on top of the base
+      03-jsonpatch.json       # RFC 6902 patch applied on top of the previous state
+
+For each scenario the runner creates the base (plan shows a create, apply,
+re-plan is clean), applies each jsonpatch in ascending order — re-plan must show
+changes, apply, re-plan must be clean — and finally destroys. A scenario with no
+patches is just create -> no-drift -> destroy; its base may be plain HCL (.tf).
+A JSON patch needs a JSON target, so a scenario with patches needs a .tf.json
+base (Terraform reads .tf.json natively).
+"""
+
+import json
 from pathlib import Path
 
+import jsonpatch
 import pytest
 
 from fixtures.signoz import SigNoz
-from fixtures.terraform import TESTDATA, Terraform
+from fixtures.terraform import TESTDATA, VERSIONS_TF, Terraform
 
-RESOURCE_FILES = sorted((TESTDATA / "resources").glob("signoz_*/*.tf"))
+# resources/signoz_<name>/<NN>/ — each two-digit dir is one scenario.
+SCENARIOS = sorted(p for p in (TESTDATA / "resources").glob("signoz_*/[0-9][0-9]") if p.is_dir())
 
-# Edge-case configs to skip, keyed by "<resource>/<file>" -> reason. Populate
-# from an integration run when a config surfaces a provider/API issue rather
-# than a bug in the config itself (mirrors test_examples.SKIPPED).
+# Scenarios to skip, keyed by "<resource>/<NN>" -> reason. Populate from an
+# integration run when a scenario surfaces a provider/API issue rather than a
+# bug in the config itself.
 SKIPPED: dict[str, str] = {}
 
 
-def _case(tf_file: Path):
-    rel = f"{tf_file.parent.name}/{tf_file.name}"
-    marks = [pytest.mark.skip(reason=SKIPPED[rel])] if rel in SKIPPED else []
-
-    return pytest.param(tf_file, id=rel, marks=marks)
+def _id(scenario: Path) -> str:
+    return f"{scenario.parent.name}/{scenario.name}"
 
 
-@pytest.mark.parametrize("tf_file", [_case(tf_file) for tf_file in RESOURCE_FILES])
-def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tf_cli_config: Path, signoz: SigNoz, terraform_bin: str, webhook_channels: tuple[str, ...]):
-    terraform = Terraform(workspace(tf_file), tf_cli_config, signoz, terraform_bin)
+def _case(scenario: Path):
+    sid = _id(scenario)
+    marks = [pytest.mark.skip(reason=SKIPPED[sid])] if sid in SKIPPED else []
 
-    # Create.
-    terraform.apply()
+    return pytest.param(scenario, id=sid, marks=marks)
+
+
+def _base_step(scenario: Path) -> Path:
+    bases = [p for p in scenario.iterdir() if p.name.endswith((".tf", ".tf.json")) and not p.name.endswith("-jsonpatch.json")]
+    assert len(bases) == 1, f"{scenario}: expected exactly one base .tf/.tf.json, found {sorted(p.name for p in bases)}"
+
+    return bases[0]
+
+
+def _patch_steps(scenario: Path) -> list[Path]:
+    return sorted(scenario.glob("*-jsonpatch.json"))
+
+
+@pytest.mark.parametrize("scenario", [_case(scenario) for scenario in SCENARIOS])
+def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tf_cli_config: Path, signoz: SigNoz, terraform_bin: str, webhook_channels: tuple[str, ...]):
+    base = _base_step(scenario)
+    patches = _patch_steps(scenario)
+    is_json = base.name.endswith(".tf.json")
+
+    assert is_json or not patches, f"{scenario}: JSON patches require a .tf.json base, got {base.name}"
+
+    (tmp_path / "versions.tf").write_text(VERSIONS_TF)
+    terraform = Terraform(tmp_path, tf_cli_config, signoz, terraform_bin)
+
+    if is_json:
+        doc = json.loads(base.read_text())
+        ((_rtype, named),) = doc["resource"].items()
+        ((rname, body),) = named.items()
+
+        config = tmp_path / "resource.tf.json"
+        config.write_text(json.dumps(doc, indent=2))
+    else:
+        config = tmp_path / base.name
+        config.write_text(base.read_text())
 
     try:
-        # Read: applying again must be a no-op — no drift.
-        assert terraform.plan_exit_code() == 0, "drift detected after apply"
+        # Create: the first plan is the create, apply, re-plan must be clean.
+        assert terraform.plan_exit_code() == 2, "expected a create on the first plan"
+        terraform.apply()
+        assert terraform.plan_exit_code() == 0, "drift after initial apply"
+
+        # Each patch is one edit: re-plan shows changes, apply, re-plan clean.
+        for patch in patches:
+            body = jsonpatch.apply_patch(body, json.loads(patch.read_text()))
+            named[rname] = body
+            config.write_text(json.dumps(doc, indent=2))
+
+            assert terraform.plan_exit_code() == 2, f"{patch.name}: expected the edit to change the plan"
+            terraform.apply()
+            assert terraform.plan_exit_code() == 0, f"{patch.name}: drift after applying the edit"
     finally:
-        # Delete.
         terraform.destroy()
