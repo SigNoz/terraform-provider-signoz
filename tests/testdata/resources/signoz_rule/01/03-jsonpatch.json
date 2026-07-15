@@ -1,0 +1,26 @@
+[
+  { "op": "add", "path": "/condition/thresholds/basic/spec/0/channels/-", "value": "pagerduty" },
+  {
+    "op": "add",
+    "path": "/condition/thresholds/basic/spec/-",
+    "value": {
+      "channels": ["slack"],
+      "match_type": "at_least_once",
+      "name": "warning",
+      "op": "above",
+      "target": 0.7
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/notification_settings",
+    "value": {
+      "group_by": ["host.name"],
+      "renotify": {
+        "enabled": true,
+        "interval": "1h",
+        "alert_states": ["firing"]
+      }
+    }
+  }
+]

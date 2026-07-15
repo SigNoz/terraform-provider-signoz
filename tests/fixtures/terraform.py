@@ -21,6 +21,9 @@ logger = setup_logger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLES = REPO_ROOT / "examples"
+# Edge-case configs that exercise the provider beyond the user-facing examples;
+# same layout as examples/ (resources/signoz_<name>/*.tf).
+TESTDATA = REPO_ROOT / "tests" / "testdata"
 
 # Provider source address; matches main.go's registry address and the
 # `source` used in the generated versions.tf.

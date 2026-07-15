@@ -22,14 +22,10 @@ SKIPPED = {
 }
 
 
-def _case(tf_file: Path):
-    rel = f"{tf_file.parent.name}/{tf_file.name}"
-    marks = [pytest.mark.skip(reason=SKIPPED[rel])] if rel in SKIPPED else []
-
-    return pytest.param(tf_file, id=rel, marks=marks)
-
-
-@pytest.mark.parametrize("tf_file", [_case(tf_file) for tf_file in RESOURCE_FILES])
+@pytest.mark.parametrize(
+    "tf_file",
+    [pytest.param(tf_file, id=(rel := f"{tf_file.parent.name}/{tf_file.name}"), marks=[pytest.mark.skip(reason=SKIPPED[rel])] if rel in SKIPPED else []) for tf_file in RESOURCE_FILES],
+)
 def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tf_cli_config: Path, signoz: SigNoz, terraform_bin: str, webhook_channels: tuple[str, ...]):
     terraform = Terraform(workspace(tf_file), tf_cli_config, signoz, terraform_bin)
 
