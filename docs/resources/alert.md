@@ -10,6 +10,8 @@ description: |-
 
 Creates and manages alert resources in SigNoz.
 
+~> **Deprecated.** `signoz_alert` is built on the SigNoz v1 rules API and is superseded by [`signoz_rule`](rule.md) (typed alerts on the v2 rules API). It remains supported for now — see the [migration guide](../guides/migrate-signoz-alert-to-signoz-rule.md) — but new alert rules should use `signoz_rule`.
+
 ## Example Usage
 
 ```terraform

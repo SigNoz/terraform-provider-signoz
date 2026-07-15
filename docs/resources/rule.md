@@ -10,6 +10,8 @@ description: |-
 
 
 
+-> **Requires SigNoz >= v0.133.0.** `signoz_rule` uses the v2 rules API (`/api/v2/rules`, `schema_version = "v2alpha1"`), available on SigNoz v0.133.0 and later. On earlier versions use [`signoz_alert`](alert.md); see the [migration guide](../guides/migrate-signoz-alert-to-signoz-rule.md).
+
 ## Example Usage
 
 ```terraform
