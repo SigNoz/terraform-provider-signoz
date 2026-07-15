@@ -1,5 +1,5 @@
 # Rule backed by a raw ClickHouse SQL query instead of the query builder.
-resource "signoz_rule" "clickhouse_query" {
+resource "signoz_rule" "scenario_03" {
   alert      = "testdata-clickhouse-sql"
   alert_type = "METRIC_BASED_ALERT"
   rule_type  = "threshold_rule"

@@ -1,7 +1,7 @@
 # Anomaly rule: alerts on deviation from a learned seasonal baseline rather than
 # a fixed target. Exercises the condition fields specific to anomaly detection
 # (algorithm, seasonality, require_min_points, required_num_points).
-resource "signoz_rule" "anomaly_seasonality" {
+resource "signoz_rule" "scenario_02" {
   alert      = "testdata-anomaly-seasonality"
   alert_type = "METRIC_BASED_ALERT"
   rule_type  = "anomaly_rule"

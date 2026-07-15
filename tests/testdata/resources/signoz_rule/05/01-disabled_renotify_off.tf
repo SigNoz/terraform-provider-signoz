@@ -1,6 +1,6 @@
 # Rule created in the disabled state, using the `not_equal` operator and an
 # explicitly disabled renotify block.
-resource "signoz_rule" "disabled_renotify_off" {
+resource "signoz_rule" "scenario_05" {
   alert      = "testdata-disabled-renotify-off"
   alert_type = "METRIC_BASED_ALERT"
   rule_type  = "threshold_rule"

@@ -1,6 +1,6 @@
 # Metric rule using the `below` operator with the `on_average` match type, a
 # `table` panel, and absent-data alerting (alert_on_absent + absent_for).
-resource "signoz_rule" "metrics_below_absent" {
+resource "signoz_rule" "scenario_04" {
   alert      = "testdata-metrics-below-absent"
   alert_type = "METRIC_BASED_ALERT"
   rule_type  = "threshold_rule"
