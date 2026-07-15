@@ -1,0 +1,7 @@
+[
+  { "op": "replace", "path": "/labels/severity", "value": "critical" },
+  { "op": "add", "path": "/annotations", "value": { "summary": "CPU above 85%" } },
+  { "op": "replace", "path": "/condition/thresholds/basic/spec/0/name", "value": "critical" },
+  { "op": "replace", "path": "/condition/thresholds/basic/spec/0/target", "value": 0.85 },
+  { "op": "replace", "path": "/evaluation/rolling/spec/eval_window", "value": "10m" }
+]
