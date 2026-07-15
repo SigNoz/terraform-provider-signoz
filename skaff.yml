@@ -171,6 +171,28 @@ resources:
         - updatedBy
         - source
         - generateName
+  rule:
+    create:
+      path: /api/v2/rules
+      method: POST
+    read:
+      path: /api/v2/rules/{id}
+      method: GET
+    update:
+      path: /api/v2/rules/{id}
+      method: PUT
+    delete:
+      path: /api/v2/rules/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - state
 
 data_sources:
   route_policy:
@@ -275,3 +297,16 @@ data_sources:
         - updatedAt
         - updatedBy
         - source
+  rule:
+    read:
+      path: /api/v2/rules/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - state

@@ -50,6 +50,12 @@ type CreateDashboardV2JSONRequestBody = apitypes.DashboardtypesPostableDashboard
 // UpdateDashboardV2JSONRequestBody defines body for UpdateDashboardV2 for application/json ContentType.
 type UpdateDashboardV2JSONRequestBody = apitypes.DashboardtypesUpdatableDashboardV2
 
+// CreateRuleJSONRequestBody defines body for CreateRule for application/json ContentType.
+type CreateRuleJSONRequestBody = apitypes.RuletypesPostableRule
+
+// UpdateRuleByIDJSONRequestBody defines body for UpdateRuleByID for application/json ContentType.
+type UpdateRuleByIDJSONRequestBody = apitypes.RuletypesPostableRule
+
 // CreateUserRoleJSONRequestBody defines body for CreateUserRole for application/json ContentType.
 type CreateUserRoleJSONRequestBody = apitypes.AuthtypesPostableUserRole
 
@@ -222,6 +228,22 @@ type ClientInterface interface {
 	UpdateDashboardV2WithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateDashboardV2(ctx context.Context, id string, body UpdateDashboardV2JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateRuleWithBody request with any body
+	CreateRuleWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateRule(ctx context.Context, body CreateRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteRuleByID request
+	DeleteRuleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetRuleByID request
+	GetRuleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateRuleByIDWithBody request with any body
+	UpdateRuleByIDWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateRuleByID(ctx context.Context, id string, body UpdateRuleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateUserRoleWithBody request with any body
 	CreateUserRoleWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -649,6 +671,78 @@ func (c *Client) UpdateDashboardV2WithBody(ctx context.Context, id string, conte
 
 func (c *Client) UpdateDashboardV2(ctx context.Context, id string, body UpdateDashboardV2JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateDashboardV2Request(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateRuleWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateRuleRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateRule(ctx context.Context, body CreateRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateRuleRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteRuleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteRuleByIDRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetRuleByID(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetRuleByIDRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateRuleByIDWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateRuleByIDRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateRuleByID(ctx context.Context, id string, body UpdateRuleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateRuleByIDRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1662,6 +1756,161 @@ func NewUpdateDashboardV2RequestWithBody(server string, id string, contentType s
 	return req, nil
 }
 
+// NewCreateRuleRequest calls the generic CreateRule builder with application/json body
+func NewCreateRuleRequest(server string, body CreateRuleJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateRuleRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateRuleRequestWithBody generates requests for CreateRule with any type of body
+func NewCreateRuleRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/rules")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteRuleByIDRequest generates requests for DeleteRuleByID
+func NewDeleteRuleByIDRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/rules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetRuleByIDRequest generates requests for GetRuleByID
+func NewGetRuleByIDRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/rules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateRuleByIDRequest calls the generic UpdateRuleByID builder with application/json body
+func NewUpdateRuleByIDRequest(server string, id string, body UpdateRuleByIDJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateRuleByIDRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateRuleByIDRequestWithBody generates requests for UpdateRuleByID with any type of body
+func NewUpdateRuleByIDRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/rules/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewCreateUserRoleRequest calls the generic CreateUserRole builder with application/json body
 func NewCreateUserRoleRequest(server string, body CreateUserRoleJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2058,6 +2307,22 @@ type ClientWithResponsesInterface interface {
 	UpdateDashboardV2WithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDashboardV2Response, error)
 
 	UpdateDashboardV2WithResponse(ctx context.Context, id string, body UpdateDashboardV2JSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDashboardV2Response, error)
+
+	// CreateRuleWithBodyWithResponse request with any body
+	CreateRuleWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateRuleResponse, error)
+
+	CreateRuleWithResponse(ctx context.Context, body CreateRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateRuleResponse, error)
+
+	// DeleteRuleByIDWithResponse request
+	DeleteRuleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteRuleByIDResponse, error)
+
+	// GetRuleByIDWithResponse request
+	GetRuleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetRuleByIDResponse, error)
+
+	// UpdateRuleByIDWithBodyWithResponse request with any body
+	UpdateRuleByIDWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateRuleByIDResponse, error)
+
+	UpdateRuleByIDWithResponse(ctx context.Context, id string, body UpdateRuleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateRuleByIDResponse, error)
 
 	// CreateUserRoleWithBodyWithResponse request with any body
 	CreateUserRoleWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUserRoleResponse, error)
@@ -2918,6 +3183,147 @@ func (r UpdateDashboardV2Response) ContentType() string {
 	return ""
 }
 
+type CreateRuleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *struct {
+		Data   apitypes.RuletypesRule `json:"data"`
+		Status string                 `json:"status"`
+	}
+	JSON400 *apitypes.RenderErrorResponse
+	JSON401 *apitypes.RenderErrorResponse
+	JSON403 *apitypes.RenderErrorResponse
+	JSON500 *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateRuleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateRuleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateRuleResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteRuleByIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *apitypes.RenderErrorResponse
+	JSON403      *apitypes.RenderErrorResponse
+	JSON404      *apitypes.RenderErrorResponse
+	JSON500      *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteRuleByIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteRuleByIDResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteRuleByIDResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetRuleByIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data   apitypes.RuletypesRule `json:"data"`
+		Status string                 `json:"status"`
+	}
+	JSON401 *apitypes.RenderErrorResponse
+	JSON403 *apitypes.RenderErrorResponse
+	JSON404 *apitypes.RenderErrorResponse
+	JSON500 *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetRuleByIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetRuleByIDResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetRuleByIDResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type UpdateRuleByIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *apitypes.RenderErrorResponse
+	JSON401      *apitypes.RenderErrorResponse
+	JSON403      *apitypes.RenderErrorResponse
+	JSON404      *apitypes.RenderErrorResponse
+	JSON500      *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateRuleByIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateRuleByIDResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateRuleByIDResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type CreateUserRoleResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3463,6 +3869,58 @@ func (c *ClientWithResponses) UpdateDashboardV2WithResponse(ctx context.Context,
 		return nil, err
 	}
 	return ParseUpdateDashboardV2Response(rsp)
+}
+
+// CreateRuleWithBodyWithResponse request with arbitrary body returning *CreateRuleResponse
+func (c *ClientWithResponses) CreateRuleWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateRuleResponse, error) {
+	rsp, err := c.CreateRuleWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateRuleResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateRuleWithResponse(ctx context.Context, body CreateRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateRuleResponse, error) {
+	rsp, err := c.CreateRule(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateRuleResponse(rsp)
+}
+
+// DeleteRuleByIDWithResponse request returning *DeleteRuleByIDResponse
+func (c *ClientWithResponses) DeleteRuleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteRuleByIDResponse, error) {
+	rsp, err := c.DeleteRuleByID(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteRuleByIDResponse(rsp)
+}
+
+// GetRuleByIDWithResponse request returning *GetRuleByIDResponse
+func (c *ClientWithResponses) GetRuleByIDWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetRuleByIDResponse, error) {
+	rsp, err := c.GetRuleByID(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetRuleByIDResponse(rsp)
+}
+
+// UpdateRuleByIDWithBodyWithResponse request with arbitrary body returning *UpdateRuleByIDResponse
+func (c *ClientWithResponses) UpdateRuleByIDWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateRuleByIDResponse, error) {
+	rsp, err := c.UpdateRuleByIDWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateRuleByIDResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateRuleByIDWithResponse(ctx context.Context, id string, body UpdateRuleByIDJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateRuleByIDResponse, error) {
+	rsp, err := c.UpdateRuleByID(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateRuleByIDResponse(rsp)
 }
 
 // CreateUserRoleWithBodyWithResponse request with arbitrary body returning *CreateUserRoleResponse
@@ -4845,6 +5303,221 @@ func ParseUpdateDashboardV2Response(rsp *http.Response) (*UpdateDashboardV2Respo
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateRuleResponse parses an HTTP response from a CreateRuleWithResponse call
+func ParseCreateRuleResponse(rsp *http.Response) (*CreateRuleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateRuleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest struct {
+			Data   apitypes.RuletypesRule `json:"data"`
+			Status string                 `json:"status"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteRuleByIDResponse parses an HTTP response from a DeleteRuleByIDWithResponse call
+func ParseDeleteRuleByIDResponse(rsp *http.Response) (*DeleteRuleByIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteRuleByIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetRuleByIDResponse parses an HTTP response from a GetRuleByIDWithResponse call
+func ParseGetRuleByIDResponse(rsp *http.Response) (*GetRuleByIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetRuleByIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data   apitypes.RuletypesRule `json:"data"`
+			Status string                 `json:"status"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateRuleByIDResponse parses an HTTP response from a UpdateRuleByIDWithResponse call
+func ParseUpdateRuleByIDResponse(rsp *http.Response) (*UpdateRuleByIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateRuleByIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
 		var dest apitypes.RenderErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
