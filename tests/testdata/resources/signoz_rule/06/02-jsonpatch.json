@@ -1,0 +1,3 @@
+[
+  { "op": "replace", "path": "/condition/composite_query/queries/0/builder_query/spec/metrics/step_interval", "value": 60 }
+]
