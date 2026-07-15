@@ -55,8 +55,8 @@ def test_edit_scenario(scenario: Path, tmp_path: Path, tf_cli_config: Path, sign
 
     if is_json:
         doc = json.loads(base.read_text())
-        (rtype, named), = doc["resource"].items()
-        (rname, body), = named.items()
+        ((rtype, named),) = doc["resource"].items()
+        ((rname, body),) = named.items()
 
         config = tmp_path / "resource.tf.json"
         config.write_text(json.dumps(doc, indent=2))
