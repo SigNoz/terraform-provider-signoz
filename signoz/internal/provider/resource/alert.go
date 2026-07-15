@@ -97,7 +97,8 @@ func (r *alertResource) Metadata(_ context.Context, req resource.MetadataRequest
 // Schema defines the schema for the resource.
 func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Creates and manages alert resources in SigNoz.",
+		Description:        "Creates and manages alert resources in SigNoz.",
+		DeprecationMessage: "signoz_alert is superseded by signoz_rule (typed alerts on the SigNoz v2 rules API). It remains supported for now, but new alert rules should use signoz_rule.",
 		Attributes: map[string]schema.Attribute{
 			attr.Alert: schema.StringAttribute{
 				Required:    true,
