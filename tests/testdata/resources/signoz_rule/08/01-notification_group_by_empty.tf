@@ -1,9 +1,12 @@
-# Scenario 00 — a base resource with no edits. The runner plans (create),
-# applies, plans again (no drift), then destroys. Base-only scenarios may be
-# authored in HCL (.tf); scenarios with JSON patches use a .tf.json base so the
-# patch has a JSON target (see scenario 01 and ../../../README.md).
-resource "signoz_rule" "scenario_00" {
-  alert          = "testdata-scenario-00"
+# Roundtrip probe: `notification_settings.group_by` set to an empty list.
+#
+# group_by is Optional + Computed. The provider sends `groupBy: []`, but the
+# backend field is tagged `omitempty`, so an empty slice is dropped from the
+# response and flattens back to null. Expected: the create fails with
+# `.notification_settings.group_by: was [], but now null` — the same
+# drop-the-falsy-value class of bug as use_policy (scenario 07).
+resource "signoz_rule" "scenario_08" {
+  alert          = "testdata-group-by-empty"
   alert_type     = "METRIC_BASED_ALERT"
   rule_type      = "threshold_rule"
   schema_version = "v2alpha1"
@@ -65,7 +68,6 @@ resource "signoz_rule" "scenario_00" {
   }
 
   notification_settings = {
-    group_by             = ["service.name", "deployment.environment"]
-    new_group_eval_delay = "2m"
+    group_by = []
   }
 }
