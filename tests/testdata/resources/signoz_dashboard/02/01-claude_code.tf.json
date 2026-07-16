@@ -1,0 +1,364 @@
+{
+  "resource": {
+    "signoz_dashboard": {
+      "claude_code": {
+        "schema_version": "v6",
+        "name": "claude-code-metrics-8rkchzo1",
+        "tags": [
+          {
+            "key": "tag",
+            "value": "claude"
+          }
+        ],
+        "spec": {
+          "display": {
+            "name": "Claude Code Metrics",
+            "description": "Monitor Claude Code usage, costs, tokens, and productivity metrics"
+          },
+          "variables": [],
+          "panels": {
+            "cost-by-model": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Cost by Model",
+                  "description": "Cost breakdown by model"
+                },
+                "plugin": {
+                  "bar_chart_panel": {
+                    "kind": "signoz/BarChartPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time",
+                        "fill_spans": false,
+                        "stacked_bar_chart": false
+                      },
+                      "formatting": {
+                        "unit": "",
+                        "decimal_precision": "2"
+                      },
+                      "axes": {
+                        "is_log_scale": false
+                      },
+                      "legend": {
+                        "position": "bottom",
+                        "mode": "list"
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "time_series",
+                    "spec": {
+                      "name": "A",
+                      "plugin": {
+                        "builder_query": {
+                          "kind": "signoz/BuilderQuery",
+                          "spec": {
+                            "metrics": {
+                              "name": "A",
+                              "step_interval": "60",
+                              "signal": "metrics",
+                              "aggregations": [
+                                {
+                                  "metric_name": "claude_code.cost.usage",
+                                  "time_aggregation": "sum",
+                                  "space_aggregation": "sum",
+                                  "reduce_to": "sum"
+                                }
+                              ],
+                              "group_by": [
+                                {
+                                  "name": "model",
+                                  "field_context": "attribute",
+                                  "field_data_type": "string"
+                                }
+                              ],
+                              "having": {
+                                "expression": ""
+                              },
+                              "legend": "{{model}}"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "api-requests-table": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Recent API Calls",
+                  "description": "Recent API calls with cost"
+                },
+                "plugin": {
+                  "list_panel": {
+                    "kind": "signoz/ListPanel",
+                    "spec": {}
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "raw",
+                    "spec": {
+                      "name": "A",
+                      "plugin": {
+                        "builder_query": {
+                          "kind": "signoz/BuilderQuery",
+                          "spec": {
+                            "logs": {
+                              "name": "A",
+                              "step_interval": "60",
+                              "signal": "logs",
+                              "filter": {
+                                "expression": "body = 'claude_code.api_request'"
+                              },
+                              "select_fields": [
+                                {
+                                  "name": "timestamp",
+                                  "field_context": "attribute",
+                                  "field_data_type": "string"
+                                },
+                                {
+                                  "name": "model",
+                                  "field_context": "attribute",
+                                  "field_data_type": "string"
+                                },
+                                {
+                                  "name": "cost_usd",
+                                  "field_context": "attribute",
+                                  "field_data_type": "string"
+                                }
+                              ],
+                              "limit": 10,
+                              "having": {
+                                "expression": ""
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "api-cost": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "API Cost (Total)",
+                  "description": "Total hypothetical API cost for selected window"
+                },
+                "plugin": {
+                  "number_panel": {
+                    "kind": "signoz/NumberPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time"
+                      },
+                      "formatting": {
+                        "unit": "",
+                        "decimal_precision": "2"
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "scalar",
+                    "spec": {
+                      "name": "A",
+                      "plugin": {
+                        "click_house_sql": {
+                          "kind": "signoz/ClickHouseSQL",
+                          "spec": {
+                            "name": "A",
+                            "query": "SELECT sum(value) as value FROM signoz_metrics.distributed_samples_v4 WHERE metric_name = 'claude_code.cost.usage' AND unix_milli >= {{.start_timestamp_ms}} AND unix_milli <= {{.end_timestamp_ms}}",
+                            "legend": "Cost ($)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "cache-efficiency": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Cache Efficiency %",
+                  "description": "Percentage of tokens served from cache"
+                },
+                "plugin": {
+                  "time_series_panel": {
+                    "kind": "signoz/TimeSeriesPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time",
+                        "fill_spans": false
+                      },
+                      "formatting": {
+                        "unit": "",
+                        "decimal_precision": "2"
+                      },
+                      "chart_appearance": {
+                        "line_interpolation": "spline",
+                        "show_points": false,
+                        "line_style": "solid",
+                        "fill_mode": "none",
+                        "span_gaps": {
+                          "fill_only_below": false,
+                          "fill_less_than": ""
+                        }
+                      },
+                      "axes": {
+                        "is_log_scale": false
+                      },
+                      "legend": {
+                        "position": "bottom",
+                        "mode": "list"
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "time_series",
+                    "spec": {
+                      "plugin": {
+                        "composite_query": {
+                          "kind": "signoz/CompositeQuery",
+                          "spec": {
+                            "queries": [
+                              {
+                                "builder_query": {
+                                  "type": "builder_query",
+                                  "spec": {
+                                    "metrics": {
+                                      "name": "A",
+                                      "step_interval": "60",
+                                      "signal": "metrics",
+                                      "aggregations": [
+                                        {
+                                          "metric_name": "claude_code.token.usage",
+                                          "time_aggregation": "sum",
+                                          "space_aggregation": "sum",
+                                          "reduce_to": "sum"
+                                        }
+                                      ],
+                                      "filter": {
+                                        "expression": "type = 'cacheRead'"
+                                      },
+                                      "having": {
+                                        "expression": ""
+                                      },
+                                      "legend": "Cache Read"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "builder_query": {
+                                  "type": "builder_query",
+                                  "spec": {
+                                    "metrics": {
+                                      "name": "B",
+                                      "step_interval": "60",
+                                      "signal": "metrics",
+                                      "aggregations": [
+                                        {
+                                          "metric_name": "claude_code.token.usage",
+                                          "time_aggregation": "sum",
+                                          "space_aggregation": "sum",
+                                          "reduce_to": "sum"
+                                        }
+                                      ],
+                                      "filter": {
+                                        "expression": "type = 'input'"
+                                      },
+                                      "having": {
+                                        "expression": ""
+                                      },
+                                      "legend": "Input"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "builder_formula": {
+                                  "type": "builder_formula",
+                                  "spec": {
+                                    "name": "F1",
+                                    "expression": "(A / (A + B)) * 100",
+                                    "legend": "Cache Efficiency %"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "layouts": [
+            {
+              "grid": {
+                "kind": "Grid",
+                "spec": {
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/cost-by-model"
+                      }
+                    },
+                    {
+                      "x": 6,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/api-requests-table"
+                      }
+                    },
+                    {
+                      "x": 0,
+                      "y": 6,
+                      "width": 6,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/api-cost"
+                      }
+                    },
+                    {
+                      "x": 6,
+                      "y": 6,
+                      "width": 6,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/cache-efficiency"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

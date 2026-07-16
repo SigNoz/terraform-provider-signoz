@@ -1,0 +1,163 @@
+{
+  "resource": {
+    "signoz_dashboard": {
+      "fluxcd": {
+        "schema_version": "v6",
+        "name": "fluxcd-controllers-meehwjqr",
+        "tags": [
+          {
+            "key": "tag",
+            "value": "fluxcd"
+          }
+        ],
+        "spec": {
+          "display": {
+            "name": "FluxCD \u2014 Controllers",
+            "description": "FluxCD controller health: reconciliation throughput, errors, duration, workqueues, runtime resources, and Kubernetes API traffic."
+          },
+          "variables": [
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "k8s_cluster_name",
+                    "description": "Kubernetes cluster"
+                  },
+                  "allow_all_value": true,
+                  "allow_multiple": true,
+                  "sort": "alphabetical-asc",
+                  "plugin": {
+                    "dynamic_variable": {
+                      "kind": "signoz/DynamicVariable",
+                      "spec": {
+                        "name": "k8s.cluster.name",
+                        "signal": "metrics"
+                      }
+                    }
+                  },
+                  "name": "k8s_cluster_name"
+                }
+              }
+            },
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "kind",
+                    "description": "Flux resource kind (reconciliation panels)"
+                  },
+                  "allow_all_value": true,
+                  "allow_multiple": true,
+                  "sort": "alphabetical-asc",
+                  "plugin": {
+                    "custom_variable": {
+                      "kind": "signoz/CustomVariable",
+                      "spec": {
+                        "custom_value": "Bucket,GitRepository,HelmChart,HelmRelease,HelmRepository,Kustomization,OCIRepository,Alert,Provider,Receiver,ImagePolicy,ImageRepository,ImageUpdateAutomation"
+                      }
+                    }
+                  },
+                  "name": "kind"
+                }
+              }
+            },
+            {
+              "text_variable": {
+                "kind": "TextVariable",
+                "spec": {
+                  "display": {
+                    "name": "k8s_namespace",
+                    "description": "Namespace where Flux controllers run"
+                  },
+                  "value": "flux-system",
+                  "name": "k8s_namespace"
+                }
+              }
+            }
+          ],
+          "panels": {
+            "v-active-workers": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Active Workers",
+                  "description": "Reconcile workers currently busy."
+                },
+                "plugin": {
+                  "number_panel": {
+                    "kind": "signoz/NumberPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time"
+                      },
+                      "formatting": {
+                        "unit": "none",
+                        "decimal_precision": "2"
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "scalar",
+                    "spec": {
+                      "name": "A",
+                      "plugin": {
+                        "builder_query": {
+                          "kind": "signoz/BuilderQuery",
+                          "spec": {
+                            "metrics": {
+                              "name": "A",
+                              "step_interval": "60",
+                              "signal": "metrics",
+                              "aggregations": [
+                                {
+                                  "metric_name": "controller_runtime_active_workers",
+                                  "temporality": "unspecified",
+                                  "time_aggregation": "latest",
+                                  "space_aggregation": "sum"
+                                }
+                              ],
+                              "filter": {
+                                "expression": "k8s.namespace.name = $k8s_namespace AND k8s.cluster.name IN $k8s_cluster_name"
+                              },
+                              "having": {
+                                "expression": ""
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "layouts": [
+            {
+              "grid": {
+                "kind": "Grid",
+                "spec": {
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/v-active-workers"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

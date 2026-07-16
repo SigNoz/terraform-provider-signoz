@@ -1,0 +1,6 @@
+[
+  { "op": "replace", "path": "/spec/display/name", "value": "CI/CD Observability (edited)" },
+  { "op": "replace", "path": "/spec/display/description", "value": "DORA metrics from CI and CD systems." },
+  { "op": "replace", "path": "/spec/panels/0d690bea-6631-48bf-b823-3a75497ab1cd/spec/plugin/number_panel/spec/thresholds/0/value", "value": 300 },
+  { "op": "replace", "path": "/spec/panels/06e8ec0a-46dc-4c6b-bfc7-eecbc0eb4da2/spec/plugin/pie_chart_panel/spec/formatting/unit", "value": "s" }
+]

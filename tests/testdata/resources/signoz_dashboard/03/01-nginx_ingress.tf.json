@@ -1,0 +1,171 @@
+{
+  "resource": {
+    "signoz_dashboard": {
+      "nginx_ingress": {
+        "schema_version": "v6",
+        "name": "nginx-ingress-controller-6gab2tgm",
+        "tags": [
+          {
+            "key": "tag",
+            "value": "nginx"
+          }
+        ],
+        "spec": {
+          "display": {
+            "name": "NGINX Ingress controller",
+            "description": "Ingress-nginx controller health and performance \u2014 request volume, success rate, config reloads, CPU/memory, network I/O, and latency percentiles. Filter by namespace, controller class, controller pod, and ingress."
+          },
+          "variables": [
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "controller"
+                  },
+                  "allow_all_value": false,
+                  "allow_multiple": false,
+                  "plugin": {
+                    "query_variable": {
+                      "kind": "signoz/QueryVariable",
+                      "spec": {
+                        "query_value": "SELECT DISTINCT JSONExtractString(labels, 'controller_pod') FROM signoz_metrics.distributed_time_series_v4\nWHERE metric_name='nginx_ingress_controller_config_hash' AND JSONExtractString(labels, 'controller_namespace')=$namespace AND JSONExtractString(labels, 'controller_class')=$controller_class AND fingerprint GLOBAL IN\n(\n    SELECT DISTINCT fingerprint FROM signoz_metrics.distributed_samples_v4 WHERE\n    metric_name='nginx_ingress_controller_config_hash' AND unix_milli>toUnixTimestamp(now() - INTERVAL 5 MINUTE)*1000\n)"
+                      }
+                    }
+                  },
+                  "name": "controller"
+                }
+              }
+            },
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "controller_class"
+                  },
+                  "allow_all_value": false,
+                  "allow_multiple": false,
+                  "plugin": {
+                    "query_variable": {
+                      "kind": "signoz/QueryVariable",
+                      "spec": {
+                        "query_value": "SELECT DISTINCT JSONExtractString(labels, 'controller_class') FROM signoz_metrics.distributed_time_series_v4\nWHERE metric_name='nginx_ingress_controller_config_hash' AND JSONExtractString(labels, 'controller_namespace')={{.namespace}} AND fingerprint GLOBAL IN\n(\n    SELECT DISTINCT fingerprint FROM signoz_metrics.distributed_samples_v4 WHERE\n    metric_name='nginx_ingress_controller_config_hash' AND unix_milli>toUnixTimestamp(now() - INTERVAL 5 MINUTE)*1000\n)"
+                      }
+                    }
+                  },
+                  "name": "controller_class"
+                }
+              }
+            },
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "ingress"
+                  },
+                  "allow_all_value": false,
+                  "allow_multiple": false,
+                  "plugin": {
+                    "query_variable": {
+                      "kind": "signoz/QueryVariable",
+                      "spec": {
+                        "query_value": "SELECT DISTINCT JSONExtractString(labels, 'ingress') FROM signoz_metrics.distributed_time_series_v4\nWHERE metric_name='nginx_ingress_controller_requests' AND JSONExtractString(labels, 'controller_namespace')={{.namespace}} AND JSONExtractString(labels, 'controller_class')={{.controller_class}} AND JSONExtractString(labels, 'controller_pod')={{.controller}} AND fingerprint GLOBAL IN\n(\n    SELECT DISTINCT fingerprint FROM signoz_metrics.distributed_samples_v4 WHERE\n    metric_name='nginx_ingress_controller_requests' AND unix_milli>toUnixTimestamp(now() - INTERVAL 5 MINUTE)*1000\n)"
+                      }
+                    }
+                  },
+                  "name": "ingress"
+                }
+              }
+            },
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "namespace"
+                  },
+                  "allow_all_value": false,
+                  "allow_multiple": false,
+                  "plugin": {
+                    "query_variable": {
+                      "kind": "signoz/QueryVariable",
+                      "spec": {
+                        "query_value": "SELECT DISTINCT JSONExtractString(labels, 'controller_namespace') FROM signoz_metrics.distributed_time_series_v4\nWHERE metric_name='nginx_ingress_controller_config_hash' AND fingerprint GLOBAL IN\n(\n    SELECT DISTINCT fingerprint FROM signoz_metrics.distributed_samples_v4 WHERE\n    metric_name='nginx_ingress_controller_config_hash' AND unix_milli>toUnixTimestamp(now() - INTERVAL 5 MINUTE)*1000\n)"
+                      }
+                    }
+                  },
+                  "name": "namespace"
+                }
+              }
+            }
+          ],
+          "panels": {
+            "3dd819bf-4489-430b-9ebf-4cf0bef9b821": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Last Config Failed"
+                },
+                "plugin": {
+                  "number_panel": {
+                    "kind": "signoz/NumberPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time"
+                      },
+                      "formatting": {
+                        "unit": "none",
+                        "decimal_precision": "2"
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "scalar",
+                    "spec": {
+                      "name": "A",
+                      "plugin": {
+                        "prom_qlquery": {
+                          "kind": "signoz/PromQLQuery",
+                          "spec": {
+                            "name": "A",
+                            "query": "count(nginx_ingress_controller_config_last_reload_successful{controller_pod=~\"{{.controller}}\",controller_namespace=~\"{{.namespace}}\"} == 0)",
+                            "step": "0",
+                            "stats": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "layouts": [
+            {
+              "grid": {
+                "kind": "Grid",
+                "spec": {
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/3dd819bf-4489-430b-9ebf-4cf0bef9b821"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
