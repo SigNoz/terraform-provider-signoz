@@ -1,12 +1,4 @@
-# Roundtrip probe: `notification_settings.renotify.alert_states` set to [].
-#
-# alert_states is Optional + Computed. The provider sends `alertStates: []`,
-# but the backend field is tagged `json:"alertStates,omitempty"`, so an empty
-# slice is dropped from the response and flattens back to null. Expected: the
-# create fails with
-# `.notification_settings.renotify.alert_states: was [], but now null` — the
-# same drop-the-empty-slice class of bug that group_by (scenario 08) hit before
-# GroupBy switched to `omitzero`.
+# notification_settings.renotify.alert_states = [] must round-trip, not come back null.
 resource "signoz_rule" "scenario_11" {
   alert          = "testdata-alert-states-empty"
   alert_type     = "METRIC_BASED_ALERT"

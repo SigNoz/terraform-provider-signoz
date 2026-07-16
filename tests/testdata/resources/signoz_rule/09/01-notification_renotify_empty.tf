@@ -1,9 +1,4 @@
-# Roundtrip probe: `notification_settings.renotify` set to an empty object.
-#
-# renotify is Optional + Computed. The provider sends `renotify: {}`; the
-# backend's Renotify.Enabled is tagged `json:"enabled"` (no omitempty), so the
-# response echoes `{enabled: false}` while interval/alertStates stay absent.
-# This probes whether an all-null renotify object round-trips cleanly or drifts.
+# An empty notification_settings.renotify = {} must round-trip cleanly.
 resource "signoz_rule" "scenario_09" {
   alert          = "testdata-renotify-empty"
   alert_type     = "METRIC_BASED_ALERT"

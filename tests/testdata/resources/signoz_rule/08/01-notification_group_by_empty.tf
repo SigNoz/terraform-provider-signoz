@@ -1,10 +1,4 @@
-# Roundtrip probe: `notification_settings.group_by` set to an empty list.
-#
-# group_by is Optional + Computed. The provider sends `groupBy: []`, but the
-# backend field is tagged `omitempty`, so an empty slice is dropped from the
-# response and flattens back to null. Expected: the create fails with
-# `.notification_settings.group_by: was [], but now null` — the same
-# drop-the-falsy-value class of bug as use_policy (scenario 07).
+# notification_settings.group_by = [] must round-trip, not come back null.
 resource "signoz_rule" "scenario_08" {
   alert          = "testdata-group-by-empty"
   alert_type     = "METRIC_BASED_ALERT"

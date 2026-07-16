@@ -1,14 +1,4 @@
-# Regression: `notification_settings.use_policy` explicitly set to `false`.
-#
-# use_policy is Optional + Computed. When the user pins it to `false`, the
-# provider must return `false` after apply — not `null`. The API drops the
-# falsy `usePolicy` from its response, so a naive round-trip flattens the
-# absent field back to null and Terraform rejects the apply with:
-#
-#   .notification_settings.use_policy: was cty.False, but now null
-#
-# This base-only scenario fails at `terraform apply` until the round-trip
-# preserves the explicit `false`.
+# notification_settings.use_policy = false must round-trip, not come back null.
 resource "signoz_rule" "scenario_07" {
   alert          = "testdata-use-policy-false"
   alert_type     = "METRIC_BASED_ALERT"
