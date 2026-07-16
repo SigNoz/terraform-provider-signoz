@@ -1,0 +1,134 @@
+---
+page_title: "SigNoz Provider v0.0.x to v0.1.0 Upgrade Guide"
+subcategory: ""
+description: |-
+  Migration guide for upgrading the SigNoz provider to v0.1.0, which removes signoz_alert and replaces signoz_dashboard with a typed v2 schema.
+---
+
+# SigNoz Provider v0.0.x to v0.1.0 Upgrade Guide
+
+Version **v0.1.0** completes the SigNoz provider's move to fully typed,
+schema-driven resources generated from the SigNoz OpenAPI spec. Every attribute
+is now a first-class field that Terraform can plan, validate, and diff — there
+are no more opaque `jsonencode(...)` blobs.
+
+Two changes are **breaking** and need action before or during the upgrade:
+
+1. [`signoz_alert` has been removed](#signoz_alert-removed) — use `signoz_rule`.
+2. [`signoz_dashboard` moved to a typed v2 schema](#signoz_dashboard-v1-to-v2) —
+   the old JSON-string configuration must be rewritten.
+
+If you use neither resource, upgrading to v0.1.0 needs no configuration changes.
+
+## `signoz_alert` removed
+
+`signoz_alert` — built on the SigNoz v1 rules API, with `condition` and
+`evaluation` carried as opaque `jsonencode(...)` strings — has been removed. Its
+replacement is [`signoz_rule`](../resources/rule): the same alert rules on the
+**v2 rules API** (`/api/v2/rules`, `schema_version = "v2alpha1"`), with every
+field typed and validated at plan time.
+
+The rule data on the server is untouched — the v1 and v2 APIs are two views over
+one rule store — so this is a Terraform resource-*type* change, not a rule
+rewrite. Terraform can generate the typed `signoz_rule` configuration for you
+from the live rule using an `import` block and `-generate-config-out`.
+
+Migrate each rule while still on a v0.0.x provider (where `signoz_alert` still
+exists), then upgrade to v0.1.0. The dedicated [**Migrating from `signoz_alert`
+to `signoz_rule`**](migrate-signoz-alert-to-signoz-rule) guide has the full
+step-by-step workflow and the attribute-by-attribute mapping.
+
+## `signoz_dashboard` v1 to v2
+
+v0.1.0 replaces the `signoz_dashboard` resource and data source with a new
+implementation built on the SigNoz dashboards **v2 API** (`/api/v2/dashboards`).
+The new schema models a dashboard as a fully typed [Perses](https://perses.dev)
+specification instead of opaque JSON strings. This is a **breaking change**: the
+resource's entire attribute set changed, so existing configurations and state
+must be migrated.
+
+### What changed
+
+The old resource stored most of the dashboard as `jsonencode(...)` blobs:
+
+```terraform
+resource "signoz_dashboard" "old" {
+  name                      = "test1"
+  title                     = "test1"
+  description               = "test1"
+  version                   = "v4"
+  tags                      = ["node", "kubelet"]
+  collapsable_rows_migrated = true
+  uploaded_grafana          = false
+  layout                    = jsonencode([/* grid positions */])
+  panel_map                 = jsonencode({ /* rows -> widgets */ })
+  variables                 = jsonencode({ /* variables */ })
+  widgets                   = jsonencode([/* panels + queries */])
+}
+```
+
+The v2 resource replaces those with a typed tree under `spec`, so every panel,
+query, variable, and layout is a first-class attribute that Terraform can plan
+and validate:
+
+```terraform
+resource "signoz_dashboard" "new" {
+  schema_version = "v6"
+  name           = "redis-overview"
+
+  tags = [
+    { key = "tag", value = "redis" },
+  ]
+
+  spec = {
+    display = {
+      name        = "Redis overview"
+      description = "Redis instance overview."
+    }
+
+    variables = [/* typed list/text variables */]
+    panels    = { /* keyed by panel UUID */ }
+    layouts   = [/* grid layouts referencing panels by $ref */]
+  }
+}
+```
+
+See the [`signoz_dashboard` resource documentation](../resources/dashboard) for a
+complete, working example.
+
+#### Attribute mapping
+
+| old (v1)                                                     | new (v2)                                                   |
+| ------------------------------------------------------------ | ---------------------------------------------------------- |
+| `title`, `description`                                       | `spec.display.name`, `spec.display.description`            |
+| `tags` (list of strings)                                     | `tags` (list of `{ key, value }` objects)                  |
+| `widgets` (JSON string)                                      | `spec.panels` (map of typed panels, keyed by UUID)         |
+| `layout` (JSON string)                                       | `spec.layouts` (list of typed grid layouts)                |
+| `variables` (JSON string)                                    | `spec.variables` (list of typed list/text variables)       |
+| `version`                                                    | `schema_version`                                           |
+| `panel_map`, `collapsable_rows_migrated`, `uploaded_grafana` | removed (folded into `spec.layouts` / no longer needed)    |
+
+### Upgrade steps
+
+Because the schema changed completely, there is no in-place attribute rename — the
+configuration has to be rewritten:
+
+1. **Remove the old resource from state** so Terraform stops tracking the v1 shape:
+
+   ```sh
+   terraform state rm signoz_dashboard.<name>
+   ```
+
+2. **Rewrite the configuration** using the v2 schema (see the resource documentation
+   and example).
+
+3. **Import the existing dashboard** back into state under the new schema:
+
+   ```sh
+   terraform import signoz_dashboard.<name> <dashboard-id>
+   ```
+
+4. Run `terraform plan` and reconcile any remaining differences.
+
+Alternatively, if you manage dashboards as code and can recreate them, delete the old
+dashboards and apply the new configuration from scratch.
