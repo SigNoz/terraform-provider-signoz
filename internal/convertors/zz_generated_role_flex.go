@@ -46,7 +46,7 @@ func ExpandAuthtypesUpdatableRole(ctx context.Context, m schemas.RoleModel) (*ap
 	return out, diags
 }
 
-func FlattenAuthtypesRoleWithTransactionGroups(ctx context.Context, g *apitypes.AuthtypesRoleWithTransactionGroups) (*schemas.RoleDataSourceModel, diag.Diagnostics) {
+func FlattenAuthtypesRole(ctx context.Context, g *apitypes.AuthtypesRole) (*schemas.RoleDataSourceModel, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if g == nil {
 		return nil, diags

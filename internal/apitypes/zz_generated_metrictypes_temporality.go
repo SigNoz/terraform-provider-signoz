@@ -7,6 +7,7 @@ package apitypes
 const (
 	MetrictypesTemporalityCumulative  MetrictypesTemporality = "cumulative"
 	MetrictypesTemporalityDelta       MetrictypesTemporality = "delta"
+	MetrictypesTemporalityEmpty       MetrictypesTemporality = ""
 	MetrictypesTemporalityUnspecified MetrictypesTemporality = "unspecified"
 )
 
@@ -16,6 +17,8 @@ func (e MetrictypesTemporality) Valid() bool {
 	case MetrictypesTemporalityCumulative:
 		return true
 	case MetrictypesTemporalityDelta:
+		return true
+	case MetrictypesTemporalityEmpty:
 		return true
 	case MetrictypesTemporalityUnspecified:
 		return true

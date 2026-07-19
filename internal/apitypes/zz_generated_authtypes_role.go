@@ -9,11 +9,12 @@ import (
 
 // AuthtypesRole defines model for AuthtypesRole.
 type AuthtypesRole struct {
-	CreatedAt   *time.Time `json:"createdAt,omitempty"`
-	Description string     `json:"description"`
-	Id          string     `json:"id"`
-	Name        string     `json:"name"`
-	OrgId       string     `json:"orgId"`
-	Type        string     `json:"type"`
-	UpdatedAt   *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt         *time.Time                 `json:"createdAt,omitempty"`
+	Description       string                     `json:"description"`
+	Id                string                     `json:"id"`
+	Name              string                     `json:"name"`
+	OrgId             string                     `json:"orgId"`
+	TransactionGroups AuthtypesTransactionGroups `json:"transactionGroups"`
+	Type              string                     `json:"type"`
+	UpdatedAt         *time.Time                 `json:"updatedAt,omitempty"`
 }
