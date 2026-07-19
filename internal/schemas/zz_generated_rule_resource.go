@@ -862,6 +862,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"meter",
+																			"",
 																		),
 																	},
 																},
@@ -946,6 +947,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						"delta",
 																						"cumulative",
 																						"unspecified",
+																						"",
 																					),
 																				},
 																			},
@@ -963,6 +965,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						"count_distinct",
 																						"rate",
 																						"increase",
+																						"",
 																					),
 																				},
 																			},
@@ -1527,6 +1530,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"meter",
+																			"",
 																		),
 																	},
 																},
@@ -2118,6 +2122,7 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"meter",
+																			"",
 																		),
 																	},
 																},

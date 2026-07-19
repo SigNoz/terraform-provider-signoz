@@ -2572,8 +2572,8 @@ type GetRoleResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Data   apitypes.AuthtypesRoleWithTransactionGroups `json:"data"`
-		Status string                                      `json:"status"`
+		Data   apitypes.AuthtypesRole `json:"data"`
+		Status string                 `json:"status"`
 	}
 	JSON401 *apitypes.RenderErrorResponse
 	JSON403 *apitypes.RenderErrorResponse
@@ -4380,8 +4380,8 @@ func ParseGetRoleResponse(rsp *http.Response) (*GetRoleResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data   apitypes.AuthtypesRoleWithTransactionGroups `json:"data"`
-			Status string                                      `json:"status"`
+			Data   apitypes.AuthtypesRole `json:"data"`
+			Status string                 `json:"status"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err

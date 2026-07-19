@@ -1967,6 +1967,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																								Validators: []validator.String{
 																									stringvalidator.OneOf(
 																										"meter",
+																										"",
 																									),
 																								},
 																							},
@@ -2051,6 +2052,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																													"delta",
 																													"cumulative",
 																													"unspecified",
+																													"",
 																												),
 																											},
 																										},
@@ -2068,6 +2070,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																													"count_distinct",
 																													"rate",
 																													"increase",
+																													"",
 																												),
 																											},
 																										},
@@ -2632,6 +2635,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																								Validators: []validator.String{
 																									stringvalidator.OneOf(
 																										"meter",
+																										"",
 																									),
 																								},
 																							},
@@ -3223,6 +3227,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																								Validators: []validator.String{
 																									stringvalidator.OneOf(
 																										"meter",
+																										"",
 																									),
 																								},
 																							},
@@ -4108,6 +4113,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																															Validators: []validator.String{
 																																stringvalidator.OneOf(
 																																	"meter",
+																																	"",
 																																),
 																															},
 																														},
@@ -4192,6 +4198,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																																				"delta",
 																																				"cumulative",
 																																				"unspecified",
+																																				"",
 																																			),
 																																		},
 																																	},
@@ -4209,6 +4216,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																																				"count_distinct",
 																																				"rate",
 																																				"increase",
+																																				"",
 																																			),
 																																		},
 																																	},
@@ -4773,6 +4781,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																															Validators: []validator.String{
 																																stringvalidator.OneOf(
 																																	"meter",
+																																	"",
 																																),
 																															},
 																														},
@@ -5364,6 +5373,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																															Validators: []validator.String{
 																																stringvalidator.OneOf(
 																																	"meter",
+																																	"",
 																																),
 																															},
 																														},
