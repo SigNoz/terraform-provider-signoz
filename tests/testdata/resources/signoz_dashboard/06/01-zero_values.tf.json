@@ -13,7 +13,7 @@
         "spec": {
           "display": {
             "name": "Zero and empty values",
-            "description": "Probes zero/empty values the API may drop, incl. empty-string display description and query name it marshals omitempty (see PR #131 for the rule analogue and SigNoz PR #12158 review)."
+            "description": "Probes zero/empty values the API may drop, incl. the empty-string display description it marshals omitempty (see PR #131 for the rule analogue and SigNoz PR #12158 review)."
           },
           "variables": [],
           "panels": {
@@ -62,7 +62,7 @@
                   {
                     "kind": "time_series",
                     "spec": {
-                      "name": "",
+                      "name": "A",
                       "plugin": {
                         "builder_query": {
                           "kind": "signoz/BuilderQuery",
