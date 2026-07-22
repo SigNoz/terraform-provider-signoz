@@ -13,7 +13,7 @@
         "spec": {
           "display": {
             "name": "Omitempty and nullable fields",
-            "description": "Round-trips fields the v2 API marshals omitempty/omitzero, populated so they must survive (see SigNoz PR #12158 review): dashboard/panel links, text-variable constant, list-variable custom_all_value/capturing_regexp/sort."
+            "description": "Round-trips fields the v2 API marshals omitempty/omitzero, populated so they must survive: dashboard/panel links, text-variable constant, list-variable custom_all_value/capturing_regexp/sort."
           },
           "links": [
             {
