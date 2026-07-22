@@ -13,7 +13,7 @@ description: |-
 
 `signoz_rule` removes both problems.
 
--> **`signoz_alert` is not being removed yet.** Both resources ship side by side and existing `signoz_alert` configurations keep working against `api/v1/rules`. A formal deprecation and removal will get its own release note.
+~> **`signoz_alert` was removed in provider v0.1.0.** If you manage alert rules with `signoz_alert`, you must migrate them to `signoz_rule`. The rule data on the server is untouched — the v1 and v2 APIs are two views over one rule store — so this is a Terraform resource-*type* change, not a rule rewrite. The `-generate-config-out` workflow below still works after upgrading to v0.1.0; the only step that needs the old resource is the [v1 → v2alpha1 conversion](#convert-a-v1-rule-to-v2alpha1-first), so do that while still on a v0.0.x provider (or let the server migrate it for you).
 
 ## `signoz_rule` is v2alpha1-only
 
@@ -105,8 +105,8 @@ recorded):
    terraform plan   # should report: No changes
    ```
 
-Repeat per rule. Everything you have not migrated keeps running under
-`signoz_alert`.
+Repeat per rule until every `signoz_alert` block is gone from your
+configuration.
 
 -> The generated config is emitted directly from what the v2 API returns for the
 rule, so it is always valid `v2alpha1`. If step 6 shows a diff, treat it as real

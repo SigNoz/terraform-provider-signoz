@@ -1,0 +1,371 @@
+{
+  "resource": {
+    "signoz_dashboard": {
+      "drift_fields": {
+        "schema_version": "v6",
+        "name": "testdata-dashboard-drift-fields-hz08qk",
+        "tags": [
+          {
+            "key": "tag",
+            "value": "testdata"
+          }
+        ],
+        "spec": {
+          "display": {
+            "name": "Hermes Coding Agent \u2014 Observability",
+            "description": "Comprehensive monitoring for the Hermes coding agent: agent sessions/turns, LLM API calls & token usage, tool-call activity, latency, and errors. Built from OTel traces (service: hermes-agent) using gen_ai.* and hermes.* span attributes. Panels are grouped top-to-bottom: Overview (scorecards), LLM/Model, Agent/Turns, Tool Calls, Errors."
+          },
+          "variables": [],
+          "panels": {
+            "errorrate": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Error Spans",
+                  "description": "Count of spans with hasError = true"
+                },
+                "plugin": {
+                  "number_panel": {
+                    "kind": "signoz/NumberPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time"
+                      },
+                      "formatting": {
+                        "unit": "",
+                        "decimal_precision": "2"
+                      },
+                      "thresholds": [
+                        {
+                          "value": 0,
+                          "operator": "above",
+                          "unit": "none",
+                          "color": "Red",
+                          "format": "text"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "scalar",
+                    "spec": {
+                      "name": "A",
+                      "plugin": {
+                        "builder_query": {
+                          "kind": "signoz/BuilderQuery",
+                          "spec": {
+                            "traces": {
+                              "name": "A",
+                              "step_interval": "60",
+                              "signal": "traces",
+                              "aggregations": [
+                                {
+                                  "expression": "count()"
+                                }
+                              ],
+                              "filter": {
+                                "expression": "service.name = 'hermes-agent' AND hasError = true"
+                              },
+                              "having": {
+                                "expression": ""
+                              },
+                              "legend": "errors"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "llm-tokens-stacked": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Token Usage Over Time",
+                  "description": "Stacked token totals over time"
+                },
+                "plugin": {
+                  "time_series_panel": {
+                    "kind": "signoz/TimeSeriesPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time",
+                        "fill_spans": false
+                      },
+                      "formatting": {
+                        "unit": "none",
+                        "decimal_precision": "2"
+                      },
+                      "chart_appearance": {
+                        "line_interpolation": "spline",
+                        "show_points": false,
+                        "line_style": "solid",
+                        "fill_mode": "none",
+                        "span_gaps": {
+                          "fill_only_below": false,
+                          "fill_less_than": "0s"
+                        }
+                      },
+                      "axes": {
+                        "soft_min": 0,
+                        "soft_max": 0,
+                        "is_log_scale": false
+                      },
+                      "legend": {
+                        "position": "bottom",
+                        "mode": "list",
+                        "custom_colors": {
+                          "input tokens": "#e9c8d0"
+                        }
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "time_series",
+                    "spec": {
+                      "plugin": {
+                        "composite_query": {
+                          "kind": "signoz/CompositeQuery",
+                          "spec": {
+                            "queries": [
+                              {
+                                "builder_query": {
+                                  "type": "builder_query",
+                                  "spec": {
+                                    "traces": {
+                                      "name": "A",
+                                      "step_interval": "60",
+                                      "signal": "traces",
+                                      "aggregations": [
+                                        {
+                                          "expression": "sum(gen_ai.usage.input_tokens)"
+                                        }
+                                      ],
+                                      "filter": {
+                                        "expression": "service.name = 'hermes-agent'"
+                                      },
+                                      "having": {
+                                        "expression": ""
+                                      },
+                                      "legend": "input tokens"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "builder_query": {
+                                  "type": "builder_query",
+                                  "spec": {
+                                    "traces": {
+                                      "name": "B",
+                                      "step_interval": "60",
+                                      "signal": "traces",
+                                      "aggregations": [
+                                        {
+                                          "expression": "sum(gen_ai.usage.output_tokens)"
+                                        }
+                                      ],
+                                      "filter": {
+                                        "expression": "service.name = 'hermes-agent'"
+                                      },
+                                      "having": {
+                                        "expression": ""
+                                      },
+                                      "legend": "output tokens"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "builder_query": {
+                                  "type": "builder_query",
+                                  "spec": {
+                                    "traces": {
+                                      "name": "C",
+                                      "step_interval": "60",
+                                      "signal": "traces",
+                                      "aggregations": [
+                                        {
+                                          "expression": "sum(gen_ai.usage.cache_read_input_tokens)"
+                                        }
+                                      ],
+                                      "filter": {
+                                        "expression": "service.name = 'hermes-agent'"
+                                      },
+                                      "having": {
+                                        "expression": ""
+                                      },
+                                      "legend": "cache-read tokens"
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "tool-table": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Tool Usage Summary",
+                  "description": "Count and p95 latency per tool type"
+                },
+                "plugin": {
+                  "table_panel": {
+                    "kind": "signoz/TablePanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time"
+                      },
+                      "formatting": {
+                        "column_units": {
+                          "A": "",
+                          "B": "ns"
+                        },
+                        "decimal_precision": "2"
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "scalar",
+                    "spec": {
+                      "plugin": {
+                        "composite_query": {
+                          "kind": "signoz/CompositeQuery",
+                          "spec": {
+                            "queries": [
+                              {
+                                "builder_query": {
+                                  "type": "builder_query",
+                                  "spec": {
+                                    "traces": {
+                                      "name": "A",
+                                      "step_interval": "60",
+                                      "signal": "traces",
+                                      "aggregations": [
+                                        {
+                                          "expression": "count()"
+                                        }
+                                      ],
+                                      "filter": {
+                                        "expression": "service.name = 'hermes-agent' AND name LIKE 'tool.%'"
+                                      },
+                                      "group_by": [
+                                        {
+                                          "name": "name",
+                                          "field_data_type": "string"
+                                        }
+                                      ],
+                                      "order": [
+                                        {
+                                          "key": {
+                                            "name": "count()"
+                                          },
+                                          "direction": "desc"
+                                        }
+                                      ],
+                                      "having": {
+                                        "expression": ""
+                                      },
+                                      "legend": "calls"
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "builder_query": {
+                                  "type": "builder_query",
+                                  "spec": {
+                                    "traces": {
+                                      "name": "B",
+                                      "step_interval": "60",
+                                      "signal": "traces",
+                                      "aggregations": [
+                                        {
+                                          "expression": "p95(durationNano)"
+                                        }
+                                      ],
+                                      "filter": {
+                                        "expression": "service.name = 'hermes-agent' AND name LIKE 'tool.%'"
+                                      },
+                                      "group_by": [
+                                        {
+                                          "name": "name",
+                                          "field_data_type": "string"
+                                        }
+                                      ],
+                                      "having": {
+                                        "expression": ""
+                                      },
+                                      "legend": "p95 latency"
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "layouts": [
+            {
+              "grid": {
+                "kind": "Grid",
+                "spec": {
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "width": 12,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/errorrate"
+                      }
+                    },
+                    {
+                      "x": 0,
+                      "y": 6,
+                      "width": 12,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/llm-tokens-stacked"
+                      }
+                    },
+                    {
+                      "x": 0,
+                      "y": 12,
+                      "width": 12,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/tool-table"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

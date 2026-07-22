@@ -21,3 +21,7 @@ spec:
         # BEGIN instead of on first write, avoiding "database is locked"
         # errors under concurrent test writes.
         SIGNOZ_SQLSTORE_SQLITE_TRANSACTION__MODE: "immediate"
+        # Disable the stats/telemetry reporter so integration-test runs aren't
+        # counted (statsreporter.enabled defaults to true → the "analytics"
+        # provider; false selects the noop provider).
+        SIGNOZ_STATSREPORTER_ENABLED: "false"

@@ -3,225 +3,328 @@
 page_title: "signoz_dashboard Resource - SigNoz"
 subcategory: ""
 description: |-
-  Creates and manages dashboard resources in SigNoz.
+  
 ---
 
 # signoz_dashboard (Resource)
 
-Creates and manages dashboard resources in SigNoz.
+
 
 ## Example Usage
 
 ```terraform
-// Refer to https://github.com/SigNoz/dashboards for more dashboard templates.
+# A SigNoz dashboard (v2, Perses-based): a Redis overview with a host filter
+# variable and three panels — an ungrouped time series, a time series grouped by
+# host, and a single-stat number panel. See the schema below for all attributes.
 
-resource "signoz_dashboard" "new_dashboard" {
-  collapsable_rows_migrated = true
-  description               = "test1"
-  layout = jsonencode([
+resource "signoz_dashboard" "redis_overview" {
+  schema_version = "v6"
+  name           = "redis-overview-aqdiza77"
+  tags = [
     {
-      "h" : 8,
-      "i" : "c5f29b09-8a63-44ba-825f-db91a3c79a54",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 0,
-      "y" : 0
+      key   = "tag"
+      value = "redis"
     },
-  ])
-  name = "test1"
-  panel_map = jsonencode(
     {
-      "94c3ba3e-b5de-49da-8a4d-f4572585d2e6" : {
-        "collapsed" : false,
-        "widgets" : [
-          {
-            "h" : 6,
-            "i" : "3d74094e-241b-4560-9128-abb1af79ae3c",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 0,
-            "y" : 172
-          },
-          {
-            "h" : 6,
-            "i" : "9a8ac524-afe4-457a-b17a-45f11c4f0fcf",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 6,
-            "y" : 172
-          },
-          {
-            "h" : 6,
-            "i" : "f42a3a42-8099-4be9-a6b5-1528d1f1bdfa",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 0,
-            "y" : 178
-          },
-          {
-            "h" : 6,
-            "i" : "e796af4a-abe8-4ff4-9bba-0b7eb81c022a",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 6,
-            "y" : 178
-          },
-          {
-            "h" : 6,
-            "i" : "9abc2374-d1ef-4ad6-958b-2355addcb245",
-            "moved" : false,
-            "static" : false,
-            "w" : 12,
-            "x" : 0,
-            "y" : 184
-          }
-        ]
-      },
+      key   = "tag"
+      value = "database"
+    },
+  ]
+  spec = {
+    display = {
+      name        = "Redis overview"
+      description = "This dashboard shows the Redis instance overview. It includes latency, hit/miss rate, connections, and memory information."
     }
-  )
-  tags             = ["node", "kubelet"]
-  title            = "test1"
-  version          = "v4"
-  uploaded_grafana = false
-  variables = jsonencode(
-    {
-      "8ccae12a-9f04-4d27-8940-374446050530" : {
-        "customValue" : "",
-        "description" : "The k8s node name",
-        "id" : "8ccae12a-9f04-4d27-8940-374446050530",
-        "modificationUUID" : "4f18b48e-0d06-4f63-88fb-2299ca8a7b1f",
-        "multiSelect" : true,
-        "name" : "k8s_node_name",
-        "order" : 1,
-        "queryValue" : "SELECT JSONExtractString(labels, 'k8s_node_name') AS k8s_node_name\nFROM signoz_metrics.distributed_time_series_v4_1day\nWHERE metric_name = 'k8s_node_cpu_time' AND JSONExtractString(labels, 'k8s_cluster_name') = {{.k8s_cluster_name}}\nGROUP BY k8s_node_name",
-        "showALLOption" : true,
-        "sort" : "ASC",
-        "textboxValue" : "",
-        "type" : "QUERY",
-        "selectedValue" : ["default"],
-        "allSelected" : false
-      },
-    }
-  )
-  widgets = jsonencode([
-    {
-      "bucketCount" : 30,
-      "bucketWidth" : 0,
-      "columnUnits" : {},
-      "description" : "",
-      "fillSpans" : false,
-      "id" : "c5f29b09-8a63-44ba-825f-db91a3c79a54",
-      "isStacked" : false,
-      "mergeAllActiveQueries" : false,
-      "nullZeroValues" : "zero",
-      "opacity" : "1",
-      "panelTypes" : "graph",
-      "query" : {
-        "builder" : {
-          "queryData" : [
-            {
-              "aggregateAttribute" : {
-                "dataType" : "float64",
-                "id" : "k8s_node_cpu_utilization--float64--Gauge--true",
-                "isColumn" : true,
-                "isJSON" : false,
-                "key" : "k8s_node_cpu_utilization",
-                "type" : "Gauge"
-              },
-              "aggregateOperator" : "avg",
-              "dataSource" : "metrics",
-              "disabled" : false,
-              "expression" : "A",
-              "filters" : {
-                "items" : [
-                  {
-                    "id" : "4995e999",
-                    "key" : {
-                      "dataType" : "string",
-                      "id" : "k8s_cluster_name--string--tag--false",
-                      "isColumn" : false,
-                      "key" : "k8s_cluster_name",
-                      "type" : "tag"
-                    },
-                    "op" : "=",
-                    "value" : "{{.k8s_cluster_name}}"
-                  },
-                  {
-                    "id" : "14a0fa64",
-                    "key" : {
-                      "dataType" : "string",
-                      "id" : "k8s_node_name--string--tag--false",
-                      "isColumn" : false,
-                      "key" : "k8s_node_name",
-                      "type" : "tag"
-                    },
-                    "op" : "in",
-                    "value" : [
-                      "{{.k8s_node_name}}"
-                    ]
-                  }
-                ],
-                "op" : "AND"
-              },
-              "functions" : [],
-              "groupBy" : [
-                {
-                  "dataType" : "string",
-                  "id" : "k8s_node_name--string--tag--false",
-                  "isColumn" : false,
-                  "isJSON" : false,
-                  "key" : "k8s_node_name",
-                  "type" : "tag"
-                }
-              ],
-              "having" : [],
-              "legend" : "{{k8s_node_name}}",
-              "limit" : null,
-              "orderBy" : [],
-              "queryName" : "A",
-              "reduceTo" : "sum",
-              "spaceAggregation" : "sum",
-              "stepInterval" : 60,
-              "timeAggregation" : "avg"
+    variables = [
+      {
+        list_variable = {
+          kind = "ListVariable"
+          spec = {
+            display = {
+              name        = "host_name"
+              description = "List of hosts sending Redis metrics"
             }
-          ],
-          "queryFormulas" : []
-        },
-        "clickhouse_sql" : [
-          {
-            "disabled" : false,
-            "legend" : "",
-            "name" : "A",
-            "query" : ""
+            allow_all_value = true
+            allow_multiple  = true
+            sort            = "alphabetical-asc"
+            name            = "host_name"
+            plugin = {
+              dynamic_variable = {
+                kind = "signoz/DynamicVariable"
+                spec = {
+                  name   = "host.name"
+                  signal = "metrics"
+                }
+              }
+            }
           }
-        ],
-        "id" : "6c8b0b46-1bd5-49aa-a4f9-0e4fd4636eaa",
-        "promql" : [
-          {
-            "disabled" : false,
-            "legend" : "",
-            "name" : "A",
-            "query" : ""
-          }
-        ],
-        "queryType" : "builder"
+        }
       },
-      "selectedLogFields" : [],
-      "selectedTracesFields" : [],
-      "softMax" : 0,
-      "softMin" : 0,
-      "stackedBarChart" : false,
-      "thresholds" : [],
-      "timePreferance" : "GLOBAL_TIME",
-      "title" : "Node CPU usage",
-      "yAxisUnit" : "none"
-    },
-  ])
+    ]
+    panels = {
+      "2fbaef0d-3cdb-4ce3-aa3c-9bbbb41786d9" = {
+        kind = "Panel"
+        spec = {
+          display = {
+            name = "Command/s"
+          }
+          plugin = {
+            time_series_panel = {
+              kind = "signoz/TimeSeriesPanel"
+              spec = {
+                visualization = {
+                  time_preference = "global_time"
+                  fill_spans      = true
+                }
+                formatting = {
+                  unit              = "ops"
+                  decimal_precision = "2"
+                }
+                chart_appearance = {
+                  line_interpolation = "spline"
+                  show_points        = false
+                  line_style         = "solid"
+                  fill_mode          = "solid"
+                  span_gaps = {
+                    fill_only_below = false
+                    fill_less_than  = "0s"
+                  }
+                }
+                axes = {
+                  soft_min     = 0
+                  is_log_scale = false
+                }
+                legend = {
+                  position = "bottom"
+                  mode     = "list"
+                }
+              }
+            }
+          }
+          queries = [
+            {
+              kind = "time_series"
+              spec = {
+                name = "A"
+                plugin = {
+                  builder_query = {
+                    kind = "signoz/BuilderQuery"
+                    spec = {
+                      metrics = {
+                        name          = "A"
+                        step_interval = "60"
+                        signal        = "metrics"
+                        aggregations = [
+                          {
+                            metric_name       = "redis.commands"
+                            time_aggregation  = "avg"
+                            space_aggregation = "sum"
+                            reduce_to         = "sum"
+                          },
+                        ]
+                        filter = {
+                          expression = "host.name IN $host_name"
+                        }
+                        having = {
+                          expression = ""
+                        }
+                        legend = "ops/s"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          ]
+        }
+      }
+      "9698cee2-b1f3-4c0b-8c9f-3da4f0e05f17" = {
+        kind = "Panel"
+        spec = {
+          display = {
+            name = "RSS Memory"
+          }
+          plugin = {
+            time_series_panel = {
+              kind = "signoz/TimeSeriesPanel"
+              spec = {
+                visualization = {
+                  time_preference = "global_time"
+                  fill_spans      = false
+                }
+                formatting = {
+                  unit              = "bytes"
+                  decimal_precision = "2"
+                }
+                chart_appearance = {
+                  line_interpolation = "spline"
+                  show_points        = false
+                  line_style         = "solid"
+                  fill_mode          = "solid"
+                  span_gaps = {
+                    fill_only_below = false
+                    fill_less_than  = "0s"
+                  }
+                }
+                axes = {
+                  soft_min     = 0
+                  is_log_scale = false
+                }
+                legend = {
+                  position = "bottom"
+                  mode     = "list"
+                }
+              }
+            }
+          }
+          queries = [
+            {
+              kind = "time_series"
+              spec = {
+                name = "A"
+                plugin = {
+                  builder_query = {
+                    kind = "signoz/BuilderQuery"
+                    spec = {
+                      metrics = {
+                        name          = "A"
+                        step_interval = "60"
+                        signal        = "metrics"
+                        aggregations = [
+                          {
+                            metric_name       = "redis.memory.rss"
+                            time_aggregation  = "avg"
+                            space_aggregation = "sum"
+                            reduce_to         = "sum"
+                          },
+                        ]
+                        filter = {
+                          expression = "host.name IN $host_name"
+                        }
+                        group_by = [
+                          {
+                            name            = "host.name"
+                            field_context   = "attribute"
+                            field_data_type = "string"
+                          },
+                        ]
+                        having = {
+                          expression = ""
+                        }
+                        legend = "Rss::{{host.name}}"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          ]
+        }
+      }
+      "f6a7b8c9-d0e1-4f2a-c13d-4e5f6a7b8c9d" = {
+        kind = "Panel"
+        spec = {
+          display = {
+            name        = "Uptime"
+            description = "Number of seconds since Redis server start"
+          }
+          plugin = {
+            number_panel = {
+              kind = "signoz/NumberPanel"
+              spec = {
+                visualization = {
+                  time_preference = "global_time"
+                }
+                formatting = {
+                  unit              = "s"
+                  decimal_precision = "2"
+                }
+              }
+            }
+          }
+          queries = [
+            {
+              kind = "scalar"
+              spec = {
+                name = "A"
+                plugin = {
+                  builder_query = {
+                    kind = "signoz/BuilderQuery"
+                    spec = {
+                      metrics = {
+                        name          = "A"
+                        step_interval = "60"
+                        signal        = "metrics"
+                        aggregations = [
+                          {
+                            metric_name       = "redis.uptime"
+                            time_aggregation  = "max"
+                            space_aggregation = "max"
+                            reduce_to         = "last"
+                          },
+                        ]
+                        filter = {
+                          expression = "host.name IN $host_name"
+                        }
+                        having = {
+                          expression = ""
+                        }
+                        legend = "Uptime"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          ]
+        }
+      }
+    }
+    layouts = [
+      {
+        grid = {
+          kind = "Grid"
+          spec = {
+            display = {
+              title = "Overview"
+              collapse = {
+                open = true
+              }
+            }
+            items = [
+              {
+                x      = 0
+                y      = 0
+                width  = 8
+                height = 6
+                content = {
+                  ref = "#/spec/panels/2fbaef0d-3cdb-4ce3-aa3c-9bbbb41786d9"
+                }
+              },
+              {
+                x      = 8
+                y      = 0
+                width  = 4
+                height = 6
+                content = {
+                  ref = "#/spec/panels/f6a7b8c9-d0e1-4f2a-c13d-4e5f6a7b8c9d"
+                }
+              },
+              {
+                x      = 0
+                y      = 6
+                width  = 12
+                height = 6
+                content = {
+                  ref = "#/spec/panels/9698cee2-b1f3-4c0b-8c9f-3da4f0e05f17"
+                }
+              },
+            ]
+          }
+        }
+      },
+    ]
+  }
 }
 ```
 
@@ -230,29 +333,2615 @@ resource "signoz_dashboard" "new_dashboard" {
 
 ### Required
 
-- `collapsable_rows_migrated` (Boolean)
-- `description` (String) Description of the dashboard.
-- `layout` (String) Layout of the dashboard.
-- `name` (String) Name of the dashboard.
-- `title` (String) Title of the dashboard.
-- `uploaded_grafana` (Boolean)
-- `variables` (String) Variables for the dashboard.
-- `version` (String) Version of the dashboard.
-- `widgets` (String) Widgets for the dashboard.
+- `schema_version` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec))
+- `tags` (Attributes List) (see [below for nested schema](#nestedatt--tags))
 
 ### Optional
 
-- `panel_map` (String)
-- `source` (String) Source of the dashboard. By default, it is <SIGNOZ_ENDPOINT>/dashboard.
-- `tags` (List of String) Tags of the dashboard.
+- `image` (String)
+- `name` (String)
 
 ### Read-Only
 
-- `created_at` (String) Creation time of the dashboard.
-- `created_by` (String) Creator of the dashboard.
-- `id` (String) Autogenerated unique ID for the dashboard.
-- `updated_at` (String) Last update time of the dashboard.
-- `updated_by` (String) Last updater of the dashboard.
+- `id` (String) The ID of this resource.
+- `locked` (Boolean)
+- `org_id` (String)
+
+<a id="nestedatt--spec"></a>
+### Nested Schema for `spec`
+
+Required:
+
+- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--display))
+- `layouts` (Attributes List) (see [below for nested schema](#nestedatt--spec--layouts))
+- `panels` (Attributes Map) (see [below for nested schema](#nestedatt--spec--panels))
+- `variables` (Attributes List) (see [below for nested schema](#nestedatt--spec--variables))
+
+Optional:
+
+- `datasources` (Attributes Map) (see [below for nested schema](#nestedatt--spec--datasources))
+- `duration` (String)
+- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--links))
+- `refresh_interval` (String)
+
+<a id="nestedatt--spec--display"></a>
+### Nested Schema for `spec.display`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+
+
+<a id="nestedatt--spec--layouts"></a>
+### Nested Schema for `spec.layouts`
+
+Optional:
+
+- `grid` (Attributes) (see [below for nested schema](#nestedatt--spec--layouts--grid))
+
+<a id="nestedatt--spec--layouts--grid"></a>
+### Nested Schema for `spec.layouts.grid`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--layouts--grid--spec))
+
+<a id="nestedatt--spec--layouts--grid--spec"></a>
+### Nested Schema for `spec.layouts.grid.spec`
+
+Optional:
+
+- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--layouts--grid--spec--display))
+- `items` (Attributes List) (see [below for nested schema](#nestedatt--spec--layouts--grid--spec--items))
+- `repeat_variable` (String)
+
+<a id="nestedatt--spec--layouts--grid--spec--display"></a>
+### Nested Schema for `spec.layouts.grid.spec.display`
+
+Optional:
+
+- `collapse` (Attributes) (see [below for nested schema](#nestedatt--spec--layouts--grid--spec--display--collapse))
+- `title` (String)
+
+<a id="nestedatt--spec--layouts--grid--spec--display--collapse"></a>
+### Nested Schema for `spec.layouts.grid.spec.display.collapse`
+
+Optional:
+
+- `open` (Boolean)
+
+
+
+<a id="nestedatt--spec--layouts--grid--spec--items"></a>
+### Nested Schema for `spec.layouts.grid.spec.items`
+
+Optional:
+
+- `content` (Attributes) (see [below for nested schema](#nestedatt--spec--layouts--grid--spec--items--content))
+- `height` (Number)
+- `width` (Number)
+- `x` (Number)
+- `y` (Number)
+
+<a id="nestedatt--spec--layouts--grid--spec--items--content"></a>
+### Nested Schema for `spec.layouts.grid.spec.items.content`
+
+Optional:
+
+- `ref` (String)
+
+
+
+
+
+
+<a id="nestedatt--spec--panels"></a>
+### Nested Schema for `spec.panels`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec))
+
+<a id="nestedatt--spec--panels--spec"></a>
+### Nested Schema for `spec.panels.spec`
+
+Required:
+
+- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--display))
+- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin))
+- `queries` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries))
+
+Optional:
+
+- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--links))
+
+<a id="nestedatt--spec--panels--spec--display"></a>
+### Nested Schema for `spec.panels.spec.display`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin"></a>
+### Nested Schema for `spec.panels.spec.plugin`
+
+Optional:
+
+- `bar_chart_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel))
+- `histogram_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel))
+- `list_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel))
+- `number_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel))
+- `pie_chart_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel))
+- `table_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel))
+- `time_series_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel))
+
+<a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec`
+
+Optional:
+
+- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--axes))
+- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--formatting))
+- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--legend))
+- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--thresholds))
+- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--axes"></a>
+### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec.axes`
+
+Optional:
+
+- `is_log_scale` (Boolean)
+- `soft_max` (Number)
+- `soft_min` (Number)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec.formatting`
+
+Optional:
+
+- `decimal_precision` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--legend"></a>
+### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec.legend`
+
+Optional:
+
+- `custom_colors` (Map of String)
+- `mode` (String)
+- `position` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--thresholds"></a>
+### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec.thresholds`
+
+Required:
+
+- `color` (String)
+- `value` (Number)
+
+Optional:
+
+- `label` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec.visualization`
+
+Optional:
+
+- `fill_spans` (Boolean)
+- `stacked_bar_chart` (Boolean)
+- `time_preference` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--histogram_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.histogram_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--histogram_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.histogram_panel.spec`
+
+Optional:
+
+- `histogram_buckets` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec--histogram_buckets))
+- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec--legend))
+
+<a id="nestedatt--spec--panels--spec--plugin--histogram_panel--spec--histogram_buckets"></a>
+### Nested Schema for `spec.panels.spec.plugin.histogram_panel.spec.histogram_buckets`
+
+Optional:
+
+- `bucket_count` (Number)
+- `bucket_width` (Number)
+- `merge_all_active_queries` (Boolean)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--histogram_panel--spec--legend"></a>
+### Nested Schema for `spec.panels.spec.plugin.histogram_panel.spec.legend`
+
+Optional:
+
+- `custom_colors` (Map of String)
+- `mode` (String)
+- `position` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--list_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.list_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--list_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.list_panel.spec`
+
+Optional:
+
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel--spec--select_fields))
+
+<a id="nestedatt--spec--panels--spec--plugin--list_panel--spec--select_fields"></a>
+### Nested Schema for `spec.panels.spec.plugin.list_panel.spec.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--number_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.number_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--number_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.number_panel.spec`
+
+Optional:
+
+- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--formatting))
+- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--thresholds))
+- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--number_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.number_panel.spec.formatting`
+
+Optional:
+
+- `decimal_precision` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--number_panel--spec--thresholds"></a>
+### Nested Schema for `spec.panels.spec.plugin.number_panel.spec.thresholds`
+
+Required:
+
+- `color` (String)
+- `value` (Number)
+
+Optional:
+
+- `format` (String)
+- `operator` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--number_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.number_panel.spec.visualization`
+
+Optional:
+
+- `time_preference` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.pie_chart_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.pie_chart_panel.spec`
+
+Optional:
+
+- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--formatting))
+- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--legend))
+- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.pie_chart_panel.spec.formatting`
+
+Optional:
+
+- `decimal_precision` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--legend"></a>
+### Nested Schema for `spec.panels.spec.plugin.pie_chart_panel.spec.legend`
+
+Optional:
+
+- `custom_colors` (Map of String)
+- `mode` (String)
+- `position` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.pie_chart_panel.spec.visualization`
+
+Optional:
+
+- `time_preference` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--table_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.table_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--table_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.table_panel.spec`
+
+Optional:
+
+- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--formatting))
+- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--thresholds))
+- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--table_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.table_panel.spec.formatting`
+
+Optional:
+
+- `column_units` (Map of String)
+- `decimal_precision` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--table_panel--spec--thresholds"></a>
+### Nested Schema for `spec.panels.spec.plugin.table_panel.spec.thresholds`
+
+Required:
+
+- `color` (String)
+- `column_name` (String)
+- `value` (Number)
+
+Optional:
+
+- `format` (String)
+- `operator` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--table_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.table_panel.spec.visualization`
+
+Optional:
+
+- `time_preference` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec`
+
+Optional:
+
+- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--axes))
+- `chart_appearance` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance))
+- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--formatting))
+- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--legend))
+- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--thresholds))
+- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--axes"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.axes`
+
+Optional:
+
+- `is_log_scale` (Boolean)
+- `soft_max` (Number)
+- `soft_min` (Number)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.chart_appearance`
+
+Optional:
+
+- `fill_mode` (String)
+- `line_interpolation` (String)
+- `line_style` (String)
+- `show_points` (Boolean)
+- `span_gaps` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance--span_gaps))
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance--span_gaps"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.chart_appearance.span_gaps`
+
+Optional:
+
+- `fill_less_than` (String) The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected.
+- `fill_only_below` (Boolean) Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected.
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.formatting`
+
+Optional:
+
+- `decimal_precision` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--legend"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.legend`
+
+Optional:
+
+- `custom_colors` (Map of String)
+- `mode` (String)
+- `position` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--thresholds"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.thresholds`
+
+Required:
+
+- `color` (String)
+- `value` (Number)
+
+Optional:
+
+- `label` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.visualization`
+
+Optional:
+
+- `fill_spans` (Boolean)
+- `time_preference` (String)
+
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries"></a>
+### Nested Schema for `spec.panels.spec.queries`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec`
+
+Required:
+
+- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin))
+
+Optional:
+
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin`
+
+Optional:
+
+- `builder_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query))
+- `click_house_sql` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql))
+- `composite_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query))
+- `formula` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula))
+- `prom_qlquery` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery))
+- `trace_operator` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec`
+
+Optional:
+
+- `logs` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs))
+- `metrics` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics))
+- `traces` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.aggregations`
+
+Optional:
+
+- `comparison_space_aggregation_param` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
+- `metric_name` (String)
+- `reduce_to` (String)
+- `space_aggregation` (String)
+- `temporality` (String)
+- `time_aggregation` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.aggregations.comparison_space_aggregation_param`
+
+Required:
+
+- `operator` (String)
+- `threshold` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.click_house_sql`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.click_house_sql.spec`
+
+Optional:
+
+- `disabled` (Boolean)
+- `legend` (String)
+- `name` (String)
+- `query` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) Composite query containing one or more query envelopes. Each query envelope specifies its type and corresponding spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec`
+
+Optional:
+
+- `queries` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries`
+
+Optional:
+
+- `builder_formula` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula))
+- `builder_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query))
+- `builder_trace_operator` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator))
+- `clickhouse_sql` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql))
+- `promql` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula`
+
+Required:
+
+- `type` (String)
+
+Optional:
+
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec`
+
+Optional:
+
+- `disabled` (Boolean)
+- `expression` (String)
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--having))
+- `legend` (String)
+- `limit` (Number)
+- `name` (String)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query`
+
+Required:
+
+- `type` (String)
+
+Optional:
+
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec`
+
+Optional:
+
+- `logs` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs))
+- `metrics` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics))
+- `traces` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.aggregations`
+
+Optional:
+
+- `comparison_space_aggregation_param` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
+- `metric_name` (String)
+- `reduce_to` (String)
+- `space_aggregation` (String)
+- `temporality` (String)
+- `time_aggregation` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.aggregations.comparison_space_aggregation_param`
+
+Required:
+
+- `operator` (String)
+- `threshold` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator`
+
+Required:
+
+- `type` (String)
+
+Optional:
+
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec`
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `expression` (String)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--having))
+- `legend` (String)
+- `limit` (Number)
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order))
+- `return_spans_from` (String)
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--select_fields))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.clickhouse_sql`
+
+Required:
+
+- `type` (String)
+
+Optional:
+
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.clickhouse_sql.spec`
+
+Optional:
+
+- `disabled` (Boolean)
+- `legend` (String)
+- `name` (String)
+- `query` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.promql`
+
+Required:
+
+- `type` (String)
+
+Optional:
+
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.promql.spec`
+
+Optional:
+
+- `disabled` (Boolean)
+- `legend` (String)
+- `name` (String)
+- `query` (String)
+- `stats` (Boolean)
+- `step` (String)
+
+
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec`
+
+Optional:
+
+- `disabled` (Boolean)
+- `expression` (String)
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--having))
+- `legend` (String)
+- `limit` (Number)
+- `name` (String)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.prom_qlquery`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.prom_qlquery.spec`
+
+Optional:
+
+- `disabled` (Boolean)
+- `legend` (String)
+- `name` (String)
+- `query` (String)
+- `stats` (Boolean)
+- `step` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec`
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `expression` (String)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--having))
+- `legend` (String)
+- `limit` (Number)
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order))
+- `return_spans_from` (String)
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--select_fields))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+
+
+
+<a id="nestedatt--spec--panels--spec--links"></a>
+### Nested Schema for `spec.panels.spec.links`
+
+Optional:
+
+- `name` (String)
+- `render_variables` (Boolean)
+- `target_blank` (Boolean)
+- `tooltip` (String)
+- `url` (String)
+
+
+
+
+<a id="nestedatt--spec--variables"></a>
+### Nested Schema for `spec.variables`
+
+Optional:
+
+- `list_variable` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable))
+- `text_variable` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--text_variable))
+
+<a id="nestedatt--spec--variables--list_variable"></a>
+### Nested Schema for `spec.variables.list_variable`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec))
+
+<a id="nestedatt--spec--variables--list_variable--spec"></a>
+### Nested Schema for `spec.variables.list_variable.spec`
+
+Required:
+
+- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--display))
+- `name` (String)
+
+Optional:
+
+- `allow_all_value` (Boolean)
+- `allow_multiple` (Boolean)
+- `capturing_regexp` (String)
+- `custom_all_value` (String)
+- `default_value` (String)
+- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin))
+- `sort` (String)
+
+<a id="nestedatt--spec--variables--list_variable--spec--display"></a>
+### Nested Schema for `spec.variables.list_variable.spec.display`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+
+
+<a id="nestedatt--spec--variables--list_variable--spec--plugin"></a>
+### Nested Schema for `spec.variables.list_variable.spec.plugin`
+
+Optional:
+
+- `custom_variable` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--custom_variable))
+- `dynamic_variable` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--dynamic_variable))
+- `query_variable` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--query_variable))
+
+<a id="nestedatt--spec--variables--list_variable--spec--plugin--custom_variable"></a>
+### Nested Schema for `spec.variables.list_variable.spec.plugin.custom_variable`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--custom_variable--spec))
+
+<a id="nestedatt--spec--variables--list_variable--spec--plugin--custom_variable--spec"></a>
+### Nested Schema for `spec.variables.list_variable.spec.plugin.custom_variable.spec`
+
+Required:
+
+- `custom_value` (String)
+
+
+
+<a id="nestedatt--spec--variables--list_variable--spec--plugin--dynamic_variable"></a>
+### Nested Schema for `spec.variables.list_variable.spec.plugin.dynamic_variable`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--dynamic_variable--spec))
+
+<a id="nestedatt--spec--variables--list_variable--spec--plugin--dynamic_variable--spec"></a>
+### Nested Schema for `spec.variables.list_variable.spec.plugin.dynamic_variable.spec`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `signal` (String)
+
+
+
+<a id="nestedatt--spec--variables--list_variable--spec--plugin--query_variable"></a>
+### Nested Schema for `spec.variables.list_variable.spec.plugin.query_variable`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--query_variable--spec))
+
+<a id="nestedatt--spec--variables--list_variable--spec--plugin--query_variable--spec"></a>
+### Nested Schema for `spec.variables.list_variable.spec.plugin.query_variable.spec`
+
+Required:
+
+- `query_value` (String)
+
+
+
+
+
+
+<a id="nestedatt--spec--variables--text_variable"></a>
+### Nested Schema for `spec.variables.text_variable`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--text_variable--spec))
+
+<a id="nestedatt--spec--variables--text_variable--spec"></a>
+### Nested Schema for `spec.variables.text_variable.spec`
+
+Required:
+
+- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--text_variable--spec--display))
+- `name` (String)
+- `value` (String)
+
+Optional:
+
+- `constant` (Boolean)
+
+<a id="nestedatt--spec--variables--text_variable--spec--display"></a>
+### Nested Schema for `spec.variables.text_variable.spec.display`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+
+
+
+
+
+<a id="nestedatt--spec--datasources"></a>
+### Nested Schema for `spec.datasources`
+
+Optional:
+
+- `default` (Boolean)
+- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--display))
+- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--plugin))
+
+<a id="nestedatt--spec--datasources--display"></a>
+### Nested Schema for `spec.datasources.display`
+
+Optional:
+
+- `description` (String)
+- `name` (String)
+
+
+<a id="nestedatt--spec--datasources--plugin"></a>
+### Nested Schema for `spec.datasources.plugin`
+
+Optional:
+
+- `datasource` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--plugin--datasource))
+
+<a id="nestedatt--spec--datasources--plugin--datasource"></a>
+### Nested Schema for `spec.datasources.plugin.datasource`
+
+Required:
+
+- `kind` (String)
+- `spec` (String)
+
+
+
+
+<a id="nestedatt--spec--links"></a>
+### Nested Schema for `spec.links`
+
+Optional:
+
+- `name` (String)
+- `render_variables` (Boolean)
+- `target_blank` (Boolean)
+- `tooltip` (String)
+- `url` (String)
+
+
+
+<a id="nestedatt--tags"></a>
+### Nested Schema for `tags`
+
+Required:
+
+- `key` (String)
+- `value` (String)
 
 ## Import
 
@@ -262,5 +2951,5 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 
 ```shell
 # Dashboards are imported using their ID.
-terraform import signoz_dashboard.new_dashboard 0192a9c2-1234-7abc-8def-0123456789ab
+terraform import signoz_dashboard.redis_overview 0192a9c2-1234-7abc-8def-0123456789ab
 ```

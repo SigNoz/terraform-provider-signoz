@@ -1,210 +1,313 @@
-// Refer to https://github.com/SigNoz/dashboards for more dashboard templates.
+# A SigNoz dashboard (v2, Perses-based): a Redis overview with a host filter
+# variable and three panels — an ungrouped time series, a time series grouped by
+# host, and a single-stat number panel. See the schema below for all attributes.
 
-resource "signoz_dashboard" "new_dashboard" {
-  collapsable_rows_migrated = true
-  description               = "test1"
-  layout = jsonencode([
+resource "signoz_dashboard" "redis_overview" {
+  schema_version = "v6"
+  name           = "redis-overview-aqdiza77"
+  tags = [
     {
-      "h" : 8,
-      "i" : "c5f29b09-8a63-44ba-825f-db91a3c79a54",
-      "moved" : false,
-      "static" : false,
-      "w" : 6,
-      "x" : 0,
-      "y" : 0
+      key   = "tag"
+      value = "redis"
     },
-  ])
-  name = "test1"
-  panel_map = jsonencode(
     {
-      "94c3ba3e-b5de-49da-8a4d-f4572585d2e6" : {
-        "collapsed" : false,
-        "widgets" : [
-          {
-            "h" : 6,
-            "i" : "3d74094e-241b-4560-9128-abb1af79ae3c",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 0,
-            "y" : 172
-          },
-          {
-            "h" : 6,
-            "i" : "9a8ac524-afe4-457a-b17a-45f11c4f0fcf",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 6,
-            "y" : 172
-          },
-          {
-            "h" : 6,
-            "i" : "f42a3a42-8099-4be9-a6b5-1528d1f1bdfa",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 0,
-            "y" : 178
-          },
-          {
-            "h" : 6,
-            "i" : "e796af4a-abe8-4ff4-9bba-0b7eb81c022a",
-            "moved" : false,
-            "static" : false,
-            "w" : 6,
-            "x" : 6,
-            "y" : 178
-          },
-          {
-            "h" : 6,
-            "i" : "9abc2374-d1ef-4ad6-958b-2355addcb245",
-            "moved" : false,
-            "static" : false,
-            "w" : 12,
-            "x" : 0,
-            "y" : 184
-          }
-        ]
-      },
+      key   = "tag"
+      value = "database"
+    },
+  ]
+  spec = {
+    display = {
+      name        = "Redis overview"
+      description = "This dashboard shows the Redis instance overview. It includes latency, hit/miss rate, connections, and memory information."
     }
-  )
-  tags             = ["node", "kubelet"]
-  title            = "test1"
-  version          = "v4"
-  uploaded_grafana = false
-  variables = jsonencode(
-    {
-      "8ccae12a-9f04-4d27-8940-374446050530" : {
-        "customValue" : "",
-        "description" : "The k8s node name",
-        "id" : "8ccae12a-9f04-4d27-8940-374446050530",
-        "modificationUUID" : "4f18b48e-0d06-4f63-88fb-2299ca8a7b1f",
-        "multiSelect" : true,
-        "name" : "k8s_node_name",
-        "order" : 1,
-        "queryValue" : "SELECT JSONExtractString(labels, 'k8s_node_name') AS k8s_node_name\nFROM signoz_metrics.distributed_time_series_v4_1day\nWHERE metric_name = 'k8s_node_cpu_time' AND JSONExtractString(labels, 'k8s_cluster_name') = {{.k8s_cluster_name}}\nGROUP BY k8s_node_name",
-        "showALLOption" : true,
-        "sort" : "ASC",
-        "textboxValue" : "",
-        "type" : "QUERY",
-        "selectedValue" : ["default"],
-        "allSelected" : false
-      },
-    }
-  )
-  widgets = jsonencode([
-    {
-      "bucketCount" : 30,
-      "bucketWidth" : 0,
-      "columnUnits" : {},
-      "description" : "",
-      "fillSpans" : false,
-      "id" : "c5f29b09-8a63-44ba-825f-db91a3c79a54",
-      "isStacked" : false,
-      "mergeAllActiveQueries" : false,
-      "nullZeroValues" : "zero",
-      "opacity" : "1",
-      "panelTypes" : "graph",
-      "query" : {
-        "builder" : {
-          "queryData" : [
-            {
-              "aggregateAttribute" : {
-                "dataType" : "float64",
-                "id" : "k8s_node_cpu_utilization--float64--Gauge--true",
-                "isColumn" : true,
-                "isJSON" : false,
-                "key" : "k8s_node_cpu_utilization",
-                "type" : "Gauge"
-              },
-              "aggregateOperator" : "avg",
-              "dataSource" : "metrics",
-              "disabled" : false,
-              "expression" : "A",
-              "filters" : {
-                "items" : [
-                  {
-                    "id" : "4995e999",
-                    "key" : {
-                      "dataType" : "string",
-                      "id" : "k8s_cluster_name--string--tag--false",
-                      "isColumn" : false,
-                      "key" : "k8s_cluster_name",
-                      "type" : "tag"
-                    },
-                    "op" : "=",
-                    "value" : "{{.k8s_cluster_name}}"
-                  },
-                  {
-                    "id" : "14a0fa64",
-                    "key" : {
-                      "dataType" : "string",
-                      "id" : "k8s_node_name--string--tag--false",
-                      "isColumn" : false,
-                      "key" : "k8s_node_name",
-                      "type" : "tag"
-                    },
-                    "op" : "in",
-                    "value" : [
-                      "{{.k8s_node_name}}"
-                    ]
-                  }
-                ],
-                "op" : "AND"
-              },
-              "functions" : [],
-              "groupBy" : [
-                {
-                  "dataType" : "string",
-                  "id" : "k8s_node_name--string--tag--false",
-                  "isColumn" : false,
-                  "isJSON" : false,
-                  "key" : "k8s_node_name",
-                  "type" : "tag"
-                }
-              ],
-              "having" : [],
-              "legend" : "{{k8s_node_name}}",
-              "limit" : null,
-              "orderBy" : [],
-              "queryName" : "A",
-              "reduceTo" : "sum",
-              "spaceAggregation" : "sum",
-              "stepInterval" : 60,
-              "timeAggregation" : "avg"
+    variables = [
+      {
+        list_variable = {
+          kind = "ListVariable"
+          spec = {
+            display = {
+              name        = "host_name"
+              description = "List of hosts sending Redis metrics"
             }
-          ],
-          "queryFormulas" : []
-        },
-        "clickhouse_sql" : [
-          {
-            "disabled" : false,
-            "legend" : "",
-            "name" : "A",
-            "query" : ""
+            allow_all_value = true
+            allow_multiple  = true
+            sort            = "alphabetical-asc"
+            name            = "host_name"
+            plugin = {
+              dynamic_variable = {
+                kind = "signoz/DynamicVariable"
+                spec = {
+                  name   = "host.name"
+                  signal = "metrics"
+                }
+              }
+            }
           }
-        ],
-        "id" : "6c8b0b46-1bd5-49aa-a4f9-0e4fd4636eaa",
-        "promql" : [
-          {
-            "disabled" : false,
-            "legend" : "",
-            "name" : "A",
-            "query" : ""
-          }
-        ],
-        "queryType" : "builder"
+        }
       },
-      "selectedLogFields" : [],
-      "selectedTracesFields" : [],
-      "softMax" : 0,
-      "softMin" : 0,
-      "stackedBarChart" : false,
-      "thresholds" : [],
-      "timePreferance" : "GLOBAL_TIME",
-      "title" : "Node CPU usage",
-      "yAxisUnit" : "none"
-    },
-  ])
+    ]
+    panels = {
+      "2fbaef0d-3cdb-4ce3-aa3c-9bbbb41786d9" = {
+        kind = "Panel"
+        spec = {
+          display = {
+            name = "Command/s"
+          }
+          plugin = {
+            time_series_panel = {
+              kind = "signoz/TimeSeriesPanel"
+              spec = {
+                visualization = {
+                  time_preference = "global_time"
+                  fill_spans      = true
+                }
+                formatting = {
+                  unit              = "ops"
+                  decimal_precision = "2"
+                }
+                chart_appearance = {
+                  line_interpolation = "spline"
+                  show_points        = false
+                  line_style         = "solid"
+                  fill_mode          = "solid"
+                  span_gaps = {
+                    fill_only_below = false
+                    fill_less_than  = "0s"
+                  }
+                }
+                axes = {
+                  soft_min     = 0
+                  is_log_scale = false
+                }
+                legend = {
+                  position = "bottom"
+                  mode     = "list"
+                }
+              }
+            }
+          }
+          queries = [
+            {
+              kind = "time_series"
+              spec = {
+                name = "A"
+                plugin = {
+                  builder_query = {
+                    kind = "signoz/BuilderQuery"
+                    spec = {
+                      metrics = {
+                        name          = "A"
+                        step_interval = "60"
+                        signal        = "metrics"
+                        aggregations = [
+                          {
+                            metric_name       = "redis.commands"
+                            time_aggregation  = "avg"
+                            space_aggregation = "sum"
+                            reduce_to         = "sum"
+                          },
+                        ]
+                        filter = {
+                          expression = "host.name IN $host_name"
+                        }
+                        having = {
+                          expression = ""
+                        }
+                        legend = "ops/s"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          ]
+        }
+      }
+      "9698cee2-b1f3-4c0b-8c9f-3da4f0e05f17" = {
+        kind = "Panel"
+        spec = {
+          display = {
+            name = "RSS Memory"
+          }
+          plugin = {
+            time_series_panel = {
+              kind = "signoz/TimeSeriesPanel"
+              spec = {
+                visualization = {
+                  time_preference = "global_time"
+                  fill_spans      = false
+                }
+                formatting = {
+                  unit              = "bytes"
+                  decimal_precision = "2"
+                }
+                chart_appearance = {
+                  line_interpolation = "spline"
+                  show_points        = false
+                  line_style         = "solid"
+                  fill_mode          = "solid"
+                  span_gaps = {
+                    fill_only_below = false
+                    fill_less_than  = "0s"
+                  }
+                }
+                axes = {
+                  soft_min     = 0
+                  is_log_scale = false
+                }
+                legend = {
+                  position = "bottom"
+                  mode     = "list"
+                }
+              }
+            }
+          }
+          queries = [
+            {
+              kind = "time_series"
+              spec = {
+                name = "A"
+                plugin = {
+                  builder_query = {
+                    kind = "signoz/BuilderQuery"
+                    spec = {
+                      metrics = {
+                        name          = "A"
+                        step_interval = "60"
+                        signal        = "metrics"
+                        aggregations = [
+                          {
+                            metric_name       = "redis.memory.rss"
+                            time_aggregation  = "avg"
+                            space_aggregation = "sum"
+                            reduce_to         = "sum"
+                          },
+                        ]
+                        filter = {
+                          expression = "host.name IN $host_name"
+                        }
+                        group_by = [
+                          {
+                            name            = "host.name"
+                            field_context   = "attribute"
+                            field_data_type = "string"
+                          },
+                        ]
+                        having = {
+                          expression = ""
+                        }
+                        legend = "Rss::{{host.name}}"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          ]
+        }
+      }
+      "f6a7b8c9-d0e1-4f2a-c13d-4e5f6a7b8c9d" = {
+        kind = "Panel"
+        spec = {
+          display = {
+            name        = "Uptime"
+            description = "Number of seconds since Redis server start"
+          }
+          plugin = {
+            number_panel = {
+              kind = "signoz/NumberPanel"
+              spec = {
+                visualization = {
+                  time_preference = "global_time"
+                }
+                formatting = {
+                  unit              = "s"
+                  decimal_precision = "2"
+                }
+              }
+            }
+          }
+          queries = [
+            {
+              kind = "scalar"
+              spec = {
+                name = "A"
+                plugin = {
+                  builder_query = {
+                    kind = "signoz/BuilderQuery"
+                    spec = {
+                      metrics = {
+                        name          = "A"
+                        step_interval = "60"
+                        signal        = "metrics"
+                        aggregations = [
+                          {
+                            metric_name       = "redis.uptime"
+                            time_aggregation  = "max"
+                            space_aggregation = "max"
+                            reduce_to         = "last"
+                          },
+                        ]
+                        filter = {
+                          expression = "host.name IN $host_name"
+                        }
+                        having = {
+                          expression = ""
+                        }
+                        legend = "Uptime"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          ]
+        }
+      }
+    }
+    layouts = [
+      {
+        grid = {
+          kind = "Grid"
+          spec = {
+            display = {
+              title = "Overview"
+              collapse = {
+                open = true
+              }
+            }
+            items = [
+              {
+                x      = 0
+                y      = 0
+                width  = 8
+                height = 6
+                content = {
+                  ref = "#/spec/panels/2fbaef0d-3cdb-4ce3-aa3c-9bbbb41786d9"
+                }
+              },
+              {
+                x      = 8
+                y      = 0
+                width  = 4
+                height = 6
+                content = {
+                  ref = "#/spec/panels/f6a7b8c9-d0e1-4f2a-c13d-4e5f6a7b8c9d"
+                }
+              },
+              {
+                x      = 0
+                y      = 6
+                width  = 12
+                height = 6
+                content = {
+                  ref = "#/spec/panels/9698cee2-b1f3-4c0b-8c9f-3da4f0e05f17"
+                }
+              },
+            ]
+          }
+        }
+      },
+    ]
+  }
 }

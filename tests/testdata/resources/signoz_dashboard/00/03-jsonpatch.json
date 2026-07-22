@@ -1,0 +1,5 @@
+[
+  { "op": "replace", "path": "/spec/variables/0/list_variable/spec/plugin/custom_variable/spec/custom_value", "value": "signoz,charts,dashboards" },
+  { "op": "replace", "path": "/spec/panels/879d2eb3-a2e3-471e-bfa3-78500c76e0ca/spec/plugin/time_series_panel/spec/visualization/fill_spans", "value": true },
+  { "op": "add", "path": "/spec/panels/927c4045-6d1e-49c4-ad8e-9ac279b9059f/spec/queries/0/spec/plugin/builder_query/spec/metrics/group_by/-", "value": { "name": "vcs.repository.name", "field_context": "attribute", "field_data_type": "string" } }
+]

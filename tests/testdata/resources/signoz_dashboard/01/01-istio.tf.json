@@ -1,0 +1,197 @@
+{
+  "resource": {
+    "signoz_dashboard": {
+      "istio": {
+        "schema_version": "v6",
+        "name": "istio-monitoring-dashboard-qa7xrhqk",
+        "tags": [
+          {
+            "key": "tag",
+            "value": "istio"
+          }
+        ],
+        "spec": {
+          "display": {
+            "name": "Istio Monitoring Dashboard",
+            "description": "Istio service mesh dashboard for Istio, Envoy, Pilot, Citadel, Galley, and Kubernetes resource metrics collected in SigNoz."
+          },
+          "variables": [
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "namespace",
+                    "description": "Kubernetes namespace for Istio telemetry and resource metrics."
+                  },
+                  "allow_all_value": true,
+                  "allow_multiple": true,
+                  "sort": "alphabetical-asc",
+                  "plugin": {
+                    "dynamic_variable": {
+                      "kind": "signoz/DynamicVariable",
+                      "spec": {
+                        "name": "k8s.namespace.name"
+                      }
+                    }
+                  },
+                  "name": "namespace"
+                }
+              }
+            },
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "service.name",
+                    "description": "Destination service name observed in Istio standard metrics."
+                  },
+                  "allow_all_value": true,
+                  "allow_multiple": true,
+                  "sort": "alphabetical-asc",
+                  "plugin": {
+                    "dynamic_variable": {
+                      "kind": "signoz/DynamicVariable",
+                      "spec": {
+                        "name": "service.name"
+                      }
+                    }
+                  },
+                  "name": "service.name"
+                }
+              }
+            },
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "cluster",
+                    "description": "Istio destination cluster label."
+                  },
+                  "allow_all_value": true,
+                  "allow_multiple": true,
+                  "sort": "alphabetical-asc",
+                  "plugin": {
+                    "dynamic_variable": {
+                      "kind": "signoz/DynamicVariable",
+                      "spec": {
+                        "name": "destination_cluster",
+                        "signal": "metrics"
+                      }
+                    }
+                  },
+                  "name": "cluster"
+                }
+              }
+            },
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "deployment.environment",
+                    "description": "Optional deployment environment. Included for compatibility; not wired because the live Istio metrics did not expose this field."
+                  },
+                  "allow_all_value": true,
+                  "allow_multiple": true,
+                  "sort": "alphabetical-asc",
+                  "plugin": {
+                    "dynamic_variable": {
+                      "kind": "signoz/DynamicVariable",
+                      "spec": {
+                        "name": "deployment.environment"
+                      }
+                    }
+                  },
+                  "name": "deployment.environment"
+                }
+              }
+            }
+          ],
+          "panels": {
+            "control-managed-clusters": {
+              "kind": "Panel",
+              "spec": {
+                "display": {
+                  "name": "Managed Clusters",
+                  "description": "Clusters managed by Istiod."
+                },
+                "plugin": {
+                  "number_panel": {
+                    "kind": "signoz/NumberPanel",
+                    "spec": {
+                      "visualization": {
+                        "time_preference": "global_time"
+                      },
+                      "formatting": {
+                        "unit": "short",
+                        "decimal_precision": "2"
+                      }
+                    }
+                  }
+                },
+                "queries": [
+                  {
+                    "kind": "scalar",
+                    "spec": {
+                      "name": "A",
+                      "plugin": {
+                        "builder_query": {
+                          "kind": "signoz/BuilderQuery",
+                          "spec": {
+                            "metrics": {
+                              "name": "A",
+                              "step_interval": "60",
+                              "signal": "metrics",
+                              "aggregations": [
+                                {
+                                  "metric_name": "istiod_managed_clusters",
+                                  "temporality": "unspecified",
+                                  "time_aggregation": "avg",
+                                  "space_aggregation": "sum",
+                                  "reduce_to": "last"
+                                }
+                              ],
+                              "filter": {
+                                "expression": ""
+                              },
+                              "having": {
+                                "expression": ""
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "layouts": [
+            {
+              "grid": {
+                "kind": "Grid",
+                "spec": {
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "width": 6,
+                      "height": 6,
+                      "content": {
+                        "ref": "#/spec/panels/control-managed-clusters"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
