@@ -91,7 +91,7 @@ func (r *roleResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 	out := &getResp.JSON200.Data
 
-	next, diags := conv.FlattenAuthtypesRoleWithTransactionGroups(ctx, out)
+	next, diags := conv.FlattenAuthtypesRole(ctx, out)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -127,7 +127,7 @@ func (r *roleResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	}
 	out := &httpResp.JSON200.Data
 
-	next, diags := conv.FlattenAuthtypesRoleWithTransactionGroups(ctx, out)
+	next, diags := conv.FlattenAuthtypesRole(ctx, out)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -176,7 +176,7 @@ func (r *roleResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 	out := &getResp.JSON200.Data
 
-	next, diags := conv.FlattenAuthtypesRoleWithTransactionGroups(ctx, out)
+	next, diags := conv.FlattenAuthtypesRole(ctx, out)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -8,6 +8,7 @@ const (
 	MetrictypesTimeAggregationAvg           MetrictypesTimeAggregation = "avg"
 	MetrictypesTimeAggregationCount         MetrictypesTimeAggregation = "count"
 	MetrictypesTimeAggregationCountDistinct MetrictypesTimeAggregation = "count_distinct"
+	MetrictypesTimeAggregationEmpty         MetrictypesTimeAggregation = ""
 	MetrictypesTimeAggregationIncrease      MetrictypesTimeAggregation = "increase"
 	MetrictypesTimeAggregationLatest        MetrictypesTimeAggregation = "latest"
 	MetrictypesTimeAggregationMax           MetrictypesTimeAggregation = "max"
@@ -24,6 +25,8 @@ func (e MetrictypesTimeAggregation) Valid() bool {
 	case MetrictypesTimeAggregationCount:
 		return true
 	case MetrictypesTimeAggregationCountDistinct:
+		return true
+	case MetrictypesTimeAggregationEmpty:
 		return true
 	case MetrictypesTimeAggregationIncrease:
 		return true
