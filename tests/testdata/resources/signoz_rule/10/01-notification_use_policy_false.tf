@@ -1,9 +1,6 @@
-# Scenario 00 — a base resource with no edits. The runner plans (create),
-# applies, plans again (no drift), then destroys. Base-only scenarios may be
-# authored in HCL (.tf); scenarios with JSON patches use a .tf.json base so the
-# patch has a JSON target (see scenario 01 and ../../../README.md).
-resource "signoz_rule" "scenario_00" {
-  alert          = "testdata-scenario-00"
+# notification_settings.use_policy = false must round-trip, not come back null.
+resource "signoz_rule" "scenario_07" {
+  alert          = "testdata-use-policy-false"
   alert_type     = "METRIC_BASED_ALERT"
   rule_type      = "threshold_rule"
   schema_version = "v2alpha1"
@@ -65,7 +62,6 @@ resource "signoz_rule" "scenario_00" {
   }
 
   notification_settings = {
-    group_by             = ["service.name", "deployment.environment"]
-    new_group_eval_delay = "2m"
+    use_policy = false
   }
 }

@@ -69,7 +69,16 @@ resource "signoz_rule" "scenario_04" {
     }
   }
 
-  notification_settings = {}
+  notification_settings = {
+    group_by             = ["service.name"]
+    new_group_eval_delay = "5m"
+
+    renotify = {
+      enabled      = true
+      interval     = "1h"
+      alert_states = ["firing"]
+    }
+  }
 
   schema_version = "v2alpha1"
 }

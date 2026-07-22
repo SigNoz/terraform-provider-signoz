@@ -51,7 +51,13 @@ resource "signoz_rule" "scenario_03" {
     }
   }
 
-  notification_settings = {}
+  notification_settings = {
+    renotify = {
+      enabled      = true
+      interval     = "30m"
+      alert_states = ["firing", "nodata"]
+    }
+  }
 
   schema_version = "v2alpha1"
 }
