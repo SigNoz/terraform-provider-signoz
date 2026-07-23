@@ -43,20 +43,74 @@ A `map[string]Obj` on the wire.
 
 Fix in the Go source that generates `docs/api/openapi.yml`, **not** in skaff, so the fix is permanent. The schema-shaping tools, roughly in order of reach: `required:"true"` / `nullable:"true"` struct tags · `Enum() []any` · `JSONSchema()` (the `jsonschema.Exposer` interface) · `JSONSchemaOneOf()` + `PrepareJSONSchema()` with the `x-signoz-discriminator` extension.
 
-- **Untyped property** — `foo: {}` (no `type` / `$ref` / `oneOf`). *Pitfall:* tfplugingen-openapi errors *"no 'type' … attribute cannot be created"* → the whole enclosing schema is skipped. *Fix:* type the field (concrete `type` / `$ref` / `Enum()` / a `JSONSchema()` exposer). *Example:* `Querybuildertypesv5FunctionArg.value` was `value: {}` → added `PrepareJSONSchema` typing it `oneOf [number, string]` (signoz#11850).
+### Untyped property
 
-- **Inline-nested object / inline `oneOf`** — a property (or array `items`) whose value is an object or `oneOf` with **no `$ref`**. *Pitfall:* `skaff types` *"has inline-nested object property (no $ref to canonicalize)"*, or tfplugingen *"schema composition is currently not supported"* → skipped. *Fix:* extract it into a named `#/components/schemas/X` and `$ref` it. *Example:* the builder-join aggregations were an inline `items.oneOf` → extracted into a named `Querybuildertypesv5JoinAggregation` component, which `detectOneOfRewrites` then flattens.
+`foo: {}` (no `type` / `$ref` / `oneOf`).
 
-- **Untyped array items** — `items: {}`. *Pitfall:* the element has no type; the element attribute can't be created. *Fix:* type the `items` (`type:` or `$ref`). *Example:* `Querybuildertypesv5QueryData.items` (`[]any`) — a query-result type; type its items if a data source ever surfaces it.
+- **Pitfall:** tfplugingen-openapi errors *"no 'type' … attribute cannot be created"* → the whole enclosing schema is skipped.
+- **Fix:** type the field (concrete `type` / `$ref` / `Enum()` / a `JSONSchema()` exposer).
+- **Example:** `Querybuildertypesv5FunctionArg.value` was `value: {}` → added `PrepareJSONSchema` typing it `oneOf [number, string]` (signoz#11850).
 
-- **Free-form object** — `{type: object}` with no `properties`. *Pitfall:* skaff models an empty-object customtype with no convertor → every field that `$ref`s it cascade-skips. *Fix:* give it real `properties` (a named struct) — or a discriminator if it's a sum. If it is **legitimately** opaque, model it as `jsontypes.Normalized` (Terraform-side, above). *Example:* `DashboardtypesSigNozDatasourceSpec` is always `{}` by design (schema owner confirmed) → opaque `jsontypes.Normalized` route; the user writes `spec = "{}"`.
+### Inline-nested object / inline `oneOf`
 
-- **By-`type`/`kind` sum object** — exposes `JSONSchemaOneOf()`, but the reflector also leaves the struct's own untyped base field (e.g. `spec: {}`) on the parent. *Pitfall:* the `oneOf` is mappable, but the leftover untyped base property re-trips the "untyped property" skip. *Fix:* add `PrepareJSONSchema()` (with `x-signoz-discriminator` when the discriminant maps 1:1 to variants) to strip the duplicate parent properties, leaving a clean `oneOf`-of-`$ref` for `detectOneOfRewrites`. *Example:* `Querybuildertypesv5QueryEnvelope.spec` — `PrepareJSONSchema` dropped the reflected base `spec: {}`, leaving the clean query-variant union (signoz#11850). Related gotcha: each variant's `type` had to be `required:"true"` so it renders **non-pointer** — oapi-codegen's `From<Variant>` can't assign a const string to a `*T`.
+A property (or array `items`) whose value is an object or `oneOf` with **no `$ref`**.
 
-- **Untyped map** — `additionalProperties: {}`. *Pitfall:* skaff auto-coerces it to `{type: string}` — compiles, but silently lossy if the values aren't strings. *Fix:* type `additionalProperties` properly (usually a `$ref` → the map-of-object pattern above). *Example:* dashboard `spec.panels` first appeared as `additionalProperties: {}` (coerced to string) before it was typed to a panel `$ref`.
+- **Pitfall:** `skaff types` *"has inline-nested object property (no $ref to canonicalize)"*, or tfplugingen *"schema composition is currently not supported"* → skipped.
+- **Fix:** extract it into a named `#/components/schemas/X` and `$ref` it.
+- **Example:** the builder-join aggregations were an inline `items.oneOf` → extracted into a named `Querybuildertypesv5JoinAggregation` component, which `detectOneOfRewrites` then flattens.
 
-- **Nullable number → `float32` precision drift** — a `*float64` Go field emits bare `{type: number}` with **no `format`** (swaggest only adds `format` for non-pointer floats). *Pitfall:* oapi-codegen maps bare `number` → `float32`, so `target = 0.8` round-trips to `0.800000011920929` and apply fails: *"produced an unexpected new value: … was cty…(\"0.8\"), but now …(0.800000011920929)"*. *Fix:* add a `` `format:"double"` `` struct tag → `float64` everywhere. *Example:* `signoz_rule` `condition.thresholds.basic.spec[].{target,recoveryTarget}` and `condition.target` (signoz#12061).
+### Untyped array items
 
-- **Association via path params** — identity/CRUD expressed through path params (`/service_accounts/{id}/roles`, delete `/roles/{rid}`), a list-returning read, and no update endpoint. *Pitfall:* skaff builds the model from request-body ⊕ response (never path params), so the model degenerates to a bare `{id}`, `flex` skips (list read, no single-object GET), and `services` has no update — not Pattern A. *Fix:* give the association its own first-class endpoints (`POST /<association>` → `{id}`, `GET`/`DELETE /<association>/{id}`) so identity and CRUD live in the body. Details: [`association.md`](association.md). *Example:* `service_account_role` (`POST /service_accounts/{id}/roles` + list read + `DELETE …/roles/{rid}`, no update).
+`items: {}`.
 
-- **`204 No Content` that declares a body** — the spec generator emits a `content` block for a 204 whenever a response content-type is set, even when there's no body (`Response == nil`). *Pitfall:* oapi-codegen then generates an unconditional `json.Unmarshal` for the 204; the server correctly returns 204 with an empty body → `unexpected end of JSON input` (e.g. on delete). The server is right — only the spec is wrong. *Fix:* in the SigNoz spec generator (`pkg/http/handler/handler.go` `ServeOpenAPI`), omit the content type when `Response == nil` — one `else` branch fixes the whole class (18 bodyless responses; the per-route `ResponseContentType: ""` was the targeted first pass). Landing it is a **3-repo regen**: fix the *generator source* (not the generated `openapi.yml`) → regen the spec (`go run ./cmd/community generate openapi`) → regen the frontend client (`pnpm generate:api`, orval) → regen the provider (skaff). *Example:* a bodyless `DELETE` returning 204 → `unexpected end of JSON input`.
+- **Pitfall:** the element has no type; the element attribute can't be created.
+- **Fix:** type the `items` (`type:` or `$ref`).
+- **Example:** `Querybuildertypesv5QueryData.items` (`[]any`) — a query-result type; type its items if a data source ever surfaces it.
+
+### Free-form object
+
+`{type: object}` with no `properties`.
+
+- **Pitfall:** skaff models an empty-object customtype with no convertor → every field that `$ref`s it cascade-skips.
+- **Fix:** give it real `properties` (a named struct) — or a discriminator if it's a sum. If it is **legitimately** opaque, model it as `jsontypes.Normalized` (Terraform-side, above).
+- **Example:** `DashboardtypesSigNozDatasourceSpec` is always `{}` by design (schema owner confirmed) → opaque `jsontypes.Normalized` route; the user writes `spec = "{}"`.
+
+### By-`type`/`kind` sum object
+
+Exposes `JSONSchemaOneOf()`, but the reflector also leaves the struct's own untyped base field (e.g. `spec: {}`) on the parent.
+
+- **Pitfall:** the `oneOf` is mappable, but the leftover untyped base property re-trips the "untyped property" skip.
+- **Fix:** add `PrepareJSONSchema()` (with `x-signoz-discriminator` when the discriminant maps 1:1 to variants) to strip the duplicate parent properties, leaving a clean `oneOf`-of-`$ref` for `detectOneOfRewrites`.
+- **Example:** `Querybuildertypesv5QueryEnvelope.spec` — `PrepareJSONSchema` dropped the reflected base `spec: {}`, leaving the clean query-variant union (signoz#11850). Related gotcha: each variant's `type` had to be `required:"true"` so it renders **non-pointer** — oapi-codegen's `From<Variant>` can't assign a const string to a `*T`.
+
+### Untyped map
+
+`additionalProperties: {}`.
+
+- **Pitfall:** skaff auto-coerces it to `{type: string}` — compiles, but silently lossy if the values aren't strings.
+- **Fix:** type `additionalProperties` properly (usually a `$ref` → the map-of-object pattern above).
+- **Example:** dashboard `spec.panels` first appeared as `additionalProperties: {}` (coerced to string) before it was typed to a panel `$ref`.
+
+### Nullable number → `float32` precision drift
+
+A `*float64` Go field emits bare `{type: number}` with **no `format`** (swaggest only adds `format` for non-pointer floats).
+
+- **Pitfall:** oapi-codegen maps bare `number` → `float32`, so `target = 0.8` round-trips to `0.800000011920929` and apply fails: *"produced an unexpected new value: … was cty…(\"0.8\"), but now …(0.800000011920929)"*.
+- **Fix:** add a `` `format:"double"` `` struct tag → `float64` everywhere.
+- **Example:** `signoz_rule` `condition.thresholds.basic.spec[].{target,recoveryTarget}` and `condition.target` (signoz#12061).
+
+### Association via path params
+
+Identity/CRUD expressed through path params (`/service_accounts/{id}/roles`, delete `/roles/{rid}`), a list-returning read, and no update endpoint.
+
+- **Pitfall:** skaff builds the model from request-body ⊕ response (never path params), so the model degenerates to a bare `{id}`, `flex` skips (list read, no single-object GET), and `services` has no update — not Pattern A.
+- **Fix:** give the association its own first-class endpoints (`POST /<association>` → `{id}`, `GET`/`DELETE /<association>/{id}`) so identity and CRUD live in the body. Details: [`association.md`](association.md).
+- **Example:** `service_account_role` (`POST /service_accounts/{id}/roles` + list read + `DELETE …/roles/{rid}`, no update).
+
+### `204 No Content` that declares a body
+
+The spec generator emits a `content` block for a 204 whenever a response content-type is set, even when there's no body (`Response == nil`).
+
+- **Pitfall:** oapi-codegen then generates an unconditional `json.Unmarshal` for the 204; the server correctly returns 204 with an empty body → `unexpected end of JSON input` (e.g. on delete). The server is right — only the spec is wrong.
+- **Fix:** in the SigNoz spec generator (`pkg/http/handler/handler.go` `ServeOpenAPI`), omit the content type when `Response == nil` — one `else` branch fixes the whole class (18 bodyless responses; the per-route `ResponseContentType: ""` was the targeted first pass). Landing it is a **3-repo regen**: fix the *generator source* (not the generated `openapi.yml`) → regen the spec (`go run ./cmd/community generate openapi`) → regen the frontend client (`pnpm generate:api`, orval) → regen the provider (skaff).
+- **Example:** a bodyless `DELETE` returning 204 → `unexpected end of JSON input`.
