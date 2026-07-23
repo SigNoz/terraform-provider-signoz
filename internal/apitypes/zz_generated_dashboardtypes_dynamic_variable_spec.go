@@ -5,6 +5,6 @@ package apitypes
 
 // DashboardtypesDynamicVariableSpec defines model for DashboardtypesDynamicVariableSpec.
 type DashboardtypesDynamicVariableSpec struct {
-	Name   string                `json:"name"`
-	Signal *TelemetrytypesSignal `json:"signal,omitempty"`
+	Name   string                              `json:"name"`
+	Signal DashboardtypesDynamicVariableSignal `json:"signal"`
 }

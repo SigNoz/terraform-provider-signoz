@@ -12,6 +12,7 @@ resource "signoz_dashboard" "zero_values" {
       name        = "Zero and empty values"
       description = "Probes zero/empty values the API may drop, incl. the empty-string display description it marshals omitempty."
     }
+    links     = []
     variables = []
     panels = {
       "22222222-2222-4222-8222-222222222222" = {
@@ -21,6 +22,7 @@ resource "signoz_dashboard" "zero_values" {
             name        = "Empty and zero fields"
             description = ""
           }
+          links = []
           plugin = {
             time_series_panel = {
               kind = "signoz/TimeSeriesPanel"

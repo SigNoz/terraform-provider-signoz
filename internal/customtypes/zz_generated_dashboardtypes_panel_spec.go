@@ -357,7 +357,7 @@ func (v DashboardtypesPanelSpecValue) ToTerraformValue(ctx context.Context) (tft
 		AttrTypes: DashboardtypesDisplayValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
 	attrTypes["links"] = basetypes.ListType{
-		ElemType: DashboardLinkValue{}.Type(ctx),
+		ElemType: DashboardtypesLinkValue{}.Type(ctx),
 	}.TerraformType(ctx)
 	attrTypes["plugin"] = basetypes.ObjectType{
 		AttrTypes: DashboardtypesPanelPluginValue{}.AttributeTypes(ctx),
@@ -455,9 +455,9 @@ func (v DashboardtypesPanelSpecValue) ToObjectValue(ctx context.Context) (basety
 	}
 
 	links := types.ListValueMust(
-		DashboardLinkType{
+		DashboardtypesLinkType{
 			basetypes.ObjectType{
-				AttrTypes: DashboardLinkValue{}.AttributeTypes(ctx),
+				AttrTypes: DashboardtypesLinkValue{}.AttributeTypes(ctx),
 			},
 		},
 		v.Links.Elements(),
@@ -465,9 +465,9 @@ func (v DashboardtypesPanelSpecValue) ToObjectValue(ctx context.Context) (basety
 
 	if v.Links.IsNull() {
 		links = types.ListNull(
-			DashboardLinkType{
+			DashboardtypesLinkType{
 				basetypes.ObjectType{
-					AttrTypes: DashboardLinkValue{}.AttributeTypes(ctx),
+					AttrTypes: DashboardtypesLinkValue{}.AttributeTypes(ctx),
 				},
 			},
 		)
@@ -475,9 +475,9 @@ func (v DashboardtypesPanelSpecValue) ToObjectValue(ctx context.Context) (basety
 
 	if v.Links.IsUnknown() {
 		links = types.ListUnknown(
-			DashboardLinkType{
+			DashboardtypesLinkType{
 				basetypes.ObjectType{
-					AttrTypes: DashboardLinkValue{}.AttributeTypes(ctx),
+					AttrTypes: DashboardtypesLinkValue{}.AttributeTypes(ctx),
 				},
 			},
 		)
@@ -538,7 +538,7 @@ func (v DashboardtypesPanelSpecValue) ToObjectValue(ctx context.Context) (basety
 			AttrTypes: DashboardtypesDisplayValue{}.AttributeTypes(ctx),
 		},
 		"links": basetypes.ListType{
-			ElemType: DashboardLinkValue{}.Type(ctx),
+			ElemType: DashboardtypesLinkValue{}.Type(ctx),
 		},
 		"plugin": basetypes.ObjectType{
 			AttrTypes: DashboardtypesPanelPluginValue{}.AttributeTypes(ctx),
@@ -616,7 +616,7 @@ func (v DashboardtypesPanelSpecValue) AttributeTypes(ctx context.Context) map[st
 			AttrTypes: DashboardtypesDisplayValue{}.AttributeTypes(ctx),
 		},
 		"links": basetypes.ListType{
-			ElemType: DashboardLinkValue{}.Type(ctx),
+			ElemType: DashboardtypesLinkValue{}.Type(ctx),
 		},
 		"plugin": basetypes.ObjectType{
 			AttrTypes: DashboardtypesPanelPluginValue{}.AttributeTypes(ctx),

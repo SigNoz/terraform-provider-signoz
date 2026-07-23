@@ -23,7 +23,7 @@ func ExpandDashboardtypesPanelSpec(ctx context.Context, v customtypes.Dashboardt
 	diags.Append(d...)
 	display, d := ExpandDashboardtypesDisplay(ctx, displayTyped)
 	diags.Append(d...)
-	links, d := ExpandDashboardLinkList(ctx, v.Links)
+	links, d := ExpandDashboardtypesLinkList(ctx, v.Links)
 	diags.Append(d...)
 	pluginTyped, d := dashboardtypesPanelPluginValueFromObject(ctx, v.Plugin)
 	diags.Append(d...)
@@ -34,11 +34,12 @@ func ExpandDashboardtypesPanelSpec(ctx context.Context, v customtypes.Dashboardt
 	if diags.HasError() {
 		return nil, diags
 	}
-	out := &apitypes.DashboardtypesPanelSpec{
-		Links: links,
-	}
+	out := &apitypes.DashboardtypesPanelSpec{}
 	if display != nil {
 		out.Display = *display
+	}
+	if links != nil {
+		out.Links = *links
 	}
 	if plugin != nil {
 		out.Plugin = *plugin
@@ -59,7 +60,7 @@ func FlattenDashboardtypesPanelSpec(ctx context.Context, in *apitypes.Dashboardt
 	diags.Append(d...)
 	displayFlat, d := displayFlatTyped.ToObjectValue(ctx)
 	diags.Append(d...)
-	linksFlat, d := FlattenDashboardLinkList(ctx, in.Links)
+	linksFlat, d := FlattenDashboardtypesLinkList(ctx, &in.Links)
 	diags.Append(d...)
 	pluginFlatTyped, d := FlattenDashboardtypesPanelPlugin(ctx, &in.Plugin)
 	diags.Append(d...)

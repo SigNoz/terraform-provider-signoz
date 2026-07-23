@@ -5,6 +5,7 @@ package apitypes
 
 // Defines values for TelemetrytypesSignal.
 const (
+	TelemetrytypesSignalEmpty   TelemetrytypesSignal = ""
 	TelemetrytypesSignalLogs    TelemetrytypesSignal = "logs"
 	TelemetrytypesSignalMetrics TelemetrytypesSignal = "metrics"
 	TelemetrytypesSignalTraces  TelemetrytypesSignal = "traces"
@@ -13,6 +14,8 @@ const (
 // Valid indicates whether the value is a known member of the TelemetrytypesSignal enum.
 func (e TelemetrytypesSignal) Valid() bool {
 	switch e {
+	case TelemetrytypesSignalEmpty:
+		return true
 	case TelemetrytypesSignalLogs:
 		return true
 	case TelemetrytypesSignalMetrics:

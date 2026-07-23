@@ -15,6 +15,7 @@
             "name": "Hermes Coding Agent \u2014 Observability",
             "description": "Comprehensive monitoring for the Hermes coding agent: agent sessions/turns, LLM API calls & token usage, tool-call activity, latency, and errors. Built from OTel traces (service: hermes-agent) using gen_ai.* and hermes.* span attributes. Panels are grouped top-to-bottom: Overview (scorecards), LLM/Model, Agent/Turns, Tool Calls, Errors."
           },
+          "links": [],
           "variables": [],
           "panels": {
             "errorrate": {
@@ -24,6 +25,7 @@
                   "name": "Error Spans",
                   "description": "Count of spans with hasError = true"
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
@@ -88,6 +90,7 @@
                   "name": "Token Usage Over Time",
                   "description": "Stacked token totals over time"
                 },
+                "links": [],
                 "plugin": {
                   "time_series_panel": {
                     "kind": "signoz/TimeSeriesPanel",
@@ -222,6 +225,7 @@
                   "name": "Tool Usage Summary",
                   "description": "Count and p95 latency per tool type"
                 },
+                "links": [],
                 "plugin": {
                   "table_panel": {
                     "kind": "signoz/TablePanel",

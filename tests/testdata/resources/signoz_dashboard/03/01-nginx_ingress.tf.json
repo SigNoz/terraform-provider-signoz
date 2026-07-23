@@ -15,6 +15,7 @@
             "name": "NGINX Ingress controller",
             "description": "Ingress-nginx controller health and performance \u2014 request volume, success rate, config reloads, CPU/memory, network I/O, and latency percentiles. Filter by namespace, controller class, controller pod, and ingress."
           },
+          "links": [],
           "variables": [
             {
               "list_variable": {
@@ -108,6 +109,7 @@
                 "display": {
                   "name": "Last Config Failed"
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",

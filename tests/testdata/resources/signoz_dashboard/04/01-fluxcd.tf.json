@@ -15,6 +15,7 @@
             "name": "FluxCD \u2014 Controllers",
             "description": "FluxCD controller health: reconciliation throughput, errors, duration, workqueues, runtime resources, and Kubernetes API traffic."
           },
+          "links": [],
           "variables": [
             {
               "list_variable": {
@@ -85,6 +86,7 @@
                   "name": "Active Workers",
                   "description": "Reconcile workers currently busy."
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",

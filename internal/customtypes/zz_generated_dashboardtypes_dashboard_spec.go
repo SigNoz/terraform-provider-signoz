@@ -520,7 +520,7 @@ func (v DashboardtypesDashboardSpecValue) ToTerraformValue(ctx context.Context) 
 		ElemType: DashboardtypesLayoutValue{}.Type(ctx),
 	}.TerraformType(ctx)
 	attrTypes["links"] = basetypes.ListType{
-		ElemType: DashboardLinkValue{}.Type(ctx),
+		ElemType: DashboardtypesLinkValue{}.Type(ctx),
 	}.TerraformType(ctx)
 	attrTypes["panels"] = basetypes.MapType{
 		ElemType: DashboardtypesPanelValue{}.Type(ctx),
@@ -709,9 +709,9 @@ func (v DashboardtypesDashboardSpecValue) ToObjectValue(ctx context.Context) (ba
 	}
 
 	links := types.ListValueMust(
-		DashboardLinkType{
+		DashboardtypesLinkType{
 			basetypes.ObjectType{
-				AttrTypes: DashboardLinkValue{}.AttributeTypes(ctx),
+				AttrTypes: DashboardtypesLinkValue{}.AttributeTypes(ctx),
 			},
 		},
 		v.Links.Elements(),
@@ -719,9 +719,9 @@ func (v DashboardtypesDashboardSpecValue) ToObjectValue(ctx context.Context) (ba
 
 	if v.Links.IsNull() {
 		links = types.ListNull(
-			DashboardLinkType{
+			DashboardtypesLinkType{
 				basetypes.ObjectType{
-					AttrTypes: DashboardLinkValue{}.AttributeTypes(ctx),
+					AttrTypes: DashboardtypesLinkValue{}.AttributeTypes(ctx),
 				},
 			},
 		)
@@ -729,9 +729,9 @@ func (v DashboardtypesDashboardSpecValue) ToObjectValue(ctx context.Context) (ba
 
 	if v.Links.IsUnknown() {
 		links = types.ListUnknown(
-			DashboardLinkType{
+			DashboardtypesLinkType{
 				basetypes.ObjectType{
-					AttrTypes: DashboardLinkValue{}.AttributeTypes(ctx),
+					AttrTypes: DashboardtypesLinkValue{}.AttributeTypes(ctx),
 				},
 			},
 		)
@@ -807,7 +807,7 @@ func (v DashboardtypesDashboardSpecValue) ToObjectValue(ctx context.Context) (ba
 			ElemType: DashboardtypesLayoutValue{}.Type(ctx),
 		},
 		"links": basetypes.ListType{
-			ElemType: DashboardLinkValue{}.Type(ctx),
+			ElemType: DashboardtypesLinkValue{}.Type(ctx),
 		},
 		"panels": basetypes.MapType{
 			ElemType: DashboardtypesPanelValue{}.Type(ctx),
@@ -913,7 +913,7 @@ func (v DashboardtypesDashboardSpecValue) AttributeTypes(ctx context.Context) ma
 			ElemType: DashboardtypesLayoutValue{}.Type(ctx),
 		},
 		"links": basetypes.ListType{
-			ElemType: DashboardLinkValue{}.Type(ctx),
+			ElemType: DashboardtypesLinkValue{}.Type(ctx),
 		},
 		"panels": basetypes.MapType{
 			ElemType: DashboardtypesPanelValue{}.Type(ctx),

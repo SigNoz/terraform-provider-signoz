@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
@@ -535,7 +535,7 @@ type DashboardtypesListVariableSpecValue struct {
 	AllowMultiple   basetypes.BoolValue   `tfsdk:"allow_multiple"`
 	CapturingRegexp basetypes.StringValue `tfsdk:"capturing_regexp"`
 	CustomAllValue  basetypes.StringValue `tfsdk:"custom_all_value"`
-	DefaultValue    jsontypes.Normalized `tfsdk:"default_value"`
+	DefaultValue    jsontypes.Normalized  `tfsdk:"default_value"`
 	Display         basetypes.ObjectValue `tfsdk:"display"`
 	Name            basetypes.StringValue `tfsdk:"name"`
 	Plugin          basetypes.ObjectValue `tfsdk:"plugin"`
