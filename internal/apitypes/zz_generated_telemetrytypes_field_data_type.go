@@ -6,6 +6,7 @@ package apitypes
 // Defines values for TelemetrytypesFieldDataType.
 const (
 	TelemetrytypesFieldDataTypeBool    TelemetrytypesFieldDataType = "bool"
+	TelemetrytypesFieldDataTypeEmpty   TelemetrytypesFieldDataType = ""
 	TelemetrytypesFieldDataTypeFloat64 TelemetrytypesFieldDataType = "float64"
 	TelemetrytypesFieldDataTypeInt64   TelemetrytypesFieldDataType = "int64"
 	TelemetrytypesFieldDataTypeNumber  TelemetrytypesFieldDataType = "number"
@@ -16,6 +17,8 @@ const (
 func (e TelemetrytypesFieldDataType) Valid() bool {
 	switch e {
 	case TelemetrytypesFieldDataTypeBool:
+		return true
+	case TelemetrytypesFieldDataTypeEmpty:
 		return true
 	case TelemetrytypesFieldDataTypeFloat64:
 		return true

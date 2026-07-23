@@ -19,17 +19,12 @@ func ExpandDashboardtypesDynamicVariableSpec(ctx context.Context, v customtypes.
 		return nil, diags
 	}
 
-	var signal *apitypes.TelemetrytypesSignal
-	if !v.Signal.IsNull() && !v.Signal.IsUnknown() {
-		x := apitypes.TelemetrytypesSignal(v.Signal.ValueString())
-		signal = &x
-	}
 	if diags.HasError() {
 		return nil, diags
 	}
 	return &apitypes.DashboardtypesDynamicVariableSpec{
 		Name:   v.Name.ValueString(),
-		Signal: signal,
+		Signal: apitypes.DashboardtypesDynamicVariableSignal(v.Signal.ValueString()),
 	}, diags
 }
 
@@ -39,12 +34,6 @@ func FlattenDashboardtypesDynamicVariableSpec(ctx context.Context, in *apitypes.
 		return customtypes.NewDashboardtypesDynamicVariableSpecValueNull(), diags
 	}
 
-	var signalFlat types.String
-	if in.Signal != nil {
-		signalFlat = types.StringValue(string(*in.Signal))
-	} else {
-		signalFlat = types.StringNull()
-	}
 	if diags.HasError() {
 		return customtypes.NewDashboardtypesDynamicVariableSpecValueUnknown(), diags
 	}
@@ -53,7 +42,7 @@ func FlattenDashboardtypesDynamicVariableSpec(ctx context.Context, in *apitypes.
 		customtypes.DashboardtypesDynamicVariableSpecValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
 			"name":   types.StringValue(in.Name),
-			"signal": signalFlat,
+			"signal": types.StringValue(string(in.Signal)),
 		},
 	)
 	diags.Append(d...)

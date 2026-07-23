@@ -237,9 +237,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 									Computed: true,
 								},
 							},
-							CustomType: customtypes.DashboardLinkType{
+							CustomType: customtypes.DashboardtypesLinkType{
 								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.DashboardLinkValue{}.AttributeTypes(ctx),
+									AttrTypes: customtypes.DashboardtypesLinkValue{}.AttributeTypes(ctx),
 								},
 							},
 						},
@@ -288,9 +288,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 														Computed: true,
 													},
 												},
-												CustomType: customtypes.DashboardLinkType{
+												CustomType: customtypes.DashboardtypesLinkType{
 													ObjectType: types.ObjectType{
-														AttrTypes: customtypes.DashboardLinkValue{}.AttributeTypes(ctx),
+														AttrTypes: customtypes.DashboardtypesLinkValue{}.AttributeTypes(ctx),
 													},
 												},
 											},

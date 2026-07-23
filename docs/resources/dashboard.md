@@ -355,6 +355,7 @@ Required:
 
 - `display` (Attributes) (see [below for nested schema](#nestedatt--spec--display))
 - `layouts` (Attributes List) (see [below for nested schema](#nestedatt--spec--layouts))
+- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--links))
 - `panels` (Attributes Map) (see [below for nested schema](#nestedatt--spec--panels))
 - `variables` (Attributes List) (see [below for nested schema](#nestedatt--spec--variables))
 
@@ -362,7 +363,6 @@ Optional:
 
 - `datasources` (Attributes Map) (see [below for nested schema](#nestedatt--spec--datasources))
 - `duration` (String)
-- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--links))
 - `refresh_interval` (String)
 
 <a id="nestedatt--spec--display"></a>
@@ -441,6 +441,18 @@ Optional:
 
 
 
+<a id="nestedatt--spec--links"></a>
+### Nested Schema for `spec.links`
+
+Optional:
+
+- `name` (String)
+- `render_variables` (Boolean)
+- `target_blank` (Boolean)
+- `tooltip` (String)
+- `url` (String)
+
+
 <a id="nestedatt--spec--panels"></a>
 ### Nested Schema for `spec.panels`
 
@@ -455,12 +467,9 @@ Required:
 Required:
 
 - `display` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--display))
+- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--links))
 - `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin))
 - `queries` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries))
-
-Optional:
-
-- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--links))
 
 <a id="nestedatt--spec--panels--spec--display"></a>
 ### Nested Schema for `spec.panels.spec.display`
@@ -472,6 +481,18 @@ Required:
 Optional:
 
 - `description` (String)
+
+
+<a id="nestedatt--spec--panels--spec--links"></a>
+### Nested Schema for `spec.panels.spec.links`
+
+Optional:
+
+- `name` (String)
+- `render_variables` (Boolean)
+- `target_blank` (Boolean)
+- `tooltip` (String)
+- `url` (String)
 
 
 <a id="nestedatt--spec--panels--spec--plugin"></a>
@@ -2723,18 +2744,6 @@ Optional:
 
 
 
-<a id="nestedatt--spec--panels--spec--links"></a>
-### Nested Schema for `spec.panels.spec.links`
-
-Optional:
-
-- `name` (String)
-- `render_variables` (Boolean)
-- `target_blank` (Boolean)
-- `tooltip` (String)
-- `url` (String)
-
-
 
 
 <a id="nestedatt--spec--variables"></a>
@@ -2823,9 +2832,6 @@ Required:
 Required:
 
 - `name` (String)
-
-Optional:
-
 - `signal` (String)
 
 
@@ -2920,18 +2926,6 @@ Required:
 - `spec` (String)
 
 
-
-
-<a id="nestedatt--spec--links"></a>
-### Nested Schema for `spec.links`
-
-Optional:
-
-- `name` (String)
-- `render_variables` (Boolean)
-- `target_blank` (Boolean)
-- `tooltip` (String)
-- `url` (String)
 
 
 

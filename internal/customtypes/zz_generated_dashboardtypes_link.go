@@ -14,14 +14,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
-var _ basetypes.ObjectTypable = DashboardLinkType{}
+var _ basetypes.ObjectTypable = DashboardtypesLinkType{}
 
-type DashboardLinkType struct {
+type DashboardtypesLinkType struct {
 	basetypes.ObjectType
 }
 
-func (t DashboardLinkType) Equal(o attr.Type) bool {
-	other, ok := o.(DashboardLinkType)
+func (t DashboardtypesLinkType) Equal(o attr.Type) bool {
+	other, ok := o.(DashboardtypesLinkType)
 
 	if !ok {
 		return false
@@ -30,11 +30,11 @@ func (t DashboardLinkType) Equal(o attr.Type) bool {
 	return t.ObjectType.Equal(other.ObjectType)
 }
 
-func (t DashboardLinkType) String() string {
-	return "DashboardLinkType"
+func (t DashboardtypesLinkType) String() string {
+	return "DashboardtypesLinkType"
 }
 
-func (t DashboardLinkType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue) (basetypes.ObjectValuable, diag.Diagnostics) {
+func (t DashboardtypesLinkType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue) (basetypes.ObjectValuable, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	attributes := in.Attributes()
@@ -133,7 +133,7 @@ func (t DashboardLinkType) ValueFromObject(ctx context.Context, in basetypes.Obj
 		return nil, diags
 	}
 
-	return DashboardLinkValue{
+	return DashboardtypesLinkValue{
 		Name:            nameVal,
 		RenderVariables: renderVariablesVal,
 		TargetBlank:     targetBlankVal,
@@ -143,19 +143,19 @@ func (t DashboardLinkType) ValueFromObject(ctx context.Context, in basetypes.Obj
 	}, diags
 }
 
-func NewDashboardLinkValueNull() DashboardLinkValue {
-	return DashboardLinkValue{
+func NewDashboardtypesLinkValueNull() DashboardtypesLinkValue {
+	return DashboardtypesLinkValue{
 		state: attr.ValueStateNull,
 	}
 }
 
-func NewDashboardLinkValueUnknown() DashboardLinkValue {
-	return DashboardLinkValue{
+func NewDashboardtypesLinkValueUnknown() DashboardtypesLinkValue {
+	return DashboardtypesLinkValue{
 		state: attr.ValueStateUnknown,
 	}
 }
 
-func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (DashboardLinkValue, diag.Diagnostics) {
+func NewDashboardtypesLinkValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (DashboardtypesLinkValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	// Reference: https://github.com/hashicorp/terraform-plugin-framework/issues/521
@@ -166,11 +166,11 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 
 		if !ok {
 			diags.AddError(
-				"Missing DashboardLinkValue Attribute Value",
-				"While creating a DashboardLinkValue value, a missing attribute value was detected. "+
-					"A DashboardLinkValue must contain values for all attributes, even if null or unknown. "+
+				"Missing DashboardtypesLinkValue Attribute Value",
+				"While creating a DashboardtypesLinkValue value, a missing attribute value was detected. "+
+					"A DashboardtypesLinkValue must contain values for all attributes, even if null or unknown. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("DashboardLinkValue Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
+					fmt.Sprintf("DashboardtypesLinkValue Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
 			)
 
 			continue
@@ -178,12 +178,12 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 
 		if !attributeType.Equal(attribute.Type(ctx)) {
 			diags.AddError(
-				"Invalid DashboardLinkValue Attribute Type",
-				"While creating a DashboardLinkValue value, an invalid attribute value was detected. "+
-					"A DashboardLinkValue must use a matching attribute type for the value. "+
+				"Invalid DashboardtypesLinkValue Attribute Type",
+				"While creating a DashboardtypesLinkValue value, an invalid attribute value was detected. "+
+					"A DashboardtypesLinkValue must use a matching attribute type for the value. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("DashboardLinkValue Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
-					fmt.Sprintf("DashboardLinkValue Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
+					fmt.Sprintf("DashboardtypesLinkValue Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
+					fmt.Sprintf("DashboardtypesLinkValue Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
 			)
 		}
 	}
@@ -193,17 +193,17 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 
 		if !ok {
 			diags.AddError(
-				"Extra DashboardLinkValue Attribute Value",
-				"While creating a DashboardLinkValue value, an extra attribute value was detected. "+
-					"A DashboardLinkValue must not contain values beyond the expected attribute types. "+
+				"Extra DashboardtypesLinkValue Attribute Value",
+				"While creating a DashboardtypesLinkValue value, an extra attribute value was detected. "+
+					"A DashboardtypesLinkValue must not contain values beyond the expected attribute types. "+
 					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("Extra DashboardLinkValue Attribute Name: %s", name),
+					fmt.Sprintf("Extra DashboardtypesLinkValue Attribute Name: %s", name),
 			)
 		}
 	}
 
 	if diags.HasError() {
-		return NewDashboardLinkValueUnknown(), diags
+		return NewDashboardtypesLinkValueUnknown(), diags
 	}
 
 	nameAttribute, ok := attributes["name"]
@@ -213,7 +213,7 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 			"Attribute Missing",
 			`name is missing from object`)
 
-		return NewDashboardLinkValueUnknown(), diags
+		return NewDashboardtypesLinkValueUnknown(), diags
 	}
 
 	nameVal, ok := nameAttribute.(basetypes.StringValue)
@@ -231,7 +231,7 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 			"Attribute Missing",
 			`render_variables is missing from object`)
 
-		return NewDashboardLinkValueUnknown(), diags
+		return NewDashboardtypesLinkValueUnknown(), diags
 	}
 
 	renderVariablesVal, ok := renderVariablesAttribute.(basetypes.BoolValue)
@@ -249,7 +249,7 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 			"Attribute Missing",
 			`target_blank is missing from object`)
 
-		return NewDashboardLinkValueUnknown(), diags
+		return NewDashboardtypesLinkValueUnknown(), diags
 	}
 
 	targetBlankVal, ok := targetBlankAttribute.(basetypes.BoolValue)
@@ -267,7 +267,7 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 			"Attribute Missing",
 			`tooltip is missing from object`)
 
-		return NewDashboardLinkValueUnknown(), diags
+		return NewDashboardtypesLinkValueUnknown(), diags
 	}
 
 	tooltipVal, ok := tooltipAttribute.(basetypes.StringValue)
@@ -285,7 +285,7 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 			"Attribute Missing",
 			`url is missing from object`)
 
-		return NewDashboardLinkValueUnknown(), diags
+		return NewDashboardtypesLinkValueUnknown(), diags
 	}
 
 	urlVal, ok := urlAttribute.(basetypes.StringValue)
@@ -297,10 +297,10 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 	}
 
 	if diags.HasError() {
-		return NewDashboardLinkValueUnknown(), diags
+		return NewDashboardtypesLinkValueUnknown(), diags
 	}
 
-	return DashboardLinkValue{
+	return DashboardtypesLinkValue{
 		Name:            nameVal,
 		RenderVariables: renderVariablesVal,
 		TargetBlank:     targetBlankVal,
@@ -310,8 +310,8 @@ func NewDashboardLinkValue(attributeTypes map[string]attr.Type, attributes map[s
 	}, diags
 }
 
-func NewDashboardLinkValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) DashboardLinkValue {
-	object, diags := NewDashboardLinkValue(attributeTypes, attributes)
+func NewDashboardtypesLinkValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) DashboardtypesLinkValue {
+	object, diags := NewDashboardtypesLinkValue(attributeTypes, attributes)
 
 	if diags.HasError() {
 		// This could potentially be added to the diag package.
@@ -325,15 +325,15 @@ func NewDashboardLinkValueMust(attributeTypes map[string]attr.Type, attributes m
 				diagnostic.Detail()))
 		}
 
-		panic("NewDashboardLinkValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
+		panic("NewDashboardtypesLinkValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
 	}
 
 	return object
 }
 
-func (t DashboardLinkType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
+func (t DashboardtypesLinkType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
 	if in.Type() == nil {
-		return NewDashboardLinkValueNull(), nil
+		return NewDashboardtypesLinkValueNull(), nil
 	}
 
 	if !in.Type().Equal(t.TerraformType(ctx)) {
@@ -341,11 +341,11 @@ func (t DashboardLinkType) ValueFromTerraform(ctx context.Context, in tftypes.Va
 	}
 
 	if !in.IsKnown() {
-		return NewDashboardLinkValueUnknown(), nil
+		return NewDashboardtypesLinkValueUnknown(), nil
 	}
 
 	if in.IsNull() {
-		return NewDashboardLinkValueNull(), nil
+		return NewDashboardtypesLinkValueNull(), nil
 	}
 
 	attributes := map[string]attr.Value{}
@@ -368,16 +368,16 @@ func (t DashboardLinkType) ValueFromTerraform(ctx context.Context, in tftypes.Va
 		attributes[k] = a
 	}
 
-	return NewDashboardLinkValueMust(DashboardLinkValue{}.AttributeTypes(ctx), attributes), nil
+	return NewDashboardtypesLinkValueMust(DashboardtypesLinkValue{}.AttributeTypes(ctx), attributes), nil
 }
 
-func (t DashboardLinkType) ValueType(ctx context.Context) attr.Value {
-	return DashboardLinkValue{}
+func (t DashboardtypesLinkType) ValueType(ctx context.Context) attr.Value {
+	return DashboardtypesLinkValue{}
 }
 
-var _ basetypes.ObjectValuable = DashboardLinkValue{}
+var _ basetypes.ObjectValuable = DashboardtypesLinkValue{}
 
-type DashboardLinkValue struct {
+type DashboardtypesLinkValue struct {
 	Name            basetypes.StringValue `tfsdk:"name"`
 	RenderVariables basetypes.BoolValue   `tfsdk:"render_variables"`
 	TargetBlank     basetypes.BoolValue   `tfsdk:"target_blank"`
@@ -386,7 +386,7 @@ type DashboardLinkValue struct {
 	state           attr.ValueState
 }
 
-func (v DashboardLinkValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
+func (v DashboardtypesLinkValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
 	attrTypes := make(map[string]tftypes.Type, 5)
 
 	var val tftypes.Value
@@ -458,19 +458,19 @@ func (v DashboardLinkValue) ToTerraformValue(ctx context.Context) (tftypes.Value
 	}
 }
 
-func (v DashboardLinkValue) IsNull() bool {
+func (v DashboardtypesLinkValue) IsNull() bool {
 	return v.state == attr.ValueStateNull
 }
 
-func (v DashboardLinkValue) IsUnknown() bool {
+func (v DashboardtypesLinkValue) IsUnknown() bool {
 	return v.state == attr.ValueStateUnknown
 }
 
-func (v DashboardLinkValue) String() string {
-	return "DashboardLinkValue"
+func (v DashboardtypesLinkValue) String() string {
+	return "DashboardtypesLinkValue"
 }
 
-func (v DashboardLinkValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
+func (v DashboardtypesLinkValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	attributeTypes := map[string]attr.Type{
@@ -502,8 +502,8 @@ func (v DashboardLinkValue) ToObjectValue(ctx context.Context) (basetypes.Object
 	return objVal, diags
 }
 
-func (v DashboardLinkValue) Equal(o attr.Value) bool {
-	other, ok := o.(DashboardLinkValue)
+func (v DashboardtypesLinkValue) Equal(o attr.Value) bool {
+	other, ok := o.(DashboardtypesLinkValue)
 
 	if !ok {
 		return false
@@ -540,15 +540,15 @@ func (v DashboardLinkValue) Equal(o attr.Value) bool {
 	return true
 }
 
-func (v DashboardLinkValue) Type(ctx context.Context) attr.Type {
-	return DashboardLinkType{
+func (v DashboardtypesLinkValue) Type(ctx context.Context) attr.Type {
+	return DashboardtypesLinkType{
 		basetypes.ObjectType{
 			AttrTypes: v.AttributeTypes(ctx),
 		},
 	}
 }
 
-func (v DashboardLinkValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
+func (v DashboardtypesLinkValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
 		"name":             basetypes.StringType{},
 		"render_variables": basetypes.BoolType{},

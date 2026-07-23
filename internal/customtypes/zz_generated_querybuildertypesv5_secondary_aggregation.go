@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
@@ -461,7 +461,7 @@ type Querybuildertypesv5SecondaryAggregationValue struct {
 	Limit        basetypes.Int64Value  `tfsdk:"limit"`
 	LimitBy      basetypes.ObjectValue `tfsdk:"limit_by"`
 	Order        basetypes.ListValue   `tfsdk:"order"`
-	StepInterval jsontypes.Normalized `tfsdk:"step_interval"`
+	StepInterval jsontypes.Normalized  `tfsdk:"step_interval"`
 	state        attr.ValueState
 }
 
