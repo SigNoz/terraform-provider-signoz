@@ -15,6 +15,7 @@
             "name": "Istio Monitoring Dashboard",
             "description": "Istio service mesh dashboard for Istio, Envoy, Pilot, Citadel, Galley, and Kubernetes resource metrics collected in SigNoz."
           },
+          "links": [],
           "variables": [
             {
               "list_variable": {
@@ -118,6 +119,7 @@
                   "name": "Managed Clusters",
                   "description": "Clusters managed by Istiod."
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
