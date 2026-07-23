@@ -32,7 +32,8 @@
                     "dynamic_variable": {
                       "kind": "signoz/DynamicVariable",
                       "spec": {
-                        "name": "k8s.namespace.name"
+                        "name": "k8s.namespace.name",
+                        "signal": "metrics"
                       }
                     }
                   },
@@ -55,7 +56,8 @@
                     "dynamic_variable": {
                       "kind": "signoz/DynamicVariable",
                       "spec": {
-                        "name": "service.name"
+                        "name": "service.name",
+                        "signal": "metrics"
                       }
                     }
                   },
@@ -102,7 +104,8 @@
                     "dynamic_variable": {
                       "kind": "signoz/DynamicVariable",
                       "spec": {
-                        "name": "deployment.environment"
+                        "name": "deployment.environment",
+                        "signal": "metrics"
                       }
                     }
                   },
