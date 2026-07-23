@@ -112,5 +112,5 @@ Identity/CRUD expressed through path params (`/service_accounts/{id}/roles`, del
 The spec generator emits a `content` block for a 204 whenever a response content-type is set, even when there's no body (`Response == nil`).
 
 - **Pitfall:** oapi-codegen then generates an unconditional `json.Unmarshal` for the 204; the server correctly returns 204 with an empty body → `unexpected end of JSON input` (e.g. on delete). The server is right — only the spec is wrong.
-- **Fix:** in the SigNoz spec generator (`pkg/http/handler/handler.go` `ServeOpenAPI`), omit the content type when `Response == nil` — one `else` branch fixes the whole class (18 bodyless responses; the per-route `ResponseContentType: ""` was the targeted first pass). Landing it is a **3-repo regen**: fix the *generator source* (not the generated `openapi.yml`) → regen the spec (`go run ./cmd/community generate openapi`) → regen the frontend client (`pnpm generate:api`, orval) → regen the provider (skaff).
+- **Fix:** in the spec generator, don't emit a `content` block for a response with no body (`Response == nil`), so a 204 never declares one.
 - **Example:** a bodyless `DELETE` returning 204 → `unexpected end of JSON input`.
