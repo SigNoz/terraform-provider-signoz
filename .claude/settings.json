@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go build ./...)",
+      "Bash(go vet ./...)",
+      "Bash(make -f \"$PRIMUS_HOME/src/make/main.mk\" go-lint)",
+      "Bash(make -f \"$PRIMUS_HOME/src/make/main.mk\" go-fmt)",
+      "Bash(make -f \"$PRIMUS_HOME/src/make/main.mk\" go-deps)",
+      "Bash(make -f \"$PRIMUS_HOME/src/make/main.mk\" go-test)",
+      "Bash(make -f \"$PRIMUS_HOME/src/make/main.mk\" skaff *)"
+    ]
+  }
+}
