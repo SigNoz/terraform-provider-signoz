@@ -7,6 +7,7 @@ package apitypes
 const (
 	TelemetrytypesFieldContextAttribute TelemetrytypesFieldContext = "attribute"
 	TelemetrytypesFieldContextBody      TelemetrytypesFieldContext = "body"
+	TelemetrytypesFieldContextEmpty     TelemetrytypesFieldContext = ""
 	TelemetrytypesFieldContextLog       TelemetrytypesFieldContext = "log"
 	TelemetrytypesFieldContextMetric    TelemetrytypesFieldContext = "metric"
 	TelemetrytypesFieldContextResource  TelemetrytypesFieldContext = "resource"
@@ -19,6 +20,8 @@ func (e TelemetrytypesFieldContext) Valid() bool {
 	case TelemetrytypesFieldContextAttribute:
 		return true
 	case TelemetrytypesFieldContextBody:
+		return true
+	case TelemetrytypesFieldContextEmpty:
 		return true
 	case TelemetrytypesFieldContextLog:
 		return true

@@ -15,6 +15,7 @@
             "name": "CI/CD Observability",
             "description": "Dashboard displaying metrics from CI and CD systems."
           },
+          "links": [],
           "variables": [
             {
               "list_variable": {
@@ -48,6 +49,7 @@
                   "name": "Pipeline Duration (avg)",
                   "description": "Average time taken by pipelines."
                 },
+                "links": [],
                 "plugin": {
                   "pie_chart_panel": {
                     "kind": "signoz/PieChartPanel",
@@ -114,6 +116,7 @@
                   "name": "Change Age (avg)",
                   "description": "Average time a change is in open state."
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
@@ -180,6 +183,7 @@
                   "name": "Change Approval Time (avg)",
                   "description": "Average time taken to approve a change."
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
@@ -246,6 +250,7 @@
                   "name": "Pipeline Duration (detailed)",
                   "description": "Detailed breakdown of pipeline duration."
                 },
+                "links": [],
                 "plugin": {
                   "table_panel": {
                     "kind": "signoz/TablePanel",
@@ -382,6 +387,7 @@
                   "name": "# Statuses",
                   "description": "Number of pipeline runs grouped by status."
                 },
+                "links": [],
                 "plugin": {
                   "pie_chart_panel": {
                     "kind": "signoz/PieChartPanel",
@@ -448,6 +454,7 @@
                   "name": "Branch Age (avg)",
                   "description": "The average age of a branch."
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
@@ -514,6 +521,7 @@
                   "name": "# Lines changed",
                   "description": "Number of lines changed in the given time period."
                 },
+                "links": [],
                 "plugin": {
                   "pie_chart_panel": {
                     "kind": "signoz/PieChartPanel",
@@ -625,6 +633,7 @@
                   "name": "Change Merge Time (detailed)",
                   "description": "Minimum, Average and Maximum "
                 },
+                "links": [],
                 "plugin": {
                   "time_series_panel": {
                     "kind": "signoz/TimeSeriesPanel",
@@ -786,6 +795,7 @@
                   "name": "Change Merge Time (avg)",
                   "description": "Average time taken to merge a change. This metric is a part of the larger Change Lead Time DORA metric."
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
@@ -852,6 +862,7 @@
                   "name": "# Changes",
                   "description": "The number of changes by state. State can be open/closed/merged."
                 },
+                "links": [],
                 "plugin": {
                   "time_series_panel": {
                     "kind": "signoz/TimeSeriesPanel",
@@ -937,6 +948,7 @@
                   "name": "# Contributors",
                   "description": "The number of contributors over time"
                 },
+                "links": [],
                 "plugin": {
                   "time_series_panel": {
                     "kind": "signoz/TimeSeriesPanel",
@@ -1022,6 +1034,7 @@
                   "name": "# Branches (avg)",
                   "description": "The average number of branches in the repository."
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
@@ -1089,6 +1102,7 @@
                   "name": "# Changes (detailed)",
                   "description": "Detailed breakdown of changes"
                 },
+                "links": [],
                 "plugin": {
                   "table_panel": {
                     "kind": "signoz/TablePanel",
@@ -1313,6 +1327,7 @@
                   "name": "# Statuses",
                   "description": "Statuses over time"
                 },
+                "links": [],
                 "plugin": {
                   "time_series_panel": {
                     "kind": "signoz/TimeSeriesPanel",
@@ -1400,6 +1415,7 @@
                   "name": "Pipeline Duration (P50)",
                   "description": "P50 of tun duration."
                 },
+                "links": [],
                 "plugin": {
                   "time_series_panel": {
                     "kind": "signoz/TimeSeriesPanel",
@@ -1482,6 +1498,7 @@
                   "name": "# Changes (avg)",
                   "description": "The average number of changes"
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",

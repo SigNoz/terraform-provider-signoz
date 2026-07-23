@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
@@ -266,7 +266,7 @@ var _ basetypes.ObjectValuable = DashboardtypesDatasourcePluginVariantGithubComS
 
 type DashboardtypesDatasourcePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesSigNozDatasourceSpecValue struct {
 	Kind  basetypes.StringValue `tfsdk:"kind"`
-	Spec  jsontypes.Normalized `tfsdk:"spec"`
+	Spec  jsontypes.Normalized  `tfsdk:"spec"`
 	state attr.ValueState
 }
 

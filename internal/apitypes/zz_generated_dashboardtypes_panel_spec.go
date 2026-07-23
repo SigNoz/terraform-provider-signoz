@@ -6,7 +6,7 @@ package apitypes
 // DashboardtypesPanelSpec defines model for DashboardtypesPanelSpec.
 type DashboardtypesPanelSpec struct {
 	Display DashboardtypesDisplay     `json:"display"`
-	Links   *[]DashboardLink          `json:"links,omitempty"`
+	Links   []DashboardtypesLink      `json:"links"`
 	Plugin  DashboardtypesPanelPlugin `json:"plugin"`
 	Queries []DashboardtypesQuery     `json:"queries"`
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
-func ExpandDashboardLink(ctx context.Context, v customtypes.DashboardLinkValue) (*apitypes.DashboardLink, diag.Diagnostics) {
+func ExpandDashboardtypesLink(ctx context.Context, v customtypes.DashboardtypesLinkValue) (*apitypes.DashboardtypesLink, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if v.IsNull() || v.IsUnknown() {
 		return nil, diags
@@ -23,7 +23,7 @@ func ExpandDashboardLink(ctx context.Context, v customtypes.DashboardLinkValue) 
 	if diags.HasError() {
 		return nil, diags
 	}
-	return &apitypes.DashboardLink{
+	return &apitypes.DashboardtypesLink{
 		Name:            convtypes.StringPointer(v.Name),
 		RenderVariables: convtypes.BoolPointer(v.RenderVariables),
 		TargetBlank:     convtypes.BoolPointer(v.TargetBlank),
@@ -32,18 +32,18 @@ func ExpandDashboardLink(ctx context.Context, v customtypes.DashboardLinkValue) 
 	}, diags
 }
 
-func FlattenDashboardLink(ctx context.Context, in *apitypes.DashboardLink) (customtypes.DashboardLinkValue, diag.Diagnostics) {
+func FlattenDashboardtypesLink(ctx context.Context, in *apitypes.DashboardtypesLink) (customtypes.DashboardtypesLinkValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if in == nil {
-		return customtypes.NewDashboardLinkValueNull(), diags
+		return customtypes.NewDashboardtypesLinkValueNull(), diags
 	}
 
 	if diags.HasError() {
-		return customtypes.NewDashboardLinkValueUnknown(), diags
+		return customtypes.NewDashboardtypesLinkValueUnknown(), diags
 	}
 
-	rv, d := customtypes.NewDashboardLinkValue(
-		customtypes.DashboardLinkValue{}.AttributeTypes(ctx),
+	rv, d := customtypes.NewDashboardtypesLinkValue(
+		customtypes.DashboardtypesLinkValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
 			"name":             convtypes.StringFromPointer(in.Name),
 			"render_variables": convtypes.BoolFromPointer(in.RenderVariables),
@@ -56,20 +56,20 @@ func FlattenDashboardLink(ctx context.Context, in *apitypes.DashboardLink) (cust
 	return rv, diags
 }
 
-func ExpandDashboardLinkList(ctx context.Context, l types.List) (*[]apitypes.DashboardLink, diag.Diagnostics) {
+func ExpandDashboardtypesLinkList(ctx context.Context, l types.List) (*[]apitypes.DashboardtypesLink, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if l.IsNull() || l.IsUnknown() {
 		return nil, diags
 	}
-	out := make([]apitypes.DashboardLink, 0, len(l.Elements()))
+	out := make([]apitypes.DashboardtypesLink, 0, len(l.Elements()))
 	for i, el := range l.Elements() {
-		sv, ok := el.(customtypes.DashboardLinkValue)
+		sv, ok := el.(customtypes.DashboardtypesLinkValue)
 		if !ok {
 			diags.AddError("Unexpected list element type",
-				fmt.Sprintf("element %d: expected customtypes.DashboardLinkValue, got %T", i, el))
+				fmt.Sprintf("element %d: expected customtypes.DashboardtypesLinkValue, got %T", i, el))
 			return nil, diags
 		}
-		one, d := ExpandDashboardLink(ctx, sv)
+		one, d := ExpandDashboardtypesLink(ctx, sv)
 		diags.Append(d...)
 		if diags.HasError() {
 			return nil, diags
@@ -81,15 +81,15 @@ func ExpandDashboardLinkList(ctx context.Context, l types.List) (*[]apitypes.Das
 	return &out, diags
 }
 
-func FlattenDashboardLinkList(ctx context.Context, in *[]apitypes.DashboardLink) (types.List, diag.Diagnostics) {
-	elemType := customtypes.DashboardLinkValue{}.Type(ctx)
+func FlattenDashboardtypesLinkList(ctx context.Context, in *[]apitypes.DashboardtypesLink) (types.List, diag.Diagnostics) {
+	elemType := customtypes.DashboardtypesLinkValue{}.Type(ctx)
 	if in == nil {
 		return types.ListNull(elemType), nil
 	}
 	var diags diag.Diagnostics
 	elems := make([]attr.Value, 0, len(*in))
 	for i := range *in {
-		sv, d := FlattenDashboardLink(ctx, &(*in)[i])
+		sv, d := FlattenDashboardtypesLink(ctx, &(*in)[i])
 		diags.Append(d...)
 		if diags.HasError() {
 			return types.ListUnknown(elemType), diags
@@ -101,20 +101,20 @@ func FlattenDashboardLinkList(ctx context.Context, in *[]apitypes.DashboardLink)
 	return listVal, diags
 }
 
-func ExpandDashboardLinkMap(ctx context.Context, m types.Map) (*map[string]apitypes.DashboardLink, diag.Diagnostics) {
+func ExpandDashboardtypesLinkMap(ctx context.Context, m types.Map) (*map[string]apitypes.DashboardtypesLink, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	if m.IsNull() || m.IsUnknown() {
 		return nil, diags
 	}
-	out := make(map[string]apitypes.DashboardLink, len(m.Elements()))
+	out := make(map[string]apitypes.DashboardtypesLink, len(m.Elements()))
 	for k, el := range m.Elements() {
-		sv, ok := el.(customtypes.DashboardLinkValue)
+		sv, ok := el.(customtypes.DashboardtypesLinkValue)
 		if !ok {
 			diags.AddError("Unexpected map element type",
-				fmt.Sprintf("element %q: expected customtypes.DashboardLinkValue, got %T", k, el))
+				fmt.Sprintf("element %q: expected customtypes.DashboardtypesLinkValue, got %T", k, el))
 			return nil, diags
 		}
-		one, d := ExpandDashboardLink(ctx, sv)
+		one, d := ExpandDashboardtypesLink(ctx, sv)
 		diags.Append(d...)
 		if diags.HasError() {
 			return nil, diags
@@ -126,8 +126,8 @@ func ExpandDashboardLinkMap(ctx context.Context, m types.Map) (*map[string]apity
 	return &out, diags
 }
 
-func FlattenDashboardLinkMap(ctx context.Context, in *map[string]apitypes.DashboardLink) (types.Map, diag.Diagnostics) {
-	elemType := customtypes.DashboardLinkValue{}.Type(ctx)
+func FlattenDashboardtypesLinkMap(ctx context.Context, in *map[string]apitypes.DashboardtypesLink) (types.Map, diag.Diagnostics) {
+	elemType := customtypes.DashboardtypesLinkValue{}.Type(ctx)
 	if in == nil {
 		return types.MapNull(elemType), nil
 	}
@@ -135,7 +135,7 @@ func FlattenDashboardLinkMap(ctx context.Context, in *map[string]apitypes.Dashbo
 	elems := make(map[string]attr.Value, len(*in))
 	for k := range *in {
 		v := (*in)[k]
-		sv, d := FlattenDashboardLink(ctx, &v)
+		sv, d := FlattenDashboardtypesLink(ctx, &v)
 		diags.Append(d...)
 		if diags.HasError() {
 			return types.MapUnknown(elemType), diags
@@ -147,18 +147,18 @@ func FlattenDashboardLinkMap(ctx context.Context, in *map[string]apitypes.Dashbo
 	return mapVal, diags
 }
 
-// dashboardLinkValueFromObject lifts the raw basetypes.ObjectValue the
-// framework stores for a nested customtype into a typed customtypes.DashboardLinkValue
+// dashboardtypesLinkValueFromObject lifts the raw basetypes.ObjectValue the
+// framework stores for a nested customtype into a typed customtypes.DashboardtypesLinkValue
 // (structural cast, no field coercion); package-private, called by parent expanders.
-func dashboardLinkValueFromObject(ctx context.Context, ov basetypes.ObjectValue) (customtypes.DashboardLinkValue, diag.Diagnostics) {
+func dashboardtypesLinkValueFromObject(ctx context.Context, ov basetypes.ObjectValue) (customtypes.DashboardtypesLinkValue, diag.Diagnostics) {
 	if ov.IsNull() {
-		return customtypes.NewDashboardLinkValueNull(), nil
+		return customtypes.NewDashboardtypesLinkValueNull(), nil
 	}
 	if ov.IsUnknown() {
-		return customtypes.NewDashboardLinkValueUnknown(), nil
+		return customtypes.NewDashboardtypesLinkValueUnknown(), nil
 	}
-	return customtypes.NewDashboardLinkValue(
-		customtypes.DashboardLinkValue{}.AttributeTypes(ctx),
+	return customtypes.NewDashboardtypesLinkValue(
+		customtypes.DashboardtypesLinkValue{}.AttributeTypes(ctx),
 		ov.Attributes(),
 	)
 }

@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
@@ -266,7 +266,7 @@ var _ basetypes.ObjectValuable = Querybuildertypesv5FunctionArgValue{}
 
 type Querybuildertypesv5FunctionArgValue struct {
 	Name  basetypes.StringValue `tfsdk:"name"`
-	Value jsontypes.Normalized `tfsdk:"value"`
+	Value jsontypes.Normalized  `tfsdk:"value"`
 	state attr.ValueState
 }
 

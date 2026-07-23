@@ -15,6 +15,7 @@
             "name": "Claude Code Metrics",
             "description": "Monitor Claude Code usage, costs, tokens, and productivity metrics"
           },
+          "links": [],
           "variables": [],
           "panels": {
             "cost-by-model": {
@@ -24,6 +25,7 @@
                   "name": "Cost by Model",
                   "description": "Cost breakdown by model"
                 },
+                "links": [],
                 "plugin": {
                   "bar_chart_panel": {
                     "kind": "signoz/BarChartPanel",
@@ -95,6 +97,7 @@
                   "name": "Recent API Calls",
                   "description": "Recent API calls with cost"
                 },
+                "links": [],
                 "plugin": {
                   "list_panel": {
                     "kind": "signoz/ListPanel",
@@ -154,6 +157,7 @@
                   "name": "API Cost (Total)",
                   "description": "Total hypothetical API cost for selected window"
                 },
+                "links": [],
                 "plugin": {
                   "number_panel": {
                     "kind": "signoz/NumberPanel",
@@ -195,6 +199,7 @@
                   "name": "Cache Efficiency %",
                   "description": "Percentage of tokens served from cache"
                 },
+                "links": [],
                 "plugin": {
                   "time_series_panel": {
                     "kind": "signoz/TimeSeriesPanel",

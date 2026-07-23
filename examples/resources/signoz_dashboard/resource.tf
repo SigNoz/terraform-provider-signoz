@@ -20,6 +20,7 @@ resource "signoz_dashboard" "redis_overview" {
       name        = "Redis overview"
       description = "This dashboard shows the Redis instance overview. It includes latency, hit/miss rate, connections, and memory information."
     }
+    links = []
     variables = [
       {
         list_variable = {
@@ -53,6 +54,7 @@ resource "signoz_dashboard" "redis_overview" {
           display = {
             name = "Command/s"
           }
+          links = []
           plugin = {
             time_series_panel = {
               kind = "signoz/TimeSeriesPanel"
@@ -129,6 +131,7 @@ resource "signoz_dashboard" "redis_overview" {
           display = {
             name = "RSS Memory"
           }
+          links = []
           plugin = {
             time_series_panel = {
               kind = "signoz/TimeSeriesPanel"
@@ -213,6 +216,7 @@ resource "signoz_dashboard" "redis_overview" {
             name        = "Uptime"
             description = "Number of seconds since Redis server start"
           }
+          links = []
           plugin = {
             number_panel = {
               kind = "signoz/NumberPanel"

@@ -10,6 +10,7 @@ resource "signoz_dashboard" "minimal" {
     display = {
       name = "Minimal dashboard"
     }
+    links     = []
     variables = []
     panels = {
       "00000000-0000-4000-8000-000000000001" = {
@@ -18,6 +19,7 @@ resource "signoz_dashboard" "minimal" {
           display = {
             name = "Uptime"
           }
+          links = []
           plugin = {
             number_panel = {
               kind = "signoz/NumberPanel"
