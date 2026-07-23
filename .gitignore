@@ -100,9 +100,9 @@ terragrunt-debug.tfvars.json
 
 ### Local development ###
 .claude/settings.local.json
+.claude/worktrees/
+.primus/
+tmp/
 CLAUDE.local.md
 .cache/
 .dev/
-
-### Agentic development (remove when comfortable) ###
-.claude/rules/*.md

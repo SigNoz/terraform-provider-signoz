@@ -21,6 +21,15 @@ uv sync
 uv run pytest -vv
 ```
 
+## Examples
+
+Every config under [`examples/`](../examples) runs automatically — `test_examples.py` drives each example through a full create -> no-drift -> destroy cycle, **one file at a time**. So an example only passes if it can `terraform apply` on its own.
+
+If an example depends on a resource it doesn't define (e.g. it references another resource by ID), pick one:
+
+- **skip it** in the examples integration test, or
+- **bundle the prerequisite into the same file** — define the dependency resource and the example's own resource together, so the single file applies cleanly.
+
 ## Test data
 
 `testdata/` holds Terraform configs that exercise the provider beyond the curated, user-facing [`examples/`](../examples). Same top-level layout — `resources/signoz_<name>/` — so the suite can drive every config here.
