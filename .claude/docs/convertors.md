@@ -8,8 +8,7 @@ A Terraform resource's schema model and the API's request/response types are alw
 
 ## What we decided
 
-**Per-path code generation, via skaff — and nothing hand-written.**
-skaff emits one `Expand<X>` / `Flatten<X>` per OpenAPI component (customtype), called by the generated service CRUD shell. Conversion scales with **type count, not resource count**. Reflection is overkill at this scale; pure hand-writing doesn't scale.
+**Per-path code generation, via skaff — and nothing hand-written.** skaff emits one `Expand<X>` / `Flatten<X>` per OpenAPI component (customtype), called by the generated service CRUD shell. Conversion scales with **type count, not resource count**. Reflection is overkill at this scale; pure hand-writing doesn't scale.
 
 **There is no hand-written convertor layer.**
 

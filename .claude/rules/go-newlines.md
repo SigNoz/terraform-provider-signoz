@@ -5,8 +5,7 @@ paths:
 
 # Newlines before logical statements (Go)
 
-Leave a blank line before each logical statement inside a function body — `if`, `for`, `switch`, `return`, and a new local declaration that starts a fresh step.
-Adjacent lines that are part of the same step stay together. The goal: each step reads as its own paragraph.
+Leave a blank line before each logical statement inside a function body — `if`, `for`, `switch`, `return`, and a new local declaration that starts a fresh step. Adjacent lines that are part of the same step stay together. The goal: each step reads as its own paragraph.
 
 ```go
 func example() ([]Item, error) {

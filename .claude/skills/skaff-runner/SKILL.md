@@ -23,18 +23,13 @@ What it guarantees (so callers don't have to remember):
 
 ## After it runs
 
-- `flex` and `services` must report **`skipped 0`**. A skip = a resource that
-  isn't Pattern A (field-for-field) or a schema gap — stop and investigate: match
-  the shape in the pattern catalog (imported under **Reference** below).
-- The pipeline touches every declared resource, so `git status` shows byte-
-  identical re-renders of the others alongside your change — expected.
-- Then build / lint (`go-checks` rule) and, if schemas changed, regenerate docs
-  (`docs-writer` skill).
+- `flex` and `services` must report **`skipped 0`**. A skip = a resource that isn't Pattern A (field-for-field) or a schema gap — stop and investigate: match the shape in the pattern catalog (imported under **Reference** below).
+- The pipeline touches every declared resource, so `git status` shows byte-identical re-renders of the others alongside your change — expected.
+- Then build / lint (`go-checks` rule) and, if schemas changed, regenerate docs (`docs-writer` skill).
 
 ## Reference
 
-The pattern catalog — the doc you need to handle a skip: it maps each shape to its
-fix and links onward to the deeper design docs in `.claude/docs/`.
+The pattern catalog — the doc you need to handle a skip: it maps each shape to its fix and links onward to the deeper design docs in `.claude/docs/`.
 
 @.claude/docs/patterns.md
 

@@ -67,8 +67,7 @@ A wholesale regen legitimately pulls in **unrelated** spec drift (e.g. a shared 
 
 Sanity-check the diff is a *catch-up*, not a *breakage*:
 - ✅ field additions/removals on schemas, changed enum values, doc re-renders
-- ❌ a `zz_generated_*` file **disappearing**, a resource's schema emptying out,
-  or a new `skipped` — those mean a mapping broke (go to Step 3's stop rule)
+- ❌ a `zz_generated_*` file **disappearing**, a resource's schema emptying out, or a new `skipped` — those mean a mapping broke (go to Step 3's stop rule)
 
 ### 8. Commit
 
@@ -86,6 +85,5 @@ Opening a PR is outward-facing: **summarize the drift and confirm with the user 
 
 ## Not this skill
 
-- Adding a new `signoz_<name>` → **resource-creator** (declares in `skaff.yml`,
-  registers in the provider).
+- Adding a new `signoz_<name>` → **resource-creator** (declares in `skaff.yml`, registers in the provider).
 - A dependency bump unrelated to the spec → a plain `build(deps)` PR.
