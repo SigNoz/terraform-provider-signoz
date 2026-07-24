@@ -1,0 +1,26 @@
+{
+  "resource": {
+    "signoz_dashboard": {
+      "empty_panels": {
+        "schema_version": "v6",
+        "name": "testdata-dashboard-empty-panels-qp37vd",
+        "tags": [
+          {
+            "key": "tag",
+            "value": "testdata"
+          }
+        ],
+        "spec": {
+          "display": {
+            "name": "Empty panels map",
+            "description": "panels is the valid empty map {}; a jsonpatch adds the first panel, exercising the empty -> populated transition."
+          },
+          "links": [],
+          "variables": [],
+          "panels": {},
+          "layouts": []
+        }
+      }
+    }
+  }
+}
