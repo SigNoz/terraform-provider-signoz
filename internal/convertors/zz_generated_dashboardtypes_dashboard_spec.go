@@ -40,6 +40,7 @@ func ExpandDashboardtypesDashboardSpec(ctx context.Context, v customtypes.Dashbo
 	out := &apitypes.DashboardtypesDashboardSpec{
 		Datasources:     datasources,
 		Duration:        convtypes.StringPointer(v.Duration),
+		Links:           links,
 		RefreshInterval: convtypes.StringPointer(v.RefreshInterval),
 	}
 	if display != nil {
@@ -47,9 +48,6 @@ func ExpandDashboardtypesDashboardSpec(ctx context.Context, v customtypes.Dashbo
 	}
 	if layouts != nil {
 		out.Layouts = *layouts
-	}
-	if links != nil {
-		out.Links = *links
 	}
 	if panels != nil {
 		out.Panels = *panels
@@ -74,7 +72,7 @@ func FlattenDashboardtypesDashboardSpec(ctx context.Context, in *apitypes.Dashbo
 	diags.Append(d...)
 	layoutsFlat, d := FlattenDashboardtypesLayoutList(ctx, &in.Layouts)
 	diags.Append(d...)
-	linksFlat, d := FlattenDashboardtypesLinkList(ctx, &in.Links)
+	linksFlat, d := FlattenDashboardtypesLinkList(ctx, in.Links)
 	diags.Append(d...)
 	panelsFlat, d := FlattenDashboardtypesPanelMap(ctx, &in.Panels)
 	diags.Append(d...)
