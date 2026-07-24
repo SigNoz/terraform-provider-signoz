@@ -37,7 +37,6 @@ data "signoz_dashboard" "example" {
 
 Read-Only:
 
-- `datasources` (Attributes Map) (see [below for nested schema](#nestedatt--spec--datasources))
 - `display` (Attributes) (see [below for nested schema](#nestedatt--spec--display))
 - `duration` (String)
 - `layouts` (Attributes List) (see [below for nested schema](#nestedatt--spec--layouts))
@@ -45,42 +44,6 @@ Read-Only:
 - `panels` (Attributes Map) (see [below for nested schema](#nestedatt--spec--panels))
 - `refresh_interval` (String)
 - `variables` (Attributes List) (see [below for nested schema](#nestedatt--spec--variables))
-
-<a id="nestedatt--spec--datasources"></a>
-### Nested Schema for `spec.datasources`
-
-Read-Only:
-
-- `default` (Boolean)
-- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--display))
-- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--plugin))
-
-<a id="nestedatt--spec--datasources--display"></a>
-### Nested Schema for `spec.datasources.display`
-
-Read-Only:
-
-- `description` (String)
-- `name` (String)
-
-
-<a id="nestedatt--spec--datasources--plugin"></a>
-### Nested Schema for `spec.datasources.plugin`
-
-Read-Only:
-
-- `datasource` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--plugin--datasource))
-
-<a id="nestedatt--spec--datasources--plugin--datasource"></a>
-### Nested Schema for `spec.datasources.plugin.datasource`
-
-Read-Only:
-
-- `kind` (String)
-- `spec` (String)
-
-
-
 
 <a id="nestedatt--spec--display"></a>
 ### Nested Schema for `spec.display`
