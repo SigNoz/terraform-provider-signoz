@@ -39,24 +39,6 @@ func (t DashboardtypesDashboardSpecType) ValueFromObject(ctx context.Context, in
 
 	attributes := in.Attributes()
 
-	datasourcesAttribute, ok := attributes["datasources"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`datasources is missing from object`)
-
-		return nil, diags
-	}
-
-	datasourcesVal, ok := datasourcesAttribute.(basetypes.MapValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`datasources expected to be basetypes.MapValue, was: %T`, datasourcesAttribute))
-	}
-
 	displayAttribute, ok := attributes["display"]
 
 	if !ok {
@@ -188,7 +170,6 @@ func (t DashboardtypesDashboardSpecType) ValueFromObject(ctx context.Context, in
 	}
 
 	return DashboardtypesDashboardSpecValue{
-		Datasources:     datasourcesVal,
 		Display:         displayVal,
 		Duration:        durationVal,
 		Layouts:         layoutsVal,
@@ -263,24 +244,6 @@ func NewDashboardtypesDashboardSpecValue(attributeTypes map[string]attr.Type, at
 		return NewDashboardtypesDashboardSpecValueUnknown(), diags
 	}
 
-	datasourcesAttribute, ok := attributes["datasources"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`datasources is missing from object`)
-
-		return NewDashboardtypesDashboardSpecValueUnknown(), diags
-	}
-
-	datasourcesVal, ok := datasourcesAttribute.(basetypes.MapValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`datasources expected to be basetypes.MapValue, was: %T`, datasourcesAttribute))
-	}
-
 	displayAttribute, ok := attributes["display"]
 
 	if !ok {
@@ -412,7 +375,6 @@ func NewDashboardtypesDashboardSpecValue(attributeTypes map[string]attr.Type, at
 	}
 
 	return DashboardtypesDashboardSpecValue{
-		Datasources:     datasourcesVal,
 		Display:         displayVal,
 		Duration:        durationVal,
 		Layouts:         layoutsVal,
@@ -492,7 +454,6 @@ func (t DashboardtypesDashboardSpecType) ValueType(ctx context.Context) attr.Val
 var _ basetypes.ObjectValuable = DashboardtypesDashboardSpecValue{}
 
 type DashboardtypesDashboardSpecValue struct {
-	Datasources     basetypes.MapValue    `tfsdk:"datasources"`
 	Display         basetypes.ObjectValue `tfsdk:"display"`
 	Duration        basetypes.StringValue `tfsdk:"duration"`
 	Layouts         basetypes.ListValue   `tfsdk:"layouts"`
@@ -504,14 +465,11 @@ type DashboardtypesDashboardSpecValue struct {
 }
 
 func (v DashboardtypesDashboardSpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 8)
+	attrTypes := make(map[string]tftypes.Type, 7)
 
 	var val tftypes.Value
 	var err error
 
-	attrTypes["datasources"] = basetypes.MapType{
-		ElemType: DashboardtypesDatasourceSpecValue{}.Type(ctx),
-	}.TerraformType(ctx)
 	attrTypes["display"] = basetypes.ObjectType{
 		AttrTypes: DashboardtypesDisplayValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -534,15 +492,7 @@ func (v DashboardtypesDashboardSpecValue) ToTerraformValue(ctx context.Context) 
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 8)
-
-		val, err = v.Datasources.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["datasources"] = val
+		vals := make(map[string]tftypes.Value, 7)
 
 		val, err = v.Display.ToTerraformValue(ctx)
 
@@ -628,35 +578,6 @@ func (v DashboardtypesDashboardSpecValue) String() string {
 
 func (v DashboardtypesDashboardSpecValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
-
-	datasources := types.MapValueMust(
-		DashboardtypesDatasourceSpecType{
-			basetypes.ObjectType{
-				AttrTypes: DashboardtypesDatasourceSpecValue{}.AttributeTypes(ctx),
-			},
-		},
-		v.Datasources.Elements(),
-	)
-
-	if v.Datasources.IsNull() {
-		datasources = types.MapNull(
-			DashboardtypesDatasourceSpecType{
-				basetypes.ObjectType{
-					AttrTypes: DashboardtypesDatasourceSpecValue{}.AttributeTypes(ctx),
-				},
-			},
-		)
-	}
-
-	if v.Datasources.IsUnknown() {
-		datasources = types.MapUnknown(
-			DashboardtypesDatasourceSpecType{
-				basetypes.ObjectType{
-					AttrTypes: DashboardtypesDatasourceSpecValue{}.AttributeTypes(ctx),
-				},
-			},
-		)
-	}
 
 	var display basetypes.ObjectValue
 
@@ -796,9 +717,6 @@ func (v DashboardtypesDashboardSpecValue) ToObjectValue(ctx context.Context) (ba
 	}
 
 	attributeTypes := map[string]attr.Type{
-		"datasources": basetypes.MapType{
-			ElemType: DashboardtypesDatasourceSpecValue{}.Type(ctx),
-		},
 		"display": basetypes.ObjectType{
 			AttrTypes: DashboardtypesDisplayValue{}.AttributeTypes(ctx),
 		},
@@ -829,7 +747,6 @@ func (v DashboardtypesDashboardSpecValue) ToObjectValue(ctx context.Context) (ba
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"datasources":      datasources,
 			"display":          display,
 			"duration":         v.Duration,
 			"layouts":          layouts,
@@ -855,10 +772,6 @@ func (v DashboardtypesDashboardSpecValue) Equal(o attr.Value) bool {
 
 	if v.state != attr.ValueStateKnown {
 		return true
-	}
-
-	if !v.Datasources.Equal(other.Datasources) {
-		return false
 	}
 
 	if !v.Display.Equal(other.Display) {
@@ -902,9 +815,6 @@ func (v DashboardtypesDashboardSpecValue) Type(ctx context.Context) attr.Type {
 
 func (v DashboardtypesDashboardSpecValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
-		"datasources": basetypes.MapType{
-			ElemType: DashboardtypesDatasourceSpecValue{}.Type(ctx),
-		},
 		"display": basetypes.ObjectType{
 			AttrTypes: DashboardtypesDisplayValue{}.AttributeTypes(ctx),
 		},

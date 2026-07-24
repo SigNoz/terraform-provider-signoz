@@ -364,7 +364,6 @@ Required:
 
 Optional:
 
-- `datasources` (Attributes Map) (see [below for nested schema](#nestedatt--spec--datasources))
 - `duration` (String)
 - `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--links))
 - `refresh_interval` (String)
@@ -2883,42 +2882,6 @@ Optional:
 
 - `description` (String)
 
-
-
-
-
-<a id="nestedatt--spec--datasources"></a>
-### Nested Schema for `spec.datasources`
-
-Optional:
-
-- `default` (Boolean)
-- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--display))
-- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--plugin))
-
-<a id="nestedatt--spec--datasources--display"></a>
-### Nested Schema for `spec.datasources.display`
-
-Optional:
-
-- `description` (String)
-- `name` (String)
-
-
-<a id="nestedatt--spec--datasources--plugin"></a>
-### Nested Schema for `spec.datasources.plugin`
-
-Optional:
-
-- `datasource` (Attributes) (see [below for nested schema](#nestedatt--spec--datasources--plugin--datasource))
-
-<a id="nestedatt--spec--datasources--plugin--datasource"></a>
-### Nested Schema for `spec.datasources.plugin.datasource`
-
-Required:
-
-- `kind` (String)
-- `spec` (String)
 
 
 

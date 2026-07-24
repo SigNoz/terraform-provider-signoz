@@ -20,8 +20,6 @@ func ExpandDashboardtypesDashboardSpec(ctx context.Context, v customtypes.Dashbo
 		return nil, diags
 	}
 
-	datasources, d := ExpandDashboardtypesDatasourceSpecMap(ctx, v.Datasources)
-	diags.Append(d...)
 	displayTyped, d := dashboardtypesDisplayValueFromObject(ctx, v.Display)
 	diags.Append(d...)
 	display, d := ExpandDashboardtypesDisplay(ctx, displayTyped)
@@ -38,7 +36,6 @@ func ExpandDashboardtypesDashboardSpec(ctx context.Context, v customtypes.Dashbo
 		return nil, diags
 	}
 	out := &apitypes.DashboardtypesDashboardSpec{
-		Datasources:     datasources,
 		Duration:        convtypes.StringPointer(v.Duration),
 		Links:           links,
 		RefreshInterval: convtypes.StringPointer(v.RefreshInterval),
@@ -64,8 +61,6 @@ func FlattenDashboardtypesDashboardSpec(ctx context.Context, in *apitypes.Dashbo
 		return customtypes.NewDashboardtypesDashboardSpecValueNull(), diags
 	}
 
-	datasourcesFlat, d := FlattenDashboardtypesDatasourceSpecMap(ctx, in.Datasources)
-	diags.Append(d...)
 	displayFlatTyped, d := FlattenDashboardtypesDisplay(ctx, &in.Display)
 	diags.Append(d...)
 	displayFlat, d := displayFlatTyped.ToObjectValue(ctx)
@@ -85,7 +80,6 @@ func FlattenDashboardtypesDashboardSpec(ctx context.Context, in *apitypes.Dashbo
 	rv, d := customtypes.NewDashboardtypesDashboardSpecValue(
 		customtypes.DashboardtypesDashboardSpecValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
-			"datasources":      datasourcesFlat,
 			"display":          displayFlat,
 			"duration":         convtypes.StringFromPointer(in.Duration),
 			"layouts":          layoutsFlat,

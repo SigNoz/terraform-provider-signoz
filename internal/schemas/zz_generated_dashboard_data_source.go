@@ -37,64 +37,6 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
-					"datasources": schema.MapNestedAttribute{
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"default": schema.BoolAttribute{
-									Computed: true,
-								},
-								"display": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{
-										"description": schema.StringAttribute{
-											Computed: true,
-										},
-										"name": schema.StringAttribute{
-											Computed: true,
-										},
-									},
-									CustomType: customtypes.CommonDisplayType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.CommonDisplayValue{}.AttributeTypes(ctx),
-										},
-									},
-									Computed: true,
-								},
-								"plugin": schema.SingleNestedAttribute{
-									Attributes: map[string]schema.Attribute{
-										"datasource": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{
-												"kind": schema.StringAttribute{
-													Computed: true,
-												},
-												"spec": schema.StringAttribute{
-													CustomType: jsontypes.NormalizedType{},
-													Computed:   true,
-												},
-											},
-											CustomType: customtypes.DashboardtypesDatasourcePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesSigNozDatasourceSpecType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.DashboardtypesDatasourcePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesSigNozDatasourceSpecValue{}.AttributeTypes(ctx),
-												},
-											},
-											Computed: true,
-										},
-									},
-									CustomType: customtypes.DashboardtypesDatasourcePluginType{
-										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.DashboardtypesDatasourcePluginValue{}.AttributeTypes(ctx),
-										},
-									},
-									Computed: true,
-								},
-							},
-							CustomType: customtypes.DashboardtypesDatasourceSpecType{
-								ObjectType: types.ObjectType{
-									AttrTypes: customtypes.DashboardtypesDatasourceSpecValue{}.AttributeTypes(ctx),
-								},
-							},
-						},
-						Computed: true,
-					},
 					"display": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"description": schema.StringAttribute{
