@@ -283,7 +283,8 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						Required: true,
+						Optional: true,
+						Computed: true,
 					},
 					"panels": schema.MapNestedAttribute{
 						NestedObject: schema.NestedAttributeObject{
@@ -345,7 +346,8 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 													},
 												},
 											},
-											Required: true,
+											Optional: true,
+											Computed: true,
 										},
 										"plugin": schema.SingleNestedAttribute{
 											Attributes: map[string]schema.Attribute{

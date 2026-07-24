@@ -9,7 +9,7 @@ type DashboardtypesDashboardSpec struct {
 	Display         DashboardtypesDisplay                    `json:"display"`
 	Duration        *string                                  `json:"duration,omitempty"`
 	Layouts         []DashboardtypesLayout                   `json:"layouts"`
-	Links           []DashboardtypesLink                     `json:"links"`
+	Links           *[]DashboardtypesLink                    `json:"links,omitempty"`
 	Panels          map[string]DashboardtypesPanel           `json:"panels"`
 	RefreshInterval *string                                  `json:"refreshInterval,omitempty"`
 	Variables       []DashboardtypesVariable                 `json:"variables"`
