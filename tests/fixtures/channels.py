@@ -1,9 +1,3 @@
-"""Seed the notification channels the example alerts and route policies reference.
-
-The examples route to channels named "slack" and "pagerduty". SigNoz validates
-that referenced channels exist, so they must be created before the CRUD cycle.
-"""
-
 import pytest
 import requests
 
@@ -19,7 +13,6 @@ _TIMEOUT = 10
 
 
 def ensure_webhook_channel(signoz: SigNoz, name: str) -> None:
-    """Create a webhook notification channel by name if it does not already exist."""
     headers = {"SIGNOZ-API-KEY": signoz.access_token}
 
     listing = requests.get(f"{signoz.endpoint}/api/v1/channels", headers=headers, timeout=_TIMEOUT)
@@ -41,7 +34,7 @@ def ensure_webhook_channel(signoz: SigNoz, name: str) -> None:
 
 @pytest.fixture(scope="session")
 def webhook_channels(signoz: SigNoz) -> tuple[str, ...]:
-    """Ensure the 'slack' and 'pagerduty' webhook channels exist for the examples."""
+    """Seed the channels the configs reference; SigNoz rejects a rule pointing at one that does not exist."""
     for name in WEBHOOK_CHANNELS:
         ensure_webhook_channel(signoz, name)
 

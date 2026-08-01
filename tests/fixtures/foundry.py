@@ -41,10 +41,7 @@ def compose_file() -> Path | None:
 
 
 def cast(foundryctl: str) -> str:
-    """Bring up SigNoz and return its endpoint.
-
-    No-op when SIGNOZ_ENDPOINT is set (an existing instance is used as-is).
-    """
+    """Bring up SigNoz and return its endpoint; a no-op when SIGNOZ_ENDPOINT already points at one."""
     external = os.environ.get("SIGNOZ_ENDPOINT")
     if external:
         logger.info("using existing SigNoz at %s (SIGNOZ_ENDPOINT set)", external)

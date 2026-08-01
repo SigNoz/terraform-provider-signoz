@@ -1,24 +1,3 @@
-"""End-to-end lifecycle tests for every scenario under testdata/.
-
-Each numbered directory under testdata/resources/signoz_<name>/ is one scenario:
-a single base config plus, optionally, ordered JSON-patch edits.
-
-    signoz_rule/00/
-      01-<name>.tf            # base config (HCL or Terraform JSON)
-
-    signoz_rule/01/
-      01-<name>.tf.json       # base config (Terraform JSON syntax)
-      02-jsonpatch.json       # RFC 6902 patch applied on top of the base
-      03-jsonpatch.json       # RFC 6902 patch applied on top of the previous state
-
-For each scenario the runner creates the base (plan shows a create, apply,
-re-plan is clean), applies each jsonpatch in ascending order — re-plan must show
-changes, apply, re-plan must be clean — and finally destroys. A scenario with no
-patches is just create -> no-drift -> destroy; its base may be plain HCL (.tf).
-A JSON patch needs a JSON target, so a scenario with patches needs a .tf.json
-base (Terraform reads .tf.json natively).
-"""
-
 import json
 from pathlib import Path
 
@@ -58,12 +37,10 @@ def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, s
         config.write_text(base.read_text())
 
     try:
-        # Create: the first plan is the create, apply, re-plan must be clean.
         assert tool.plan_exit_code() == 2, "expected a create on the first plan"
         tool.apply()
         assert tool.plan_exit_code() == 0, "drift after initial apply"
 
-        # Each patch is one edit: re-plan shows changes, apply, re-plan clean.
         for patch in patches:
             body = jsonpatch.apply_patch(body, json.loads(patch.read_text()))
             named[rname] = body
