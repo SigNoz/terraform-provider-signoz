@@ -26,7 +26,7 @@ import jsonpatch
 import pytest
 
 from fixtures.signoz import SigNoz
-from fixtures.terraform import TESTDATA, VERSIONS_TF, Terraform
+from fixtures.tool import TESTDATA, VERSIONS_TF, Tool
 
 # resources/signoz_<name>/<NN>/ — each two-digit dir is one scenario.
 SCENARIOS = sorted(p for p in (TESTDATA / "resources").glob("signoz_*/[0-9][0-9]") if p.is_dir())
@@ -44,7 +44,7 @@ def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, s
     assert is_json or not patches, f"{scenario}: JSON patches require a .tf.json base, got {base.name}"
 
     (tmp_path / "versions.tf").write_text(VERSIONS_TF)
-    terraform = Terraform(tmp_path, tool_config, signoz, tool_bin)
+    tool = Tool(tmp_path, tool_config, signoz, tool_bin)
 
     if is_json:
         doc = json.loads(base.read_text())
@@ -59,9 +59,9 @@ def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, s
 
     try:
         # Create: the first plan is the create, apply, re-plan must be clean.
-        assert terraform.plan_exit_code() == 2, "expected a create on the first plan"
-        terraform.apply()
-        assert terraform.plan_exit_code() == 0, "drift after initial apply"
+        assert tool.plan_exit_code() == 2, "expected a create on the first plan"
+        tool.apply()
+        assert tool.plan_exit_code() == 0, "drift after initial apply"
 
         # Each patch is one edit: re-plan shows changes, apply, re-plan clean.
         for patch in patches:
@@ -69,8 +69,8 @@ def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, s
             named[rname] = body
             config.write_text(json.dumps(doc, indent=2))
 
-            assert terraform.plan_exit_code() == 2, f"{patch.name}: expected the edit to change the plan"
-            terraform.apply()
-            assert terraform.plan_exit_code() == 0, f"{patch.name}: drift after applying the edit"
+            assert tool.plan_exit_code() == 2, f"{patch.name}: expected the edit to change the plan"
+            tool.apply()
+            assert tool.plan_exit_code() == 0, f"{patch.name}: drift after applying the edit"
     finally:
-        terraform.destroy()
+        tool.destroy()

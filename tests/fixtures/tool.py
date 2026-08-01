@@ -1,117 +1,117 @@
-"""Fetch the Terraform-compatible CLI that the integration suite drives.
-
-The suite runs against either Terraform or OpenTofu — which one, and at which
-version, comes from --tool / --tool-version. The binary is downloaded into
---download-path rather than picked up from PATH, so a run pins exactly what it
-tested and the CI matrix can give each leg its own version without installing
-anything on the runner.
-"""
-
-import hashlib
-import io
-import platform
-import re
-import stat
-import zipfile
+import os
+import shutil
+import subprocess
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
-import requests
 
 from fixtures.logger import setup_logger
+from fixtures.signoz import SigNoz
 
 logger = setup_logger(__name__)
 
-TERRAFORM = "terraform"
-OPENTOFU = "opentofu"
-TOOLS = (TERRAFORM, OPENTOFU)
+REPO_ROOT = Path(__file__).resolve().parents[2]
+EXAMPLES = REPO_ROOT / "examples"
+# Edge-case configs that exercise the provider beyond the user-facing examples;
+# same layout as examples/ (resources/signoz_<name>/*.tf).
+TESTDATA = REPO_ROOT / "tests" / "testdata"
 
-# The executable packaged inside each tool's release archive.
-BINARIES = {TERRAFORM: "terraform", OPENTOFU: "tofu"}
+# Provider source address, left unqualified on purpose: each CLI normalizes it
+# against its own default registry host, so the same string matches the
+# dev_overrides key under both Terraform and OpenTofu.
+PROVIDER_SOURCE = "signoz/signoz"
 
-# A release is x.y.z; the OpenTofu index also lists -rc / -beta builds.
-STABLE = re.compile(r"^\d+\.\d+\.\d+$")
+# Written into each workspace so the CLI resolves signoz_* resources to the
+# dev-overridden provider; the provider reads endpoint/token from the env.
+VERSIONS_TF = f"""\
+terraform {{
+  required_providers {{
+    signoz = {{
+      source = "{PROVIDER_SOURCE}"
+    }}
+  }}
+}}
 
-
-def platform_suffix() -> str:
-    """Return the `<os>_<arch>` release-artifact suffix. Both tools name artifacts the same way."""
-    systems = {"darwin": "darwin", "linux": "linux"}
-    machines = {"x86_64": "amd64", "amd64": "amd64", "aarch64": "arm64", "arm64": "arm64"}
-
-    system, machine = platform.system().lower(), platform.machine().lower()
-    assert system in systems, f"unsupported OS {system!r}; the suite runs on {sorted(systems)}"
-    assert machine in machines, f"unsupported architecture {machine!r}; the suite runs on {sorted(set(machines.values()))}"
-
-    return f"{systems[system]}_{machines[machine]}"
-
-
-def resolve(tool: str, version: str) -> str:
-    """Resolve "latest" to a concrete release; any other value is taken as given."""
-    if version != "latest":
-        return version
-
-    if tool == TERRAFORM:
-        response = requests.get("https://checkpoint-api.hashicorp.com/v1/check/terraform", timeout=30)
-        assert response.status_code == 200, response.text
-        resolved = response.json()["current_version"]
-    else:
-        # The OpenTofu index is neither sorted nor stable-only, so take the highest x.y.z.
-        response = requests.get("https://get.opentofu.org/tofu/api.json", timeout=30)
-        assert response.status_code == 200, response.text
-        resolved = max((v["id"] for v in response.json()["versions"] if STABLE.match(v["id"])), key=lambda v: tuple(int(part) for part in v.split(".")))
-
-    logger.info("resolved latest %s -> %s", tool, resolved)
-    return resolved
-
-
-def download(tool: str, version: str, into: Path) -> Path:
-    """Download `tool` at `version` into `into` and return the executable.
-
-    An already-downloaded binary is reused as-is: the caller keys the directory
-    on tool + version, so a hit is always the build that was asked for.
-    """
-    binary = into / BINARIES[tool]
-    if binary.exists():
-        logger.info("reusing %s %s at %s", tool, version, binary)
-        return binary
-
-    suffix = platform_suffix()
-    if tool == TERRAFORM:
-        base = f"https://releases.hashicorp.com/terraform/{version}"
-        archive, checksums = f"terraform_{version}_{suffix}.zip", f"terraform_{version}_SHA256SUMS"
-    else:
-        base = f"https://github.com/opentofu/opentofu/releases/download/v{version}"
-        archive, checksums = f"tofu_{version}_{suffix}.zip", f"tofu_{version}_SHA256SUMS"
-
-    logger.info("downloading %s/%s", base, archive)
-    zipped = requests.get(f"{base}/{archive}", timeout=300)
-    assert zipped.status_code == 200, f"{base}/{archive}: HTTP {zipped.status_code}"
-
-    # The binary gets executed, so check it against the published sums before unpacking.
-    sums = requests.get(f"{base}/{checksums}", timeout=60)
-    assert sums.status_code == 200, f"{base}/{checksums}: HTTP {sums.status_code}"
-
-    expected = next(digest for digest, name in (line.split() for line in sums.text.splitlines() if line.strip()) if name.lstrip("*") == archive)
-    actual = hashlib.sha256(zipped.content).hexdigest()
-    assert actual == expected, f"{archive}: checksum mismatch (expected {expected}, got {actual})"
-
-    into.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(io.BytesIO(zipped.content)) as unpacked:
-        unpacked.extract(BINARIES[tool], into)
-
-    binary.chmod(binary.stat().st_mode | stat.S_IEXEC)
-    logger.info("installed %s %s at %s", tool, version, binary)
-
-    return binary
+provider "signoz" {{}}
+"""
 
 
 @pytest.fixture(scope="session")
-def tool_bin(request: pytest.FixtureRequest) -> str:
-    """Path to the Terraform-compatible CLI binary the suite drives."""
-    tool = request.config.getoption("--tool")
-    version = resolve(tool, request.config.getoption("--tool-version"))
-    # Absolute: the CLI is executed with cwd set to a workspace temp dir, so a
-    # relative --download-path would resolve against the wrong directory.
-    into = Path(request.config.getoption("--download-path")).resolve() / tool / version
+def provider_dir(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Build the provider binary into a directory for Terraform dev_overrides."""
+    go = request.config.getoption("--go-binary-path")
+    out = tmp_path_factory.mktemp("provider-bin")
+    binary = out / "terraform-provider-signoz"
 
-    return str(download(tool, version, into))
+    logger.info("building provider with %s -> %s", go, binary)
+    subprocess.run([go, "build", "-o", str(binary), "."], cwd=REPO_ROOT, check=True)
+
+    return out
+
+
+@pytest.fixture(scope="session")
+def tool_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Write a Terraform CLI config that dev-overrides the provider to the local build."""
+    cfg = tmp_path_factory.mktemp("tf-cli") / "dev.tfrc"
+    cfg.write_text(f'provider_installation {{\n  dev_overrides {{\n    "{PROVIDER_SOURCE}" = "{provider_dir}"\n  }}\n  direct {{}}\n}}\n')
+
+    return cfg
+
+
+@pytest.fixture
+def workspace(tmp_path_factory: pytest.TempPathFactory) -> Callable[[Path], Path]:
+    """Return a factory that stages an example .tf file into its own workspace with provider config."""
+
+    def stage(tf_file: Path) -> Path:
+        workdir = tmp_path_factory.mktemp(f"{tf_file.parent.name}-{tf_file.stem}")
+
+        shutil.copy(tf_file, workdir / tf_file.name)
+        (workdir / "versions.tf").write_text(VERSIONS_TF)
+        return workdir
+
+    return stage
+
+
+class Tool:
+    """Runs a Terraform-compatible CLI in a workspace against the dev-override provider."""
+
+    def __init__(self, workdir: Path, cli_config: Path, signoz: SigNoz, binary: str = "terraform"):
+        self.workdir = workdir
+        self.binary = binary
+        self.env = {
+            **os.environ,
+            "TF_CLI_CONFIG_FILE": str(cli_config),
+            "TF_IN_AUTOMATION": "1",
+            "SIGNOZ_ENDPOINT": signoz.endpoint,
+            "SIGNOZ_ACCESS_TOKEN": signoz.access_token,
+        }
+
+    def _run(self, *args: str) -> subprocess.CompletedProcess:
+        # dev_overrides make `init` unnecessary (and it would error on the
+        # missing dependency lock), so commands run directly.
+        result = subprocess.run(
+            [self.binary, *args, "-no-color"],
+            cwd=self.workdir,
+            env=self.env,
+            text=True,
+            capture_output=True,
+        )
+        logger.info("%s %s -> %d", Path(self.binary).name, " ".join(args), result.returncode)
+        return result
+
+    def apply(self) -> subprocess.CompletedProcess:
+        result = self._run("apply", "-auto-approve")
+        assert result.returncode == 0, f"apply failed:\n{result.stdout}\n{result.stderr}"
+        return result
+
+    def plan_exit_code(self) -> int:
+        # -detailed-exitcode: 0 = no changes, 1 = error, 2 = changes (drift).
+        result = self._run("plan", "-detailed-exitcode")
+        assert result.returncode in (0, 2), f"plan errored:\n{result.stdout}\n{result.stderr}"
+        return result.returncode
+
+    def destroy(self) -> subprocess.CompletedProcess:
+        result = self._run("destroy", "-auto-approve")
+        assert result.returncode == 0, f"destroy failed:\n{result.stdout}\n{result.stderr}"
+        return result

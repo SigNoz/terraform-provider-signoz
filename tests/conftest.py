@@ -2,13 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from fixtures.tool import TERRAFORM, TOOLS
+from fixtures.tool_bin import TERRAFORM, TOOLS
 
 pytest_plugins = [
     "fixtures.signoz",
     "fixtures.channels",
+    "fixtures.tool_bin",
     "fixtures.tool",
-    "fixtures.terraform",
 ]
 
 # tmp/bin/ at the repo root — already gitignored, and shared with the other

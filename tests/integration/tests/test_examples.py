@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from fixtures.signoz import SigNoz
-from fixtures.terraform import EXAMPLES, Terraform
+from fixtures.tool import EXAMPLES, Tool
 
 RESOURCE_FILES = sorted((EXAMPLES / "resources").glob("signoz_*/*.tf"))
 
@@ -20,14 +20,14 @@ SKIPPED = {
     [pytest.param(tf_file, id=(rel := f"{tf_file.parent.name}/{tf_file.name}"), marks=[pytest.mark.skip(reason=SKIPPED[rel])] if rel in SKIPPED else []) for tf_file in RESOURCE_FILES],
 )
 def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tool_config: Path, signoz: SigNoz, tool_bin: str, webhook_channels: tuple[str, ...]):
-    terraform = Terraform(workspace(tf_file), tool_config, signoz, tool_bin)
+    tool = Tool(workspace(tf_file), tool_config, signoz, tool_bin)
 
     # Create.
-    terraform.apply()
+    tool.apply()
 
     try:
         # Read: applying again must be a no-op — no drift.
-        assert terraform.plan_exit_code() == 0, "drift detected after apply"
+        assert tool.plan_exit_code() == 0, "drift detected after apply"
     finally:
         # Delete.
-        terraform.destroy()
+        tool.destroy()

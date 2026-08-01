@@ -13,4 +13,4 @@ Most of `internal/` is **generated** by the `SigNoz/skaff` codegen pipeline from
 - `internal/convtypes/*.go` — generic conversion helpers (`StringPointer`, `TimeFromString`, …)
 - `internal/provider/provider.go` — framework provider entry; registers each resource
 
-When editing hand-written Go here, follow the `comments` and `go-newlines` rules.
+When editing hand-written Go here, follow the `go-comments` and `go-newlines` rules.
