@@ -2832,6 +2832,8 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 															"below",
 															"equal",
 															"not_equal",
+															"above_or_equal",
+															"below_or_equal",
 															"outside_bounds",
 														),
 													},
