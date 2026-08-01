@@ -62,7 +62,7 @@ def provider_dir(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPa
 
 
 @pytest.fixture(scope="session")
-def tf_cli_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
+def tool_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Write a Terraform CLI config that dev-overrides the provider to the local build."""
     cfg = tmp_path_factory.mktemp("tf-cli") / "dev.tfrc"
     cfg.write_text(f'provider_installation {{\n  dev_overrides {{\n    "{PROVIDER_SOURCE}" = "{provider_dir}"\n  }}\n  direct {{}}\n}}\n')

@@ -2,12 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from fixtures.cli import TERRAFORM, TOOLS
+from fixtures.tool import TERRAFORM, TOOLS
 
 pytest_plugins = [
     "fixtures.signoz",
     "fixtures.channels",
-    "fixtures.cli",
+    "fixtures.tool",
     "fixtures.terraform",
 ]
 
