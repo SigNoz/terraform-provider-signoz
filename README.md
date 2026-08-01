@@ -40,7 +40,7 @@ See the [registry documentation](https://registry.terraform.io/providers/signoz/
 
 ## Requirements
 
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
+- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.4, or [OpenTofu](https://opentofu.org/docs/intro/install/) >= 1.6. Terraform 1.3 and older report perpetual drift on `signoz_dashboard` and `signoz_rule`.
 - [Go](https://golang.org/doc/install) >= 1.25 (only to build the provider from source)
 
 ## Building the provider
