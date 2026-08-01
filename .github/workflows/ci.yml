@@ -47,10 +47,7 @@ jobs:
       GO_TEST_CONTEXT: ./...
       GO_VERSION: "1.25"
   build:
-    # The primus go-build workflow builds and pushes a Docker image (it always
-    # runs `docker-build` against a required Dockerfile). A Terraform provider
-    # ships no image, so the build check here just verifies the module compiles;
-    # release artifacts are produced by build.yml via GoReleaser.
+    # Not primus go-build: that requires a Dockerfile and pushes an image. Release artifacts come from build.yml.
     if: |
       (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
       (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
