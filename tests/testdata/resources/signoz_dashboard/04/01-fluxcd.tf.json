@@ -119,7 +119,8 @@
                                   "metric_name": "controller_runtime_active_workers",
                                   "temporality": "unspecified",
                                   "time_aggregation": "latest",
-                                  "space_aggregation": "sum"
+                                  "space_aggregation": "sum",
+                                  "reduce_to": "last"
                                 }
                               ],
                               "filter": {
