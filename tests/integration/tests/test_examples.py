@@ -19,8 +19,8 @@ SKIPPED = {
     "tf_file",
     [pytest.param(tf_file, id=(rel := f"{tf_file.parent.name}/{tf_file.name}"), marks=[pytest.mark.skip(reason=SKIPPED[rel])] if rel in SKIPPED else []) for tf_file in RESOURCE_FILES],
 )
-def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tf_cli_config: Path, signoz: SigNoz, terraform_bin: str, webhook_channels: tuple[str, ...]):
-    terraform = Terraform(workspace(tf_file), tf_cli_config, signoz, terraform_bin)
+def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tf_cli_config: Path, signoz: SigNoz, cli_bin: str, webhook_channels: tuple[str, ...]):
+    terraform = Terraform(workspace(tf_file), tf_cli_config, signoz, cli_bin)
 
     # Create.
     terraform.apply()

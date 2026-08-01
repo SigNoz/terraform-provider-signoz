@@ -57,15 +57,26 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'safe-to-integrate')
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # The suite downloads the CLI itself (fixtures/cli.py), so no setup
+        # action is needed here — each leg just names a tool and a version.
+        include:
+          - tool: terraform
+            version: "1.0.11"
+          - tool: terraform
+            version: "latest"
+          - tool: opentofu
+            version: "1.6.3"
+          - tool: opentofu
+            version: "latest"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
-      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
-        with:
-          terraform_wrapper: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -75,7 +86,15 @@ jobs:
           curl -fsSL https://signoz.io/foundry.sh | bash
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: integration tests
+        # The `integration/tests` path arg pins rootdir so the option values are
+        # never mistaken for collection targets. --download-path stays outside
+        # --basetemp, which pytest wipes at the start of every run.
         run: |
           cd tests
           uv sync
-          uv run pytest --basetemp=./tmp/ --license-key "${{ secrets.PRIMUS_LICENSE_KEY }}"
+          uv run pytest integration/tests \
+            --basetemp=./tmp/ \
+            --tool ${{ matrix.tool }} \
+            --tool-version ${{ matrix.version }} \
+            --download-path ../tmp/bin \
+            --license-key "${{ secrets.PRIMUS_LICENSE_KEY }}"
