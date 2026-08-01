@@ -1,6 +1,6 @@
 """Build the provider under test and drive a Terraform-compatible CLI against it.
 
-The CLI — Terraform or OpenTofu, supplied by the `cli_bin` fixture — is pointed
+The CLI — Terraform or OpenTofu, supplied by the `tool_bin` fixture — is pointed
 at the freshly built provider binary with a CLI config that declares a
 `dev_overrides` block. dev_overrides bypass the registry and the `init` step
 entirely: commands resolve the provider straight from the local build. Both CLIs

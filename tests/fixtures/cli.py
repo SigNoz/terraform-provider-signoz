@@ -106,7 +106,7 @@ def download(tool: str, version: str, into: Path) -> Path:
 
 
 @pytest.fixture(scope="session")
-def cli_bin(request: pytest.FixtureRequest) -> str:
+def tool_bin(request: pytest.FixtureRequest) -> str:
     """Path to the Terraform-compatible CLI binary the suite drives."""
     tool = request.config.getoption("--tool")
     version = resolve(tool, request.config.getoption("--tool-version"))
