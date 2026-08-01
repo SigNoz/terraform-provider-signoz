@@ -57,15 +57,24 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'safe-to-integrate')
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - tool: terraform
+            version: "1.4.0"
+          - tool: terraform
+            version: "latest"
+          - tool: opentofu
+            version: "1.6.0"
+          - tool: opentofu
+            version: "latest"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
-      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
-        with:
-          terraform_wrapper: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -75,7 +84,13 @@ jobs:
           curl -fsSL https://signoz.io/foundry.sh | bash
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: integration tests
+        # The path arg pins pytest's rootdir; --download-path must stay outside --basetemp, which pytest wipes.
         run: |
           cd tests
           uv sync
-          uv run pytest --basetemp=./tmp/ --license-key "${{ secrets.PRIMUS_LICENSE_KEY }}"
+          uv run pytest integration/tests \
+            --basetemp=./tmp/ \
+            --tool ${{ matrix.tool }} \
+            --tool-version ${{ matrix.version }} \
+            --download-path ../tmp/bin \
+            --license-key "${{ secrets.PRIMUS_LICENSE_KEY }}"

@@ -40,8 +40,16 @@ See the [registry documentation](https://registry.terraform.io/providers/signoz/
 
 ## Requirements
 
-- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
+- [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.4, or [OpenTofu](https://opentofu.org/docs/intro/install/) >= 1.6
 - [Go](https://golang.org/doc/install) >= 1.25 (only to build the provider from source)
+
+### Why Terraform 1.4 and not 1.0
+
+The provider is built on the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework), and models much of the SigNoz API as *nested attributes* — objects inside objects, several levels deep, whose inner fields are both optional and computed: you may set them, and the server supplies whatever you leave out.
+
+Terraform 1.3 and older do not round-trip that shape. After a successful apply, the values the server filled in for attributes the configuration left unset are not reconciled with the plan, and the next `plan` proposes them as changes all over again. The effect is perpetual drift — the apply succeeds, and every subsequent plan wants to make the identical change. No change to the configuration avoids it.
+
+Resources whose attributes are all flat scalars are unaffected, so an older CLI looks fine right up until a deeply nested resource is used. Terraform 1.4 is the first release that handles it. OpenTofu inherits the fix, its first release having been forked from Terraform 1.5.
 
 ## Building the provider
 

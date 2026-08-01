@@ -1,11 +1,3 @@
-"""Build the provider under test and drive the Terraform CLI against it.
-
-Terraform is pointed at the freshly built provider binary with a CLI config that
-declares a `dev_overrides` block. dev_overrides bypass the registry and the
-`terraform init` step entirely — commands resolve the provider straight from the
-local build.
-"""
-
 import os
 import shutil
 import subprocess
@@ -25,11 +17,12 @@ EXAMPLES = REPO_ROOT / "examples"
 # same layout as examples/ (resources/signoz_<name>/*.tf).
 TESTDATA = REPO_ROOT / "tests" / "testdata"
 
-# Provider source address; matches main.go's registry address and the
-# `source` used in the generated versions.tf.
+# Provider source address, left unqualified on purpose: each CLI normalizes it
+# against its own default registry host, so the same string matches the
+# dev_overrides key under both Terraform and OpenTofu.
 PROVIDER_SOURCE = "signoz/signoz"
 
-# Written into each workspace so Terraform resolves signoz_* resources to the
+# Written into each workspace so the CLI resolves signoz_* resources to the
 # dev-overridden provider; the provider reads endpoint/token from the env.
 VERSIONS_TF = f"""\
 terraform {{
@@ -42,11 +35,6 @@ terraform {{
 
 provider "signoz" {{}}
 """
-
-
-@pytest.fixture(scope="session")
-def terraform_bin(request: pytest.FixtureRequest) -> str:
-    return request.config.getoption("--terraform-binary-path")
 
 
 @pytest.fixture(scope="session")
@@ -63,7 +51,7 @@ def provider_dir(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPa
 
 
 @pytest.fixture(scope="session")
-def tf_cli_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
+def tool_config(provider_dir: Path, tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Write a Terraform CLI config that dev-overrides the provider to the local build."""
     cfg = tmp_path_factory.mktemp("tf-cli") / "dev.tfrc"
     cfg.write_text(f'provider_installation {{\n  dev_overrides {{\n    "{PROVIDER_SOURCE}" = "{provider_dir}"\n  }}\n  direct {{}}\n}}\n')
@@ -85,8 +73,8 @@ def workspace(tmp_path_factory: pytest.TempPathFactory) -> Callable[[Path], Path
     return stage
 
 
-class Terraform:
-    """Runs the Terraform CLI in a workspace against the dev-override provider."""
+class Tool:
+    """Runs a Terraform-compatible CLI in a workspace against the dev-override provider."""
 
     def __init__(self, workdir: Path, cli_config: Path, signoz: SigNoz, binary: str = "terraform"):
         self.workdir = workdir
@@ -109,7 +97,7 @@ class Terraform:
             text=True,
             capture_output=True,
         )
-        logger.info("terraform %s -> %d", " ".join(args), result.returncode)
+        logger.info("%s %s -> %d", Path(self.binary).name, " ".join(args), result.returncode)
         return result
 
     def apply(self) -> subprocess.CompletedProcess:

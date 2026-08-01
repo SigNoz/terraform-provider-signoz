@@ -1,10 +1,19 @@
+from pathlib import Path
+
 import pytest
+
+from fixtures.tool_bin import TERRAFORM, TOOLS
 
 pytest_plugins = [
     "fixtures.signoz",
     "fixtures.channels",
-    "fixtures.terraform",
+    "fixtures.tool_bin",
+    "fixtures.tool",
 ]
+
+# tmp/bin/ at the repo root — already gitignored, and shared with the other
+# tooling binaries the repo downloads.
+DOWNLOAD_PATH = Path(__file__).resolve().parent.parent / "tmp" / "bin"
 
 
 def pytest_addoption(parser: pytest.Parser):
@@ -27,10 +36,24 @@ def pytest_addoption(parser: pytest.Parser):
         help="Path to the foundryctl binary used to cast the SigNoz environment.",
     )
     parser.addoption(
-        "--terraform-binary-path",
+        "--tool",
         action="store",
-        default="terraform",
-        help="Path to the terraform binary used to run the CRUD cycle.",
+        default=TERRAFORM,
+        choices=TOOLS,
+        help="Terraform-compatible CLI driven through the CRUD cycle.",
+    )
+    # Not --version: pytest already owns that flag.
+    parser.addoption(
+        "--tool-version",
+        action="store",
+        default="latest",
+        help="Version of --tool to download, e.g. 1.9.8. 'latest' resolves the newest release.",
+    )
+    parser.addoption(
+        "--download-path",
+        action="store",
+        default=str(DOWNLOAD_PATH),
+        help="Directory the --tool binary is downloaded into; each tool/version gets its own subdirectory.",
     )
     parser.addoption(
         "--go-binary-path",

@@ -9,9 +9,10 @@ End-to-end tests that spin up a real SigNoz instance and drive Terraform against
 
 - [`foundryctl`](https://github.com/signoz/foundry) on `PATH` (or set `SIGNOZ_ENDPOINT`)
 - Docker (for the Compose deployment)
-- Terraform CLI
 - Go (to build the provider under test)
 - Python ≥ 3.11 with [`uv`](https://docs.astral.sh/uv/)
+
+The Terraform CLI is *not* a requirement — the suite downloads it (see [CLI under test](#cli-under-test)).
 
 ## Running
 
@@ -20,6 +21,26 @@ cd tests
 uv sync
 uv run pytest -vv
 ```
+
+## CLI under test
+
+The suite drives either Terraform or OpenTofu. It downloads the binary itself rather than taking one from `PATH`, so a run pins exactly what it tested:
+
+| flag | default | meaning |
+|------|---------|---------|
+| `--tool` | `terraform` | `terraform` or `opentofu` |
+| `--tool-version` | `latest` | an exact version (`1.9.8`), or `latest` to resolve the newest release |
+| `--download-path` | `tmp/bin/` at the repo root | where the binary lands, under `<tool>/<version>/` |
+
+`--tool-version` rather than `--version` because pytest already owns that flag.
+
+```sh
+uv run pytest integration/tests --tool opentofu --tool-version 1.8.5
+```
+
+A download is skipped when the binary is already present, so repeat runs are free. Both CLIs are driven through the same `dev_overrides` CLI config — they read it from the same `TF_CLI_CONFIG_FILE` variable and normalize the `signoz/signoz` source address against their own default registry host, so nothing in the workspace changes between them.
+
+CI runs a matrix over `(tool, version)` — see the `integration` job in [`testci.yml`](../.github/workflows/testci.yml).
 
 ## Examples
 
