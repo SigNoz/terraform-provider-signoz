@@ -6,7 +6,9 @@ package apitypes
 // Defines values for RuletypesCompareOperator.
 const (
 	RuletypesCompareOperatorAbove         RuletypesCompareOperator = "above"
+	RuletypesCompareOperatorAboveOrEqual  RuletypesCompareOperator = "above_or_equal"
 	RuletypesCompareOperatorBelow         RuletypesCompareOperator = "below"
+	RuletypesCompareOperatorBelowOrEqual  RuletypesCompareOperator = "below_or_equal"
 	RuletypesCompareOperatorEqual         RuletypesCompareOperator = "equal"
 	RuletypesCompareOperatorNotEqual      RuletypesCompareOperator = "not_equal"
 	RuletypesCompareOperatorOutsideBounds RuletypesCompareOperator = "outside_bounds"
@@ -17,7 +19,11 @@ func (e RuletypesCompareOperator) Valid() bool {
 	switch e {
 	case RuletypesCompareOperatorAbove:
 		return true
+	case RuletypesCompareOperatorAboveOrEqual:
+		return true
 	case RuletypesCompareOperatorBelow:
+		return true
+	case RuletypesCompareOperatorBelowOrEqual:
 		return true
 	case RuletypesCompareOperatorEqual:
 		return true
