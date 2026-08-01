@@ -38,6 +38,7 @@ For a resource-*type* change (alert→rule, or a v1→v2 dashboard swap) the old
 
 - `-generate-config-out` emits verbose config incl. computed/optional attrs to trim.
 - Deeply-nested blocks (panel/layout trees, composite queries) need eyeballing.
+- OpenTofu (all releases) and Terraform below 1.9.8 write map keys unquoted, so any resource with a `MapNestedAttribute` keyed by non-identifier strings — `signoz_dashboard.spec.panels`, keyed by panel UUIDs — generates a file that fails to parse (`Missing key/value separator`). Fixed in Terraform 1.9.8/1.10.0; still open upstream as [opentofu/opentofu#3978](https://github.com/opentofu/opentofu/issues/3978). Workaround: hand-quote the keys in `generated.tf`, or hand-write the config and use a plain `import` (unaffected). `signoz_rule` has no `MapNestedAttribute` and is not affected.
 - But the output is **schema-correct by construction** — a hand-written converter can't guarantee that across regens.
 
 ### Optional bulk helper
