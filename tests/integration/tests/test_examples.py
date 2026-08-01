@@ -22,12 +22,9 @@ SKIPPED = {
 def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tool_config: Path, signoz: SigNoz, tool_bin: str, webhook_channels: tuple[str, ...]):
     tool = Tool(workspace(tf_file), tool_config, signoz, tool_bin)
 
-    # Create.
     tool.apply()
 
     try:
-        # Read: applying again must be a no-op — no drift.
         assert tool.plan_exit_code() == 0, "drift detected after apply"
     finally:
-        # Delete.
         tool.destroy()

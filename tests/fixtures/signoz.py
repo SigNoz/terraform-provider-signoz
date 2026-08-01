@@ -1,11 +1,3 @@
-"""Provide a reachable, authenticated SigNoz instance to the integration tests.
-
-The casting provisions a root user on first boot. We log in as that root user,
-mint a service-account API key (the token the Terraform provider authenticates
-with), and hand back a SigNoz handle. The whole environment is created/torn down
-through the --reuse / --teardown machinery in fixtures.reuse.
-"""
-
 import time
 from dataclasses import dataclass
 
@@ -29,8 +21,6 @@ SERVICE_ACCOUNT_ROLE = "signoz-admin"
 
 @dataclass(frozen=True)
 class SigNoz:
-    """A reachable, authenticated SigNoz instance."""
-
     endpoint: str
     access_token: str
 
