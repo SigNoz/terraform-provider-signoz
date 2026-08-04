@@ -1,0 +1,27 @@
+[
+  {
+    "op": "add",
+    "path": "/pipelines/0",
+    "value": {
+      "name": "testdata-scenario-01-first",
+      "alias": "scenario-01-first",
+      "filter": {
+        "items": [
+          {
+            "key": {
+              "key": "source",
+              "data_type": "string",
+              "type": "tag"
+            },
+            "op": "=",
+            "value": "\"testdata-first\""
+          }
+        ]
+      },
+      "config": [
+        { "type": "remove", "field": "attributes.secret" }
+      ]
+    }
+  },
+  { "op": "add", "path": "/pipelines/1/enabled", "value": false }
+]

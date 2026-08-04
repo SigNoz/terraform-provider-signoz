@@ -1,0 +1,35 @@
+{
+  "resource": {
+    "signoz_pipelines": {
+      "scenario_01": {
+        "pipelines": [
+          {
+            "name": "testdata-scenario-01",
+            "alias": "scenario-01",
+            "description": "Parse JSON logs.",
+            "filter": {
+              "items": [
+                {
+                  "key": {
+                    "key": "source",
+                    "data_type": "string",
+                    "type": "tag"
+                  },
+                  "op": "=",
+                  "value": "\"testdata\""
+                }
+              ]
+            },
+            "config": [
+              {
+                "type": "json_parser",
+                "parse_from": "body",
+                "parse_to": "attributes"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

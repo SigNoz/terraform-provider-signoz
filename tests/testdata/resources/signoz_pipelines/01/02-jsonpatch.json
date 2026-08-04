@@ -1,0 +1,8 @@
+[
+  { "op": "replace", "path": "/pipelines/0/description", "value": "Parse JSON logs (updated)." },
+  {
+    "op": "add",
+    "path": "/pipelines/0/config/-",
+    "value": { "type": "add", "field": "attributes.env", "value": "staging" }
+  }
+]
