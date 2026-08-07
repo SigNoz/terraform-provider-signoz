@@ -193,6 +193,30 @@ resources:
         - updatedAt
         - updatedBy
         - state
+  saved_view:
+    create:
+      path: /api/v2/saved_views
+      method: POST
+    read:
+      path: /api/v2/saved_views/{id}
+      method: GET
+    update:
+      path: /api/v2/saved_views/{id}
+      method: PUT
+    delete:
+      path: /api/v2/saved_views/{id}
+      method: DELETE
+    schema:
+      ignores:
+        # `data` is the saved view's own payload here, not the response
+        # envelope — only the create envelope's `data.id` is dropped.
+        - data.id
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - generateName
 
 data_sources:
   route_policy:
@@ -310,3 +334,14 @@ data_sources:
         - updatedAt
         - updatedBy
         - state
+  saved_view:
+    read:
+      path: /api/v2/saved_views/{id}
+      method: GET
+    schema:
+      ignores:
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
