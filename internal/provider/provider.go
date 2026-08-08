@@ -130,6 +130,7 @@ func (p *signozProvider) Configure(ctx context.Context, req provider.ConfigureRe
 
 func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		services.NewAuthDomainResource,
 		services.NewDashboardResource,
 		services.NewPlannedMaintenanceResource,
 		services.NewRoleResource,
@@ -145,6 +146,7 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 
 func (p *signozProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		services.NewAuthDomainDataSource,
 		services.NewDashboardDataSource,
 		services.NewPlannedMaintenanceDataSource,
 		services.NewRoleDataSource,
