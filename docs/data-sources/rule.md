@@ -66,11 +66,204 @@ Read-Only:
 
 Read-Only:
 
+- `builder_ai_query` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query))
 - `builder_formula` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula))
 - `builder_query` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query))
 - `builder_trace_operator` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_trace_operator))
 - `clickhouse_sql` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--clickhouse_sql))
 - `promql` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--promql))
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query`
+
+Read-Only:
+
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec))
+- `type` (String)
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec`
+
+Read-Only:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--select_fields))
+- `signal` (String)
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--aggregations"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.aggregations`
+
+Read-Only:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--filter"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.filter`
+
+Read-Only:
+
+- `expression` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--functions"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.functions`
+
+Read-Only:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--functions--args))
+- `name` (String)
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--functions--args"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.functions.args`
+
+Read-Only:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--group_by"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.group_by`
+
+Read-Only:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `name` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--having"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.having`
+
+Read-Only:
+
+- `expression` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--limit_by"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.limit_by`
+
+Read-Only:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--order"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.order`
+
+Read-Only:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--order--key))
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--order--key"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.order.key`
+
+Read-Only:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `name` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.secondary_aggregations`
+
+Read-Only:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--group_by"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.secondary_aggregations.group_by`
+
+Read-Only:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `name` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--limit_by"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.secondary_aggregations.limit_by`
+
+Read-Only:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--order"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.secondary_aggregations.order`
+
+Read-Only:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--order--key))
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--secondary_aggregations--order--key"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.secondary_aggregations.order.key`
+
+Read-Only:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `name` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--select_fields"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.select_fields`
+
+Read-Only:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `name` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
 
 <a id="nestedatt--condition--composite_query--queries--builder_formula"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_formula`

@@ -43,6 +43,34 @@ func (t *Querybuildertypesv5QueryEnvelope) MergeQuerybuildertypesv5QueryEnvelope
 	return err
 }
 
+// AsQuerybuildertypesv5QueryEnvelopeBuilderAI returns the union data inside the Querybuildertypesv5QueryEnvelope as a Querybuildertypesv5QueryEnvelopeBuilderAI
+func (t Querybuildertypesv5QueryEnvelope) AsQuerybuildertypesv5QueryEnvelopeBuilderAI() (Querybuildertypesv5QueryEnvelopeBuilderAI, error) {
+	var body Querybuildertypesv5QueryEnvelopeBuilderAI
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromQuerybuildertypesv5QueryEnvelopeBuilderAI overwrites any union data inside the Querybuildertypesv5QueryEnvelope as the provided Querybuildertypesv5QueryEnvelopeBuilderAI
+func (t *Querybuildertypesv5QueryEnvelope) FromQuerybuildertypesv5QueryEnvelopeBuilderAI(v Querybuildertypesv5QueryEnvelopeBuilderAI) error {
+	v.Type = "builder_ai_query"
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeQuerybuildertypesv5QueryEnvelopeBuilderAI performs a merge with any union data inside the Querybuildertypesv5QueryEnvelope, using the provided Querybuildertypesv5QueryEnvelopeBuilderAI
+func (t *Querybuildertypesv5QueryEnvelope) MergeQuerybuildertypesv5QueryEnvelopeBuilderAI(v Querybuildertypesv5QueryEnvelopeBuilderAI) error {
+	v.Type = "builder_ai_query"
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
 // AsQuerybuildertypesv5QueryEnvelopeFormula returns the union data inside the Querybuildertypesv5QueryEnvelope as a Querybuildertypesv5QueryEnvelopeFormula
 func (t Querybuildertypesv5QueryEnvelope) AsQuerybuildertypesv5QueryEnvelopeFormula() (Querybuildertypesv5QueryEnvelopeFormula, error) {
 	var body Querybuildertypesv5QueryEnvelopeFormula
@@ -169,6 +197,8 @@ func (t Querybuildertypesv5QueryEnvelope) ValueByDiscriminator() (interface{}, e
 		return nil, err
 	}
 	switch discriminator {
+	case "builder_ai_query":
+		return t.AsQuerybuildertypesv5QueryEnvelopeBuilderAI()
 	case "builder_formula":
 		return t.AsQuerybuildertypesv5QueryEnvelopeFormula()
 	case "builder_query":

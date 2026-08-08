@@ -20,6 +20,23 @@ func ExpandQuerybuildertypesv5QueryEnvelope(ctx context.Context, v customtypes.Q
 	}
 	var out apitypes.Querybuildertypesv5QueryEnvelope
 
+	if !v.BuilderAiQuery.IsNull() && !v.BuilderAiQuery.IsUnknown() {
+		typed, d := querybuildertypesv5QueryEnvelopeBuilderAIValueFromObject(ctx, v.BuilderAiQuery)
+		diags.Append(d...)
+		member, d := ExpandQuerybuildertypesv5QueryEnvelopeBuilderAI(ctx, typed)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if member != nil {
+			if err := out.FromQuerybuildertypesv5QueryEnvelopeBuilderAI(*member); err != nil {
+				diags.AddError("Failed to encode builder_ai_query union variant", err.Error())
+				return nil, diags
+			}
+		}
+		return &out, diags
+	}
+
 	if !v.BuilderFormula.IsNull() && !v.BuilderFormula.IsUnknown() {
 		typed, d := querybuildertypesv5QueryEnvelopeFormulaValueFromObject(ctx, v.BuilderFormula)
 		diags.Append(d...)
@@ -114,6 +131,7 @@ func FlattenQuerybuildertypesv5QueryEnvelope(ctx context.Context, in *apitypes.Q
 		return customtypes.NewQuerybuildertypesv5QueryEnvelopeValueNull(), diags
 	}
 	attrs := map[string]attr.Value{
+		"builder_ai_query":       basetypes.NewObjectNull(customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx)),
 		"builder_formula":        basetypes.NewObjectNull(customtypes.Querybuildertypesv5QueryEnvelopeFormulaValue{}.AttributeTypes(ctx)),
 		"builder_query":          basetypes.NewObjectNull(customtypes.Querybuildertypesv5QueryEnvelopeBuilderValue{}.AttributeTypes(ctx)),
 		"builder_trace_operator": basetypes.NewObjectNull(customtypes.Querybuildertypesv5QueryEnvelopeTraceOperatorValue{}.AttributeTypes(ctx)),
@@ -126,6 +144,12 @@ func FlattenQuerybuildertypesv5QueryEnvelope(ctx context.Context, in *apitypes.Q
 		return customtypes.NewQuerybuildertypesv5QueryEnvelopeValueUnknown(), diags
 	}
 	switch member := disc.(type) {
+	case apitypes.Querybuildertypesv5QueryEnvelopeBuilderAI:
+		fv, d := FlattenQuerybuildertypesv5QueryEnvelopeBuilderAI(ctx, &member)
+		diags.Append(d...)
+		ov, d := fv.ToObjectValue(ctx)
+		diags.Append(d...)
+		attrs["builder_ai_query"] = ov
 	case apitypes.Querybuildertypesv5QueryEnvelopeFormula:
 		fv, d := FlattenQuerybuildertypesv5QueryEnvelopeFormula(ctx, &member)
 		diags.Append(d...)

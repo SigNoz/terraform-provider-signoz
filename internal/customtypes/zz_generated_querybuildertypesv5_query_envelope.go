@@ -39,6 +39,24 @@ func (t Querybuildertypesv5QueryEnvelopeType) ValueFromObject(ctx context.Contex
 
 	attributes := in.Attributes()
 
+	builderAiQueryAttribute, ok := attributes["builder_ai_query"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`builder_ai_query is missing from object`)
+
+		return nil, diags
+	}
+
+	builderAiQueryVal, ok := builderAiQueryAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`builder_ai_query expected to be basetypes.ObjectValue, was: %T`, builderAiQueryAttribute))
+	}
+
 	builderFormulaAttribute, ok := attributes["builder_formula"]
 
 	if !ok {
@@ -134,6 +152,7 @@ func (t Querybuildertypesv5QueryEnvelopeType) ValueFromObject(ctx context.Contex
 	}
 
 	return Querybuildertypesv5QueryEnvelopeValue{
+		BuilderAiQuery:       builderAiQueryVal,
 		BuilderFormula:       builderFormulaVal,
 		BuilderQuery:         builderQueryVal,
 		BuilderTraceOperator: builderTraceOperatorVal,
@@ -206,6 +225,24 @@ func NewQuerybuildertypesv5QueryEnvelopeValue(attributeTypes map[string]attr.Typ
 		return NewQuerybuildertypesv5QueryEnvelopeValueUnknown(), diags
 	}
 
+	builderAiQueryAttribute, ok := attributes["builder_ai_query"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`builder_ai_query is missing from object`)
+
+		return NewQuerybuildertypesv5QueryEnvelopeValueUnknown(), diags
+	}
+
+	builderAiQueryVal, ok := builderAiQueryAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`builder_ai_query expected to be basetypes.ObjectValue, was: %T`, builderAiQueryAttribute))
+	}
+
 	builderFormulaAttribute, ok := attributes["builder_formula"]
 
 	if !ok {
@@ -301,6 +338,7 @@ func NewQuerybuildertypesv5QueryEnvelopeValue(attributeTypes map[string]attr.Typ
 	}
 
 	return Querybuildertypesv5QueryEnvelopeValue{
+		BuilderAiQuery:       builderAiQueryVal,
 		BuilderFormula:       builderFormulaVal,
 		BuilderQuery:         builderQueryVal,
 		BuilderTraceOperator: builderTraceOperatorVal,
@@ -378,6 +416,7 @@ func (t Querybuildertypesv5QueryEnvelopeType) ValueType(ctx context.Context) att
 var _ basetypes.ObjectValuable = Querybuildertypesv5QueryEnvelopeValue{}
 
 type Querybuildertypesv5QueryEnvelopeValue struct {
+	BuilderAiQuery       basetypes.ObjectValue `tfsdk:"builder_ai_query"`
 	BuilderFormula       basetypes.ObjectValue `tfsdk:"builder_formula"`
 	BuilderQuery         basetypes.ObjectValue `tfsdk:"builder_query"`
 	BuilderTraceOperator basetypes.ObjectValue `tfsdk:"builder_trace_operator"`
@@ -387,11 +426,14 @@ type Querybuildertypesv5QueryEnvelopeValue struct {
 }
 
 func (v Querybuildertypesv5QueryEnvelopeValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 5)
+	attrTypes := make(map[string]tftypes.Type, 6)
 
 	var val tftypes.Value
 	var err error
 
+	attrTypes["builder_ai_query"] = basetypes.ObjectType{
+		AttrTypes: Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+	}.TerraformType(ctx)
 	attrTypes["builder_formula"] = basetypes.ObjectType{
 		AttrTypes: Querybuildertypesv5QueryEnvelopeFormulaValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -412,7 +454,15 @@ func (v Querybuildertypesv5QueryEnvelopeValue) ToTerraformValue(ctx context.Cont
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 5)
+		vals := make(map[string]tftypes.Value, 6)
+
+		val, err = v.BuilderAiQuery.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["builder_ai_query"] = val
 
 		val, err = v.BuilderFormula.ToTerraformValue(ctx)
 
@@ -482,6 +532,27 @@ func (v Querybuildertypesv5QueryEnvelopeValue) String() string {
 
 func (v Querybuildertypesv5QueryEnvelopeValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
+
+	var builderAiQuery basetypes.ObjectValue
+
+	if v.BuilderAiQuery.IsNull() {
+		builderAiQuery = types.ObjectNull(
+			Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if v.BuilderAiQuery.IsUnknown() {
+		builderAiQuery = types.ObjectUnknown(
+			Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if !v.BuilderAiQuery.IsNull() && !v.BuilderAiQuery.IsUnknown() {
+		builderAiQuery = types.ObjectValueMust(
+			Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+			v.BuilderAiQuery.Attributes(),
+		)
+	}
 
 	var builderFormula basetypes.ObjectValue
 
@@ -589,6 +660,9 @@ func (v Querybuildertypesv5QueryEnvelopeValue) ToObjectValue(ctx context.Context
 	}
 
 	attributeTypes := map[string]attr.Type{
+		"builder_ai_query": basetypes.ObjectType{
+			AttrTypes: Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+		},
 		"builder_formula": basetypes.ObjectType{
 			AttrTypes: Querybuildertypesv5QueryEnvelopeFormulaValue{}.AttributeTypes(ctx),
 		},
@@ -617,6 +691,7 @@ func (v Querybuildertypesv5QueryEnvelopeValue) ToObjectValue(ctx context.Context
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
+			"builder_ai_query":       builderAiQuery,
 			"builder_formula":        builderFormula,
 			"builder_query":          builderQuery,
 			"builder_trace_operator": builderTraceOperator,
@@ -640,6 +715,10 @@ func (v Querybuildertypesv5QueryEnvelopeValue) Equal(o attr.Value) bool {
 
 	if v.state != attr.ValueStateKnown {
 		return true
+	}
+
+	if !v.BuilderAiQuery.Equal(other.BuilderAiQuery) {
+		return false
 	}
 
 	if !v.BuilderFormula.Equal(other.BuilderFormula) {
@@ -675,6 +754,9 @@ func (v Querybuildertypesv5QueryEnvelopeValue) Type(ctx context.Context) attr.Ty
 
 func (v Querybuildertypesv5QueryEnvelopeValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
+		"builder_ai_query": basetypes.ObjectType{
+			AttrTypes: Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+		},
 		"builder_formula": basetypes.ObjectType{
 			AttrTypes: Querybuildertypesv5QueryEnvelopeFormulaValue{}.AttributeTypes(ctx),
 		},

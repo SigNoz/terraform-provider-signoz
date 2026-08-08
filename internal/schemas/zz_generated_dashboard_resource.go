@@ -3300,6 +3300,637 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																					"queries": schema.ListNestedAttribute{
 																						NestedObject: schema.NestedAttributeObject{
 																							Attributes: map[string]schema.Attribute{
+																								"builder_ai_query": schema.SingleNestedAttribute{
+																									Attributes: map[string]schema.Attribute{
+																										"spec": schema.SingleNestedAttribute{
+																											Attributes: map[string]schema.Attribute{
+																												"aggregations": schema.ListNestedAttribute{
+																													NestedObject: schema.NestedAttributeObject{
+																														Attributes: map[string]schema.Attribute{
+																															"alias": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"expression": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																														},
+																														CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
+																															ObjectType: types.ObjectType{
+																																AttrTypes: customtypes.Querybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
+																															},
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"cursor": schema.StringAttribute{
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"disabled": schema.BoolAttribute{
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"filter": schema.SingleNestedAttribute{
+																													Attributes: map[string]schema.Attribute{
+																														"expression": schema.StringAttribute{
+																															Optional: true,
+																															Computed: true,
+																														},
+																													},
+																													CustomType: customtypes.Querybuildertypesv5FilterType{
+																														ObjectType: types.ObjectType{
+																															AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"functions": schema.ListNestedAttribute{
+																													NestedObject: schema.NestedAttributeObject{
+																														Attributes: map[string]schema.Attribute{
+																															"args": schema.ListNestedAttribute{
+																																NestedObject: schema.NestedAttributeObject{
+																																	Attributes: map[string]schema.Attribute{
+																																		"name": schema.StringAttribute{
+																																			Optional: true,
+																																			Computed: true,
+																																		},
+																																		"value": schema.StringAttribute{
+																																			CustomType: jsontypes.NormalizedType{},
+																																			Optional:   true,
+																																			Computed:   true,
+																																		},
+																																	},
+																																	CustomType: customtypes.Querybuildertypesv5FunctionArgType{
+																																		ObjectType: types.ObjectType{
+																																			AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
+																																		},
+																																	},
+																																},
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"name": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"cutoffmin",
+																																		"cutoffmax",
+																																		"clampmin",
+																																		"clampmax",
+																																		"absolute",
+																																		"runningdiff",
+																																		"log2",
+																																		"log10",
+																																		"cumulativesum",
+																																		"ewma3",
+																																		"ewma5",
+																																		"ewma7",
+																																		"median3",
+																																		"median5",
+																																		"median7",
+																																		"timeshift",
+																																		"anomaly",
+																																		"fillzero",
+																																	),
+																																},
+																															},
+																														},
+																														CustomType: customtypes.Querybuildertypesv5FunctionType{
+																															ObjectType: types.ObjectType{
+																																AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
+																															},
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"group_by": schema.ListNestedAttribute{
+																													NestedObject: schema.NestedAttributeObject{
+																														Attributes: map[string]schema.Attribute{
+																															"description": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"field_context": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"metric",
+																																		"log",
+																																		"span",
+																																		"resource",
+																																		"attribute",
+																																		"body",
+																																		"",
+																																	),
+																																},
+																															},
+																															"field_data_type": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"string",
+																																		"bool",
+																																		"float64",
+																																		"int64",
+																																		"number",
+																																		"",
+																																	),
+																																},
+																															},
+																															"name": schema.StringAttribute{
+																																Required: true,
+																															},
+																															"signal": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"traces",
+																																		"logs",
+																																		"metrics",
+																																		"",
+																																	),
+																																},
+																															},
+																															"unit": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																														},
+																														CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																															ObjectType: types.ObjectType{
+																																AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																															},
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"having": schema.SingleNestedAttribute{
+																													Attributes: map[string]schema.Attribute{
+																														"expression": schema.StringAttribute{
+																															Optional: true,
+																															Computed: true,
+																														},
+																													},
+																													CustomType: customtypes.Querybuildertypesv5HavingType{
+																														ObjectType: types.ObjectType{
+																															AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"legend": schema.StringAttribute{
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"limit": schema.Int64Attribute{
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"limit_by": schema.SingleNestedAttribute{
+																													Attributes: map[string]schema.Attribute{
+																														"keys": schema.ListAttribute{
+																															ElementType: types.StringType,
+																															Optional:    true,
+																															Computed:    true,
+																														},
+																														"value": schema.StringAttribute{
+																															Optional: true,
+																															Computed: true,
+																														},
+																													},
+																													CustomType: customtypes.Querybuildertypesv5LimitByType{
+																														ObjectType: types.ObjectType{
+																															AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"name": schema.StringAttribute{
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"offset": schema.Int64Attribute{
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"order": schema.ListNestedAttribute{
+																													NestedObject: schema.NestedAttributeObject{
+																														Attributes: map[string]schema.Attribute{
+																															"direction": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"asc",
+																																		"desc",
+																																	),
+																																},
+																															},
+																															"key": schema.SingleNestedAttribute{
+																																Attributes: map[string]schema.Attribute{
+																																	"description": schema.StringAttribute{
+																																		Optional: true,
+																																		Computed: true,
+																																	},
+																																	"field_context": schema.StringAttribute{
+																																		Optional: true,
+																																		Computed: true,
+																																		Validators: []validator.String{
+																																			stringvalidator.OneOf(
+																																				"metric",
+																																				"log",
+																																				"span",
+																																				"resource",
+																																				"attribute",
+																																				"body",
+																																				"",
+																																			),
+																																		},
+																																	},
+																																	"field_data_type": schema.StringAttribute{
+																																		Optional: true,
+																																		Computed: true,
+																																		Validators: []validator.String{
+																																			stringvalidator.OneOf(
+																																				"string",
+																																				"bool",
+																																				"float64",
+																																				"int64",
+																																				"number",
+																																				"",
+																																			),
+																																		},
+																																	},
+																																	"name": schema.StringAttribute{
+																																		Required: true,
+																																	},
+																																	"signal": schema.StringAttribute{
+																																		Optional: true,
+																																		Computed: true,
+																																		Validators: []validator.String{
+																																			stringvalidator.OneOf(
+																																				"traces",
+																																				"logs",
+																																				"metrics",
+																																				"",
+																																			),
+																																		},
+																																	},
+																																	"unit": schema.StringAttribute{
+																																		Optional: true,
+																																		Computed: true,
+																																	},
+																																},
+																																CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																																	ObjectType: types.ObjectType{
+																																		AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																																	},
+																																},
+																																Optional: true,
+																																Computed: true,
+																															},
+																														},
+																														CustomType: customtypes.Querybuildertypesv5OrderByType{
+																															ObjectType: types.ObjectType{
+																																AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																															},
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"secondary_aggregations": schema.ListNestedAttribute{
+																													NestedObject: schema.NestedAttributeObject{
+																														Attributes: map[string]schema.Attribute{
+																															"alias": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"expression": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"group_by": schema.ListNestedAttribute{
+																																NestedObject: schema.NestedAttributeObject{
+																																	Attributes: map[string]schema.Attribute{
+																																		"description": schema.StringAttribute{
+																																			Optional: true,
+																																			Computed: true,
+																																		},
+																																		"field_context": schema.StringAttribute{
+																																			Optional: true,
+																																			Computed: true,
+																																			Validators: []validator.String{
+																																				stringvalidator.OneOf(
+																																					"metric",
+																																					"log",
+																																					"span",
+																																					"resource",
+																																					"attribute",
+																																					"body",
+																																					"",
+																																				),
+																																			},
+																																		},
+																																		"field_data_type": schema.StringAttribute{
+																																			Optional: true,
+																																			Computed: true,
+																																			Validators: []validator.String{
+																																				stringvalidator.OneOf(
+																																					"string",
+																																					"bool",
+																																					"float64",
+																																					"int64",
+																																					"number",
+																																					"",
+																																				),
+																																			},
+																																		},
+																																		"name": schema.StringAttribute{
+																																			Required: true,
+																																		},
+																																		"signal": schema.StringAttribute{
+																																			Optional: true,
+																																			Computed: true,
+																																			Validators: []validator.String{
+																																				stringvalidator.OneOf(
+																																					"traces",
+																																					"logs",
+																																					"metrics",
+																																					"",
+																																				),
+																																			},
+																																		},
+																																		"unit": schema.StringAttribute{
+																																			Optional: true,
+																																			Computed: true,
+																																		},
+																																	},
+																																	CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																																		ObjectType: types.ObjectType{
+																																			AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																																		},
+																																	},
+																																},
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"limit": schema.Int64Attribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"limit_by": schema.SingleNestedAttribute{
+																																Attributes: map[string]schema.Attribute{
+																																	"keys": schema.ListAttribute{
+																																		ElementType: types.StringType,
+																																		Optional:    true,
+																																		Computed:    true,
+																																	},
+																																	"value": schema.StringAttribute{
+																																		Optional: true,
+																																		Computed: true,
+																																	},
+																																},
+																																CustomType: customtypes.Querybuildertypesv5LimitByType{
+																																	ObjectType: types.ObjectType{
+																																		AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																																	},
+																																},
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"order": schema.ListNestedAttribute{
+																																NestedObject: schema.NestedAttributeObject{
+																																	Attributes: map[string]schema.Attribute{
+																																		"direction": schema.StringAttribute{
+																																			Optional: true,
+																																			Computed: true,
+																																			Validators: []validator.String{
+																																				stringvalidator.OneOf(
+																																					"asc",
+																																					"desc",
+																																				),
+																																			},
+																																		},
+																																		"key": schema.SingleNestedAttribute{
+																																			Attributes: map[string]schema.Attribute{
+																																				"description": schema.StringAttribute{
+																																					Optional: true,
+																																					Computed: true,
+																																				},
+																																				"field_context": schema.StringAttribute{
+																																					Optional: true,
+																																					Computed: true,
+																																					Validators: []validator.String{
+																																						stringvalidator.OneOf(
+																																							"metric",
+																																							"log",
+																																							"span",
+																																							"resource",
+																																							"attribute",
+																																							"body",
+																																							"",
+																																						),
+																																					},
+																																				},
+																																				"field_data_type": schema.StringAttribute{
+																																					Optional: true,
+																																					Computed: true,
+																																					Validators: []validator.String{
+																																						stringvalidator.OneOf(
+																																							"string",
+																																							"bool",
+																																							"float64",
+																																							"int64",
+																																							"number",
+																																							"",
+																																						),
+																																					},
+																																				},
+																																				"name": schema.StringAttribute{
+																																					Required: true,
+																																				},
+																																				"signal": schema.StringAttribute{
+																																					Optional: true,
+																																					Computed: true,
+																																					Validators: []validator.String{
+																																						stringvalidator.OneOf(
+																																							"traces",
+																																							"logs",
+																																							"metrics",
+																																							"",
+																																						),
+																																					},
+																																				},
+																																				"unit": schema.StringAttribute{
+																																					Optional: true,
+																																					Computed: true,
+																																				},
+																																			},
+																																			CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																																				ObjectType: types.ObjectType{
+																																					AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																																				},
+																																			},
+																																			Optional: true,
+																																			Computed: true,
+																																		},
+																																	},
+																																	CustomType: customtypes.Querybuildertypesv5OrderByType{
+																																		ObjectType: types.ObjectType{
+																																			AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																																		},
+																																	},
+																																},
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"step_interval": schema.StringAttribute{
+																																CustomType: jsontypes.NormalizedType{},
+																																Optional:   true,
+																																Computed:   true,
+																															},
+																														},
+																														CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
+																															ObjectType: types.ObjectType{
+																																AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
+																															},
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"select_fields": schema.ListNestedAttribute{
+																													NestedObject: schema.NestedAttributeObject{
+																														Attributes: map[string]schema.Attribute{
+																															"description": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																															"field_context": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"metric",
+																																		"log",
+																																		"span",
+																																		"resource",
+																																		"attribute",
+																																		"body",
+																																		"",
+																																	),
+																																},
+																															},
+																															"field_data_type": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"string",
+																																		"bool",
+																																		"float64",
+																																		"int64",
+																																		"number",
+																																		"",
+																																	),
+																																},
+																															},
+																															"name": schema.StringAttribute{
+																																Required: true,
+																															},
+																															"signal": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																																Validators: []validator.String{
+																																	stringvalidator.OneOf(
+																																		"traces",
+																																		"logs",
+																																		"metrics",
+																																		"",
+																																	),
+																																},
+																															},
+																															"unit": schema.StringAttribute{
+																																Optional: true,
+																																Computed: true,
+																															},
+																														},
+																														CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+																															ObjectType: types.ObjectType{
+																																AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+																															},
+																														},
+																													},
+																													Optional: true,
+																													Computed: true,
+																												},
+																												"signal": schema.StringAttribute{
+																													Required: true,
+																													Validators: []validator.String{
+																														stringvalidator.OneOf(
+																															"traces",
+																														),
+																													},
+																												},
+																												"source": schema.StringAttribute{
+																													Optional: true,
+																													Computed: true,
+																													Validators: []validator.String{
+																														stringvalidator.OneOf(
+																															"meter",
+																															"",
+																														),
+																													},
+																												},
+																												"step_interval": schema.StringAttribute{
+																													CustomType: jsontypes.NormalizedType{},
+																													Optional:   true,
+																													Computed:   true,
+																												},
+																											},
+																											CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationType{
+																												ObjectType: types.ObjectType{
+																													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
+																												},
+																											},
+																											Optional: true,
+																											Computed: true,
+																										},
+																										"type": schema.StringAttribute{
+																											Required: true,
+																											Validators: []validator.String{
+																												stringvalidator.OneOf(
+																													"builder_query",
+																													"builder_ai_query",
+																													"builder_formula",
+																													"builder_trace_operator",
+																													"clickhouse_sql",
+																													"promql",
+																												),
+																											},
+																										},
+																									},
+																									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiType{
+																										ObjectType: types.ObjectType{
+																											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+																										},
+																									},
+																									Optional: true,
+																									Computed: true,
+																								},
 																								"builder_formula": schema.SingleNestedAttribute{
 																									Attributes: map[string]schema.Attribute{
 																										"spec": schema.SingleNestedAttribute{
@@ -3500,6 +4131,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																											Validators: []validator.String{
 																												stringvalidator.OneOf(
 																													"builder_query",
+																													"builder_ai_query",
 																													"builder_formula",
 																													"builder_trace_operator",
 																													"clickhouse_sql",
@@ -5431,6 +6063,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																											Validators: []validator.String{
 																												stringvalidator.OneOf(
 																													"builder_query",
+																													"builder_ai_query",
 																													"builder_formula",
 																													"builder_trace_operator",
 																													"clickhouse_sql",
@@ -5830,6 +6463,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																											Validators: []validator.String{
 																												stringvalidator.OneOf(
 																													"builder_query",
+																													"builder_ai_query",
 																													"builder_formula",
 																													"builder_trace_operator",
 																													"clickhouse_sql",
@@ -5880,6 +6514,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																											Validators: []validator.String{
 																												stringvalidator.OneOf(
 																													"builder_query",
+																													"builder_ai_query",
 																													"builder_formula",
 																													"builder_trace_operator",
 																													"clickhouse_sql",
@@ -5939,6 +6574,7 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																											Validators: []validator.String{
 																												stringvalidator.OneOf(
 																													"builder_query",
+																													"builder_ai_query",
 																													"builder_formula",
 																													"builder_trace_operator",
 																													"clickhouse_sql",
