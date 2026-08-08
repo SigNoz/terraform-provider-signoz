@@ -1586,11 +1586,225 @@ Optional:
 
 Optional:
 
+- `builder_ai_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query))
 - `builder_formula` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula))
 - `builder_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query))
 - `builder_trace_operator` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator))
 - `clickhouse_sql` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql))
 - `promql` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query`
+
+Required:
+
+- `type` (String)
+
+Optional:
+
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--aggregations))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula`

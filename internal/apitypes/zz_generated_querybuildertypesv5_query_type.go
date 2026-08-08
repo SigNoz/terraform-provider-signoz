@@ -5,6 +5,7 @@ package apitypes
 
 // Defines values for Querybuildertypesv5QueryType.
 const (
+	Querybuildertypesv5QueryTypeBuilderAiQuery       Querybuildertypesv5QueryType = "builder_ai_query"
 	Querybuildertypesv5QueryTypeBuilderFormula       Querybuildertypesv5QueryType = "builder_formula"
 	Querybuildertypesv5QueryTypeBuilderQuery         Querybuildertypesv5QueryType = "builder_query"
 	Querybuildertypesv5QueryTypeBuilderTraceOperator Querybuildertypesv5QueryType = "builder_trace_operator"
@@ -15,6 +16,8 @@ const (
 // Valid indicates whether the value is a known member of the Querybuildertypesv5QueryType enum.
 func (e Querybuildertypesv5QueryType) Valid() bool {
 	switch e {
+	case Querybuildertypesv5QueryTypeBuilderAiQuery:
+		return true
 	case Querybuildertypesv5QueryTypeBuilderFormula:
 		return true
 	case Querybuildertypesv5QueryTypeBuilderQuery:
