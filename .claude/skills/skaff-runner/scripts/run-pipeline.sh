@@ -14,13 +14,9 @@
 #
 # Env:
 #   DRY_RUN=1        print each skaff invocation instead of running it
-#   SKAFF_VERSION=vX.Y.Z   pin the skaff release primus downloads (default: SKAFF_VERSION below)
+#   SKAFF_VERSION=vX.Y.Z   pin the skaff release primus downloads (default: primus default)
 #
 set -euo pipefail
-
-# primus defaults to an older skaff; pin the version this repo's generated code
-# was produced with so a regen is reproducible.
-SKAFF_VERSION="${SKAFF_VERSION:-v0.0.2}"
 
 SPEC="${1:-}"
 if [ -z "$SPEC" ] || [ ! -f "$SPEC" ]; then
