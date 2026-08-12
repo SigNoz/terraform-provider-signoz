@@ -12,9 +12,6 @@ RESOURCE_FILES = sorted((EXAMPLES / "resources").glob("signoz_*/*.tf"))
 # run surfaced provider/API issues for these.
 SKIPPED = {
     "signoz_planned_maintenance/resource.tf": "alert_ids reference non-existent rules (API 500)",
-    "signoz_saved_view/resource.tf": "v2 saved views API not in a released SigNoz yet (needs v0.137.0)",
-    "signoz_saved_view/resource_minimal.tf": "v2 saved views API not in a released SigNoz yet (needs v0.137.0)",
-    "signoz_saved_view/resource_traces.tf": "v2 saved views API not in a released SigNoz yet (needs v0.137.0)",
 }
 
 
