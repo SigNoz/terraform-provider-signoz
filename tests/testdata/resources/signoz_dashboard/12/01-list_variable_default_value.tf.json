@@ -1,0 +1,51 @@
+{
+  "resource": {
+    "signoz_dashboard": {
+      "list_variable_default_value": {
+        "schema_version": "v6",
+        "name": "testdata-dashboard-list-variable-default-value-k8vt2m",
+        "tags": [
+          {
+            "key": "tag",
+            "value": "testdata"
+          }
+        ],
+        "spec": {
+          "display": {
+            "name": "List variable default_value",
+            "description": "default_value is a scalar-or-array union: a JSON array of selections while allow_multiple is set, a JSON string once the variable is single-select."
+          },
+          "links": [],
+          "variables": [
+            {
+              "list_variable": {
+                "kind": "ListVariable",
+                "spec": {
+                  "display": {
+                    "name": "service.name",
+                    "description": "The service name."
+                  },
+                  "allow_all_value": true,
+                  "allow_multiple": true,
+                  "sort": "alphabetical-asc",
+                  "plugin": {
+                    "custom_variable": {
+                      "kind": "signoz/CustomVariable",
+                      "spec": {
+                        "custom_value": "frontend,backend"
+                      }
+                    }
+                  },
+                  "name": "service.name",
+                  "default_value": "${jsonencode([\"frontend\", \"backend\"])}"
+                }
+              }
+            }
+          ],
+          "panels": {},
+          "layouts": []
+        }
+      }
+    }
+  }
+}

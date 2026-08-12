@@ -1,0 +1,4 @@
+[
+  { "op": "replace", "path": "/spec/variables/0/list_variable/spec/allow_multiple", "value": false },
+  { "op": "replace", "path": "/spec/variables/0/list_variable/spec/allow_all_value", "value": false }
+]
