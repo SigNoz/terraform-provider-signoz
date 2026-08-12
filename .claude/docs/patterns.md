@@ -109,6 +109,14 @@ A `*float64` Go field emits bare `{type: number}` with **no `format`** (swaggest
 - **Fix:** add a `` `format:"double"` `` struct tag → `float64` everywhere.
 - **Example:** `signoz_rule` `condition.thresholds.basic.spec[].{target,recoveryTarget}` and `condition.target` (signoz#12061).
 
+### Scalar-or-array union whose arm is inferred from emptiness
+
+A `oneOf [string, array<string>]` whose marshaller takes the scalar arm only while the scalar is non-empty, so which arm the caller set is inferred rather than recorded.
+
+- **Pitfall:** an explicit empty scalar is accepted on write (201) and then absent from the read, so apply fails: *"Provider produced inconsistent result after apply … was cty.StringVal(\"\\\"\\\"\"), but now null"* — and the resource is left created on the server.
+- **Fix:** record which arm was set instead of inferring it from emptiness, so an empty string round-trips; failing that, reject an empty scalar on write so the caller gets a clean 400.
+- **Example:** `signoz_dashboard` `spec.variables[].list_variable.spec.default_value` — `jsonencode("")` writes but never reads back, while `jsonencode("prod")` and every array form round-trip (#155).
+
 ### Association via path params
 
 Identity/CRUD expressed through path params (`/service_accounts/{id}/roles`, delete `/roles/{rid}`), a list-returning read, and no update endpoint.

@@ -1,0 +1,3 @@
+[
+  { "op": "replace", "path": "/spec/variables/0/list_variable/spec/default_value", "value": "[\"\"]" }
+]
