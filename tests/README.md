@@ -75,3 +75,15 @@ Naming:
 - A JSON Patch (RFC 6902) needs a JSON target, so any scenario with patches uses a **`.tf.json`** base (Terraform JSON syntax, read natively by Terraform). Patch `path`s are relative to the single resource's body (e.g. `/condition/thresholds/basic/spec/0/target`). A patch-free scenario may use a plain HCL `.tf` base.
 
 Channels referenced by `thresholds[*].channels` must be seeded by the suite — `slack` and `pagerduty` are (see [`fixtures/channels.py`](fixtures/channels.py)).
+
+### Invalid-by-design scenarios
+
+A scenario can instead assert that a config is **rejected**, which is how schema-level validation (e.g. the `ExactlyOneNestedAttribute` guards on flattened `oneOf` unions) is covered end to end. Drop an `expect-plan-error.txt` next to the base config:
+
+```
+signoz_dashboard/12/
+  01-<name>.tf              # base config, invalid on purpose
+  expect-plan-error.txt     # one message fragment per line
+```
+
+The runner then plans once and requires it to fail with every fragment present — nothing is applied or destroyed, so these scenarios take no patches. Fragments are matched against whitespace-collapsed output, so a fragment may be written as one line even where Terraform wraps the diagnostic.

@@ -1,0 +1,2 @@
+Invalid oneOf configuration
+Exactly one of logs, metrics, traces must be configured. Currently configured: none.
