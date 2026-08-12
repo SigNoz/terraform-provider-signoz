@@ -22,6 +22,7 @@ skaff and the Go gates run through **primus**. If it's not set up (`PRIMUS_HOME`
 | Regenerate everything from the latest upstream spec + open a catch-up PR | **spec-syncer** |
 | Regenerate or validate registry docs, add examples, write a guide | **docs-writer** |
 | Run the e2e suite, test against a real SigNoz, add a testdata scenario | **integration-tester** |
+| Triage a reported bug — reproduce it, find which repo owns the defect, prove it with a test | **issue-triager** |
 | Install primus tooling | **primus-setter** |
 
 Reach for the skill before hand-writing — it carries the runbook, the flags, the footguns, and the design/history references.
