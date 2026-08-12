@@ -6,7 +6,7 @@ description: >-
 
 # Triage a reported bug
 
-A report tells you what someone saw, not what is wrong. Both triages this repo has run ended somewhere other than where the reporter pointed: issue #154 blamed the provider for never sending `signal` (it always did — the real defect was a missing plan-time validator), and issue #155 read as a type-width bug but reproduced as a syntax mistake against a field whose docs never explain its real requirement. **Start from the error string, not the reporter's diagnosis.**
+A report tells you what someone saw, not what is wrong. Validate that the reported bug is real before anything else, and expect the defect to sit somewhere other than where the reporter pointed. **Start from the error string, not the reporter's diagnosis.**
 
 The provider is generated, so triage has one question the reporter can't answer: does the defect live in this repo at all? Read the [`generated-code`](../../rules/generated-code.md) rule before you conclude anything.
 
