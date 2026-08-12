@@ -19,70 +19,68 @@ description: |-
 # list with a handful of columns selected. See the schema below for all attributes.
 
 resource "signoz_saved_view" "api_service_errors" {
-  name   = "api-service-errors"
-  source = "logs"
+  name           = "api-service-errors"
+  source         = "logs"
+  schema_version = "v2"
 
-  data = {
-    schema_version = "v2"
+  spec = {
+    display_name = "API service errors"
+    panel_type   = "list"
+    request_type = "raw"
 
-    spec = {
-      display_name = "API service errors"
-      panel_type   = "list"
+    queries = [
+      {
+        builder_query = {
+          type = "builder_query"
+          spec = {
+            logs = {
+              name   = "A"
+              signal = "logs"
 
-      queries = [
-        {
-          builder_query = {
-            type = "builder_query"
-            spec = {
-              logs = {
-                name   = "A"
-                signal = "logs"
-
-                filter = {
-                  expression = "service.name = 'api-service' AND severity_text = 'ERROR'"
-                }
-
-                order = [
-                  {
-                    direction = "desc"
-                    key = {
-                      name = "timestamp"
-                    }
-                  }
-                ]
-
-                limit = 100
+              filter = {
+                expression = "service.name = 'api-service' AND severity_text = 'ERROR'"
               }
+
+              order = [
+                {
+                  direction = "desc"
+                  key = {
+                    name = "timestamp"
+                  }
+                }
+              ]
+
+              limit = 100
             }
           }
         }
-      ]
-
-      selected_fields = [
-        {
-          name = "timestamp"
-        },
-        {
-          name            = "service.name"
-          field_context   = "resource"
-          field_data_type = "string"
-        },
-        {
-          name            = "severity_text"
-          field_data_type = "string"
-        },
-        {
-          name            = "body"
-          field_context   = "body"
-          field_data_type = "string"
-        },
-      ]
-
-      display = {
-        font_size = "small"
-        format    = "list"
-        max_lines = 2
       }
+    ]
+
+    selected_fields = [
+      {
+        name = "timestamp"
+      },
+      {
+        name            = "service.name"
+        field_context   = "resource"
+        field_data_type = "string"
+      },
+      {
+        name            = "severity_text"
+        field_data_type = "string"
+      },
+      {
+        name            = "body"
+        field_context   = "body"
+        field_data_type = "string"
+      },
+    ]
+
+    display = {
+      font_size = "small"
+      format    = "list"
+      max_lines = 2
     }
   }
 }
@@ -90,34 +88,28 @@ resource "signoz_saved_view" "api_service_errors" {
 
 ```terraform
 resource "signoz_saved_view" "minimal" {
-  name   = "minimal-required-only"
-  source = "logs"
+  name           = "minimal-required-only"
+  source         = "logs"
+  schema_version = "v2"
 
-  data = {
-    schema_version = "v2"
+  spec = {
+    display_name = "Minimal"
+    panel_type   = "list"
+    request_type = "raw"
 
-    spec = {
-      display_name = "Minimal"
-      panel_type   = "list"
-
-      queries = [
-        {
-          builder_query = {
-            type = "builder_query"
-            spec = {
-              logs = {
-                name   = "A"
-                signal = "logs"
-              }
+    queries = [
+      {
+        builder_query = {
+          type = "builder_query"
+          spec = {
+            logs = {
+              name   = "A"
+              signal = "logs"
             }
           }
         }
-      ]
-
-      selected_fields = []
-
-      display = {}
-    }
+      }
+    ]
   }
 }
 ```
@@ -127,66 +119,64 @@ resource "signoz_saved_view" "minimal" {
 # operation and rendered as a table.
 
 resource "signoz_saved_view" "checkout_slow_spans" {
-  name   = "checkout-slow-spans"
-  source = "traces"
+  name           = "checkout-slow-spans"
+  source         = "traces"
+  schema_version = "v2"
 
-  data = {
-    schema_version = "v2"
+  spec = {
+    display_name = "Checkout slow spans"
+    panel_type   = "table"
+    request_type = "scalar"
 
-    spec = {
-      display_name = "Checkout slow spans"
-      panel_type   = "table"
+    queries = [
+      {
+        builder_query = {
+          type = "builder_query"
+          spec = {
+            traces = {
+              name   = "A"
+              signal = "traces"
 
-      queries = [
-        {
-          builder_query = {
-            type = "builder_query"
-            spec = {
-              traces = {
-                name   = "A"
-                signal = "traces"
-
-                aggregations = [
-                  {
-                    expression = "p99(duration_nano)"
-                  }
-                ]
-
-                filter = {
-                  expression = "service.name = 'checkout' AND duration_nano > 500000000"
+              aggregations = [
+                {
+                  expression = "p99(duration_nano)"
                 }
+              ]
 
-                group_by = [
-                  {
-                    name            = "name"
-                    field_context   = "span"
-                    field_data_type = "string"
-                  }
-                ]
-
-                limit = 50
+              filter = {
+                expression = "service.name = 'checkout' AND duration_nano > 500000000"
               }
+
+              group_by = [
+                {
+                  name            = "name"
+                  field_context   = "span"
+                  field_data_type = "string"
+                }
+              ]
+
+              limit = 50
             }
           }
         }
-      ]
-
-      selected_fields = [
-        {
-          name            = "name"
-          field_context   = "span"
-          field_data_type = "string"
-        },
-        {
-          name            = "duration_nano"
-          field_context   = "span"
-          field_data_type = "float64"
-        },
-      ]
-
-      display = {
-        format = "table"
       }
+    ]
+
+    selected_fields = [
+      {
+        name            = "name"
+        field_context   = "span"
+        field_data_type = "string"
+      },
+      {
+        name            = "duration_nano"
+        field_context   = "span"
+        field_data_type = "float64"
+      },
+    ]
+
+    display = {
+      format = "table"
     }
   }
 }
@@ -197,8 +187,9 @@ resource "signoz_saved_view" "checkout_slow_spans" {
 
 ### Required
 
-- `data` (Attributes) (see [below for nested schema](#nestedatt--data))
+- `schema_version` (String)
 - `source` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec))
 
 ### Optional
 
@@ -208,50 +199,35 @@ resource "signoz_saved_view" "checkout_slow_spans" {
 
 - `id` (String) The ID of this resource.
 
-<a id="nestedatt--data"></a>
-### Nested Schema for `data`
+<a id="nestedatt--spec"></a>
+### Nested Schema for `spec`
 
 Required:
 
-- `schema_version` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--data--spec))
-
-<a id="nestedatt--data--spec"></a>
-### Nested Schema for `data.spec`
-
-Required:
-
-- `display` (Attributes) (see [below for nested schema](#nestedatt--data--spec--display))
 - `display_name` (String)
 - `panel_type` (String)
-- `queries` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries))
-- `selected_fields` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--selected_fields))
-
-<a id="nestedatt--data--spec--display"></a>
-### Nested Schema for `data.spec.display`
+- `queries` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries))
+- `request_type` (String)
 
 Optional:
 
-- `color` (String)
-- `font_size` (String)
-- `format` (String)
-- `max_lines` (Number)
+- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--display))
+- `selected_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--selected_fields))
 
-
-<a id="nestedatt--data--spec--queries"></a>
-### Nested Schema for `data.spec.queries`
+<a id="nestedatt--spec--queries"></a>
+### Nested Schema for `spec.queries`
 
 Optional:
 
-- `builder_ai_query` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query))
-- `builder_formula` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_formula))
-- `builder_query` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query))
-- `builder_trace_operator` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator))
-- `clickhouse_sql` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--clickhouse_sql))
-- `promql` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--promql))
+- `builder_ai_query` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query))
+- `builder_formula` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_formula))
+- `builder_query` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query))
+- `builder_trace_operator` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator))
+- `clickhouse_sql` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--clickhouse_sql))
+- `promql` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--promql))
 
-<a id="nestedatt--data--spec--queries--builder_ai_query"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query`
+<a id="nestedatt--spec--queries--builder_ai_query"></a>
+### Nested Schema for `spec.queries.builder_ai_query`
 
 Required:
 
@@ -259,10 +235,10 @@ Required:
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec))
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec))
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec`
+<a id="nestedatt--spec--queries--builder_ai_query--spec"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec`
 
 Required:
 
@@ -270,26 +246,26 @@ Required:
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--aggregations))
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--aggregations))
 - `cursor` (String)
 - `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--having))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--having))
 - `legend` (String)
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--limit_by))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--limit_by))
 - `name` (String)
 - `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--select_fields))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--select_fields))
 - `source` (String)
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.aggregations`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--aggregations"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.aggregations`
 
 Optional:
 
@@ -297,24 +273,24 @@ Optional:
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--filter"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.filter`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--filter"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.filter`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--functions"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.functions`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--functions"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.functions`
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--functions--args))
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--functions--args))
 - `name` (String)
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--functions--args"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.functions.args`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--functions--args"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.functions.args`
 
 Optional:
 
@@ -323,8 +299,8 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.group_by`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--group_by"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.group_by`
 
 Required:
 
@@ -339,16 +315,16 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--having"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.having`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--having"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.having`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.limit_by`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--limit_by"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.limit_by`
 
 Optional:
 
@@ -356,16 +332,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--order"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.order`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--order"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.order.key`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--order--key"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.order.key`
 
 Required:
 
@@ -381,21 +357,21 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.secondary_aggregations`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.secondary_aggregations`
 
 Optional:
 
 - `alias` (String)
 - `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by))
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--order))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--order))
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.secondary_aggregations.group_by`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.secondary_aggregations.group_by`
 
 Required:
 
@@ -410,8 +386,8 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.secondary_aggregations.limit_by`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.secondary_aggregations.limit_by`
 
 Optional:
 
@@ -419,34 +395,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--order"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.secondary_aggregations.order`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--order"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.secondary_aggregations.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.secondary_aggregations.order.key`
-
-Required:
-
-- `name` (String)
-
-Optional:
-
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
-
-
-
-
-<a id="nestedatt--data--spec--queries--builder_ai_query--spec--select_fields"></a>
-### Nested Schema for `data.spec.queries.builder_ai_query.spec.select_fields`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.secondary_aggregations.order.key`
 
 Required:
 
@@ -463,8 +421,26 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_formula"></a>
-### Nested Schema for `data.spec.queries.builder_formula`
+<a id="nestedatt--spec--queries--builder_ai_query--spec--select_fields"></a>
+### Nested Schema for `spec.queries.builder_ai_query.spec.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--queries--builder_formula"></a>
+### Nested Schema for `spec.queries.builder_formula`
 
 Required:
 
@@ -472,32 +448,32 @@ Required:
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_formula--spec))
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec))
 
-<a id="nestedatt--data--spec--queries--builder_formula--spec"></a>
-### Nested Schema for `data.spec.queries.builder_formula.spec`
+<a id="nestedatt--spec--queries--builder_formula--spec"></a>
+### Nested Schema for `spec.queries.builder_formula.spec`
 
 Optional:
 
 - `disabled` (Boolean)
 - `expression` (String)
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_formula--spec--functions))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_formula--spec--having))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--functions))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--having))
 - `legend` (String)
 - `limit` (Number)
 - `name` (String)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_formula--spec--order))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--order))
 
-<a id="nestedatt--data--spec--queries--builder_formula--spec--functions"></a>
-### Nested Schema for `data.spec.queries.builder_formula.spec.functions`
+<a id="nestedatt--spec--queries--builder_formula--spec--functions"></a>
+### Nested Schema for `spec.queries.builder_formula.spec.functions`
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_formula--spec--functions--args))
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--functions--args))
 - `name` (String)
 
-<a id="nestedatt--data--spec--queries--builder_formula--spec--functions--args"></a>
-### Nested Schema for `data.spec.queries.builder_formula.spec.functions.args`
+<a id="nestedatt--spec--queries--builder_formula--spec--functions--args"></a>
+### Nested Schema for `spec.queries.builder_formula.spec.functions.args`
 
 Optional:
 
@@ -506,24 +482,24 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_formula--spec--having"></a>
-### Nested Schema for `data.spec.queries.builder_formula.spec.having`
+<a id="nestedatt--spec--queries--builder_formula--spec--having"></a>
+### Nested Schema for `spec.queries.builder_formula.spec.having`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_formula--spec--order"></a>
-### Nested Schema for `data.spec.queries.builder_formula.spec.order`
+<a id="nestedatt--spec--queries--builder_formula--spec--order"></a>
+### Nested Schema for `spec.queries.builder_formula.spec.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_formula--spec--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_formula--spec--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_formula.spec.order.key`
+<a id="nestedatt--spec--queries--builder_formula--spec--order--key"></a>
+### Nested Schema for `spec.queries.builder_formula.spec.order.key`
 
 Required:
 
@@ -541,8 +517,8 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query"></a>
-### Nested Schema for `data.spec.queries.builder_query`
+<a id="nestedatt--spec--queries--builder_query"></a>
+### Nested Schema for `spec.queries.builder_query`
 
 Required:
 
@@ -550,19 +526,19 @@ Required:
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec))
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec`
+<a id="nestedatt--spec--queries--builder_query--spec"></a>
+### Nested Schema for `spec.queries.builder_query.spec`
 
 Optional:
 
-- `logs` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs))
-- `metrics` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics))
-- `traces` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces))
+- `logs` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs))
+- `metrics` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics))
+- `traces` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs`
+<a id="nestedatt--spec--queries--builder_query--spec--logs"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs`
 
 Required:
 
@@ -570,26 +546,26 @@ Required:
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--aggregations))
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--aggregations))
 - `cursor` (String)
 - `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--having))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--having))
 - `legend` (String)
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--limit_by))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--limit_by))
 - `name` (String)
 - `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--select_fields))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--select_fields))
 - `source` (String)
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.aggregations`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--aggregations"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.aggregations`
 
 Optional:
 
@@ -597,24 +573,24 @@ Optional:
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--filter"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.filter`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--filter"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.filter`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--functions"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.functions`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--functions"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.functions`
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--functions--args))
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--functions--args))
 - `name` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--functions--args"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.functions.args`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--functions--args"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.functions.args`
 
 Optional:
 
@@ -623,8 +599,8 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.group_by`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--group_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.group_by`
 
 Required:
 
@@ -639,16 +615,16 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--having"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.having`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--having"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.having`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.limit_by`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--limit_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.limit_by`
 
 Optional:
 
@@ -656,16 +632,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--order"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.order`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--order"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.order.key`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--order--key"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.order.key`
 
 Required:
 
@@ -681,21 +657,21 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.secondary_aggregations`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.secondary_aggregations`
 
 Optional:
 
 - `alias` (String)
 - `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by))
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--order))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--order))
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.secondary_aggregations.group_by`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.secondary_aggregations.group_by`
 
 Required:
 
@@ -710,8 +686,8 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.secondary_aggregations.limit_by`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.secondary_aggregations.limit_by`
 
 Optional:
 
@@ -719,34 +695,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--order"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.secondary_aggregations.order`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--order"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.secondary_aggregations.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.secondary_aggregations.order.key`
-
-Required:
-
-- `name` (String)
-
-Optional:
-
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
-
-
-
-
-<a id="nestedatt--data--spec--queries--builder_query--spec--logs--select_fields"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.logs.select_fields`
+<a id="nestedatt--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.secondary_aggregations.order.key`
 
 Required:
 
@@ -762,8 +720,26 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics`
+
+<a id="nestedatt--spec--queries--builder_query--spec--logs--select_fields"></a>
+### Nested Schema for `spec.queries.builder_query.spec.logs.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--queries--builder_query--spec--metrics"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics`
 
 Required:
 
@@ -771,38 +747,38 @@ Required:
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--aggregations))
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--aggregations))
 - `cursor` (String)
 - `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--having))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--having))
 - `legend` (String)
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--limit_by))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--limit_by))
 - `name` (String)
 - `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--select_fields))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--select_fields))
 - `source` (String)
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.aggregations`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--aggregations"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.aggregations`
 
 Optional:
 
-- `comparison_space_aggregation_param` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
+- `comparison_space_aggregation_param` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
 - `metric_name` (String)
 - `reduce_to` (String)
 - `space_aggregation` (String)
 - `temporality` (String)
 - `time_aggregation` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.aggregations.comparison_space_aggregation_param`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.aggregations.comparison_space_aggregation_param`
 
 Required:
 
@@ -811,24 +787,24 @@ Required:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--filter"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.filter`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--filter"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.filter`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--functions"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.functions`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--functions"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.functions`
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--functions--args))
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--functions--args))
 - `name` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--functions--args"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.functions.args`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--functions--args"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.functions.args`
 
 Optional:
 
@@ -837,8 +813,8 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.group_by`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--group_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.group_by`
 
 Required:
 
@@ -853,16 +829,16 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--having"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.having`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--having"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.having`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.limit_by`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--limit_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.limit_by`
 
 Optional:
 
@@ -870,16 +846,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--order"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.order`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--order"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.order.key`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--order--key"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.order.key`
 
 Required:
 
@@ -895,21 +871,21 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.secondary_aggregations`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.secondary_aggregations`
 
 Optional:
 
 - `alias` (String)
 - `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by))
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--order))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--order))
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.secondary_aggregations.group_by`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.secondary_aggregations.group_by`
 
 Required:
 
@@ -924,8 +900,8 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.secondary_aggregations.limit_by`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.secondary_aggregations.limit_by`
 
 Optional:
 
@@ -933,34 +909,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--order"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.secondary_aggregations.order`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--order"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.secondary_aggregations.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.secondary_aggregations.order.key`
-
-Required:
-
-- `name` (String)
-
-Optional:
-
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
-
-
-
-
-<a id="nestedatt--data--spec--queries--builder_query--spec--metrics--select_fields"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.metrics.select_fields`
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.secondary_aggregations.order.key`
 
 Required:
 
@@ -976,8 +934,26 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces`
+
+<a id="nestedatt--spec--queries--builder_query--spec--metrics--select_fields"></a>
+### Nested Schema for `spec.queries.builder_query.spec.metrics.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--queries--builder_query--spec--traces"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces`
 
 Required:
 
@@ -985,26 +961,26 @@ Required:
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--aggregations))
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--aggregations))
 - `cursor` (String)
 - `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--having))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--having))
 - `legend` (String)
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--limit_by))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--limit_by))
 - `name` (String)
 - `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--select_fields))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--select_fields))
 - `source` (String)
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.aggregations`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--aggregations"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.aggregations`
 
 Optional:
 
@@ -1012,24 +988,24 @@ Optional:
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--filter"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.filter`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--filter"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.filter`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--functions"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.functions`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--functions"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.functions`
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--functions--args))
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--functions--args))
 - `name` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--functions--args"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.functions.args`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--functions--args"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.functions.args`
 
 Optional:
 
@@ -1038,8 +1014,8 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.group_by`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--group_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.group_by`
 
 Required:
 
@@ -1054,16 +1030,16 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--having"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.having`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--having"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.having`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.limit_by`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--limit_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.limit_by`
 
 Optional:
 
@@ -1071,16 +1047,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--order"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.order`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--order"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.order.key`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--order--key"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.order.key`
 
 Required:
 
@@ -1096,21 +1072,21 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.secondary_aggregations`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.secondary_aggregations`
 
 Optional:
 
 - `alias` (String)
 - `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by))
 - `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--order))
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--order))
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.secondary_aggregations.group_by`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.secondary_aggregations.group_by`
 
 Required:
 
@@ -1125,8 +1101,8 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.secondary_aggregations.limit_by`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.secondary_aggregations.limit_by`
 
 Optional:
 
@@ -1134,34 +1110,16 @@ Optional:
 - `value` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--order"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.secondary_aggregations.order`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--order"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.secondary_aggregations.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.secondary_aggregations.order.key`
-
-Required:
-
-- `name` (String)
-
-Optional:
-
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
-
-
-
-
-<a id="nestedatt--data--spec--queries--builder_query--spec--traces--select_fields"></a>
-### Nested Schema for `data.spec.queries.builder_query.spec.traces.select_fields`
+<a id="nestedatt--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.secondary_aggregations.order.key`
 
 Required:
 
@@ -1178,9 +1136,27 @@ Optional:
 
 
 
+<a id="nestedatt--spec--queries--builder_query--spec--traces--select_fields"></a>
+### Nested Schema for `spec.queries.builder_query.spec.traces.select_fields`
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator`
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+
+<a id="nestedatt--spec--queries--builder_trace_operator"></a>
+### Nested Schema for `spec.queries.builder_trace_operator`
 
 Required:
 
@@ -1188,32 +1164,32 @@ Required:
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec))
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec))
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec`
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--aggregations))
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--aggregations))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `expression` (String)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--having))
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--having))
 - `legend` (String)
 - `limit` (Number)
 - `name` (String)
 - `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--order))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--order))
 - `return_spans_from` (String)
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--select_fields))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--select_fields))
 - `step_interval` (String)
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--aggregations"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.aggregations`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--aggregations"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.aggregations`
 
 Optional:
 
@@ -1221,24 +1197,24 @@ Optional:
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--filter"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.filter`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--filter"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.filter`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--functions"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.functions`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--functions"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.functions`
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--functions--args))
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--functions--args))
 - `name` (String)
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--functions--args"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.functions.args`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--functions--args"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.functions.args`
 
 Optional:
 
@@ -1247,8 +1223,8 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--group_by"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.group_by`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--group_by"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.group_by`
 
 Required:
 
@@ -1263,41 +1239,24 @@ Optional:
 - `unit` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--having"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.having`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--having"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.having`
 
 Optional:
 
 - `expression` (String)
 
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--order"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.order`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--order"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.order`
 
 Optional:
 
 - `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--builder_trace_operator--spec--order--key))
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec--order--key))
 
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--order--key"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.order.key`
-
-Required:
-
-- `name` (String)
-
-Optional:
-
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
-
-
-
-<a id="nestedatt--data--spec--queries--builder_trace_operator--spec--select_fields"></a>
-### Nested Schema for `data.spec.queries.builder_trace_operator.spec.select_fields`
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--order--key"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.order.key`
 
 Required:
 
@@ -1313,9 +1272,26 @@ Optional:
 
 
 
+<a id="nestedatt--spec--queries--builder_trace_operator--spec--select_fields"></a>
+### Nested Schema for `spec.queries.builder_trace_operator.spec.select_fields`
 
-<a id="nestedatt--data--spec--queries--clickhouse_sql"></a>
-### Nested Schema for `data.spec.queries.clickhouse_sql`
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--queries--clickhouse_sql"></a>
+### Nested Schema for `spec.queries.clickhouse_sql`
 
 Required:
 
@@ -1323,10 +1299,10 @@ Required:
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--clickhouse_sql--spec))
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--clickhouse_sql--spec))
 
-<a id="nestedatt--data--spec--queries--clickhouse_sql--spec"></a>
-### Nested Schema for `data.spec.queries.clickhouse_sql.spec`
+<a id="nestedatt--spec--queries--clickhouse_sql--spec"></a>
+### Nested Schema for `spec.queries.clickhouse_sql.spec`
 
 Optional:
 
@@ -1337,8 +1313,8 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--queries--promql"></a>
-### Nested Schema for `data.spec.queries.promql`
+<a id="nestedatt--spec--queries--promql"></a>
+### Nested Schema for `spec.queries.promql`
 
 Required:
 
@@ -1346,10 +1322,10 @@ Required:
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--data--spec--queries--promql--spec))
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--promql--spec))
 
-<a id="nestedatt--data--spec--queries--promql--spec"></a>
-### Nested Schema for `data.spec.queries.promql.spec`
+<a id="nestedatt--spec--queries--promql--spec"></a>
+### Nested Schema for `spec.queries.promql.spec`
 
 Optional:
 
@@ -1363,8 +1339,19 @@ Optional:
 
 
 
-<a id="nestedatt--data--spec--selected_fields"></a>
-### Nested Schema for `data.spec.selected_fields`
+<a id="nestedatt--spec--display"></a>
+### Nested Schema for `spec.display`
+
+Optional:
+
+- `color` (String)
+- `font_size` (String)
+- `format` (String)
+- `max_lines` (Number)
+
+
+<a id="nestedatt--spec--selected_fields"></a>
+### Nested Schema for `spec.selected_fields`
 
 Required:
 
