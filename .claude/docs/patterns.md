@@ -37,6 +37,16 @@ A `map[string]Obj` on the wire.
 - **Fix:** skaff `MapValueRef` + generated `Expand/Flatten<X>Map` (handled now).
 - **Example:** dashboard `spec.panels` (`map[string]Panel`) and `spec.datasources`.
 
+### Spec constraint that never reaches the schema
+
+The spec *does* express a constraint — a `oneOf` discriminator, an update-less field — but the generated schema doesn't, because skaff injects constraints in post-processing passes and each pass hand-rolls its own incomplete walk of the attribute tree.
+
+- **Pitfall:** invalid config passes `terraform plan` and only fails at apply, with a server error that points somewhere else entirely. An empty variant block serialises as `"spec": null` and SigNoz answers `invalid signal ""` — which reads like a missing-serialisation bug in the provider and isn't (issue #154); setting *two* variants also plans clean and silently drops one.
+- **Spot it:** compare constraint presence for the *same* shape across two resources' generated schemas. A difference means the walk, not the spec — check whether the shape sits under a container the pass doesn't descend into.
+- **Fix:** in skaff, one shared traversal per pass, recursing independently of the attach, and dedup at every append site. Fixed for `oneOf` validators in skaff v0.0.2 (`SigNoz/skaff#14`): `nestedContainer` now handles map/set nesting, so unions under a `MapNestedAttribute` are reachable, and the four append sites dedup identical rewrites — two components share the builder-query discriminator mapping, which previously produced a doubled validator in the rule schema.
+- **Still open — same class:** `injectRequiresReplace` doesn't recurse and runs only for update-less resources, so per-field immutability is never expressed and a `signoz_saved_view` rename fails only at apply (#149).
+- **Example:** the five unions under dashboard `spec.panels` — the panel plugin, the query plugin, two `builder_query.spec` sites and the query spec — had no `ExactlyOneNestedAttribute` until the v0.0.2 regen, while dashboard layouts and both variable unions were guarded all along. `spec.panels` is the schema's only `MapNestedAttribute`, and it is in the ancestry of exactly the unguarded five.
+
 ---
 
 ## SigNoz-side patterns — schema shapes that need an upstream fix

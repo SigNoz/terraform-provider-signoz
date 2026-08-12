@@ -1645,7 +1645,6 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 											Computed: true,
 											Validators: []validator.Object{
 												validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
-												validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
 											},
 										},
 										"type": schema.StringAttribute{
