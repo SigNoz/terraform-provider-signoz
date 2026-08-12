@@ -187,22 +187,17 @@ resource "signoz_rule" "minimal" {
 - `alert` (String)
 - `alert_type` (String)
 - `condition` (Attributes) (see [below for nested schema](#nestedatt--condition))
+- `evaluation` (Attributes) (see [below for nested schema](#nestedatt--evaluation))
+- `notification_settings` (Attributes) (see [below for nested schema](#nestedatt--notification_settings))
 - `rule_type` (String)
+- `schema_version` (String)
 
 ### Optional
 
 - `annotations` (Map of String)
 - `description` (String)
 - `disabled` (Boolean)
-- `eval_window` (String)
-- `evaluation` (Attributes) (see [below for nested schema](#nestedatt--evaluation))
-- `frequency` (String)
 - `labels` (Map of String)
-- `notification_settings` (Attributes) (see [below for nested schema](#nestedatt--notification_settings))
-- `preferred_channels` (List of String)
-- `schema_version` (String)
-- `source` (String)
-- `version` (String)
 
 ### Read-Only
 
@@ -214,21 +209,17 @@ resource "signoz_rule" "minimal" {
 Required:
 
 - `composite_query` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query))
+- `selected_query_name` (String)
+- `thresholds` (Attributes) (see [below for nested schema](#nestedatt--condition--thresholds))
 
 Optional:
 
 - `absent_for` (Number)
 - `alert_on_absent` (Boolean)
 - `algorithm` (String)
-- `match_type` (String)
-- `op` (String)
 - `require_min_points` (Boolean)
 - `required_num_points` (Number)
 - `seasonality` (String)
-- `selected_query_name` (String)
-- `target` (Number)
-- `target_unit` (String)
-- `thresholds` (Attributes) (see [below for nested schema](#nestedatt--condition--thresholds))
 
 <a id="nestedatt--condition--composite_query"></a>
 ### Nested Schema for `condition.composite_query`

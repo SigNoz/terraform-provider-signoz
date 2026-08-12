@@ -29,17 +29,12 @@ data "signoz_rule" "example" {
 - `condition` (Attributes) (see [below for nested schema](#nestedatt--condition))
 - `description` (String)
 - `disabled` (Boolean)
-- `eval_window` (String)
 - `evaluation` (Attributes) (see [below for nested schema](#nestedatt--evaluation))
-- `frequency` (String)
 - `id` (String) The ID of this resource.
 - `labels` (Map of String)
 - `notification_settings` (Attributes) (see [below for nested schema](#nestedatt--notification_settings))
-- `preferred_channels` (List of String)
 - `rule_type` (String)
 - `schema_version` (String)
-- `source` (String)
-- `version` (String)
 
 <a id="nestedatt--condition"></a>
 ### Nested Schema for `condition`
@@ -50,14 +45,10 @@ Read-Only:
 - `alert_on_absent` (Boolean)
 - `algorithm` (String)
 - `composite_query` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query))
-- `match_type` (String)
-- `op` (String)
 - `require_min_points` (Boolean)
 - `required_num_points` (Number)
 - `seasonality` (String)
 - `selected_query_name` (String)
-- `target` (Number)
-- `target_unit` (String)
 - `thresholds` (Attributes) (see [below for nested schema](#nestedatt--condition--thresholds))
 
 <a id="nestedatt--condition--composite_query"></a>
