@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
@@ -422,7 +422,7 @@ type Querybuildertypesv5PromQueryValue struct {
 	Name     basetypes.StringValue `tfsdk:"name"`
 	Query    basetypes.StringValue `tfsdk:"query"`
 	Stats    basetypes.BoolValue   `tfsdk:"stats"`
-	Step     jsontypes.Normalized `tfsdk:"step"`
+	Step     jsontypes.Normalized  `tfsdk:"step"`
 	state    attr.ValueState
 }
 
