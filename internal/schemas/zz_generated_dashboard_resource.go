@@ -1290,6 +1290,9 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 											Required: true,
+											Validators: []validator.Object{
+												validators.ExactlyOneNestedAttribute("bar_chart_panel", "histogram_panel", "list_panel", "number_panel", "pie_chart_panel", "table_panel", "time_series_panel"),
+											},
 										},
 										"queries": schema.ListNestedAttribute{
 											NestedObject: schema.NestedAttributeObject{
@@ -3230,6 +3233,9 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																					},
 																				},
 																				Required: true,
+																				Validators: []validator.Object{
+																					validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
+																				},
 																			},
 																		},
 																		CustomType: customtypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpecType{
@@ -6057,6 +6063,9 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																											},
 																											Optional: true,
 																											Computed: true,
+																											Validators: []validator.Object{
+																												validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
+																											},
 																										},
 																										"type": schema.StringAttribute{
 																											Required: true,
@@ -6596,6 +6605,9 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																								ObjectType: types.ObjectType{
 																									AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeValue{}.AttributeTypes(ctx),
 																								},
+																							},
+																							Validators: []validator.Object{
+																								validators.ExactlyOneNestedAttribute("builder_ai_query", "builder_formula", "builder_query", "builder_trace_operator", "clickhouse_sql", "promql"),
 																							},
 																						},
 																						Optional: true,
@@ -7286,6 +7298,9 @@ func DashboardResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 																Required: true,
+																Validators: []validator.Object{
+																	validators.ExactlyOneNestedAttribute("builder_query", "click_house_sql", "composite_query", "formula", "prom_qlquery", "trace_operator"),
+																},
 															},
 														},
 														CustomType: customtypes.DashboardtypesQuerySpecType{
