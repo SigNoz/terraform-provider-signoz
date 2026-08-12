@@ -105,12 +105,9 @@ class Tool:
         assert result.returncode == 0, f"apply failed:\n{result.stdout}\n{result.stderr}"
         return result
 
-    def plan(self) -> subprocess.CompletedProcess:
-        # -detailed-exitcode: 0 = no changes, 1 = error, 2 = changes (drift).
-        return self._run("plan", "-detailed-exitcode")
-
     def plan_exit_code(self) -> int:
-        result = self.plan()
+        # -detailed-exitcode: 0 = no changes, 1 = error, 2 = changes (drift).
+        result = self._run("plan", "-detailed-exitcode")
         assert result.returncode in (0, 2), f"plan errored:\n{result.stdout}\n{result.stderr}"
         return result.returncode
 
