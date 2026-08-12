@@ -54,7 +54,7 @@ resource "signoz_saved_view" "checkout_slow_spans" {
       {
         name            = "duration_nano"
         field_context   = "span"
-        field_data_type = "float64"
+        field_data_type = "number"
       },
     ]
 
