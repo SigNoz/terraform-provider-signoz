@@ -37,6 +37,15 @@ A `map[string]Obj` on the wire.
 - **Fix:** skaff `MapValueRef` + generated `Expand/Flatten<X>Map` (handled now).
 - **Example:** dashboard `spec.panels` (`map[string]Panel`) and `spec.datasources`.
 
+### Spec constraint that never reaches the schema
+
+The spec *does* express a constraint — a `oneOf` discriminator, an update-less field — but the generated schema doesn't, because skaff injects constraints in post-processing passes and each pass hand-rolls its own incomplete walk of the attribute tree.
+
+- **Pitfall:** invalid config passes `terraform plan` and only fails at apply, with a server error that points somewhere else entirely. An empty variant block serialises as `"spec": null` and SigNoz answers `invalid signal ""` — which reads like a missing-serialisation bug in the provider and isn't (issue #154); setting *two* variants also plans clean and silently drops one. The walks: `nestedContainer` (skaff `app/generate.go:702-714`) knows only `single_nested` / `list_nested`, and since the same call gates both the attach **and** the recursion (`injectByMatch`, `:664-683`), a `MapNestedAttribute` hides every union beneath it. `injectRequiresReplace` doesn't recurse (`:460-495`) and runs only for update-less resources (`app/schemas.go:140`), so per-field immutability is never expressed at all.
+- **Spot it:** compare validator presence for the *same* union across two resources' generated schemas — `signoz_rule` guards `builder_query.spec`, `signoz_dashboard` doesn't. The differentiator is ancestry: check whether the union sits under a map.
+- **Fix:** in skaff, one shared traversal per pass — teach `nestedContainer` map/set, and recurse independently of the attach. Watch the sibling bug: two components share the builder-query discriminator mapping, so a re-walk appends twice (the doubled validator at `zz_generated_rule_resource.go:2832-2833`) and fixing the map walk alone propagates that duplicate into the dashboard schema.
+- **Example:** dashboard's panel plugin (`zz_generated_dashboard_resource.go:282`), query plugin (`:1315`) and `builder_query.spec` (`:1327`) carry no `ExactlyOneNestedAttribute` — all three sit under `spec.panels`, the schema's only `MapNestedAttribute` — while layouts (`:181`) and both variable unions (`:7505`, `:7606`) are guarded. Same class, separate fix: a `signoz_saved_view` rename fails only at apply (#149).
+
 ---
 
 ## SigNoz-side patterns — schema shapes that need an upstream fix
