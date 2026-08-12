@@ -9,13 +9,9 @@ type RuletypesRuleCondition struct {
 	AlertOnAbsent     *bool                        `json:"alertOnAbsent,omitempty"`
 	Algorithm         *string                      `json:"algorithm,omitempty"`
 	CompositeQuery    RuletypesAlertCompositeQuery `json:"compositeQuery"`
-	MatchType         *RuletypesMatchType          `json:"matchType,omitempty"`
-	Op                *RuletypesCompareOperator    `json:"op,omitempty"`
 	RequireMinPoints  *bool                        `json:"requireMinPoints,omitempty"`
 	RequiredNumPoints *int                         `json:"requiredNumPoints,omitempty"`
 	Seasonality       *RuletypesSeasonality        `json:"seasonality,omitempty"`
-	SelectedQueryName *string                      `json:"selectedQueryName,omitempty"`
-	Target            *float64                     `json:"target,omitempty"`
-	TargetUnit        *string                      `json:"targetUnit,omitempty"`
-	Thresholds        *RuletypesRuleThresholdData  `json:"thresholds,omitempty"`
+	SelectedQueryName string                       `json:"selectedQueryName"`
+	Thresholds        RuletypesRuleThresholdData   `json:"thresholds"`
 }

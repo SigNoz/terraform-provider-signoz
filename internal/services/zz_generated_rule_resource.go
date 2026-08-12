@@ -220,16 +220,11 @@ func ruleResourceFromDS(ds *schemas.RuleDataSourceModel) *schemas.RuleModel {
 		Condition:            ds.Condition,
 		Description:          ds.Description,
 		Disabled:             ds.Disabled,
-		EvalWindow:           ds.EvalWindow,
 		Evaluation:           ds.Evaluation,
-		Frequency:            ds.Frequency,
 		Id:                   ds.Id,
 		Labels:               ds.Labels,
 		NotificationSettings: ds.NotificationSettings,
-		PreferredChannels:    ds.PreferredChannels,
 		RuleType:             ds.RuleType,
 		SchemaVersion:        ds.SchemaVersion,
-		Source:               ds.Source,
-		Version:              ds.Version,
 	}
 }
