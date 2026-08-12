@@ -37,7 +37,7 @@
                     }
                   },
                   "name": "service.name",
-                  "default_value": "[\"frontend\",\"backend\"]"
+                  "default_value": "${jsonencode([\"frontend\", \"backend\"])}"
                 }
               }
             }
