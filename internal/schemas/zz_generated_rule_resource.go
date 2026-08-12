@@ -7,7 +7,6 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/validators"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -3377,9 +3376,6 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 									},
 								},
 								Required: true,
-								Validators: []validator.List{
-									listvalidator.SizeAtLeast(1),
-								},
 							},
 							"query_type": schema.StringAttribute{
 								Required: true,
@@ -3403,6 +3399,34 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						},
 						Required: true,
 					},
+					"match_type": schema.StringAttribute{
+						Optional: true,
+						Computed: true,
+						Validators: []validator.String{
+							stringvalidator.OneOf(
+								"at_least_once",
+								"all_the_times",
+								"on_average",
+								"in_total",
+								"last",
+							),
+						},
+					},
+					"op": schema.StringAttribute{
+						Optional: true,
+						Computed: true,
+						Validators: []validator.String{
+							stringvalidator.OneOf(
+								"above",
+								"below",
+								"equal",
+								"not_equal",
+								"above_or_equal",
+								"below_or_equal",
+								"outside_bounds",
+							),
+						},
+					},
 					"require_min_points": schema.BoolAttribute{
 						Optional: true,
 						Computed: true,
@@ -3423,7 +3447,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"selected_query_name": schema.StringAttribute{
-						Required: true,
+						Optional: true,
+						Computed: true,
+					},
+					"target": schema.Float64Attribute{
+						Optional: true,
+						Computed: true,
+					},
+					"target_unit": schema.StringAttribute{
+						Optional: true,
+						Computed: true,
 					},
 					"thresholds": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
@@ -3509,7 +3542,8 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 								AttrTypes: customtypes.RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
 							},
 						},
-						Required: true,
+						Optional: true,
+						Computed: true,
 						Validators: []validator.Object{
 							validators.ExactlyOneNestedAttribute("basic"),
 						},
@@ -3527,6 +3561,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"disabled": schema.BoolAttribute{
+				Optional: true,
+				Computed: true,
+			},
+			"eval_window": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
 			},
@@ -3647,10 +3685,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.RuletypesEvaluationEnvelopeValue{}.AttributeTypes(ctx),
 					},
 				},
-				Required: true,
+				Optional: true,
+				Computed: true,
 				Validators: []validator.Object{
 					validators.ExactlyOneNestedAttribute("cumulative", "rolling"),
 				},
+			},
+			"frequency": schema.StringAttribute{
+				Optional: true,
+				Computed: true,
 			},
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -3705,7 +3748,13 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.RuletypesNotificationSettingsValue{}.AttributeTypes(ctx),
 					},
 				},
-				Required: true,
+				Optional: true,
+				Computed: true,
+			},
+			"preferred_channels": schema.ListAttribute{
+				ElementType: types.StringType,
+				Optional:    true,
+				Computed:    true,
 			},
 			"rule_type": schema.StringAttribute{
 				Required: true,
@@ -3718,12 +3767,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"schema_version": schema.StringAttribute{
-				Required: true,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"v2alpha1",
-					),
-				},
+				Optional: true,
+				Computed: true,
+			},
+			"source": schema.StringAttribute{
+				Optional: true,
+				Computed: true,
+			},
+			"version": schema.StringAttribute{
+				Optional: true,
+				Computed: true,
 			},
 		},
 	}
@@ -3736,10 +3789,15 @@ type RuleModel struct {
 	Condition            customtypes.RuletypesRuleConditionValue        `tfsdk:"condition"`
 	Description          types.String                                   `tfsdk:"description"`
 	Disabled             types.Bool                                     `tfsdk:"disabled"`
+	EvalWindow           types.String                                   `tfsdk:"eval_window"`
 	Evaluation           customtypes.RuletypesEvaluationEnvelopeValue   `tfsdk:"evaluation"`
+	Frequency            types.String                                   `tfsdk:"frequency"`
 	Id                   types.String                                   `tfsdk:"id"`
 	Labels               types.Map                                      `tfsdk:"labels"`
 	NotificationSettings customtypes.RuletypesNotificationSettingsValue `tfsdk:"notification_settings"`
+	PreferredChannels    types.List                                     `tfsdk:"preferred_channels"`
 	RuleType             types.String                                   `tfsdk:"rule_type"`
 	SchemaVersion        types.String                                   `tfsdk:"schema_version"`
+	Source               types.String                                   `tfsdk:"source"`
+	Version              types.String                                   `tfsdk:"version"`
 }

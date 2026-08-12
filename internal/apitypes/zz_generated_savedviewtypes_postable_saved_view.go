@@ -5,8 +5,9 @@ package apitypes
 
 // SavedviewtypesPostableSavedView defines model for SavedviewtypesPostableSavedView.
 type SavedviewtypesPostableSavedView struct {
-	Data         SavedviewtypesSavedViewData `json:"data"`
-	GenerateName *bool                       `json:"generateName,omitempty"`
-	Name         *string                     `json:"name,omitempty"`
-	Source       SavedviewtypesSource        `json:"source"`
+	GenerateName  *bool                       `json:"generateName,omitempty"`
+	Name          *string                     `json:"name,omitempty"`
+	SchemaVersion SavedviewtypesSchemaVersion `json:"schemaVersion"`
+	Source        SavedviewtypesSource        `json:"source"`
+	Spec          SavedviewtypesSavedViewSpec `json:"spec"`
 }

@@ -5,9 +5,10 @@ package apitypes
 
 // SavedviewtypesSavedViewSpec defines model for SavedviewtypesSavedViewSpec.
 type SavedviewtypesSavedViewSpec struct {
-	Display        SavedviewtypesDisplay              `json:"display"`
+	Display        *SavedviewtypesDisplay             `json:"display,omitempty"`
 	DisplayName    string                             `json:"displayName"`
 	PanelType      SavedviewtypesPanelType            `json:"panelType"`
 	Queries        []Querybuildertypesv5QueryEnvelope `json:"queries"`
-	SelectedFields []TelemetrytypesTelemetryFieldKey  `json:"selectedFields"`
+	RequestType    Querybuildertypesv5RequestType     `json:"requestType"`
+	SelectedFields *[]TelemetrytypesTelemetryFieldKey `json:"selectedFields,omitempty"`
 }

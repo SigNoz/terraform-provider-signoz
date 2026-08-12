@@ -17,17 +17,18 @@ var _ = types.StringNull
 func ExpandSavedviewtypesPostableSavedView(ctx context.Context, m schemas.SavedViewModel) (*apitypes.SavedviewtypesPostableSavedView, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	data, d := ExpandSavedviewtypesSavedViewData(ctx, m.Data)
+	spec, d := ExpandSavedviewtypesSavedViewSpec(ctx, m.Spec)
 	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 	out := &apitypes.SavedviewtypesPostableSavedView{
-		Name:   convtypes.StringPointer(m.Name),
-		Source: apitypes.SavedviewtypesSource(m.Source.ValueString()),
+		Name:          convtypes.StringPointer(m.Name),
+		SchemaVersion: apitypes.SavedviewtypesSchemaVersion(m.SchemaVersion.ValueString()),
+		Source:        apitypes.SavedviewtypesSource(m.Source.ValueString()),
 	}
-	if data != nil {
-		out.Data = *data
+	if spec != nil {
+		out.Spec = *spec
 	}
 	return out, diags
 }
@@ -35,16 +36,17 @@ func ExpandSavedviewtypesPostableSavedView(ctx context.Context, m schemas.SavedV
 func ExpandSavedviewtypesUpdatableSavedView(ctx context.Context, m schemas.SavedViewModel) (*apitypes.SavedviewtypesUpdatableSavedView, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	data, d := ExpandSavedviewtypesSavedViewData(ctx, m.Data)
+	spec, d := ExpandSavedviewtypesSavedViewSpec(ctx, m.Spec)
 	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 	out := &apitypes.SavedviewtypesUpdatableSavedView{
-		Source: apitypes.SavedviewtypesSource(m.Source.ValueString()),
+		SchemaVersion: apitypes.SavedviewtypesSchemaVersion(m.SchemaVersion.ValueString()),
+		Source:        apitypes.SavedviewtypesSource(m.Source.ValueString()),
 	}
-	if data != nil {
-		out.Data = *data
+	if spec != nil {
+		out.Spec = *spec
 	}
 	return out, diags
 }
@@ -55,22 +57,23 @@ func FlattenSavedviewtypesSavedView(ctx context.Context, g *apitypes.Savedviewty
 		return nil, diags
 	}
 
-	dataFlat, d := FlattenSavedviewtypesSavedViewData(ctx, g.Data)
-	diags.Append(d...)
 	var sourceFlat types.String
 	if g.Source != nil {
 		sourceFlat = types.StringValue(string(*g.Source))
 	} else {
 		sourceFlat = types.StringNull()
 	}
+	specFlat, d := FlattenSavedviewtypesSavedViewSpec(ctx, &g.Spec)
+	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 
 	return &schemas.SavedViewDataSourceModel{
-		Data:   dataFlat,
-		Id:     types.StringValue(g.Id),
-		Name:   convtypes.StringFromPointer(g.Name),
-		Source: sourceFlat,
+		Id:            types.StringValue(g.Id),
+		Name:          convtypes.StringFromPointer(g.Name),
+		SchemaVersion: types.StringValue(string(g.SchemaVersion)),
+		Source:        sourceFlat,
+		Spec:          specFlat,
 	}, diags
 }

@@ -5,6 +5,7 @@ package apitypes
 
 // SavedviewtypesUpdatableSavedView defines model for SavedviewtypesUpdatableSavedView.
 type SavedviewtypesUpdatableSavedView struct {
-	Data   SavedviewtypesSavedViewData `json:"data"`
-	Source SavedviewtypesSource        `json:"source"`
+	SchemaVersion SavedviewtypesSchemaVersion `json:"schemaVersion"`
+	Source        SavedviewtypesSource        `json:"source"`
+	Spec          SavedviewtypesSavedViewSpec `json:"spec"`
 }

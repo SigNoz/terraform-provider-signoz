@@ -3599,6 +3599,7 @@ type CreateSavedViewResponse struct {
 	JSON400 *apitypes.RenderErrorResponse
 	JSON401 *apitypes.RenderErrorResponse
 	JSON403 *apitypes.RenderErrorResponse
+	JSON409 *apitypes.RenderErrorResponse
 	JSON500 *apitypes.RenderErrorResponse
 }
 
@@ -6062,6 +6063,13 @@ func ParseCreateSavedViewResponse(rsp *http.Response) (*CreateSavedViewResponse,
 			return nil, err
 		}
 		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
 		var dest apitypes.RenderErrorResponse

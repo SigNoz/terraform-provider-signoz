@@ -1978,6 +1978,12 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 						},
 						Computed: true,
 					},
+					"match_type": schema.StringAttribute{
+						Computed: true,
+					},
+					"op": schema.StringAttribute{
+						Computed: true,
+					},
 					"require_min_points": schema.BoolAttribute{
 						Computed: true,
 					},
@@ -1988,6 +1994,12 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 						Computed: true,
 					},
 					"selected_query_name": schema.StringAttribute{
+						Computed: true,
+					},
+					"target": schema.Float64Attribute{
+						Computed: true,
+					},
+					"target_unit": schema.StringAttribute{
 						Computed: true,
 					},
 					"thresholds": schema.SingleNestedAttribute{
@@ -2062,6 +2074,9 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 				Computed: true,
 			},
 			"disabled": schema.BoolAttribute{
+				Computed: true,
+			},
+			"eval_window": schema.StringAttribute{
 				Computed: true,
 			},
 			"evaluation": schema.SingleNestedAttribute{
@@ -2160,6 +2175,9 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 					validators.ExactlyOneNestedAttribute("cumulative", "rolling"),
 				},
 			},
+			"frequency": schema.StringAttribute{
+				Computed: true,
+			},
 			"id": schema.StringAttribute{
 				Required: true,
 			},
@@ -2207,10 +2225,20 @@ func RuleDataSourceSchema(ctx context.Context) schema.Schema {
 				},
 				Computed: true,
 			},
+			"preferred_channels": schema.ListAttribute{
+				ElementType: types.StringType,
+				Computed:    true,
+			},
 			"rule_type": schema.StringAttribute{
 				Computed: true,
 			},
 			"schema_version": schema.StringAttribute{
+				Computed: true,
+			},
+			"source": schema.StringAttribute{
+				Computed: true,
+			},
+			"version": schema.StringAttribute{
 				Computed: true,
 			},
 		},
@@ -2224,10 +2252,15 @@ type RuleDataSourceModel struct {
 	Condition            customtypes.RuletypesRuleConditionValue        `tfsdk:"condition"`
 	Description          types.String                                   `tfsdk:"description"`
 	Disabled             types.Bool                                     `tfsdk:"disabled"`
+	EvalWindow           types.String                                   `tfsdk:"eval_window"`
 	Evaluation           customtypes.RuletypesEvaluationEnvelopeValue   `tfsdk:"evaluation"`
+	Frequency            types.String                                   `tfsdk:"frequency"`
 	Id                   types.String                                   `tfsdk:"id"`
 	Labels               types.Map                                      `tfsdk:"labels"`
 	NotificationSettings customtypes.RuletypesNotificationSettingsValue `tfsdk:"notification_settings"`
+	PreferredChannels    types.List                                     `tfsdk:"preferred_channels"`
 	RuleType             types.String                                   `tfsdk:"rule_type"`
 	SchemaVersion        types.String                                   `tfsdk:"schema_version"`
+	Source               types.String                                   `tfsdk:"source"`
+	Version              types.String                                   `tfsdk:"version"`
 }

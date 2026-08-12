@@ -17,47 +17,1275 @@ import (
 func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"data": schema.SingleNestedAttribute{
+			"id": schema.StringAttribute{
+				Required: true,
+			},
+			"name": schema.StringAttribute{
+				Computed: true,
+			},
+			"schema_version": schema.StringAttribute{
+				Computed: true,
+			},
+			"source": schema.StringAttribute{
+				Computed: true,
+			},
+			"spec": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
-					"schema_version": schema.StringAttribute{
+					"display": schema.SingleNestedAttribute{
+						Attributes: map[string]schema.Attribute{
+							"color": schema.StringAttribute{
+								Computed: true,
+							},
+							"font_size": schema.StringAttribute{
+								Computed: true,
+							},
+							"format": schema.StringAttribute{
+								Computed: true,
+							},
+							"max_lines": schema.Int64Attribute{
+								Computed: true,
+							},
+						},
+						CustomType: customtypes.SavedviewtypesDisplayType{
+							ObjectType: types.ObjectType{
+								AttrTypes: customtypes.SavedviewtypesDisplayValue{}.AttributeTypes(ctx),
+							},
+						},
 						Computed: true,
 					},
-					"spec": schema.SingleNestedAttribute{
-						Attributes: map[string]schema.Attribute{
-							"display": schema.SingleNestedAttribute{
-								Attributes: map[string]schema.Attribute{
-									"color": schema.StringAttribute{
-										Computed: true,
-									},
-									"font_size": schema.StringAttribute{
-										Computed: true,
-									},
-									"format": schema.StringAttribute{
-										Computed: true,
-									},
-									"max_lines": schema.Int64Attribute{
-										Computed: true,
-									},
-								},
-								CustomType: customtypes.SavedviewtypesDisplayType{
-									ObjectType: types.ObjectType{
-										AttrTypes: customtypes.SavedviewtypesDisplayValue{}.AttributeTypes(ctx),
-									},
-								},
-								Computed: true,
-							},
-							"display_name": schema.StringAttribute{
-								Computed: true,
-							},
-							"panel_type": schema.StringAttribute{
-								Computed: true,
-							},
-							"queries": schema.ListNestedAttribute{
-								NestedObject: schema.NestedAttributeObject{
+					"display_name": schema.StringAttribute{
+						Computed: true,
+					},
+					"panel_type": schema.StringAttribute{
+						Computed: true,
+					},
+					"queries": schema.ListNestedAttribute{
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"builder_ai_query": schema.SingleNestedAttribute{
 									Attributes: map[string]schema.Attribute{
-										"builder_ai_query": schema.SingleNestedAttribute{
+										"spec": schema.SingleNestedAttribute{
 											Attributes: map[string]schema.Attribute{
-												"spec": schema.SingleNestedAttribute{
+												"aggregations": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"alias": schema.StringAttribute{
+																Computed: true,
+															},
+															"expression": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"cursor": schema.StringAttribute{
+													Computed: true,
+												},
+												"disabled": schema.BoolAttribute{
+													Computed: true,
+												},
+												"filter": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"expression": schema.StringAttribute{
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5FilterType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"functions": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"args": schema.ListNestedAttribute{
+																NestedObject: schema.NestedAttributeObject{
+																	Attributes: map[string]schema.Attribute{
+																		"name": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"value": schema.StringAttribute{
+																			CustomType: jsontypes.NormalizedType{},
+																			Computed:   true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5FunctionArgType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																},
+																Computed: true,
+															},
+															"name": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5FunctionType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"group_by": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"description": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_context": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_data_type": schema.StringAttribute{
+																Computed: true,
+															},
+															"name": schema.StringAttribute{
+																Computed: true,
+															},
+															"signal": schema.StringAttribute{
+																Computed: true,
+															},
+															"unit": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"having": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"expression": schema.StringAttribute{
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5HavingType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"legend": schema.StringAttribute{
+													Computed: true,
+												},
+												"limit": schema.Int64Attribute{
+													Computed: true,
+												},
+												"limit_by": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"keys": schema.ListAttribute{
+															ElementType: types.StringType,
+															Computed:    true,
+														},
+														"value": schema.StringAttribute{
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5LimitByType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"name": schema.StringAttribute{
+													Computed: true,
+												},
+												"offset": schema.Int64Attribute{
+													Computed: true,
+												},
+												"order": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"direction": schema.StringAttribute{
+																Computed: true,
+															},
+															"key": schema.SingleNestedAttribute{
+																Attributes: map[string]schema.Attribute{
+																	"description": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_context": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_data_type": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"signal": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"unit": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																	},
+																},
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5OrderByType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"secondary_aggregations": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"alias": schema.StringAttribute{
+																Computed: true,
+															},
+															"expression": schema.StringAttribute{
+																Computed: true,
+															},
+															"group_by": schema.ListNestedAttribute{
+																NestedObject: schema.NestedAttributeObject{
+																	Attributes: map[string]schema.Attribute{
+																		"description": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"field_context": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"field_data_type": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"name": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"signal": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"unit": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																},
+																Computed: true,
+															},
+															"limit": schema.Int64Attribute{
+																Computed: true,
+															},
+															"limit_by": schema.SingleNestedAttribute{
+																Attributes: map[string]schema.Attribute{
+																	"keys": schema.ListAttribute{
+																		ElementType: types.StringType,
+																		Computed:    true,
+																	},
+																	"value": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5LimitByType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																	},
+																},
+																Computed: true,
+															},
+															"order": schema.ListNestedAttribute{
+																NestedObject: schema.NestedAttributeObject{
+																	Attributes: map[string]schema.Attribute{
+																		"direction": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"key": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"description": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"field_context": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"field_data_type": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"name": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"signal": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"unit": schema.StringAttribute{
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5OrderByType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																},
+																Computed: true,
+															},
+															"step_interval": schema.StringAttribute{
+																CustomType: jsontypes.NormalizedType{},
+																Computed:   true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"select_fields": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"description": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_context": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_data_type": schema.StringAttribute{
+																Computed: true,
+															},
+															"name": schema.StringAttribute{
+																Computed: true,
+															},
+															"signal": schema.StringAttribute{
+																Computed: true,
+															},
+															"unit": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"signal": schema.StringAttribute{
+													Computed: true,
+												},
+												"source": schema.StringAttribute{
+													Computed: true,
+												},
+												"step_interval": schema.StringAttribute{
+													CustomType: jsontypes.NormalizedType{},
+													Computed:   true,
+												},
+											},
+											CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationType{
+												ObjectType: types.ObjectType{
+													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
+												},
+											},
+											Computed: true,
+										},
+										"type": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiType{
+										ObjectType: types.ObjectType{
+											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+										},
+									},
+									Computed: true,
+								},
+								"builder_formula": schema.SingleNestedAttribute{
+									Attributes: map[string]schema.Attribute{
+										"spec": schema.SingleNestedAttribute{
+											Attributes: map[string]schema.Attribute{
+												"disabled": schema.BoolAttribute{
+													Computed: true,
+												},
+												"expression": schema.StringAttribute{
+													Computed: true,
+												},
+												"functions": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"args": schema.ListNestedAttribute{
+																NestedObject: schema.NestedAttributeObject{
+																	Attributes: map[string]schema.Attribute{
+																		"name": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"value": schema.StringAttribute{
+																			CustomType: jsontypes.NormalizedType{},
+																			Computed:   true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5FunctionArgType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																},
+																Computed: true,
+															},
+															"name": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5FunctionType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"having": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"expression": schema.StringAttribute{
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5HavingType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"legend": schema.StringAttribute{
+													Computed: true,
+												},
+												"limit": schema.Int64Attribute{
+													Computed: true,
+												},
+												"name": schema.StringAttribute{
+													Computed: true,
+												},
+												"order": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"direction": schema.StringAttribute{
+																Computed: true,
+															},
+															"key": schema.SingleNestedAttribute{
+																Attributes: map[string]schema.Attribute{
+																	"description": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_context": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_data_type": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"signal": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"unit": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																	},
+																},
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5OrderByType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+											},
+											CustomType: customtypes.Querybuildertypesv5QueryBuilderFormulaType{
+												ObjectType: types.ObjectType{
+													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderFormulaValue{}.AttributeTypes(ctx),
+												},
+											},
+											Computed: true,
+										},
+										"type": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeFormulaType{
+										ObjectType: types.ObjectType{
+											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeFormulaValue{}.AttributeTypes(ctx),
+										},
+									},
+									Computed: true,
+								},
+								"builder_query": schema.SingleNestedAttribute{
+									Attributes: map[string]schema.Attribute{
+										"spec": schema.SingleNestedAttribute{
+											Attributes: map[string]schema.Attribute{
+												"logs": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"aggregations": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"alias": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"expression": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5LogAggregationType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5LogAggregationValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"cursor": schema.StringAttribute{
+															Computed: true,
+														},
+														"disabled": schema.BoolAttribute{
+															Computed: true,
+														},
+														"filter": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"expression": schema.StringAttribute{
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5FilterType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+														"functions": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"args": schema.ListNestedAttribute{
+																		NestedObject: schema.NestedAttributeObject{
+																			Attributes: map[string]schema.Attribute{
+																				"name": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"value": schema.StringAttribute{
+																					CustomType: jsontypes.NormalizedType{},
+																					Computed:   true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5FunctionArgType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5FunctionType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"group_by": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"description": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_context": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_data_type": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"signal": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"unit": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"having": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"expression": schema.StringAttribute{
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5HavingType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+														"legend": schema.StringAttribute{
+															Computed: true,
+														},
+														"limit": schema.Int64Attribute{
+															Computed: true,
+														},
+														"limit_by": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"keys": schema.ListAttribute{
+																	ElementType: types.StringType,
+																	Computed:    true,
+																},
+																"value": schema.StringAttribute{
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5LimitByType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+														"name": schema.StringAttribute{
+															Computed: true,
+														},
+														"offset": schema.Int64Attribute{
+															Computed: true,
+														},
+														"order": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"direction": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"key": schema.SingleNestedAttribute{
+																		Attributes: map[string]schema.Attribute{
+																			"description": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"field_context": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"field_data_type": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"name": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"signal": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"unit": schema.StringAttribute{
+																				Computed: true,
+																			},
+																		},
+																		CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																			ObjectType: types.ObjectType{
+																				AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																			},
+																		},
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5OrderByType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"secondary_aggregations": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"alias": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"expression": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"group_by": schema.ListNestedAttribute{
+																		NestedObject: schema.NestedAttributeObject{
+																			Attributes: map[string]schema.Attribute{
+																				"description": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"field_context": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"field_data_type": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"name": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"signal": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"unit": schema.StringAttribute{
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"limit": schema.Int64Attribute{
+																		Computed: true,
+																	},
+																	"limit_by": schema.SingleNestedAttribute{
+																		Attributes: map[string]schema.Attribute{
+																			"keys": schema.ListAttribute{
+																				ElementType: types.StringType,
+																				Computed:    true,
+																			},
+																			"value": schema.StringAttribute{
+																				Computed: true,
+																			},
+																		},
+																		CustomType: customtypes.Querybuildertypesv5LimitByType{
+																			ObjectType: types.ObjectType{
+																				AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"order": schema.ListNestedAttribute{
+																		NestedObject: schema.NestedAttributeObject{
+																			Attributes: map[string]schema.Attribute{
+																				"direction": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"key": schema.SingleNestedAttribute{
+																					Attributes: map[string]schema.Attribute{
+																						"description": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"field_context": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"field_data_type": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"name": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"signal": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"unit": schema.StringAttribute{
+																							Computed: true,
+																						},
+																					},
+																					CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																						ObjectType: types.ObjectType{
+																							AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																						},
+																					},
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5OrderByType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"step_interval": schema.StringAttribute{
+																		CustomType: jsontypes.NormalizedType{},
+																		Computed:   true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"select_fields": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"description": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_context": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_data_type": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"signal": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"unit": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"signal": schema.StringAttribute{
+															Computed: true,
+														},
+														"source": schema.StringAttribute{
+															Computed: true,
+														},
+														"step_interval": schema.StringAttribute{
+															CustomType: jsontypes.NormalizedType{},
+															Computed:   true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"metrics": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"aggregations": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"comparison_space_aggregation_param": schema.SingleNestedAttribute{
+																		Attributes: map[string]schema.Attribute{
+																			"operator": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"threshold": schema.Float64Attribute{
+																				Computed: true,
+																			},
+																		},
+																		CustomType: customtypes.MetrictypesComparisonSpaceAggregationParamType{
+																			ObjectType: types.ObjectType{
+																				AttrTypes: customtypes.MetrictypesComparisonSpaceAggregationParamValue{}.AttributeTypes(ctx),
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"metric_name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"reduce_to": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"space_aggregation": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"temporality": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"time_aggregation": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5MetricAggregationType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5MetricAggregationValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"cursor": schema.StringAttribute{
+															Computed: true,
+														},
+														"disabled": schema.BoolAttribute{
+															Computed: true,
+														},
+														"filter": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"expression": schema.StringAttribute{
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5FilterType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+														"functions": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"args": schema.ListNestedAttribute{
+																		NestedObject: schema.NestedAttributeObject{
+																			Attributes: map[string]schema.Attribute{
+																				"name": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"value": schema.StringAttribute{
+																					CustomType: jsontypes.NormalizedType{},
+																					Computed:   true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5FunctionArgType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5FunctionType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"group_by": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"description": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_context": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_data_type": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"signal": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"unit": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"having": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"expression": schema.StringAttribute{
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5HavingType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+														"legend": schema.StringAttribute{
+															Computed: true,
+														},
+														"limit": schema.Int64Attribute{
+															Computed: true,
+														},
+														"limit_by": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"keys": schema.ListAttribute{
+																	ElementType: types.StringType,
+																	Computed:    true,
+																},
+																"value": schema.StringAttribute{
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5LimitByType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+														"name": schema.StringAttribute{
+															Computed: true,
+														},
+														"offset": schema.Int64Attribute{
+															Computed: true,
+														},
+														"order": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"direction": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"key": schema.SingleNestedAttribute{
+																		Attributes: map[string]schema.Attribute{
+																			"description": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"field_context": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"field_data_type": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"name": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"signal": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"unit": schema.StringAttribute{
+																				Computed: true,
+																			},
+																		},
+																		CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																			ObjectType: types.ObjectType{
+																				AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																			},
+																		},
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5OrderByType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"secondary_aggregations": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"alias": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"expression": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"group_by": schema.ListNestedAttribute{
+																		NestedObject: schema.NestedAttributeObject{
+																			Attributes: map[string]schema.Attribute{
+																				"description": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"field_context": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"field_data_type": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"name": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"signal": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"unit": schema.StringAttribute{
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"limit": schema.Int64Attribute{
+																		Computed: true,
+																	},
+																	"limit_by": schema.SingleNestedAttribute{
+																		Attributes: map[string]schema.Attribute{
+																			"keys": schema.ListAttribute{
+																				ElementType: types.StringType,
+																				Computed:    true,
+																			},
+																			"value": schema.StringAttribute{
+																				Computed: true,
+																			},
+																		},
+																		CustomType: customtypes.Querybuildertypesv5LimitByType{
+																			ObjectType: types.ObjectType{
+																				AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"order": schema.ListNestedAttribute{
+																		NestedObject: schema.NestedAttributeObject{
+																			Attributes: map[string]schema.Attribute{
+																				"direction": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"key": schema.SingleNestedAttribute{
+																					Attributes: map[string]schema.Attribute{
+																						"description": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"field_context": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"field_data_type": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"name": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"signal": schema.StringAttribute{
+																							Computed: true,
+																						},
+																						"unit": schema.StringAttribute{
+																							Computed: true,
+																						},
+																					},
+																					CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																						ObjectType: types.ObjectType{
+																							AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																						},
+																					},
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5OrderByType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																		},
+																		Computed: true,
+																	},
+																	"step_interval": schema.StringAttribute{
+																		CustomType: jsontypes.NormalizedType{},
+																		Computed:   true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"select_fields": schema.ListNestedAttribute{
+															NestedObject: schema.NestedAttributeObject{
+																Attributes: map[string]schema.Attribute{
+																	"description": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_context": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_data_type": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"signal": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"unit": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+																	},
+																},
+															},
+															Computed: true,
+														},
+														"signal": schema.StringAttribute{
+															Computed: true,
+														},
+														"source": schema.StringAttribute{
+															Computed: true,
+														},
+														"step_interval": schema.StringAttribute{
+															CustomType: jsontypes.NormalizedType{},
+															Computed:   true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregationType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregationValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"traces": schema.SingleNestedAttribute{
 													Attributes: map[string]schema.Attribute{
 														"aggregations": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
@@ -408,1624 +1636,389 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 													},
 													Computed: true,
 												},
-												"type": schema.StringAttribute{
-													Computed: true,
-												},
 											},
-											CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiType{
+											CustomType: customtypes.Querybuildertypesv5BuilderQuerySpecType{
 												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiValue{}.AttributeTypes(ctx),
+													AttrTypes: customtypes.Querybuildertypesv5BuilderQuerySpecValue{}.AttributeTypes(ctx),
 												},
 											},
 											Computed: true,
+											Validators: []validator.Object{
+												validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
+												validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
+											},
 										},
-										"builder_formula": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{
-												"spec": schema.SingleNestedAttribute{
-													Attributes: map[string]schema.Attribute{
-														"disabled": schema.BoolAttribute{
-															Computed: true,
-														},
-														"expression": schema.StringAttribute{
-															Computed: true,
-														},
-														"functions": schema.ListNestedAttribute{
-															NestedObject: schema.NestedAttributeObject{
-																Attributes: map[string]schema.Attribute{
-																	"args": schema.ListNestedAttribute{
-																		NestedObject: schema.NestedAttributeObject{
-																			Attributes: map[string]schema.Attribute{
-																				"name": schema.StringAttribute{
-																					Computed: true,
-																				},
-																				"value": schema.StringAttribute{
-																					CustomType: jsontypes.NormalizedType{},
-																					Computed:   true,
-																				},
-																			},
-																			CustomType: customtypes.Querybuildertypesv5FunctionArgType{
-																				ObjectType: types.ObjectType{
-																					AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
-																				},
-																			},
-																		},
-																		Computed: true,
-																	},
-																	"name": schema.StringAttribute{
-																		Computed: true,
-																	},
-																},
-																CustomType: customtypes.Querybuildertypesv5FunctionType{
-																	ObjectType: types.ObjectType{
-																		AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
-																	},
-																},
-															},
-															Computed: true,
-														},
-														"having": schema.SingleNestedAttribute{
-															Attributes: map[string]schema.Attribute{
-																"expression": schema.StringAttribute{
-																	Computed: true,
-																},
-															},
-															CustomType: customtypes.Querybuildertypesv5HavingType{
-																ObjectType: types.ObjectType{
-																	AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
-																},
-															},
-															Computed: true,
-														},
-														"legend": schema.StringAttribute{
-															Computed: true,
-														},
-														"limit": schema.Int64Attribute{
-															Computed: true,
-														},
-														"name": schema.StringAttribute{
-															Computed: true,
-														},
-														"order": schema.ListNestedAttribute{
-															NestedObject: schema.NestedAttributeObject{
-																Attributes: map[string]schema.Attribute{
-																	"direction": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"key": schema.SingleNestedAttribute{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																		Computed: true,
-																	},
-																},
-																CustomType: customtypes.Querybuildertypesv5OrderByType{
-																	ObjectType: types.ObjectType{
-																		AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																	},
-																},
-															},
-															Computed: true,
-														},
-													},
-													CustomType: customtypes.Querybuildertypesv5QueryBuilderFormulaType{
-														ObjectType: types.ObjectType{
-															AttrTypes: customtypes.Querybuildertypesv5QueryBuilderFormulaValue{}.AttributeTypes(ctx),
-														},
-													},
-													Computed: true,
-												},
-												"type": schema.StringAttribute{
-													Computed: true,
-												},
-											},
-											CustomType: customtypes.Querybuildertypesv5QueryEnvelopeFormulaType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeFormulaValue{}.AttributeTypes(ctx),
-												},
-											},
-											Computed: true,
-										},
-										"builder_query": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{
-												"spec": schema.SingleNestedAttribute{
-													Attributes: map[string]schema.Attribute{
-														"logs": schema.SingleNestedAttribute{
-															Attributes: map[string]schema.Attribute{
-																"aggregations": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"alias": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"expression": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5LogAggregationType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5LogAggregationValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"cursor": schema.StringAttribute{
-																	Computed: true,
-																},
-																"disabled": schema.BoolAttribute{
-																	Computed: true,
-																},
-																"filter": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"expression": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5FilterType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"functions": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"args": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"name": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"value": schema.StringAttribute{
-																							CustomType: jsontypes.NormalizedType{},
-																							Computed:   true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5FunctionArgType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5FunctionType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"group_by": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"having": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"expression": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5HavingType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"legend": schema.StringAttribute{
-																	Computed: true,
-																},
-																"limit": schema.Int64Attribute{
-																	Computed: true,
-																},
-																"limit_by": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"keys": schema.ListAttribute{
-																			ElementType: types.StringType,
-																			Computed:    true,
-																		},
-																		"value": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5LimitByType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"name": schema.StringAttribute{
-																	Computed: true,
-																},
-																"offset": schema.Int64Attribute{
-																	Computed: true,
-																},
-																"order": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"direction": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"key": schema.SingleNestedAttribute{
-																				Attributes: map[string]schema.Attribute{
-																					"description": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"field_context": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"field_data_type": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"name": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"signal": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"unit": schema.StringAttribute{
-																						Computed: true,
-																					},
-																				},
-																				CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																					ObjectType: types.ObjectType{
-																						AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																					},
-																				},
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5OrderByType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"secondary_aggregations": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"alias": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"expression": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"group_by": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"description": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"field_context": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"field_data_type": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"name": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"signal": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"unit": schema.StringAttribute{
-																							Computed: true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"limit": schema.Int64Attribute{
-																				Computed: true,
-																			},
-																			"limit_by": schema.SingleNestedAttribute{
-																				Attributes: map[string]schema.Attribute{
-																					"keys": schema.ListAttribute{
-																						ElementType: types.StringType,
-																						Computed:    true,
-																					},
-																					"value": schema.StringAttribute{
-																						Computed: true,
-																					},
-																				},
-																				CustomType: customtypes.Querybuildertypesv5LimitByType{
-																					ObjectType: types.ObjectType{
-																						AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"order": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"direction": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"key": schema.SingleNestedAttribute{
-																							Attributes: map[string]schema.Attribute{
-																								"description": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"field_context": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"field_data_type": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"name": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"signal": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"unit": schema.StringAttribute{
-																									Computed: true,
-																								},
-																							},
-																							CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																								ObjectType: types.ObjectType{
-																									AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																								},
-																							},
-																							Computed: true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5OrderByType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"step_interval": schema.StringAttribute{
-																				CustomType: jsontypes.NormalizedType{},
-																				Computed:   true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"select_fields": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"signal": schema.StringAttribute{
-																	Computed: true,
-																},
-																"source": schema.StringAttribute{
-																	Computed: true,
-																},
-																"step_interval": schema.StringAttribute{
-																	CustomType: jsontypes.NormalizedType{},
-																	Computed:   true,
-																},
-															},
-															CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationType{
-																ObjectType: types.ObjectType{
-																	AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValue{}.AttributeTypes(ctx),
-																},
-															},
-															Computed: true,
-														},
-														"metrics": schema.SingleNestedAttribute{
-															Attributes: map[string]schema.Attribute{
-																"aggregations": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"comparison_space_aggregation_param": schema.SingleNestedAttribute{
-																				Attributes: map[string]schema.Attribute{
-																					"operator": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"threshold": schema.Float64Attribute{
-																						Computed: true,
-																					},
-																				},
-																				CustomType: customtypes.MetrictypesComparisonSpaceAggregationParamType{
-																					ObjectType: types.ObjectType{
-																						AttrTypes: customtypes.MetrictypesComparisonSpaceAggregationParamValue{}.AttributeTypes(ctx),
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"metric_name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"reduce_to": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"space_aggregation": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"temporality": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"time_aggregation": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5MetricAggregationType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5MetricAggregationValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"cursor": schema.StringAttribute{
-																	Computed: true,
-																},
-																"disabled": schema.BoolAttribute{
-																	Computed: true,
-																},
-																"filter": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"expression": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5FilterType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"functions": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"args": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"name": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"value": schema.StringAttribute{
-																							CustomType: jsontypes.NormalizedType{},
-																							Computed:   true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5FunctionArgType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5FunctionType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"group_by": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"having": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"expression": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5HavingType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"legend": schema.StringAttribute{
-																	Computed: true,
-																},
-																"limit": schema.Int64Attribute{
-																	Computed: true,
-																},
-																"limit_by": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"keys": schema.ListAttribute{
-																			ElementType: types.StringType,
-																			Computed:    true,
-																		},
-																		"value": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5LimitByType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"name": schema.StringAttribute{
-																	Computed: true,
-																},
-																"offset": schema.Int64Attribute{
-																	Computed: true,
-																},
-																"order": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"direction": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"key": schema.SingleNestedAttribute{
-																				Attributes: map[string]schema.Attribute{
-																					"description": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"field_context": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"field_data_type": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"name": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"signal": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"unit": schema.StringAttribute{
-																						Computed: true,
-																					},
-																				},
-																				CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																					ObjectType: types.ObjectType{
-																						AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																					},
-																				},
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5OrderByType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"secondary_aggregations": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"alias": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"expression": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"group_by": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"description": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"field_context": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"field_data_type": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"name": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"signal": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"unit": schema.StringAttribute{
-																							Computed: true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"limit": schema.Int64Attribute{
-																				Computed: true,
-																			},
-																			"limit_by": schema.SingleNestedAttribute{
-																				Attributes: map[string]schema.Attribute{
-																					"keys": schema.ListAttribute{
-																						ElementType: types.StringType,
-																						Computed:    true,
-																					},
-																					"value": schema.StringAttribute{
-																						Computed: true,
-																					},
-																				},
-																				CustomType: customtypes.Querybuildertypesv5LimitByType{
-																					ObjectType: types.ObjectType{
-																						AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"order": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"direction": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"key": schema.SingleNestedAttribute{
-																							Attributes: map[string]schema.Attribute{
-																								"description": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"field_context": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"field_data_type": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"name": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"signal": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"unit": schema.StringAttribute{
-																									Computed: true,
-																								},
-																							},
-																							CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																								ObjectType: types.ObjectType{
-																									AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																								},
-																							},
-																							Computed: true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5OrderByType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"step_interval": schema.StringAttribute{
-																				CustomType: jsontypes.NormalizedType{},
-																				Computed:   true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"select_fields": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"signal": schema.StringAttribute{
-																	Computed: true,
-																},
-																"source": schema.StringAttribute{
-																	Computed: true,
-																},
-																"step_interval": schema.StringAttribute{
-																	CustomType: jsontypes.NormalizedType{},
-																	Computed:   true,
-																},
-															},
-															CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregationType{
-																ObjectType: types.ObjectType{
-																	AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregationValue{}.AttributeTypes(ctx),
-																},
-															},
-															Computed: true,
-														},
-														"traces": schema.SingleNestedAttribute{
-															Attributes: map[string]schema.Attribute{
-																"aggregations": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"alias": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"expression": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"cursor": schema.StringAttribute{
-																	Computed: true,
-																},
-																"disabled": schema.BoolAttribute{
-																	Computed: true,
-																},
-																"filter": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"expression": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5FilterType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"functions": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"args": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"name": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"value": schema.StringAttribute{
-																							CustomType: jsontypes.NormalizedType{},
-																							Computed:   true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5FunctionArgType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5FunctionType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"group_by": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"having": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"expression": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5HavingType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"legend": schema.StringAttribute{
-																	Computed: true,
-																},
-																"limit": schema.Int64Attribute{
-																	Computed: true,
-																},
-																"limit_by": schema.SingleNestedAttribute{
-																	Attributes: map[string]schema.Attribute{
-																		"keys": schema.ListAttribute{
-																			ElementType: types.StringType,
-																			Computed:    true,
-																		},
-																		"value": schema.StringAttribute{
-																			Computed: true,
-																		},
-																	},
-																	CustomType: customtypes.Querybuildertypesv5LimitByType{
-																		ObjectType: types.ObjectType{
-																			AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
-																		},
-																	},
-																	Computed: true,
-																},
-																"name": schema.StringAttribute{
-																	Computed: true,
-																},
-																"offset": schema.Int64Attribute{
-																	Computed: true,
-																},
-																"order": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"direction": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"key": schema.SingleNestedAttribute{
-																				Attributes: map[string]schema.Attribute{
-																					"description": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"field_context": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"field_data_type": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"name": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"signal": schema.StringAttribute{
-																						Computed: true,
-																					},
-																					"unit": schema.StringAttribute{
-																						Computed: true,
-																					},
-																				},
-																				CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																					ObjectType: types.ObjectType{
-																						AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																					},
-																				},
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5OrderByType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"secondary_aggregations": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"alias": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"expression": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"group_by": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"description": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"field_context": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"field_data_type": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"name": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"signal": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"unit": schema.StringAttribute{
-																							Computed: true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"limit": schema.Int64Attribute{
-																				Computed: true,
-																			},
-																			"limit_by": schema.SingleNestedAttribute{
-																				Attributes: map[string]schema.Attribute{
-																					"keys": schema.ListAttribute{
-																						ElementType: types.StringType,
-																						Computed:    true,
-																					},
-																					"value": schema.StringAttribute{
-																						Computed: true,
-																					},
-																				},
-																				CustomType: customtypes.Querybuildertypesv5LimitByType{
-																					ObjectType: types.ObjectType{
-																						AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"order": schema.ListNestedAttribute{
-																				NestedObject: schema.NestedAttributeObject{
-																					Attributes: map[string]schema.Attribute{
-																						"direction": schema.StringAttribute{
-																							Computed: true,
-																						},
-																						"key": schema.SingleNestedAttribute{
-																							Attributes: map[string]schema.Attribute{
-																								"description": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"field_context": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"field_data_type": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"name": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"signal": schema.StringAttribute{
-																									Computed: true,
-																								},
-																								"unit": schema.StringAttribute{
-																									Computed: true,
-																								},
-																							},
-																							CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																								ObjectType: types.ObjectType{
-																									AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																								},
-																							},
-																							Computed: true,
-																						},
-																					},
-																					CustomType: customtypes.Querybuildertypesv5OrderByType{
-																						ObjectType: types.ObjectType{
-																							AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																						},
-																					},
-																				},
-																				Computed: true,
-																			},
-																			"step_interval": schema.StringAttribute{
-																				CustomType: jsontypes.NormalizedType{},
-																				Computed:   true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"select_fields": schema.ListNestedAttribute{
-																	NestedObject: schema.NestedAttributeObject{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																	},
-																	Computed: true,
-																},
-																"signal": schema.StringAttribute{
-																	Computed: true,
-																},
-																"source": schema.StringAttribute{
-																	Computed: true,
-																},
-																"step_interval": schema.StringAttribute{
-																	CustomType: jsontypes.NormalizedType{},
-																	Computed:   true,
-																},
-															},
-															CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationType{
-																ObjectType: types.ObjectType{
-																	AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
-																},
-															},
-															Computed: true,
-														},
-													},
-													CustomType: customtypes.Querybuildertypesv5BuilderQuerySpecType{
-														ObjectType: types.ObjectType{
-															AttrTypes: customtypes.Querybuildertypesv5BuilderQuerySpecValue{}.AttributeTypes(ctx),
-														},
-													},
-													Computed: true,
-													Validators: []validator.Object{
-														validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
-														validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
-													},
-												},
-												"type": schema.StringAttribute{
-													Computed: true,
-												},
-											},
-											CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeBuilderValue{}.AttributeTypes(ctx),
-												},
-											},
-											Computed: true,
-										},
-										"builder_trace_operator": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{
-												"spec": schema.SingleNestedAttribute{
-													Attributes: map[string]schema.Attribute{
-														"aggregations": schema.ListNestedAttribute{
-															NestedObject: schema.NestedAttributeObject{
-																Attributes: map[string]schema.Attribute{
-																	"alias": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"expression": schema.StringAttribute{
-																		Computed: true,
-																	},
-																},
-																CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
-																	ObjectType: types.ObjectType{
-																		AttrTypes: customtypes.Querybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
-																	},
-																},
-															},
-															Computed: true,
-														},
-														"cursor": schema.StringAttribute{
-															Computed: true,
-														},
-														"disabled": schema.BoolAttribute{
-															Computed: true,
-														},
-														"expression": schema.StringAttribute{
-															Computed: true,
-														},
-														"filter": schema.SingleNestedAttribute{
-															Attributes: map[string]schema.Attribute{
-																"expression": schema.StringAttribute{
-																	Computed: true,
-																},
-															},
-															CustomType: customtypes.Querybuildertypesv5FilterType{
-																ObjectType: types.ObjectType{
-																	AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
-																},
-															},
-															Computed: true,
-														},
-														"functions": schema.ListNestedAttribute{
-															NestedObject: schema.NestedAttributeObject{
-																Attributes: map[string]schema.Attribute{
-																	"args": schema.ListNestedAttribute{
-																		NestedObject: schema.NestedAttributeObject{
-																			Attributes: map[string]schema.Attribute{
-																				"name": schema.StringAttribute{
-																					Computed: true,
-																				},
-																				"value": schema.StringAttribute{
-																					CustomType: jsontypes.NormalizedType{},
-																					Computed:   true,
-																				},
-																			},
-																			CustomType: customtypes.Querybuildertypesv5FunctionArgType{
-																				ObjectType: types.ObjectType{
-																					AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
-																				},
-																			},
-																		},
-																		Computed: true,
-																	},
-																	"name": schema.StringAttribute{
-																		Computed: true,
-																	},
-																},
-																CustomType: customtypes.Querybuildertypesv5FunctionType{
-																	ObjectType: types.ObjectType{
-																		AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
-																	},
-																},
-															},
-															Computed: true,
-														},
-														"group_by": schema.ListNestedAttribute{
-															NestedObject: schema.NestedAttributeObject{
-																Attributes: map[string]schema.Attribute{
-																	"description": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"field_context": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"field_data_type": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"name": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"signal": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"unit": schema.StringAttribute{
-																		Computed: true,
-																	},
-																},
-																CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
-																	ObjectType: types.ObjectType{
-																		AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
-																	},
-																},
-															},
-															Computed: true,
-														},
-														"having": schema.SingleNestedAttribute{
-															Attributes: map[string]schema.Attribute{
-																"expression": schema.StringAttribute{
-																	Computed: true,
-																},
-															},
-															CustomType: customtypes.Querybuildertypesv5HavingType{
-																ObjectType: types.ObjectType{
-																	AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
-																},
-															},
-															Computed: true,
-														},
-														"legend": schema.StringAttribute{
-															Computed: true,
-														},
-														"limit": schema.Int64Attribute{
-															Computed: true,
-														},
-														"name": schema.StringAttribute{
-															Computed: true,
-														},
-														"offset": schema.Int64Attribute{
-															Computed: true,
-														},
-														"order": schema.ListNestedAttribute{
-															NestedObject: schema.NestedAttributeObject{
-																Attributes: map[string]schema.Attribute{
-																	"direction": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"key": schema.SingleNestedAttribute{
-																		Attributes: map[string]schema.Attribute{
-																			"description": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_context": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"field_data_type": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"name": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"signal": schema.StringAttribute{
-																				Computed: true,
-																			},
-																			"unit": schema.StringAttribute{
-																				Computed: true,
-																			},
-																		},
-																		CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
-																			ObjectType: types.ObjectType{
-																				AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
-																			},
-																		},
-																		Computed: true,
-																	},
-																},
-																CustomType: customtypes.Querybuildertypesv5OrderByType{
-																	ObjectType: types.ObjectType{
-																		AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
-																	},
-																},
-															},
-															Computed: true,
-														},
-														"return_spans_from": schema.StringAttribute{
-															Computed: true,
-														},
-														"select_fields": schema.ListNestedAttribute{
-															NestedObject: schema.NestedAttributeObject{
-																Attributes: map[string]schema.Attribute{
-																	"description": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"field_context": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"field_data_type": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"name": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"signal": schema.StringAttribute{
-																		Computed: true,
-																	},
-																	"unit": schema.StringAttribute{
-																		Computed: true,
-																	},
-																},
-																CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
-																	ObjectType: types.ObjectType{
-																		AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
-																	},
-																},
-															},
-															Computed: true,
-														},
-														"step_interval": schema.StringAttribute{
-															CustomType: jsontypes.NormalizedType{},
-															Computed:   true,
-														},
-													},
-													CustomType: customtypes.Querybuildertypesv5QueryBuilderTraceOperatorType{
-														ObjectType: types.ObjectType{
-															AttrTypes: customtypes.Querybuildertypesv5QueryBuilderTraceOperatorValue{}.AttributeTypes(ctx),
-														},
-													},
-													Computed: true,
-												},
-												"type": schema.StringAttribute{
-													Computed: true,
-												},
-											},
-											CustomType: customtypes.Querybuildertypesv5QueryEnvelopeTraceOperatorType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeTraceOperatorValue{}.AttributeTypes(ctx),
-												},
-											},
-											Computed: true,
-										},
-										"clickhouse_sql": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{
-												"spec": schema.SingleNestedAttribute{
-													Attributes: map[string]schema.Attribute{
-														"disabled": schema.BoolAttribute{
-															Computed: true,
-														},
-														"legend": schema.StringAttribute{
-															Computed: true,
-														},
-														"name": schema.StringAttribute{
-															Computed: true,
-														},
-														"query": schema.StringAttribute{
-															Computed: true,
-														},
-													},
-													CustomType: customtypes.Querybuildertypesv5ClickHouseQueryType{
-														ObjectType: types.ObjectType{
-															AttrTypes: customtypes.Querybuildertypesv5ClickHouseQueryValue{}.AttributeTypes(ctx),
-														},
-													},
-													Computed: true,
-												},
-												"type": schema.StringAttribute{
-													Computed: true,
-												},
-											},
-											CustomType: customtypes.Querybuildertypesv5QueryEnvelopeClickHouseSqlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeClickHouseSqlValue{}.AttributeTypes(ctx),
-												},
-											},
-											Computed: true,
-										},
-										"promql": schema.SingleNestedAttribute{
-											Attributes: map[string]schema.Attribute{
-												"spec": schema.SingleNestedAttribute{
-													Attributes: map[string]schema.Attribute{
-														"disabled": schema.BoolAttribute{
-															Computed: true,
-														},
-														"legend": schema.StringAttribute{
-															Computed: true,
-														},
-														"name": schema.StringAttribute{
-															Computed: true,
-														},
-														"query": schema.StringAttribute{
-															Computed: true,
-														},
-														"stats": schema.BoolAttribute{
-															Computed: true,
-														},
-														"step": schema.StringAttribute{
-															CustomType: jsontypes.NormalizedType{},
-															Computed:   true,
-														},
-													},
-													CustomType: customtypes.Querybuildertypesv5PromQueryType{
-														ObjectType: types.ObjectType{
-															AttrTypes: customtypes.Querybuildertypesv5PromQueryValue{}.AttributeTypes(ctx),
-														},
-													},
-													Computed: true,
-												},
-												"type": schema.StringAttribute{
-													Computed: true,
-												},
-											},
-											CustomType: customtypes.Querybuildertypesv5QueryEnvelopePromQlType{
-												ObjectType: types.ObjectType{
-													AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopePromQlValue{}.AttributeTypes(ctx),
-												},
-											},
+										"type": schema.StringAttribute{
 											Computed: true,
 										},
 									},
-									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeType{
+									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderType{
 										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeValue{}.AttributeTypes(ctx),
+											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeBuilderValue{}.AttributeTypes(ctx),
 										},
 									},
-									Validators: []validator.Object{
-										validators.ExactlyOneNestedAttribute("builder_ai_query", "builder_formula", "builder_query", "builder_trace_operator", "clickhouse_sql", "promql"),
-									},
+									Computed: true,
 								},
-								Computed: true,
-							},
-							"selected_fields": schema.ListNestedAttribute{
-								NestedObject: schema.NestedAttributeObject{
+								"builder_trace_operator": schema.SingleNestedAttribute{
 									Attributes: map[string]schema.Attribute{
-										"description": schema.StringAttribute{
+										"spec": schema.SingleNestedAttribute{
+											Attributes: map[string]schema.Attribute{
+												"aggregations": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"alias": schema.StringAttribute{
+																Computed: true,
+															},
+															"expression": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"cursor": schema.StringAttribute{
+													Computed: true,
+												},
+												"disabled": schema.BoolAttribute{
+													Computed: true,
+												},
+												"expression": schema.StringAttribute{
+													Computed: true,
+												},
+												"filter": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"expression": schema.StringAttribute{
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5FilterType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"functions": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"args": schema.ListNestedAttribute{
+																NestedObject: schema.NestedAttributeObject{
+																	Attributes: map[string]schema.Attribute{
+																		"name": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"value": schema.StringAttribute{
+																			CustomType: jsontypes.NormalizedType{},
+																			Computed:   true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5FunctionArgType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																},
+																Computed: true,
+															},
+															"name": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5FunctionType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"group_by": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"description": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_context": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_data_type": schema.StringAttribute{
+																Computed: true,
+															},
+															"name": schema.StringAttribute{
+																Computed: true,
+															},
+															"signal": schema.StringAttribute{
+																Computed: true,
+															},
+															"unit": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"having": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"expression": schema.StringAttribute{
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5HavingType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"legend": schema.StringAttribute{
+													Computed: true,
+												},
+												"limit": schema.Int64Attribute{
+													Computed: true,
+												},
+												"name": schema.StringAttribute{
+													Computed: true,
+												},
+												"offset": schema.Int64Attribute{
+													Computed: true,
+												},
+												"order": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"direction": schema.StringAttribute{
+																Computed: true,
+															},
+															"key": schema.SingleNestedAttribute{
+																Attributes: map[string]schema.Attribute{
+																	"description": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_context": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"field_data_type": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"name": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"signal": schema.StringAttribute{
+																		Computed: true,
+																	},
+																	"unit": schema.StringAttribute{
+																		Computed: true,
+																	},
+																},
+																CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																	ObjectType: types.ObjectType{
+																		AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																	},
+																},
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.Querybuildertypesv5OrderByType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"return_spans_from": schema.StringAttribute{
+													Computed: true,
+												},
+												"select_fields": schema.ListNestedAttribute{
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"description": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_context": schema.StringAttribute{
+																Computed: true,
+															},
+															"field_data_type": schema.StringAttribute{
+																Computed: true,
+															},
+															"name": schema.StringAttribute{
+																Computed: true,
+															},
+															"signal": schema.StringAttribute{
+																Computed: true,
+															},
+															"unit": schema.StringAttribute{
+																Computed: true,
+															},
+														},
+														CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+															ObjectType: types.ObjectType{
+																AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+															},
+														},
+													},
+													Computed: true,
+												},
+												"step_interval": schema.StringAttribute{
+													CustomType: jsontypes.NormalizedType{},
+													Computed:   true,
+												},
+											},
+											CustomType: customtypes.Querybuildertypesv5QueryBuilderTraceOperatorType{
+												ObjectType: types.ObjectType{
+													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderTraceOperatorValue{}.AttributeTypes(ctx),
+												},
+											},
 											Computed: true,
 										},
-										"field_context": schema.StringAttribute{
-											Computed: true,
-										},
-										"field_data_type": schema.StringAttribute{
-											Computed: true,
-										},
-										"name": schema.StringAttribute{
-											Computed: true,
-										},
-										"signal": schema.StringAttribute{
-											Computed: true,
-										},
-										"unit": schema.StringAttribute{
+										"type": schema.StringAttribute{
 											Computed: true,
 										},
 									},
-									CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeTraceOperatorType{
 										ObjectType: types.ObjectType{
-											AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeTraceOperatorValue{}.AttributeTypes(ctx),
 										},
 									},
+									Computed: true,
 								},
-								Computed: true,
+								"clickhouse_sql": schema.SingleNestedAttribute{
+									Attributes: map[string]schema.Attribute{
+										"spec": schema.SingleNestedAttribute{
+											Attributes: map[string]schema.Attribute{
+												"disabled": schema.BoolAttribute{
+													Computed: true,
+												},
+												"legend": schema.StringAttribute{
+													Computed: true,
+												},
+												"name": schema.StringAttribute{
+													Computed: true,
+												},
+												"query": schema.StringAttribute{
+													Computed: true,
+												},
+											},
+											CustomType: customtypes.Querybuildertypesv5ClickHouseQueryType{
+												ObjectType: types.ObjectType{
+													AttrTypes: customtypes.Querybuildertypesv5ClickHouseQueryValue{}.AttributeTypes(ctx),
+												},
+											},
+											Computed: true,
+										},
+										"type": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeClickHouseSqlType{
+										ObjectType: types.ObjectType{
+											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeClickHouseSqlValue{}.AttributeTypes(ctx),
+										},
+									},
+									Computed: true,
+								},
+								"promql": schema.SingleNestedAttribute{
+									Attributes: map[string]schema.Attribute{
+										"spec": schema.SingleNestedAttribute{
+											Attributes: map[string]schema.Attribute{
+												"disabled": schema.BoolAttribute{
+													Computed: true,
+												},
+												"legend": schema.StringAttribute{
+													Computed: true,
+												},
+												"name": schema.StringAttribute{
+													Computed: true,
+												},
+												"query": schema.StringAttribute{
+													Computed: true,
+												},
+												"stats": schema.BoolAttribute{
+													Computed: true,
+												},
+												"step": schema.StringAttribute{
+													CustomType: jsontypes.NormalizedType{},
+													Computed:   true,
+												},
+											},
+											CustomType: customtypes.Querybuildertypesv5PromQueryType{
+												ObjectType: types.ObjectType{
+													AttrTypes: customtypes.Querybuildertypesv5PromQueryValue{}.AttributeTypes(ctx),
+												},
+											},
+											Computed: true,
+										},
+										"type": schema.StringAttribute{
+											Computed: true,
+										},
+									},
+									CustomType: customtypes.Querybuildertypesv5QueryEnvelopePromQlType{
+										ObjectType: types.ObjectType{
+											AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopePromQlValue{}.AttributeTypes(ctx),
+										},
+									},
+									Computed: true,
+								},
+							},
+							CustomType: customtypes.Querybuildertypesv5QueryEnvelopeType{
+								ObjectType: types.ObjectType{
+									AttrTypes: customtypes.Querybuildertypesv5QueryEnvelopeValue{}.AttributeTypes(ctx),
+								},
+							},
+							Validators: []validator.Object{
+								validators.ExactlyOneNestedAttribute("builder_ai_query", "builder_formula", "builder_query", "builder_trace_operator", "clickhouse_sql", "promql"),
 							},
 						},
-						CustomType: customtypes.SavedviewtypesSavedViewSpecType{
-							ObjectType: types.ObjectType{
-								AttrTypes: customtypes.SavedviewtypesSavedViewSpecValue{}.AttributeTypes(ctx),
+						Computed: true,
+					},
+					"request_type": schema.StringAttribute{
+						Computed: true,
+					},
+					"selected_fields": schema.ListNestedAttribute{
+						NestedObject: schema.NestedAttributeObject{
+							Attributes: map[string]schema.Attribute{
+								"description": schema.StringAttribute{
+									Computed: true,
+								},
+								"field_context": schema.StringAttribute{
+									Computed: true,
+								},
+								"field_data_type": schema.StringAttribute{
+									Computed: true,
+								},
+								"name": schema.StringAttribute{
+									Computed: true,
+								},
+								"signal": schema.StringAttribute{
+									Computed: true,
+								},
+								"unit": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+							CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+								ObjectType: types.ObjectType{
+									AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+								},
 							},
 						},
 						Computed: true,
 					},
 				},
-				CustomType: customtypes.SavedviewtypesSavedViewDataType{
+				CustomType: customtypes.SavedviewtypesSavedViewSpecType{
 					ObjectType: types.ObjectType{
-						AttrTypes: customtypes.SavedviewtypesSavedViewDataValue{}.AttributeTypes(ctx),
+						AttrTypes: customtypes.SavedviewtypesSavedViewSpecValue{}.AttributeTypes(ctx),
 					},
 				},
-				Computed: true,
-			},
-			"id": schema.StringAttribute{
-				Required: true,
-			},
-			"name": schema.StringAttribute{
-				Computed: true,
-			},
-			"source": schema.StringAttribute{
 				Computed: true,
 			},
 		},
@@ -2033,8 +2026,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 }
 
 type SavedViewDataSourceModel struct {
-	Data   customtypes.SavedviewtypesSavedViewDataValue `tfsdk:"data"`
-	Id     types.String                                 `tfsdk:"id"`
-	Name   types.String                                 `tfsdk:"name"`
-	Source types.String                                 `tfsdk:"source"`
+	Id            types.String                                 `tfsdk:"id"`
+	Name          types.String                                 `tfsdk:"name"`
+	SchemaVersion types.String                                 `tfsdk:"schema_version"`
+	Source        types.String                                 `tfsdk:"source"`
+	Spec          customtypes.SavedviewtypesSavedViewSpecValue `tfsdk:"spec"`
 }

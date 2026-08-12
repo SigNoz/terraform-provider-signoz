@@ -208,9 +208,7 @@ resources:
       method: DELETE
     schema:
       ignores:
-        # `data` is the saved view's own payload here, not the response
-        # envelope — only the create envelope's `data.id` is dropped.
-        - data.id
+        - data
         - status
         - createdAt
         - createdBy
@@ -340,6 +338,7 @@ data_sources:
       method: GET
     schema:
       ignores:
+        - data
         - status
         - createdAt
         - createdBy

@@ -111,6 +111,24 @@ func (t SavedviewtypesSavedViewSpecType) ValueFromObject(ctx context.Context, in
 			fmt.Sprintf(`queries expected to be basetypes.ListValue, was: %T`, queriesAttribute))
 	}
 
+	requestTypeAttribute, ok := attributes["request_type"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`request_type is missing from object`)
+
+		return nil, diags
+	}
+
+	requestTypeVal, ok := requestTypeAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`request_type expected to be basetypes.StringValue, was: %T`, requestTypeAttribute))
+	}
+
 	selectedFieldsAttribute, ok := attributes["selected_fields"]
 
 	if !ok {
@@ -138,6 +156,7 @@ func (t SavedviewtypesSavedViewSpecType) ValueFromObject(ctx context.Context, in
 		DisplayName:    displayNameVal,
 		PanelType:      panelTypeVal,
 		Queries:        queriesVal,
+		RequestType:    requestTypeVal,
 		SelectedFields: selectedFieldsVal,
 		state:          attr.ValueStateKnown,
 	}, diags
@@ -278,6 +297,24 @@ func NewSavedviewtypesSavedViewSpecValue(attributeTypes map[string]attr.Type, at
 			fmt.Sprintf(`queries expected to be basetypes.ListValue, was: %T`, queriesAttribute))
 	}
 
+	requestTypeAttribute, ok := attributes["request_type"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`request_type is missing from object`)
+
+		return NewSavedviewtypesSavedViewSpecValueUnknown(), diags
+	}
+
+	requestTypeVal, ok := requestTypeAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`request_type expected to be basetypes.StringValue, was: %T`, requestTypeAttribute))
+	}
+
 	selectedFieldsAttribute, ok := attributes["selected_fields"]
 
 	if !ok {
@@ -305,6 +342,7 @@ func NewSavedviewtypesSavedViewSpecValue(attributeTypes map[string]attr.Type, at
 		DisplayName:    displayNameVal,
 		PanelType:      panelTypeVal,
 		Queries:        queriesVal,
+		RequestType:    requestTypeVal,
 		SelectedFields: selectedFieldsVal,
 		state:          attr.ValueStateKnown,
 	}, diags
@@ -382,12 +420,13 @@ type SavedviewtypesSavedViewSpecValue struct {
 	DisplayName    basetypes.StringValue `tfsdk:"display_name"`
 	PanelType      basetypes.StringValue `tfsdk:"panel_type"`
 	Queries        basetypes.ListValue   `tfsdk:"queries"`
+	RequestType    basetypes.StringValue `tfsdk:"request_type"`
 	SelectedFields basetypes.ListValue   `tfsdk:"selected_fields"`
 	state          attr.ValueState
 }
 
 func (v SavedviewtypesSavedViewSpecValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 5)
+	attrTypes := make(map[string]tftypes.Type, 6)
 
 	var val tftypes.Value
 	var err error
@@ -400,6 +439,7 @@ func (v SavedviewtypesSavedViewSpecValue) ToTerraformValue(ctx context.Context) 
 	attrTypes["queries"] = basetypes.ListType{
 		ElemType: Querybuildertypesv5QueryEnvelopeValue{}.Type(ctx),
 	}.TerraformType(ctx)
+	attrTypes["request_type"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["selected_fields"] = basetypes.ListType{
 		ElemType: TelemetrytypesTelemetryFieldKeyValue{}.Type(ctx),
 	}.TerraformType(ctx)
@@ -408,7 +448,7 @@ func (v SavedviewtypesSavedViewSpecValue) ToTerraformValue(ctx context.Context) 
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 5)
+		vals := make(map[string]tftypes.Value, 6)
 
 		val, err = v.Display.ToTerraformValue(ctx)
 
@@ -441,6 +481,14 @@ func (v SavedviewtypesSavedViewSpecValue) ToTerraformValue(ctx context.Context) 
 		}
 
 		vals["queries"] = val
+
+		val, err = v.RequestType.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["request_type"] = val
 
 		val, err = v.SelectedFields.ToTerraformValue(ctx)
 
@@ -567,6 +615,7 @@ func (v SavedviewtypesSavedViewSpecValue) ToObjectValue(ctx context.Context) (ba
 		"queries": basetypes.ListType{
 			ElemType: Querybuildertypesv5QueryEnvelopeValue{}.Type(ctx),
 		},
+		"request_type": basetypes.StringType{},
 		"selected_fields": basetypes.ListType{
 			ElemType: TelemetrytypesTelemetryFieldKeyValue{}.Type(ctx),
 		},
@@ -587,6 +636,7 @@ func (v SavedviewtypesSavedViewSpecValue) ToObjectValue(ctx context.Context) (ba
 			"display_name":    v.DisplayName,
 			"panel_type":      v.PanelType,
 			"queries":         queries,
+			"request_type":    v.RequestType,
 			"selected_fields": selectedFields,
 		})
 
@@ -624,6 +674,10 @@ func (v SavedviewtypesSavedViewSpecValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.RequestType.Equal(other.RequestType) {
+		return false
+	}
+
 	if !v.SelectedFields.Equal(other.SelectedFields) {
 		return false
 	}
@@ -649,6 +703,7 @@ func (v SavedviewtypesSavedViewSpecValue) AttributeTypes(ctx context.Context) ma
 		"queries": basetypes.ListType{
 			ElemType: Querybuildertypesv5QueryEnvelopeValue{}.Type(ctx),
 		},
+		"request_type": basetypes.StringType{},
 		"selected_fields": basetypes.ListType{
 			ElemType: TelemetrytypesTelemetryFieldKeyValue{}.Type(ctx),
 		},

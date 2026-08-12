@@ -31,17 +31,14 @@ func ExpandSavedviewtypesSavedViewSpec(ctx context.Context, v customtypes.Savedv
 		return nil, diags
 	}
 	out := &apitypes.SavedviewtypesSavedViewSpec{
-		DisplayName: v.DisplayName.ValueString(),
-		PanelType:   apitypes.SavedviewtypesPanelType(v.PanelType.ValueString()),
-	}
-	if display != nil {
-		out.Display = *display
+		Display:        display,
+		DisplayName:    v.DisplayName.ValueString(),
+		PanelType:      apitypes.SavedviewtypesPanelType(v.PanelType.ValueString()),
+		RequestType:    apitypes.Querybuildertypesv5RequestType(v.RequestType.ValueString()),
+		SelectedFields: selectedFields,
 	}
 	if queries != nil {
 		out.Queries = *queries
-	}
-	if selectedFields != nil {
-		out.SelectedFields = *selectedFields
 	}
 	return out, diags
 }
@@ -52,13 +49,13 @@ func FlattenSavedviewtypesSavedViewSpec(ctx context.Context, in *apitypes.Savedv
 		return customtypes.NewSavedviewtypesSavedViewSpecValueNull(), diags
 	}
 
-	displayFlatTyped, d := FlattenSavedviewtypesDisplay(ctx, &in.Display)
+	displayFlatTyped, d := FlattenSavedviewtypesDisplay(ctx, in.Display)
 	diags.Append(d...)
 	displayFlat, d := displayFlatTyped.ToObjectValue(ctx)
 	diags.Append(d...)
 	queriesFlat, d := FlattenQuerybuildertypesv5QueryEnvelopeList(ctx, &in.Queries)
 	diags.Append(d...)
-	selectedFieldsFlat, d := FlattenTelemetrytypesTelemetryFieldKeyList(ctx, &in.SelectedFields)
+	selectedFieldsFlat, d := FlattenTelemetrytypesTelemetryFieldKeyList(ctx, in.SelectedFields)
 	diags.Append(d...)
 	if diags.HasError() {
 		return customtypes.NewSavedviewtypesSavedViewSpecValueUnknown(), diags
@@ -71,6 +68,7 @@ func FlattenSavedviewtypesSavedViewSpec(ctx context.Context, in *apitypes.Savedv
 			"display_name":    types.StringValue(in.DisplayName),
 			"panel_type":      types.StringValue(string(in.PanelType)),
 			"queries":         queriesFlat,
+			"request_type":    types.StringValue(string(in.RequestType)),
 			"selected_fields": selectedFieldsFlat,
 		},
 	)

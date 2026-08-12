@@ -214,9 +214,10 @@ func (r *savedViewResource) ImportState(ctx context.Context, req resource.Import
 // but not in the resource shape (typically server-set audit fields).
 func savedViewResourceFromDS(ds *schemas.SavedViewDataSourceModel) *schemas.SavedViewModel {
 	return &schemas.SavedViewModel{
-		Data:   ds.Data,
-		Id:     ds.Id,
-		Name:   ds.Name,
-		Source: ds.Source,
+		Id:            ds.Id,
+		Name:          ds.Name,
+		SchemaVersion: ds.SchemaVersion,
+		Source:        ds.Source,
+		Spec:          ds.Spec,
 	}
 }

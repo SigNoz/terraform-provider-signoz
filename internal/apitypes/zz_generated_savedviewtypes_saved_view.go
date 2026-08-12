@@ -9,12 +9,13 @@ import (
 
 // SavedviewtypesSavedView defines model for SavedviewtypesSavedView.
 type SavedviewtypesSavedView struct {
-	CreatedAt *time.Time                   `json:"createdAt,omitempty"`
-	CreatedBy *string                      `json:"createdBy,omitempty"`
-	Data      *SavedviewtypesSavedViewData `json:"data,omitempty"`
-	Id        string                       `json:"id"`
-	Name      *string                      `json:"name,omitempty"`
-	Source    *SavedviewtypesSource        `json:"source,omitempty"`
-	UpdatedAt *time.Time                   `json:"updatedAt,omitempty"`
-	UpdatedBy *string                      `json:"updatedBy,omitempty"`
+	CreatedAt     *time.Time                  `json:"createdAt,omitempty"`
+	CreatedBy     *string                     `json:"createdBy,omitempty"`
+	Id            string                      `json:"id"`
+	Name          *string                     `json:"name,omitempty"`
+	SchemaVersion SavedviewtypesSchemaVersion `json:"schemaVersion"`
+	Source        *SavedviewtypesSource       `json:"source,omitempty"`
+	Spec          SavedviewtypesSavedViewSpec `json:"spec"`
+	UpdatedAt     *time.Time                  `json:"updatedAt,omitempty"`
+	UpdatedBy     *string                     `json:"updatedBy,omitempty"`
 }
