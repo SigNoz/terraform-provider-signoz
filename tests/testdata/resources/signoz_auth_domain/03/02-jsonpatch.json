@@ -1,0 +1,7 @@
+[
+  { "op": "replace", "path": "/enabled", "value": true },
+  { "op": "replace", "path": "/config/google/spec/allowed_groups", "value": ["engineering@example.com", "sre@example.com"] },
+  { "op": "replace", "path": "/config/google/spec/insecure_skip_email_verified", "value": true },
+  { "op": "replace", "path": "/role_mapping/default_role", "value": "EDITOR" },
+  { "op": "add", "path": "/role_mapping/group_mappings/sre@example.com", "value": "ADMIN" }
+]

@@ -11,8 +11,6 @@ RESOURCE_FILES = sorted((EXAMPLES / "resources").glob("signoz_*/*.tf"))
 # Example files to skip, keyed by "<resource>/<file>" -> reason. The integration
 # run surfaced provider/API issues for these.
 SKIPPED = {
-    "signoz_auth_domain/resource.tf": "server lacks the kind/spec auth domain API until SigNoz#12472 lands",
-    "signoz_auth_domain/resource_saml.tf": "server lacks the kind/spec auth domain API until SigNoz#12472 lands",
     "signoz_planned_maintenance/resource.tf": "alert_ids reference non-existent rules (API 500)",
 }
 
