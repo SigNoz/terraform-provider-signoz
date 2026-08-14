@@ -12,6 +12,5 @@ type AuthtypesGoogleConfig struct {
 	FetchGroups                    *bool              `json:"fetchGroups,omitempty"`
 	FetchTransitiveGroupMembership *bool              `json:"fetchTransitiveGroupMembership,omitempty"`
 	InsecureSkipEmailVerified      *bool              `json:"insecureSkipEmailVerified,omitempty"`
-	RedirectURI                    *string            `json:"redirectURI,omitempty"`
 	ServiceAccountJson             *string            `json:"serviceAccountJson,omitempty"`
 }

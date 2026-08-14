@@ -35,7 +35,6 @@ func ExpandAuthtypesGoogleConfig(ctx context.Context, v customtypes.AuthtypesGoo
 		FetchGroups:                    convtypes.BoolPointer(v.FetchGroups),
 		FetchTransitiveGroupMembership: convtypes.BoolPointer(v.FetchTransitiveGroupMembership),
 		InsecureSkipEmailVerified:      convtypes.BoolPointer(v.InsecureSkipEmailVerified),
-		RedirectURI:                    convtypes.StringPointer(v.RedirectUri),
 		ServiceAccountJson:             convtypes.StringPointer(v.ServiceAccountJson),
 	}, diags
 }
@@ -64,7 +63,6 @@ func FlattenAuthtypesGoogleConfig(ctx context.Context, in *apitypes.AuthtypesGoo
 			"fetch_groups":                      convtypes.BoolFromPointer(in.FetchGroups),
 			"fetch_transitive_group_membership": convtypes.BoolFromPointer(in.FetchTransitiveGroupMembership),
 			"insecure_skip_email_verified":      convtypes.BoolFromPointer(in.InsecureSkipEmailVerified),
-			"redirect_uri":                      convtypes.StringFromPointer(in.RedirectURI),
 			"service_account_json":              convtypes.StringFromPointer(in.ServiceAccountJson),
 		},
 	)

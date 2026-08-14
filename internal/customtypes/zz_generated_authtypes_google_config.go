@@ -165,24 +165,6 @@ func (t AuthtypesGoogleConfigType) ValueFromObject(ctx context.Context, in baset
 			fmt.Sprintf(`insecure_skip_email_verified expected to be basetypes.BoolValue, was: %T`, insecureSkipEmailVerifiedAttribute))
 	}
 
-	redirectUriAttribute, ok := attributes["redirect_uri"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`redirect_uri is missing from object`)
-
-		return nil, diags
-	}
-
-	redirectUriVal, ok := redirectUriAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`redirect_uri expected to be basetypes.StringValue, was: %T`, redirectUriAttribute))
-	}
-
 	serviceAccountJsonAttribute, ok := attributes["service_account_json"]
 
 	if !ok {
@@ -213,7 +195,6 @@ func (t AuthtypesGoogleConfigType) ValueFromObject(ctx context.Context, in baset
 		FetchGroups:                    fetchGroupsVal,
 		FetchTransitiveGroupMembership: fetchTransitiveGroupMembershipVal,
 		InsecureSkipEmailVerified:      insecureSkipEmailVerifiedVal,
-		RedirectUri:                    redirectUriVal,
 		ServiceAccountJson:             serviceAccountJsonVal,
 		state:                          attr.ValueStateKnown,
 	}, diags
@@ -408,24 +389,6 @@ func NewAuthtypesGoogleConfigValue(attributeTypes map[string]attr.Type, attribut
 			fmt.Sprintf(`insecure_skip_email_verified expected to be basetypes.BoolValue, was: %T`, insecureSkipEmailVerifiedAttribute))
 	}
 
-	redirectUriAttribute, ok := attributes["redirect_uri"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`redirect_uri is missing from object`)
-
-		return NewAuthtypesGoogleConfigValueUnknown(), diags
-	}
-
-	redirectUriVal, ok := redirectUriAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`redirect_uri expected to be basetypes.StringValue, was: %T`, redirectUriAttribute))
-	}
-
 	serviceAccountJsonAttribute, ok := attributes["service_account_json"]
 
 	if !ok {
@@ -456,7 +419,6 @@ func NewAuthtypesGoogleConfigValue(attributeTypes map[string]attr.Type, attribut
 		FetchGroups:                    fetchGroupsVal,
 		FetchTransitiveGroupMembership: fetchTransitiveGroupMembershipVal,
 		InsecureSkipEmailVerified:      insecureSkipEmailVerifiedVal,
-		RedirectUri:                    redirectUriVal,
 		ServiceAccountJson:             serviceAccountJsonVal,
 		state:                          attr.ValueStateKnown,
 	}, diags
@@ -537,13 +499,12 @@ type AuthtypesGoogleConfigValue struct {
 	FetchGroups                    basetypes.BoolValue   `tfsdk:"fetch_groups"`
 	FetchTransitiveGroupMembership basetypes.BoolValue   `tfsdk:"fetch_transitive_group_membership"`
 	InsecureSkipEmailVerified      basetypes.BoolValue   `tfsdk:"insecure_skip_email_verified"`
-	RedirectUri                    basetypes.StringValue `tfsdk:"redirect_uri"`
 	ServiceAccountJson             basetypes.StringValue `tfsdk:"service_account_json"`
 	state                          attr.ValueState
 }
 
 func (v AuthtypesGoogleConfigValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 9)
+	attrTypes := make(map[string]tftypes.Type, 8)
 
 	var val tftypes.Value
 	var err error
@@ -559,14 +520,13 @@ func (v AuthtypesGoogleConfigValue) ToTerraformValue(ctx context.Context) (tftyp
 	attrTypes["fetch_groups"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["fetch_transitive_group_membership"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["insecure_skip_email_verified"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["redirect_uri"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["service_account_json"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 9)
+		vals := make(map[string]tftypes.Value, 8)
 
 		val, err = v.AllowedGroups.ToTerraformValue(ctx)
 
@@ -623,14 +583,6 @@ func (v AuthtypesGoogleConfigValue) ToTerraformValue(ctx context.Context) (tftyp
 		}
 
 		vals["insecure_skip_email_verified"] = val
-
-		val, err = v.RedirectUri.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["redirect_uri"] = val
 
 		val, err = v.ServiceAccountJson.ToTerraformValue(ctx)
 
@@ -694,7 +646,6 @@ func (v AuthtypesGoogleConfigValue) ToObjectValue(ctx context.Context) (basetype
 			"fetch_groups":                      basetypes.BoolType{},
 			"fetch_transitive_group_membership": basetypes.BoolType{},
 			"insecure_skip_email_verified":      basetypes.BoolType{},
-			"redirect_uri":                      basetypes.StringType{},
 			"service_account_json":              basetypes.StringType{},
 		}), diags
 	}
@@ -724,7 +675,6 @@ func (v AuthtypesGoogleConfigValue) ToObjectValue(ctx context.Context) (basetype
 			"fetch_groups":                      basetypes.BoolType{},
 			"fetch_transitive_group_membership": basetypes.BoolType{},
 			"insecure_skip_email_verified":      basetypes.BoolType{},
-			"redirect_uri":                      basetypes.StringType{},
 			"service_account_json":              basetypes.StringType{},
 		}), diags
 	}
@@ -741,7 +691,6 @@ func (v AuthtypesGoogleConfigValue) ToObjectValue(ctx context.Context) (basetype
 		"fetch_groups":                      basetypes.BoolType{},
 		"fetch_transitive_group_membership": basetypes.BoolType{},
 		"insecure_skip_email_verified":      basetypes.BoolType{},
-		"redirect_uri":                      basetypes.StringType{},
 		"service_account_json":              basetypes.StringType{},
 	}
 
@@ -763,7 +712,6 @@ func (v AuthtypesGoogleConfigValue) ToObjectValue(ctx context.Context) (basetype
 			"fetch_groups":                      v.FetchGroups,
 			"fetch_transitive_group_membership": v.FetchTransitiveGroupMembership,
 			"insecure_skip_email_verified":      v.InsecureSkipEmailVerified,
-			"redirect_uri":                      v.RedirectUri,
 			"service_account_json":              v.ServiceAccountJson,
 		})
 
@@ -813,10 +761,6 @@ func (v AuthtypesGoogleConfigValue) Equal(o attr.Value) bool {
 		return false
 	}
 
-	if !v.RedirectUri.Equal(other.RedirectUri) {
-		return false
-	}
-
 	if !v.ServiceAccountJson.Equal(other.ServiceAccountJson) {
 		return false
 	}
@@ -845,7 +789,6 @@ func (v AuthtypesGoogleConfigValue) AttributeTypes(ctx context.Context) map[stri
 		"fetch_groups":                      basetypes.BoolType{},
 		"fetch_transitive_group_membership": basetypes.BoolType{},
 		"insecure_skip_email_verified":      basetypes.BoolType{},
-		"redirect_uri":                      basetypes.StringType{},
 		"service_account_json":              basetypes.StringType{},
 	}
 }

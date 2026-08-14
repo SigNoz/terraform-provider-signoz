@@ -56,7 +56,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 										Required: true,
 									},
 									"client_secret": schema.StringAttribute{
-										Required: true,
+										Required:  true,
+										Sensitive: true,
 									},
 									"domain_to_admin_email": schema.MapAttribute{
 										ElementType: types.StringType,
@@ -75,13 +76,10 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 										Optional: true,
 										Computed: true,
 									},
-									"redirect_uri": schema.StringAttribute{
-										Optional: true,
-										Computed: true,
-									},
 									"service_account_json": schema.StringAttribute{
-										Optional: true,
-										Computed: true,
+										Optional:  true,
+										Computed:  true,
+										Sensitive: true,
 									},
 								},
 								CustomType: customtypes.AuthtypesGoogleConfigType{
@@ -146,7 +144,8 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 										Required: true,
 									},
 									"client_secret": schema.StringAttribute{
-										Required: true,
+										Required:  true,
+										Sensitive: true,
 									},
 									"get_user_info": schema.BoolAttribute{
 										Optional: true,
