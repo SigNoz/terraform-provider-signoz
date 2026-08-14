@@ -11,6 +11,7 @@
               "client_id": "912345678901-scenario03.apps.googleusercontent.com",
               "client_secret": "GOCSPX-scenario-03-secret",
               "allowed_groups": ["engineering@example.com"],
+              "fetch_groups": true,
               "insecure_skip_email_verified": false
             }
           }
