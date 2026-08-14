@@ -86,7 +86,7 @@ Required:
 Required:
 
 - `client_id` (String)
-- `client_secret` (String)
+- `client_secret` (String, Sensitive)
 
 Optional:
 
@@ -95,8 +95,7 @@ Optional:
 - `fetch_groups` (Boolean)
 - `fetch_transitive_group_membership` (Boolean)
 - `insecure_skip_email_verified` (Boolean)
-- `redirect_uri` (String)
-- `service_account_json` (String)
+- `service_account_json` (String, Sensitive)
 
 
 
@@ -114,7 +113,7 @@ Required:
 Required:
 
 - `client_id` (String)
-- `client_secret` (String)
+- `client_secret` (String, Sensitive)
 - `issuer` (String)
 
 Optional:

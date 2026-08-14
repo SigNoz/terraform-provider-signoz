@@ -63,13 +63,12 @@ Read-Only:
 
 - `allowed_groups` (List of String)
 - `client_id` (String)
-- `client_secret` (String)
+- `client_secret` (String, Sensitive)
 - `domain_to_admin_email` (Map of String)
 - `fetch_groups` (Boolean)
 - `fetch_transitive_group_membership` (Boolean)
 - `insecure_skip_email_verified` (Boolean)
-- `redirect_uri` (String)
-- `service_account_json` (String)
+- `service_account_json` (String, Sensitive)
 
 
 
@@ -88,7 +87,7 @@ Read-Only:
 
 - `claim_mapping` (Attributes) (see [below for nested schema](#nestedatt--config--oidc--spec--claim_mapping))
 - `client_id` (String)
-- `client_secret` (String)
+- `client_secret` (String, Sensitive)
 - `get_user_info` (Boolean)
 - `insecure_skip_email_verified` (Boolean)
 - `issuer` (String)
