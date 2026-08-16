@@ -1,0 +1,9 @@
+[
+  { "op": "replace", "path": "/enabled", "value": true },
+  { "op": "replace", "path": "/config/oidc/spec/get_user_info", "value": true },
+  { "op": "replace", "path": "/config/oidc/spec/insecure_skip_email_verified", "value": true },
+  { "op": "add", "path": "/config/oidc/spec/issuer_alias", "value": "https://idp-alias.example.com" },
+  { "op": "add", "path": "/config/oidc/spec/claim_mapping/role", "value": "role" },
+  { "op": "replace", "path": "/role_mapping/default_role", "value": "signoz-editor" },
+  { "op": "add", "path": "/role_mapping/group_mappings/sre@example.com", "value": "signoz-admin" }
+]

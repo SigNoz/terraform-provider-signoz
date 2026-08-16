@@ -2,6 +2,27 @@ provider:
   name: signoz
 
 resources:
+  auth_domain:
+    create:
+      path: /api/v2/auth_domains
+      method: POST
+    read:
+      path: /api/v2/auth_domains/{id}
+      method: GET
+    update:
+      path: /api/v2/auth_domains/{id}
+      method: PUT
+    delete:
+      path: /api/v2/auth_domains/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
   route_policy:
     create:
       path: /api/v1/route_policies
@@ -217,6 +238,18 @@ resources:
         - generateName
 
 data_sources:
+  auth_domain:
+    read:
+      path: /api/v2/auth_domains/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
   route_policy:
     read:
       path: /api/v1/route_policies/{id}

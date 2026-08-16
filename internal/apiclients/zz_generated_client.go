@@ -44,6 +44,12 @@ type CreateServiceAccountJSONRequestBody = apitypes.ServiceaccounttypesPostableS
 // UpdateServiceAccountJSONRequestBody defines body for UpdateServiceAccount for application/json ContentType.
 type UpdateServiceAccountJSONRequestBody = apitypes.ServiceaccounttypesPostableServiceAccount
 
+// CreateAuthDomainJSONRequestBody defines body for CreateAuthDomain for application/json ContentType.
+type CreateAuthDomainJSONRequestBody = apitypes.AuthtypesPostableAuthDomain
+
+// UpdateAuthDomainJSONRequestBody defines body for UpdateAuthDomain for application/json ContentType.
+type UpdateAuthDomainJSONRequestBody = apitypes.AuthtypesUpdatableAuthDomain
+
 // CreateDashboardV2JSONRequestBody defines body for CreateDashboardV2 for application/json ContentType.
 type CreateDashboardV2JSONRequestBody = apitypes.DashboardtypesPostableDashboardV2
 
@@ -218,6 +224,22 @@ type ClientInterface interface {
 	UpdateServiceAccountWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateServiceAccount(ctx context.Context, id string, body UpdateServiceAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAuthDomainWithBody request with any body
+	CreateAuthDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateAuthDomain(ctx context.Context, body CreateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteAuthDomain request
+	DeleteAuthDomain(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAuthDomain request
+	GetAuthDomain(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateAuthDomainWithBody request with any body
+	UpdateAuthDomainWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateAuthDomain(ctx context.Context, id string, body UpdateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateDashboardV2WithBody request with any body
 	CreateDashboardV2WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -621,6 +643,78 @@ func (c *Client) UpdateServiceAccountWithBody(ctx context.Context, id string, co
 
 func (c *Client) UpdateServiceAccount(ctx context.Context, id string, body UpdateServiceAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateServiceAccountRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAuthDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAuthDomainRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAuthDomain(ctx context.Context, body CreateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAuthDomainRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteAuthDomain(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAuthDomainRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAuthDomain(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAuthDomainRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAuthDomainWithBody(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAuthDomainRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAuthDomain(ctx context.Context, id string, body UpdateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAuthDomainRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1695,6 +1789,161 @@ func NewUpdateServiceAccountRequestWithBody(server string, id string, contentTyp
 	return req, nil
 }
 
+// NewCreateAuthDomainRequest calls the generic CreateAuthDomain builder with application/json body
+func NewCreateAuthDomainRequest(server string, body CreateAuthDomainJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAuthDomainRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateAuthDomainRequestWithBody generates requests for CreateAuthDomain with any type of body
+func NewCreateAuthDomainRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/auth_domains")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteAuthDomainRequest generates requests for DeleteAuthDomain
+func NewDeleteAuthDomainRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/auth_domains/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAuthDomainRequest generates requests for GetAuthDomain
+func NewGetAuthDomainRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/auth_domains/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateAuthDomainRequest calls the generic UpdateAuthDomain builder with application/json body
+func NewUpdateAuthDomainRequest(server string, id string, body UpdateAuthDomainJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateAuthDomainRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateAuthDomainRequestWithBody generates requests for UpdateAuthDomain with any type of body
+func NewUpdateAuthDomainRequestWithBody(server string, id string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v2/auth_domains/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewCreateDashboardV2Request calls the generic CreateDashboardV2 builder with application/json body
 func NewCreateDashboardV2Request(server string, body CreateDashboardV2JSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2541,6 +2790,22 @@ type ClientWithResponsesInterface interface {
 
 	UpdateServiceAccountWithResponse(ctx context.Context, id string, body UpdateServiceAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateServiceAccountResponse, error)
 
+	// CreateAuthDomainWithBodyWithResponse request with any body
+	CreateAuthDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAuthDomainResponse, error)
+
+	CreateAuthDomainWithResponse(ctx context.Context, body CreateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAuthDomainResponse, error)
+
+	// DeleteAuthDomainWithResponse request
+	DeleteAuthDomainWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteAuthDomainResponse, error)
+
+	// GetAuthDomainWithResponse request
+	GetAuthDomainWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetAuthDomainResponse, error)
+
+	// UpdateAuthDomainWithBodyWithResponse request with any body
+	UpdateAuthDomainWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAuthDomainResponse, error)
+
+	UpdateAuthDomainWithResponse(ctx context.Context, id string, body UpdateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAuthDomainResponse, error)
+
 	// CreateDashboardV2WithBodyWithResponse request with any body
 	CreateDashboardV2WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDashboardV2Response, error)
 
@@ -3295,6 +3560,148 @@ func (r UpdateServiceAccountResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r UpdateServiceAccountResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CreateAuthDomainResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *struct {
+		Data   apitypes.TypesIdentifiable `json:"data"`
+		Status string                     `json:"status"`
+	}
+	JSON400 *apitypes.RenderErrorResponse
+	JSON401 *apitypes.RenderErrorResponse
+	JSON403 *apitypes.RenderErrorResponse
+	JSON409 *apitypes.RenderErrorResponse
+	JSON500 *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAuthDomainResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAuthDomainResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateAuthDomainResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteAuthDomainResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *apitypes.RenderErrorResponse
+	JSON401      *apitypes.RenderErrorResponse
+	JSON403      *apitypes.RenderErrorResponse
+	JSON500      *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteAuthDomainResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteAuthDomainResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteAuthDomainResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetAuthDomainResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data   apitypes.AuthtypesGettableAuthDomain `json:"data"`
+		Status string                               `json:"status"`
+	}
+	JSON401 *apitypes.RenderErrorResponse
+	JSON403 *apitypes.RenderErrorResponse
+	JSON404 *apitypes.RenderErrorResponse
+	JSON500 *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAuthDomainResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAuthDomainResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAuthDomainResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type UpdateAuthDomainResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *apitypes.RenderErrorResponse
+	JSON401      *apitypes.RenderErrorResponse
+	JSON403      *apitypes.RenderErrorResponse
+	JSON409      *apitypes.RenderErrorResponse
+	JSON500      *apitypes.RenderErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateAuthDomainResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateAuthDomainResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateAuthDomainResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -4226,6 +4633,58 @@ func (c *ClientWithResponses) UpdateServiceAccountWithResponse(ctx context.Conte
 		return nil, err
 	}
 	return ParseUpdateServiceAccountResponse(rsp)
+}
+
+// CreateAuthDomainWithBodyWithResponse request with arbitrary body returning *CreateAuthDomainResponse
+func (c *ClientWithResponses) CreateAuthDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAuthDomainResponse, error) {
+	rsp, err := c.CreateAuthDomainWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAuthDomainResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateAuthDomainWithResponse(ctx context.Context, body CreateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAuthDomainResponse, error) {
+	rsp, err := c.CreateAuthDomain(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAuthDomainResponse(rsp)
+}
+
+// DeleteAuthDomainWithResponse request returning *DeleteAuthDomainResponse
+func (c *ClientWithResponses) DeleteAuthDomainWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteAuthDomainResponse, error) {
+	rsp, err := c.DeleteAuthDomain(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteAuthDomainResponse(rsp)
+}
+
+// GetAuthDomainWithResponse request returning *GetAuthDomainResponse
+func (c *ClientWithResponses) GetAuthDomainWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetAuthDomainResponse, error) {
+	rsp, err := c.GetAuthDomain(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAuthDomainResponse(rsp)
+}
+
+// UpdateAuthDomainWithBodyWithResponse request with arbitrary body returning *UpdateAuthDomainResponse
+func (c *ClientWithResponses) UpdateAuthDomainWithBodyWithResponse(ctx context.Context, id string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAuthDomainResponse, error) {
+	rsp, err := c.UpdateAuthDomainWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAuthDomainResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateAuthDomainWithResponse(ctx context.Context, id string, body UpdateAuthDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAuthDomainResponse, error) {
+	rsp, err := c.UpdateAuthDomain(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAuthDomainResponse(rsp)
 }
 
 // CreateDashboardV2WithBodyWithResponse request with arbitrary body returning *CreateDashboardV2Response
@@ -5552,6 +6011,228 @@ func ParseUpdateServiceAccountResponse(rsp *http.Response) (*UpdateServiceAccoun
 			return nil, err
 		}
 		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateAuthDomainResponse parses an HTTP response from a CreateAuthDomainWithResponse call
+func ParseCreateAuthDomainResponse(rsp *http.Response) (*CreateAuthDomainResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAuthDomainResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest struct {
+			Data   apitypes.TypesIdentifiable `json:"data"`
+			Status string                     `json:"status"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteAuthDomainResponse parses an HTTP response from a DeleteAuthDomainWithResponse call
+func ParseDeleteAuthDomainResponse(rsp *http.Response) (*DeleteAuthDomainResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteAuthDomainResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAuthDomainResponse parses an HTTP response from a GetAuthDomainWithResponse call
+func ParseGetAuthDomainResponse(rsp *http.Response) (*GetAuthDomainResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAuthDomainResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data   apitypes.AuthtypesGettableAuthDomain `json:"data"`
+			Status string                               `json:"status"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateAuthDomainResponse parses an HTTP response from a UpdateAuthDomainWithResponse call
+func ParseUpdateAuthDomainResponse(rsp *http.Response) (*UpdateAuthDomainResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateAuthDomainResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest apitypes.RenderErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
 		var dest apitypes.RenderErrorResponse
