@@ -1,0 +1,33 @@
+{
+  "resource": {
+    "signoz_auth_domain": {
+      "scenario_03": {
+        "name": "oidc.scenario-03.example.com",
+        "enabled": false,
+        "config": {
+          "oidc": {
+            "kind": "oidc",
+            "spec": {
+              "client_id": "scenario-03-client",
+              "client_secret": "scenario-03-secret",
+              "issuer": "https://idp.example.com",
+              "get_user_info": false,
+              "insecure_skip_email_verified": false,
+              "claim_mapping": {
+                "email": "email",
+                "groups": "groups"
+              }
+            }
+          }
+        },
+        "role_mapping": {
+          "default_role": "VIEWER",
+          "use_role_attribute": false,
+          "group_mappings": {
+            "engineering@example.com": "EDITOR"
+          }
+        }
+      }
+    }
+  }
+}
