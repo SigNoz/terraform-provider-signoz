@@ -80,7 +80,6 @@ EOT
 
 ### Read-Only
 
-- `auth_nprovider_info` (Attributes) (see [below for nested schema](#nestedatt--auth_nprovider_info))
 - `id` (String) The ID of this resource.
 - `org_id` (String)
 
@@ -201,14 +200,6 @@ Optional:
 - `default_role` (String)
 - `group_mappings` (Map of String)
 - `use_role_attribute` (Boolean)
-
-
-<a id="nestedatt--auth_nprovider_info"></a>
-### Nested Schema for `auth_nprovider_info`
-
-Read-Only:
-
-- `relay_state_path` (String)
 
 ## Import
 
