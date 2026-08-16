@@ -17,19 +17,6 @@ import (
 func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"auth_nprovider_info": schema.SingleNestedAttribute{
-				Attributes: map[string]schema.Attribute{
-					"relay_state_path": schema.StringAttribute{
-						Computed: true,
-					},
-				},
-				CustomType: customtypes.AuthtypesAuthNproviderInfoType{
-					ObjectType: types.ObjectType{
-						AttrTypes: customtypes.AuthtypesAuthNproviderInfoValue{}.AttributeTypes(ctx),
-					},
-				},
-				Computed: true,
-			},
 			"config": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"google": schema.SingleNestedAttribute{
@@ -304,11 +291,10 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 }
 
 type AuthDomainModel struct {
-	AuthNproviderInfo customtypes.AuthtypesAuthNproviderInfoValue `tfsdk:"auth_nprovider_info"`
-	Config            customtypes.AuthtypesAuthDomainConfigValue  `tfsdk:"config"`
-	Enabled           types.Bool                                  `tfsdk:"enabled"`
-	Id                types.String                                `tfsdk:"id"`
-	Name              types.String                                `tfsdk:"name"`
-	OrgId             types.String                                `tfsdk:"org_id"`
-	RoleMapping       customtypes.AuthtypesRoleMappingValue       `tfsdk:"role_mapping"`
+	Config      customtypes.AuthtypesAuthDomainConfigValue `tfsdk:"config"`
+	Enabled     types.Bool                                 `tfsdk:"enabled"`
+	Id          types.String                               `tfsdk:"id"`
+	Name        types.String                               `tfsdk:"name"`
+	OrgId       types.String                               `tfsdk:"org_id"`
+	RoleMapping customtypes.AuthtypesRoleMappingValue      `tfsdk:"role_mapping"`
 }

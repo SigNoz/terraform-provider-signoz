@@ -61,8 +61,6 @@ func FlattenAuthtypesGettableAuthDomain(ctx context.Context, g *apitypes.Authtyp
 		return nil, diags
 	}
 
-	authNproviderInfoFlat, d := FlattenAuthtypesAuthNProviderInfo(ctx, g.AuthNProviderInfo)
-	diags.Append(d...)
 	configFlat, d := FlattenAuthtypesAuthDomainConfig(ctx, g.Config)
 	diags.Append(d...)
 	roleMappingFlat, d := FlattenAuthtypesRoleMapping(ctx, g.RoleMapping)
@@ -72,12 +70,11 @@ func FlattenAuthtypesGettableAuthDomain(ctx context.Context, g *apitypes.Authtyp
 	}
 
 	return &schemas.AuthDomainDataSourceModel{
-		AuthNproviderInfo: authNproviderInfoFlat,
-		Config:            configFlat,
-		Enabled:           convtypes.BoolFromPointer(g.Enabled),
-		Id:                types.StringValue(g.Id),
-		Name:              convtypes.StringFromPointer(g.Name),
-		OrgId:             convtypes.StringFromPointer(g.OrgId),
-		RoleMapping:       roleMappingFlat,
+		Config:      configFlat,
+		Enabled:     convtypes.BoolFromPointer(g.Enabled),
+		Id:          types.StringValue(g.Id),
+		Name:        convtypes.StringFromPointer(g.Name),
+		OrgId:       convtypes.StringFromPointer(g.OrgId),
+		RoleMapping: roleMappingFlat,
 	}, diags
 }

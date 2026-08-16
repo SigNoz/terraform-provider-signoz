@@ -23,21 +23,12 @@ data "signoz_auth_domain" "example" {
 
 ### Read-Only
 
-- `auth_nprovider_info` (Attributes) (see [below for nested schema](#nestedatt--auth_nprovider_info))
 - `config` (Attributes) (see [below for nested schema](#nestedatt--config))
 - `enabled` (Boolean)
 - `id` (String) The ID of this resource.
 - `name` (String)
 - `org_id` (String)
 - `role_mapping` (Attributes) (see [below for nested schema](#nestedatt--role_mapping))
-
-<a id="nestedatt--auth_nprovider_info"></a>
-### Nested Schema for `auth_nprovider_info`
-
-Read-Only:
-
-- `relay_state_path` (String)
-
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
