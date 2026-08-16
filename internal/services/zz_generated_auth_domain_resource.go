@@ -214,12 +214,11 @@ func (r *authDomainResource) ImportState(ctx context.Context, req resource.Impor
 // but not in the resource shape (typically server-set audit fields).
 func authDomainResourceFromDS(ds *schemas.AuthDomainDataSourceModel) *schemas.AuthDomainModel {
 	return &schemas.AuthDomainModel{
-		AuthNproviderInfo: ds.AuthNproviderInfo,
-		Config:            ds.Config,
-		Enabled:           ds.Enabled,
-		Id:                ds.Id,
-		Name:              ds.Name,
-		OrgId:             ds.OrgId,
-		RoleMapping:       ds.RoleMapping,
+		Config:      ds.Config,
+		Enabled:     ds.Enabled,
+		Id:          ds.Id,
+		Name:        ds.Name,
+		OrgId:       ds.OrgId,
+		RoleMapping: ds.RoleMapping,
 	}
 }
