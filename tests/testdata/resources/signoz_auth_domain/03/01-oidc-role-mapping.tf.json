@@ -21,10 +21,10 @@
           }
         },
         "role_mapping": {
-          "default_role": "VIEWER",
+          "default_role": "signoz-viewer",
           "use_role_attribute": false,
           "group_mappings": {
-            "engineering@example.com": "EDITOR"
+            "engineering@example.com": "signoz-editor"
           }
         }
       }
