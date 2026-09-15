@@ -70,6 +70,7 @@ func RoleResourceSchema(ctx context.Context) schema.Schema {
 													"factor-api-key",
 													"license",
 													"subscription",
+													"deployment-host",
 													"logs",
 													"traces",
 													"metrics",

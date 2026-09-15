@@ -5,15 +5,18 @@ package apitypes
 
 // Defines values for SavedviewtypesSource.
 const (
-	SavedviewtypesSourceLogs    SavedviewtypesSource = "logs"
-	SavedviewtypesSourceMeter   SavedviewtypesSource = "meter"
-	SavedviewtypesSourceMetrics SavedviewtypesSource = "metrics"
-	SavedviewtypesSourceTraces  SavedviewtypesSource = "traces"
+	SavedviewtypesSourceAiObservability SavedviewtypesSource = "ai_observability"
+	SavedviewtypesSourceLogs            SavedviewtypesSource = "logs"
+	SavedviewtypesSourceMeter           SavedviewtypesSource = "meter"
+	SavedviewtypesSourceMetrics         SavedviewtypesSource = "metrics"
+	SavedviewtypesSourceTraces          SavedviewtypesSource = "traces"
 )
 
 // Valid indicates whether the value is a known member of the SavedviewtypesSource enum.
 func (e SavedviewtypesSource) Valid() bool {
 	switch e {
+	case SavedviewtypesSourceAiObservability:
+		return true
 	case SavedviewtypesSourceLogs:
 		return true
 	case SavedviewtypesSourceMeter:

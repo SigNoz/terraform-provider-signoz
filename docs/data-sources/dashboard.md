@@ -180,6 +180,7 @@ Read-Only:
 - `number_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel))
 - `pie_chart_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel))
 - `table_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel))
+- `text_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel))
 - `time_series_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel))
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel"></a>
@@ -464,6 +465,44 @@ Read-Only:
 
 
 
+<a id="nestedatt--spec--panels--spec--plugin--text_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.text_panel`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--text_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.text_panel.spec`
+
+Read-Only:
+
+- `header_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec--header_options))
+- `mode` (String)
+- `presentation` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec--presentation))
+- `text` (String)
+
+<a id="nestedatt--spec--panels--spec--plugin--text_panel--spec--header_options"></a>
+### Nested Schema for `spec.panels.spec.plugin.text_panel.spec.header_options`
+
+Read-Only:
+
+- `hide` (Boolean)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--text_panel--spec--presentation"></a>
+### Nested Schema for `spec.panels.spec.plugin.text_panel.spec.presentation`
+
+Read-Only:
+
+- `background` (String)
+- `text_align` (String)
+- `vertical_align` (String)
+
+
+
+
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel"></a>
 ### Nested Schema for `spec.panels.spec.plugin.time_series_panel`
 
@@ -608,6 +647,7 @@ Read-Only:
 Read-Only:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--filter))
@@ -633,6 +673,50 @@ Read-Only:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--filter"></a>
@@ -791,6 +875,7 @@ Read-Only:
 Read-Only:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--filter))
@@ -828,6 +913,50 @@ Read-Only:
 
 - `operator` (String)
 - `threshold` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
 
 
 
@@ -987,6 +1116,7 @@ Read-Only:
 Read-Only:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--filter))
@@ -1012,6 +1142,50 @@ Read-Only:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--filter"></a>
@@ -1227,6 +1401,7 @@ Read-Only:
 Read-Only:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--filter))
@@ -1252,6 +1427,50 @@ Read-Only:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--filter"></a>
@@ -1418,6 +1637,7 @@ Read-Only:
 
 Read-Only:
 
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options))
 - `disabled` (Boolean)
 - `expression` (String)
 - `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions))
@@ -1426,6 +1646,50 @@ Read-Only:
 - `limit` (Number)
 - `name` (String)
 - `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
+
+
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.functions`
@@ -1500,6 +1764,7 @@ Read-Only:
 Read-Only:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--filter))
@@ -1525,6 +1790,50 @@ Read-Only:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--filter"></a>
@@ -1683,6 +1992,7 @@ Read-Only:
 Read-Only:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--filter))
@@ -1720,6 +2030,50 @@ Read-Only:
 
 - `operator` (String)
 - `threshold` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
 
 
 
@@ -1879,6 +2233,7 @@ Read-Only:
 Read-Only:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--filter))
@@ -1904,6 +2259,50 @@ Read-Only:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--filter"></a>
@@ -2239,6 +2638,7 @@ Read-Only:
 
 Read-Only:
 
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options))
 - `disabled` (Boolean)
 - `expression` (String)
 - `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions))
@@ -2247,6 +2647,50 @@ Read-Only:
 - `limit` (Number)
 - `name` (String)
 - `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options`
+
+Read-Only:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options.linear`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options.linear.spec`
+
+Read-Only:
+
+- `max_value` (Number)
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options.log`
+
+Read-Only:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options.log.spec`
+
+Read-Only:
+
+- `scale` (Number)
+
+
+
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.functions`

@@ -11,7 +11,9 @@ const (
 	TelemetrytypesFieldContextLog       TelemetrytypesFieldContext = "log"
 	TelemetrytypesFieldContextMetric    TelemetrytypesFieldContext = "metric"
 	TelemetrytypesFieldContextResource  TelemetrytypesFieldContext = "resource"
+	TelemetrytypesFieldContextScope     TelemetrytypesFieldContext = "scope"
 	TelemetrytypesFieldContextSpan      TelemetrytypesFieldContext = "span"
+	TelemetrytypesFieldContextTrace     TelemetrytypesFieldContext = "trace"
 )
 
 // Valid indicates whether the value is a known member of the TelemetrytypesFieldContext enum.
@@ -29,7 +31,11 @@ func (e TelemetrytypesFieldContext) Valid() bool {
 		return true
 	case TelemetrytypesFieldContextResource:
 		return true
+	case TelemetrytypesFieldContextScope:
+		return true
 	case TelemetrytypesFieldContextSpan:
+		return true
+	case TelemetrytypesFieldContextTrace:
 		return true
 	default:
 		return false

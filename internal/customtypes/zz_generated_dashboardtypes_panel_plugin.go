@@ -147,6 +147,24 @@ func (t DashboardtypesPanelPluginType) ValueFromObject(ctx context.Context, in b
 			fmt.Sprintf(`table_panel expected to be basetypes.ObjectValue, was: %T`, tablePanelAttribute))
 	}
 
+	textPanelAttribute, ok := attributes["text_panel"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`text_panel is missing from object`)
+
+		return nil, diags
+	}
+
+	textPanelVal, ok := textPanelAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`text_panel expected to be basetypes.ObjectValue, was: %T`, textPanelAttribute))
+	}
+
 	timeSeriesPanelAttribute, ok := attributes["time_series_panel"]
 
 	if !ok {
@@ -176,6 +194,7 @@ func (t DashboardtypesPanelPluginType) ValueFromObject(ctx context.Context, in b
 		NumberPanel:     numberPanelVal,
 		PieChartPanel:   pieChartPanelVal,
 		TablePanel:      tablePanelVal,
+		TextPanel:       textPanelVal,
 		TimeSeriesPanel: timeSeriesPanelVal,
 		state:           attr.ValueStateKnown,
 	}, diags
@@ -352,6 +371,24 @@ func NewDashboardtypesPanelPluginValue(attributeTypes map[string]attr.Type, attr
 			fmt.Sprintf(`table_panel expected to be basetypes.ObjectValue, was: %T`, tablePanelAttribute))
 	}
 
+	textPanelAttribute, ok := attributes["text_panel"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`text_panel is missing from object`)
+
+		return NewDashboardtypesPanelPluginValueUnknown(), diags
+	}
+
+	textPanelVal, ok := textPanelAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`text_panel expected to be basetypes.ObjectValue, was: %T`, textPanelAttribute))
+	}
+
 	timeSeriesPanelAttribute, ok := attributes["time_series_panel"]
 
 	if !ok {
@@ -381,6 +418,7 @@ func NewDashboardtypesPanelPluginValue(attributeTypes map[string]attr.Type, attr
 		NumberPanel:     numberPanelVal,
 		PieChartPanel:   pieChartPanelVal,
 		TablePanel:      tablePanelVal,
+		TextPanel:       textPanelVal,
 		TimeSeriesPanel: timeSeriesPanelVal,
 		state:           attr.ValueStateKnown,
 	}, diags
@@ -460,12 +498,13 @@ type DashboardtypesPanelPluginValue struct {
 	NumberPanel     basetypes.ObjectValue `tfsdk:"number_panel"`
 	PieChartPanel   basetypes.ObjectValue `tfsdk:"pie_chart_panel"`
 	TablePanel      basetypes.ObjectValue `tfsdk:"table_panel"`
+	TextPanel       basetypes.ObjectValue `tfsdk:"text_panel"`
 	TimeSeriesPanel basetypes.ObjectValue `tfsdk:"time_series_panel"`
 	state           attr.ValueState
 }
 
 func (v DashboardtypesPanelPluginValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 7)
+	attrTypes := make(map[string]tftypes.Type, 8)
 
 	var val tftypes.Value
 	var err error
@@ -488,6 +527,9 @@ func (v DashboardtypesPanelPluginValue) ToTerraformValue(ctx context.Context) (t
 	attrTypes["table_panel"] = basetypes.ObjectType{
 		AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpecValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
+	attrTypes["text_panel"] = basetypes.ObjectType{
+		AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx),
+	}.TerraformType(ctx)
 	attrTypes["time_series_panel"] = basetypes.ObjectType{
 		AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpecValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -496,7 +538,7 @@ func (v DashboardtypesPanelPluginValue) ToTerraformValue(ctx context.Context) (t
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 7)
+		vals := make(map[string]tftypes.Value, 8)
 
 		val, err = v.BarChartPanel.ToTerraformValue(ctx)
 
@@ -545,6 +587,14 @@ func (v DashboardtypesPanelPluginValue) ToTerraformValue(ctx context.Context) (t
 		}
 
 		vals["table_panel"] = val
+
+		val, err = v.TextPanel.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["text_panel"] = val
 
 		val, err = v.TimeSeriesPanel.ToTerraformValue(ctx)
 
@@ -709,6 +759,27 @@ func (v DashboardtypesPanelPluginValue) ToObjectValue(ctx context.Context) (base
 		)
 	}
 
+	var textPanel basetypes.ObjectValue
+
+	if v.TextPanel.IsNull() {
+		textPanel = types.ObjectNull(
+			DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if v.TextPanel.IsUnknown() {
+		textPanel = types.ObjectUnknown(
+			DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if !v.TextPanel.IsNull() && !v.TextPanel.IsUnknown() {
+		textPanel = types.ObjectValueMust(
+			DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx),
+			v.TextPanel.Attributes(),
+		)
+	}
+
 	var timeSeriesPanel basetypes.ObjectValue
 
 	if v.TimeSeriesPanel.IsNull() {
@@ -749,6 +820,9 @@ func (v DashboardtypesPanelPluginValue) ToObjectValue(ctx context.Context) (base
 		"table_panel": basetypes.ObjectType{
 			AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpecValue{}.AttributeTypes(ctx),
 		},
+		"text_panel": basetypes.ObjectType{
+			AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx),
+		},
 		"time_series_panel": basetypes.ObjectType{
 			AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpecValue{}.AttributeTypes(ctx),
 		},
@@ -771,6 +845,7 @@ func (v DashboardtypesPanelPluginValue) ToObjectValue(ctx context.Context) (base
 			"number_panel":      numberPanel,
 			"pie_chart_panel":   pieChartPanel,
 			"table_panel":       tablePanel,
+			"text_panel":        textPanel,
 			"time_series_panel": timeSeriesPanel,
 		})
 
@@ -816,6 +891,10 @@ func (v DashboardtypesPanelPluginValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.TextPanel.Equal(other.TextPanel) {
+		return false
+	}
+
 	if !v.TimeSeriesPanel.Equal(other.TimeSeriesPanel) {
 		return false
 	}
@@ -850,6 +929,9 @@ func (v DashboardtypesPanelPluginValue) AttributeTypes(ctx context.Context) map[
 		},
 		"table_panel": basetypes.ObjectType{
 			AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpecValue{}.AttributeTypes(ctx),
+		},
+		"text_panel": basetypes.ObjectType{
+			AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx),
 		},
 		"time_series_panel": basetypes.ObjectType{
 			AttrTypes: DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpecValue{}.AttributeTypes(ctx),

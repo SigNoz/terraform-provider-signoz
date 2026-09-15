@@ -20,6 +20,10 @@ func ExpandQuerybuildertypesv5QueryBuilderFormula(ctx context.Context, v customt
 		return nil, diags
 	}
 
+	bucketOptionsTyped, d := querybuildertypesv5BucketOptionsValueFromObject(ctx, v.BucketOptions)
+	diags.Append(d...)
+	bucketOptions, d := ExpandQuerybuildertypesv5BucketOptions(ctx, bucketOptionsTyped)
+	diags.Append(d...)
 	functions, d := ExpandQuerybuildertypesv5FunctionList(ctx, v.Functions)
 	diags.Append(d...)
 	havingTyped, d := querybuildertypesv5HavingValueFromObject(ctx, v.Having)
@@ -32,14 +36,15 @@ func ExpandQuerybuildertypesv5QueryBuilderFormula(ctx context.Context, v customt
 		return nil, diags
 	}
 	return &apitypes.Querybuildertypesv5QueryBuilderFormula{
-		Disabled:   convtypes.BoolPointer(v.Disabled),
-		Expression: convtypes.StringPointer(v.Expression),
-		Functions:  functions,
-		Having:     having,
-		Legend:     convtypes.StringPointer(v.Legend),
-		Limit:      convtypes.IntPointer(v.Limit),
-		Name:       convtypes.StringPointer(v.Name),
-		Order:      order,
+		BucketOptions: bucketOptions,
+		Disabled:      convtypes.BoolPointer(v.Disabled),
+		Expression:    convtypes.StringPointer(v.Expression),
+		Functions:     functions,
+		Having:        having,
+		Legend:        convtypes.StringPointer(v.Legend),
+		Limit:         convtypes.IntPointer(v.Limit),
+		Name:          convtypes.StringPointer(v.Name),
+		Order:         order,
 	}, diags
 }
 
@@ -49,6 +54,10 @@ func FlattenQuerybuildertypesv5QueryBuilderFormula(ctx context.Context, in *apit
 		return customtypes.NewQuerybuildertypesv5QueryBuilderFormulaValueNull(), diags
 	}
 
+	bucketOptionsFlatTyped, d := FlattenQuerybuildertypesv5BucketOptions(ctx, in.BucketOptions)
+	diags.Append(d...)
+	bucketOptionsFlat, d := bucketOptionsFlatTyped.ToObjectValue(ctx)
+	diags.Append(d...)
 	functionsFlat, d := FlattenQuerybuildertypesv5FunctionList(ctx, in.Functions)
 	diags.Append(d...)
 	havingFlatTyped, d := FlattenQuerybuildertypesv5Having(ctx, in.Having)
@@ -64,14 +73,15 @@ func FlattenQuerybuildertypesv5QueryBuilderFormula(ctx context.Context, in *apit
 	rv, d := customtypes.NewQuerybuildertypesv5QueryBuilderFormulaValue(
 		customtypes.Querybuildertypesv5QueryBuilderFormulaValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
-			"disabled":   convtypes.BoolFromPointer(in.Disabled),
-			"expression": convtypes.StringFromPointer(in.Expression),
-			"functions":  functionsFlat,
-			"having":     havingFlat,
-			"legend":     convtypes.StringFromPointer(in.Legend),
-			"limit":      convtypes.IntFromPointer(in.Limit),
-			"name":       convtypes.StringFromPointer(in.Name),
-			"order":      orderFlat,
+			"bucket_options": bucketOptionsFlat,
+			"disabled":       convtypes.BoolFromPointer(in.Disabled),
+			"expression":     convtypes.StringFromPointer(in.Expression),
+			"functions":      functionsFlat,
+			"having":         havingFlat,
+			"legend":         convtypes.StringFromPointer(in.Legend),
+			"limit":          convtypes.IntFromPointer(in.Limit),
+			"name":           convtypes.StringFromPointer(in.Name),
+			"order":          orderFlat,
 		},
 	)
 	diags.Append(d...)

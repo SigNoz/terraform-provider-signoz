@@ -42,6 +42,7 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 						"logs",
 						"metrics",
 						"meter",
+						"ai_observability",
 					),
 				},
 			},
@@ -116,6 +117,91 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 													},
 													Optional: true,
 													Computed: true,
+												},
+												"bucket_options": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"linear": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Required: true,
+																	Validators: []validator.String{
+																		stringvalidator.OneOf(
+																			"linear",
+																			"log",
+																		),
+																	},
+																},
+																"spec": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"max_value": schema.Float64Attribute{
+																			Required: true,
+																		},
+																		"num_buckets": schema.Int64Attribute{
+																			Optional: true,
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Required: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLinearValue{}.AttributeTypes(ctx),
+																},
+															},
+															Optional: true,
+															Computed: true,
+														},
+														"log": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Required: true,
+																	Validators: []validator.String{
+																		stringvalidator.OneOf(
+																			"linear",
+																			"log",
+																		),
+																	},
+																},
+																"spec": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"scale": schema.Int64Attribute{
+																			Optional: true,
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Required: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLogValue{}.AttributeTypes(ctx),
+																},
+															},
+															Optional: true,
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5BucketOptionsType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+														},
+													},
+													Optional: true,
+													Computed: true,
+													Validators: []validator.Object{
+														validators.ExactlyOneNestedAttribute("linear", "log"),
+													},
 												},
 												"cursor": schema.StringAttribute{
 													Optional: true,
@@ -216,7 +302,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																		"metric",
 																		"log",
 																		"span",
+																		"trace",
 																		"resource",
+																		"scope",
 																		"attribute",
 																		"body",
 																		"",
@@ -344,7 +432,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -429,7 +519,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																					"metric",
 																					"log",
 																					"span",
+																					"trace",
 																					"resource",
+																					"scope",
 																					"attribute",
 																					"body",
 																					"",
@@ -530,7 +622,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																							"metric",
 																							"log",
 																							"span",
+																							"trace",
 																							"resource",
+																							"scope",
 																							"attribute",
 																							"body",
 																							"",
@@ -619,7 +713,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																		"metric",
 																		"log",
 																		"span",
+																		"trace",
 																		"resource",
+																		"scope",
 																		"attribute",
 																		"body",
 																		"",
@@ -727,6 +823,91 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 									Attributes: map[string]schema.Attribute{
 										"spec": schema.SingleNestedAttribute{
 											Attributes: map[string]schema.Attribute{
+												"bucket_options": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"linear": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Required: true,
+																	Validators: []validator.String{
+																		stringvalidator.OneOf(
+																			"linear",
+																			"log",
+																		),
+																	},
+																},
+																"spec": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"max_value": schema.Float64Attribute{
+																			Required: true,
+																		},
+																		"num_buckets": schema.Int64Attribute{
+																			Optional: true,
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Required: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLinearValue{}.AttributeTypes(ctx),
+																},
+															},
+															Optional: true,
+															Computed: true,
+														},
+														"log": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"kind": schema.StringAttribute{
+																	Required: true,
+																	Validators: []validator.String{
+																		stringvalidator.OneOf(
+																			"linear",
+																			"log",
+																		),
+																	},
+																},
+																"spec": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"scale": schema.Int64Attribute{
+																			Optional: true,
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Required: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLogValue{}.AttributeTypes(ctx),
+																},
+															},
+															Optional: true,
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.Querybuildertypesv5BucketOptionsType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+														},
+													},
+													Optional: true,
+													Computed: true,
+													Validators: []validator.Object{
+														validators.ExactlyOneNestedAttribute("linear", "log"),
+													},
+												},
 												"disabled": schema.BoolAttribute{
 													Optional: true,
 													Computed: true,
@@ -850,7 +1031,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -967,6 +1150,91 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 															Optional: true,
 															Computed: true,
 														},
+														"bucket_options": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"linear": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"kind": schema.StringAttribute{
+																			Required: true,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"linear",
+																					"log",
+																				),
+																			},
+																		},
+																		"spec": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"max_value": schema.Float64Attribute{
+																					Required: true,
+																				},
+																				"num_buckets": schema.Int64Attribute{
+																					Optional: true,
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Required: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLinearValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Optional: true,
+																	Computed: true,
+																},
+																"log": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"kind": schema.StringAttribute{
+																			Required: true,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"linear",
+																					"log",
+																				),
+																			},
+																		},
+																		"spec": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"scale": schema.Int64Attribute{
+																					Optional: true,
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Required: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLogValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Optional: true,
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5BucketOptionsType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+																},
+															},
+															Optional: true,
+															Computed: true,
+															Validators: []validator.Object{
+																validators.ExactlyOneNestedAttribute("linear", "log"),
+															},
+														},
 														"cursor": schema.StringAttribute{
 															Optional: true,
 															Computed: true,
@@ -1066,7 +1334,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -1194,7 +1464,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																						"metric",
 																						"log",
 																						"span",
+																						"trace",
 																						"resource",
+																						"scope",
 																						"attribute",
 																						"body",
 																						"",
@@ -1279,7 +1551,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																							"metric",
 																							"log",
 																							"span",
+																							"trace",
 																							"resource",
+																							"scope",
 																							"attribute",
 																							"body",
 																							"",
@@ -1380,7 +1654,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																									"metric",
 																									"log",
 																									"span",
+																									"trace",
 																									"resource",
+																									"scope",
 																									"attribute",
 																									"body",
 																									"",
@@ -1469,7 +1745,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -1650,6 +1928,91 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 															Optional: true,
 															Computed: true,
 														},
+														"bucket_options": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"linear": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"kind": schema.StringAttribute{
+																			Required: true,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"linear",
+																					"log",
+																				),
+																			},
+																		},
+																		"spec": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"max_value": schema.Float64Attribute{
+																					Required: true,
+																				},
+																				"num_buckets": schema.Int64Attribute{
+																					Optional: true,
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Required: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLinearValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Optional: true,
+																	Computed: true,
+																},
+																"log": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"kind": schema.StringAttribute{
+																			Required: true,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"linear",
+																					"log",
+																				),
+																			},
+																		},
+																		"spec": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"scale": schema.Int64Attribute{
+																					Optional: true,
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Required: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLogValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Optional: true,
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5BucketOptionsType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+																},
+															},
+															Optional: true,
+															Computed: true,
+															Validators: []validator.Object{
+																validators.ExactlyOneNestedAttribute("linear", "log"),
+															},
+														},
 														"cursor": schema.StringAttribute{
 															Optional: true,
 															Computed: true,
@@ -1749,7 +2112,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -1877,7 +2242,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																						"metric",
 																						"log",
 																						"span",
+																						"trace",
 																						"resource",
+																						"scope",
 																						"attribute",
 																						"body",
 																						"",
@@ -1962,7 +2329,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																							"metric",
 																							"log",
 																							"span",
+																							"trace",
 																							"resource",
+																							"scope",
 																							"attribute",
 																							"body",
 																							"",
@@ -2063,7 +2432,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																									"metric",
 																									"log",
 																									"span",
+																									"trace",
 																									"resource",
+																									"scope",
 																									"attribute",
 																									"body",
 																									"",
@@ -2152,7 +2523,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -2257,6 +2630,91 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 															Optional: true,
 															Computed: true,
 														},
+														"bucket_options": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"linear": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"kind": schema.StringAttribute{
+																			Required: true,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"linear",
+																					"log",
+																				),
+																			},
+																		},
+																		"spec": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"max_value": schema.Float64Attribute{
+																					Required: true,
+																				},
+																				"num_buckets": schema.Int64Attribute{
+																					Optional: true,
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Required: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLinearValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Optional: true,
+																	Computed: true,
+																},
+																"log": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"kind": schema.StringAttribute{
+																			Required: true,
+																			Validators: []validator.String{
+																				stringvalidator.OneOf(
+																					"linear",
+																					"log",
+																				),
+																			},
+																		},
+																		"spec": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"scale": schema.Int64Attribute{
+																					Optional: true,
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Required: true,
+																		},
+																	},
+																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLogValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Optional: true,
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.Querybuildertypesv5BucketOptionsType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+																},
+															},
+															Optional: true,
+															Computed: true,
+															Validators: []validator.Object{
+																validators.ExactlyOneNestedAttribute("linear", "log"),
+															},
+														},
 														"cursor": schema.StringAttribute{
 															Optional: true,
 															Computed: true,
@@ -2356,7 +2814,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -2484,7 +2944,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																						"metric",
 																						"log",
 																						"span",
+																						"trace",
 																						"resource",
+																						"scope",
 																						"attribute",
 																						"body",
 																						"",
@@ -2569,7 +3031,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																							"metric",
 																							"log",
 																							"span",
+																							"trace",
 																							"resource",
+																							"scope",
 																							"attribute",
 																							"body",
 																							"",
@@ -2670,7 +3134,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																									"metric",
 																									"log",
 																									"span",
+																									"trace",
 																									"resource",
+																									"scope",
 																									"attribute",
 																									"body",
 																									"",
@@ -2759,7 +3225,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -3003,7 +3471,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																		"metric",
 																		"log",
 																		"span",
+																		"trace",
 																		"resource",
+																		"scope",
 																		"attribute",
 																		"body",
 																		"",
@@ -3111,7 +3581,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																				"metric",
 																				"log",
 																				"span",
+																				"trace",
 																				"resource",
+																				"scope",
 																				"attribute",
 																				"body",
 																				"",
@@ -3189,7 +3661,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 																		"metric",
 																		"log",
 																		"span",
+																		"trace",
 																		"resource",
+																		"scope",
 																		"attribute",
 																		"body",
 																		"",
@@ -3410,6 +3884,7 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 								"raw",
 								"raw_stream",
 								"trace",
+								"heatmap",
 							),
 						},
 					},
@@ -3428,7 +3903,9 @@ func SavedViewResourceSchema(ctx context.Context) schema.Schema {
 											"metric",
 											"log",
 											"span",
+											"trace",
 											"resource",
+											"scope",
 											"attribute",
 											"body",
 											"",

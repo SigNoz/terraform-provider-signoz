@@ -122,6 +122,23 @@ func ExpandDashboardtypesPanelPlugin(ctx context.Context, v customtypes.Dashboar
 		return &out, diags
 	}
 
+	if !v.TextPanel.IsNull() && !v.TextPanel.IsUnknown() {
+		typed, d := dashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValueFromObject(ctx, v.TextPanel)
+		diags.Append(d...)
+		member, d := ExpandDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec(ctx, typed)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if member != nil {
+			if err := out.FromDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec(*member); err != nil {
+				diags.AddError("Failed to encode text_panel union variant", err.Error())
+				return nil, diags
+			}
+		}
+		return &out, diags
+	}
+
 	if !v.TimeSeriesPanel.IsNull() && !v.TimeSeriesPanel.IsUnknown() {
 		typed, d := dashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpecValueFromObject(ctx, v.TimeSeriesPanel)
 		diags.Append(d...)
@@ -154,6 +171,7 @@ func FlattenDashboardtypesPanelPlugin(ctx context.Context, in *apitypes.Dashboar
 		"number_panel":      basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesNumberPanelSpecValue{}.AttributeTypes(ctx)),
 		"pie_chart_panel":   basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesPieChartPanelSpecValue{}.AttributeTypes(ctx)),
 		"table_panel":       basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpecValue{}.AttributeTypes(ctx)),
+		"text_panel":        basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx)),
 		"time_series_panel": basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpecValue{}.AttributeTypes(ctx)),
 	}
 	disc, err := in.ValueByDiscriminator()
@@ -198,6 +216,12 @@ func FlattenDashboardtypesPanelPlugin(ctx context.Context, in *apitypes.Dashboar
 		ov, d := fv.ToObjectValue(ctx)
 		diags.Append(d...)
 		attrs["table_panel"] = ov
+	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec:
+		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec(ctx, &member)
+		diags.Append(d...)
+		ov, d := fv.ToObjectValue(ctx)
+		diags.Append(d...)
+		attrs["text_panel"] = ov
 	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpec:
 		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpec(ctx, &member)
 		diags.Append(d...)

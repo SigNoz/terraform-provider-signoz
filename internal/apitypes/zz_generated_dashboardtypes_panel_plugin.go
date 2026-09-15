@@ -211,6 +211,34 @@ func (t *DashboardtypesPanelPlugin) MergeDashboardtypesPanelPluginVariantGithubC
 	return err
 }
 
+// AsDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec returns the union data inside the DashboardtypesPanelPlugin as a DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec
+func (t DashboardtypesPanelPlugin) AsDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec() (DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec, error) {
+	var body DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec overwrites any union data inside the DashboardtypesPanelPlugin as the provided DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec
+func (t *DashboardtypesPanelPlugin) FromDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec(v DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec) error {
+	v.Kind = "signoz/TextPanel"
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec performs a merge with any union data inside the DashboardtypesPanelPlugin, using the provided DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec
+func (t *DashboardtypesPanelPlugin) MergeDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec(v DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec) error {
+	v.Kind = "signoz/TextPanel"
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
 func (t DashboardtypesPanelPlugin) Discriminator() (string, error) {
 	var discriminator struct {
 		Discriminator string `json:"kind"`
@@ -237,6 +265,8 @@ func (t DashboardtypesPanelPlugin) ValueByDiscriminator() (interface{}, error) {
 		return t.AsDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesPieChartPanelSpec()
 	case "signoz/TablePanel":
 		return t.AsDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpec()
+	case "signoz/TextPanel":
+		return t.AsDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec()
 	case "signoz/TimeSeriesPanel":
 		return t.AsDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpec()
 	default:

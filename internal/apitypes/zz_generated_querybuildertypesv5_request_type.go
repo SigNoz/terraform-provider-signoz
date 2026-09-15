@@ -5,6 +5,7 @@ package apitypes
 
 // Defines values for Querybuildertypesv5RequestType.
 const (
+	Querybuildertypesv5RequestTypeHeatmap    Querybuildertypesv5RequestType = "heatmap"
 	Querybuildertypesv5RequestTypeRaw        Querybuildertypesv5RequestType = "raw"
 	Querybuildertypesv5RequestTypeRawStream  Querybuildertypesv5RequestType = "raw_stream"
 	Querybuildertypesv5RequestTypeScalar     Querybuildertypesv5RequestType = "scalar"
@@ -15,6 +16,8 @@ const (
 // Valid indicates whether the value is a known member of the Querybuildertypesv5RequestType enum.
 func (e Querybuildertypesv5RequestType) Valid() bool {
 	switch e {
+	case Querybuildertypesv5RequestTypeHeatmap:
+		return true
 	case Querybuildertypesv5RequestTypeRaw:
 		return true
 	case Querybuildertypesv5RequestTypeRawStream:

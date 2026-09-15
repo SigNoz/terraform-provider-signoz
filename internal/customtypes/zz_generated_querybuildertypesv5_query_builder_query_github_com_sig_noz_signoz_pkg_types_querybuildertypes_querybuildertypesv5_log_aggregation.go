@@ -58,6 +58,24 @@ func (t Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 			fmt.Sprintf(`aggregations expected to be basetypes.ListValue, was: %T`, aggregationsAttribute))
 	}
 
+	bucketOptionsAttribute, ok := attributes["bucket_options"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`bucket_options is missing from object`)
+
+		return nil, diags
+	}
+
+	bucketOptionsVal, ok := bucketOptionsAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`bucket_options expected to be basetypes.ObjectValue, was: %T`, bucketOptionsAttribute))
+	}
+
 	cursorAttribute, ok := attributes["cursor"]
 
 	if !ok {
@@ -370,6 +388,7 @@ func (t Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 
 	return Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValue{
 		Aggregations:          aggregationsVal,
+		BucketOptions:         bucketOptionsVal,
 		Cursor:                cursorVal,
 		Disabled:              disabledVal,
 		Filter:                filterVal,
@@ -472,6 +491,24 @@ func NewQuerybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 			fmt.Sprintf(`aggregations expected to be basetypes.ListValue, was: %T`, aggregationsAttribute))
 	}
 
+	bucketOptionsAttribute, ok := attributes["bucket_options"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`bucket_options is missing from object`)
+
+		return NewQuerybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValueUnknown(), diags
+	}
+
+	bucketOptionsVal, ok := bucketOptionsAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`bucket_options expected to be basetypes.ObjectValue, was: %T`, bucketOptionsAttribute))
+	}
+
 	cursorAttribute, ok := attributes["cursor"]
 
 	if !ok {
@@ -784,6 +821,7 @@ func NewQuerybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 
 	return Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValue{
 		Aggregations:          aggregationsVal,
+		BucketOptions:         bucketOptionsVal,
 		Cursor:                cursorVal,
 		Disabled:              disabledVal,
 		Filter:                filterVal,
@@ -874,6 +912,7 @@ var _ basetypes.ObjectValuable = Querybuildertypesv5QueryBuilderQueryGithubComSi
 
 type Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValue struct {
 	Aggregations          basetypes.ListValue   `tfsdk:"aggregations"`
+	BucketOptions         basetypes.ObjectValue `tfsdk:"bucket_options"`
 	Cursor                basetypes.StringValue `tfsdk:"cursor"`
 	Disabled              basetypes.BoolValue   `tfsdk:"disabled"`
 	Filter                basetypes.ObjectValue `tfsdk:"filter"`
@@ -895,13 +934,16 @@ type Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuild
 }
 
 func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 18)
+	attrTypes := make(map[string]tftypes.Type, 19)
 
 	var val tftypes.Value
 	var err error
 
 	attrTypes["aggregations"] = basetypes.ListType{
 		ElemType: Querybuildertypesv5LogAggregationValue{}.Type(ctx),
+	}.TerraformType(ctx)
+	attrTypes["bucket_options"] = basetypes.ObjectType{
+		AttrTypes: Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
 	attrTypes["cursor"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["disabled"] = basetypes.BoolType{}.TerraformType(ctx)
@@ -941,7 +983,7 @@ func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 18)
+		vals := make(map[string]tftypes.Value, 19)
 
 		val, err = v.Aggregations.ToTerraformValue(ctx)
 
@@ -950,6 +992,14 @@ func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 		}
 
 		vals["aggregations"] = val
+
+		val, err = v.BucketOptions.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["bucket_options"] = val
 
 		val, err = v.Cursor.ToTerraformValue(ctx)
 
@@ -1142,6 +1192,27 @@ func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 					AttrTypes: Querybuildertypesv5LogAggregationValue{}.AttributeTypes(ctx),
 				},
 			},
+		)
+	}
+
+	var bucketOptions basetypes.ObjectValue
+
+	if v.BucketOptions.IsNull() {
+		bucketOptions = types.ObjectNull(
+			Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if v.BucketOptions.IsUnknown() {
+		bucketOptions = types.ObjectUnknown(
+			Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if !v.BucketOptions.IsNull() && !v.BucketOptions.IsUnknown() {
+		bucketOptions = types.ObjectValueMust(
+			Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+			v.BucketOptions.Attributes(),
 		)
 	}
 
@@ -1357,6 +1428,9 @@ func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 		"aggregations": basetypes.ListType{
 			ElemType: Querybuildertypesv5LogAggregationValue{}.Type(ctx),
 		},
+		"bucket_options": basetypes.ObjectType{
+			AttrTypes: Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+		},
 		"cursor":   basetypes.StringType{},
 		"disabled": basetypes.BoolType{},
 		"filter": basetypes.ObjectType{
@@ -1404,6 +1478,7 @@ func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 		attributeTypes,
 		map[string]attr.Value{
 			"aggregations":           aggregations,
+			"bucket_options":         bucketOptions,
 			"cursor":                 v.Cursor,
 			"disabled":               v.Disabled,
 			"filter":                 filter,
@@ -1442,6 +1517,10 @@ func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 	}
 
 	if !v.Aggregations.Equal(other.Aggregations) {
+		return false
+	}
+
+	if !v.BucketOptions.Equal(other.BucketOptions) {
 		return false
 	}
 
@@ -1528,6 +1607,9 @@ func (v Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 	return map[string]attr.Type{
 		"aggregations": basetypes.ListType{
 			ElemType: Querybuildertypesv5LogAggregationValue{}.Type(ctx),
+		},
+		"bucket_options": basetypes.ObjectType{
+			AttrTypes: Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
 		},
 		"cursor":   basetypes.StringType{},
 		"disabled": basetypes.BoolType{},
