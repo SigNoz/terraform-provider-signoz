@@ -1,0 +1,4 @@
+[
+  { "op": "replace", "path": "/config/webhook/spec/send_resolved", "value": true },
+  { "op": "add", "path": "/config/webhook/spec/username", "value": "signoz" }
+]
