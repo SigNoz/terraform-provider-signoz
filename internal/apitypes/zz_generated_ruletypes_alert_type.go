@@ -5,6 +5,7 @@ package apitypes
 
 // Defines values for RuletypesAlertType.
 const (
+	RuletypesAlertTypeAITRACESBASEDALERT   RuletypesAlertType = "AI_TRACES_BASED_ALERT"
 	RuletypesAlertTypeEXCEPTIONSBASEDALERT RuletypesAlertType = "EXCEPTIONS_BASED_ALERT"
 	RuletypesAlertTypeLOGSBASEDALERT       RuletypesAlertType = "LOGS_BASED_ALERT"
 	RuletypesAlertTypeMETRICBASEDALERT     RuletypesAlertType = "METRIC_BASED_ALERT"
@@ -14,6 +15,8 @@ const (
 // Valid indicates whether the value is a known member of the RuletypesAlertType enum.
 func (e RuletypesAlertType) Valid() bool {
 	switch e {
+	case RuletypesAlertTypeAITRACESBASEDALERT:
+		return true
 	case RuletypesAlertTypeEXCEPTIONSBASEDALERT:
 		return true
 	case RuletypesAlertTypeLOGSBASEDALERT:

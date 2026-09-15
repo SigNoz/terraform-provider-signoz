@@ -22,6 +22,10 @@ func ExpandQuerybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuer
 
 	aggregations, d := ExpandQuerybuildertypesv5LogAggregationList(ctx, v.Aggregations)
 	diags.Append(d...)
+	bucketOptionsTyped, d := querybuildertypesv5BucketOptionsValueFromObject(ctx, v.BucketOptions)
+	diags.Append(d...)
+	bucketOptions, d := ExpandQuerybuildertypesv5BucketOptions(ctx, bucketOptionsTyped)
+	diags.Append(d...)
 	filterTyped, d := querybuildertypesv5FilterValueFromObject(ctx, v.Filter)
 	diags.Append(d...)
 	filter, d := ExpandQuerybuildertypesv5Filter(ctx, filterTyped)
@@ -56,6 +60,7 @@ func ExpandQuerybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuer
 	}
 	return &apitypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregation{
 		Aggregations:          aggregations,
+		BucketOptions:         bucketOptions,
 		Cursor:                convtypes.StringPointer(v.Cursor),
 		Disabled:              convtypes.BoolPointer(v.Disabled),
 		Filter:                filter,
@@ -83,6 +88,10 @@ func FlattenQuerybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQue
 	}
 
 	aggregationsFlat, d := FlattenQuerybuildertypesv5LogAggregationList(ctx, in.Aggregations)
+	diags.Append(d...)
+	bucketOptionsFlatTyped, d := FlattenQuerybuildertypesv5BucketOptions(ctx, in.BucketOptions)
+	diags.Append(d...)
+	bucketOptionsFlat, d := bucketOptionsFlatTyped.ToObjectValue(ctx)
 	diags.Append(d...)
 	filterFlatTyped, d := FlattenQuerybuildertypesv5Filter(ctx, in.Filter)
 	diags.Append(d...)
@@ -122,6 +131,7 @@ func FlattenQuerybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQue
 		customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
 			"aggregations":           aggregationsFlat,
+			"bucket_options":         bucketOptionsFlat,
 			"cursor":                 convtypes.StringFromPointer(in.Cursor),
 			"disabled":               convtypes.BoolFromPointer(in.Disabled),
 			"filter":                 filterFlat,

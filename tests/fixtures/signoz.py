@@ -117,12 +117,12 @@ def mint_service_account_key(
     role_id = next(r["id"] for r in roles.json()["data"] if r["name"] == role)
 
     assign = requests.post(
-        f"{endpoint}/api/v1/service_accounts/{sa_id}/roles",
-        json={"id": role_id},
+        f"{endpoint}/api/v1/service_account_roles",
+        json={"serviceAccountId": sa_id, "roleId": role_id},
         headers={"Authorization": f"Bearer {bearer_token}"},
         timeout=10,
     )
-    assert assign.status_code == 204, assign.text
+    assert assign.status_code == 201, assign.text
 
     key = requests.post(
         f"{endpoint}/api/v1/service_accounts/{sa_id}/keys",

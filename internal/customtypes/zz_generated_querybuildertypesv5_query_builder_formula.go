@@ -39,6 +39,24 @@ func (t Querybuildertypesv5QueryBuilderFormulaType) ValueFromObject(ctx context.
 
 	attributes := in.Attributes()
 
+	bucketOptionsAttribute, ok := attributes["bucket_options"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`bucket_options is missing from object`)
+
+		return nil, diags
+	}
+
+	bucketOptionsVal, ok := bucketOptionsAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`bucket_options expected to be basetypes.ObjectValue, was: %T`, bucketOptionsAttribute))
+	}
+
 	disabledAttribute, ok := attributes["disabled"]
 
 	if !ok {
@@ -188,15 +206,16 @@ func (t Querybuildertypesv5QueryBuilderFormulaType) ValueFromObject(ctx context.
 	}
 
 	return Querybuildertypesv5QueryBuilderFormulaValue{
-		Disabled:   disabledVal,
-		Expression: expressionVal,
-		Functions:  functionsVal,
-		Having:     havingVal,
-		Legend:     legendVal,
-		Limit:      limitVal,
-		Name:       nameVal,
-		Order:      orderVal,
-		state:      attr.ValueStateKnown,
+		BucketOptions: bucketOptionsVal,
+		Disabled:      disabledVal,
+		Expression:    expressionVal,
+		Functions:     functionsVal,
+		Having:        havingVal,
+		Legend:        legendVal,
+		Limit:         limitVal,
+		Name:          nameVal,
+		Order:         orderVal,
+		state:         attr.ValueStateKnown,
 	}, diags
 }
 
@@ -263,6 +282,24 @@ func NewQuerybuildertypesv5QueryBuilderFormulaValue(attributeTypes map[string]at
 		return NewQuerybuildertypesv5QueryBuilderFormulaValueUnknown(), diags
 	}
 
+	bucketOptionsAttribute, ok := attributes["bucket_options"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`bucket_options is missing from object`)
+
+		return NewQuerybuildertypesv5QueryBuilderFormulaValueUnknown(), diags
+	}
+
+	bucketOptionsVal, ok := bucketOptionsAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`bucket_options expected to be basetypes.ObjectValue, was: %T`, bucketOptionsAttribute))
+	}
+
 	disabledAttribute, ok := attributes["disabled"]
 
 	if !ok {
@@ -412,15 +449,16 @@ func NewQuerybuildertypesv5QueryBuilderFormulaValue(attributeTypes map[string]at
 	}
 
 	return Querybuildertypesv5QueryBuilderFormulaValue{
-		Disabled:   disabledVal,
-		Expression: expressionVal,
-		Functions:  functionsVal,
-		Having:     havingVal,
-		Legend:     legendVal,
-		Limit:      limitVal,
-		Name:       nameVal,
-		Order:      orderVal,
-		state:      attr.ValueStateKnown,
+		BucketOptions: bucketOptionsVal,
+		Disabled:      disabledVal,
+		Expression:    expressionVal,
+		Functions:     functionsVal,
+		Having:        havingVal,
+		Legend:        legendVal,
+		Limit:         limitVal,
+		Name:          nameVal,
+		Order:         orderVal,
+		state:         attr.ValueStateKnown,
 	}, diags
 }
 
@@ -492,23 +530,27 @@ func (t Querybuildertypesv5QueryBuilderFormulaType) ValueType(ctx context.Contex
 var _ basetypes.ObjectValuable = Querybuildertypesv5QueryBuilderFormulaValue{}
 
 type Querybuildertypesv5QueryBuilderFormulaValue struct {
-	Disabled   basetypes.BoolValue   `tfsdk:"disabled"`
-	Expression basetypes.StringValue `tfsdk:"expression"`
-	Functions  basetypes.ListValue   `tfsdk:"functions"`
-	Having     basetypes.ObjectValue `tfsdk:"having"`
-	Legend     basetypes.StringValue `tfsdk:"legend"`
-	Limit      basetypes.Int64Value  `tfsdk:"limit"`
-	Name       basetypes.StringValue `tfsdk:"name"`
-	Order      basetypes.ListValue   `tfsdk:"order"`
-	state      attr.ValueState
+	BucketOptions basetypes.ObjectValue `tfsdk:"bucket_options"`
+	Disabled      basetypes.BoolValue   `tfsdk:"disabled"`
+	Expression    basetypes.StringValue `tfsdk:"expression"`
+	Functions     basetypes.ListValue   `tfsdk:"functions"`
+	Having        basetypes.ObjectValue `tfsdk:"having"`
+	Legend        basetypes.StringValue `tfsdk:"legend"`
+	Limit         basetypes.Int64Value  `tfsdk:"limit"`
+	Name          basetypes.StringValue `tfsdk:"name"`
+	Order         basetypes.ListValue   `tfsdk:"order"`
+	state         attr.ValueState
 }
 
 func (v Querybuildertypesv5QueryBuilderFormulaValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 8)
+	attrTypes := make(map[string]tftypes.Type, 9)
 
 	var val tftypes.Value
 	var err error
 
+	attrTypes["bucket_options"] = basetypes.ObjectType{
+		AttrTypes: Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+	}.TerraformType(ctx)
 	attrTypes["disabled"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["expression"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["functions"] = basetypes.ListType{
@@ -528,7 +570,15 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToTerraformValue(ctx contex
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 8)
+		vals := make(map[string]tftypes.Value, 9)
+
+		val, err = v.BucketOptions.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["bucket_options"] = val
 
 		val, err = v.Disabled.ToTerraformValue(ctx)
 
@@ -623,6 +673,27 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) String() string {
 func (v Querybuildertypesv5QueryBuilderFormulaValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	var bucketOptions basetypes.ObjectValue
+
+	if v.BucketOptions.IsNull() {
+		bucketOptions = types.ObjectNull(
+			Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if v.BucketOptions.IsUnknown() {
+		bucketOptions = types.ObjectUnknown(
+			Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if !v.BucketOptions.IsNull() && !v.BucketOptions.IsUnknown() {
+		bucketOptions = types.ObjectValueMust(
+			Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+			v.BucketOptions.Attributes(),
+		)
+	}
+
 	functions := types.ListValueMust(
 		Querybuildertypesv5FunctionType{
 			basetypes.ObjectType{
@@ -703,6 +774,9 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToObjectValue(ctx context.C
 	}
 
 	attributeTypes := map[string]attr.Type{
+		"bucket_options": basetypes.ObjectType{
+			AttrTypes: Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+		},
 		"disabled":   basetypes.BoolType{},
 		"expression": basetypes.StringType{},
 		"functions": basetypes.ListType{
@@ -730,14 +804,15 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToObjectValue(ctx context.C
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"disabled":   v.Disabled,
-			"expression": v.Expression,
-			"functions":  functions,
-			"having":     having,
-			"legend":     v.Legend,
-			"limit":      v.Limit,
-			"name":       v.Name,
-			"order":      order,
+			"bucket_options": bucketOptions,
+			"disabled":       v.Disabled,
+			"expression":     v.Expression,
+			"functions":      functions,
+			"having":         having,
+			"legend":         v.Legend,
+			"limit":          v.Limit,
+			"name":           v.Name,
+			"order":          order,
 		})
 
 	return objVal, diags
@@ -756,6 +831,10 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) Equal(o attr.Value) bool {
 
 	if v.state != attr.ValueStateKnown {
 		return true
+	}
+
+	if !v.BucketOptions.Equal(other.BucketOptions) {
+		return false
 	}
 
 	if !v.Disabled.Equal(other.Disabled) {
@@ -803,6 +882,9 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) Type(ctx context.Context) a
 
 func (v Querybuildertypesv5QueryBuilderFormulaValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
+		"bucket_options": basetypes.ObjectType{
+			AttrTypes: Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+		},
 		"disabled":   basetypes.BoolType{},
 		"expression": basetypes.StringType{},
 		"functions": basetypes.ListType{

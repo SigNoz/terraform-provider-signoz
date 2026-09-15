@@ -21,6 +21,7 @@ func (e Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybu
 // Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregation defines model for Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregation.
 type Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregation struct {
 	Aggregations          *[]Querybuildertypesv5MetricAggregation                                                                                      `json:"aggregations,omitempty"`
+	BucketOptions         *Querybuildertypesv5BucketOptions                                                                                            `json:"bucketOptions,omitempty"`
 	Cursor                *string                                                                                                                      `json:"cursor,omitempty"`
 	Disabled              *bool                                                                                                                        `json:"disabled,omitempty"`
 	Filter                *Querybuildertypesv5Filter                                                                                                   `json:"filter,omitempty"`

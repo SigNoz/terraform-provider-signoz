@@ -267,6 +267,7 @@ Required:
 Optional:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--filter))
@@ -291,6 +292,53 @@ Optional:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.bucket_options`
+
+Optional:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--log))
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--linear"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.bucket_options.linear`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--linear--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--linear--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.bucket_options.linear.spec`
+
+Required:
+
+- `max_value` (Number)
+
+Optional:
+
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--log"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.bucket_options.log`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--log--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--log--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.bucket_options.log.spec`
+
+Optional:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--filter"></a>
@@ -475,6 +523,7 @@ Optional:
 
 Optional:
 
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options))
 - `disabled` (Boolean)
 - `expression` (String)
 - `functions` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--functions))
@@ -483,6 +532,53 @@ Optional:
 - `limit` (Number)
 - `name` (String)
 - `order` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--order))
+
+<a id="nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options"></a>
+### Nested Schema for `condition.composite_query.queries.builder_formula.spec.bucket_options`
+
+Optional:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--log))
+
+<a id="nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--linear"></a>
+### Nested Schema for `condition.composite_query.queries.builder_formula.spec.bucket_options.linear`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--linear--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--linear--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_formula.spec.bucket_options.linear.spec`
+
+Required:
+
+- `max_value` (Number)
+
+Optional:
+
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--log"></a>
+### Nested Schema for `condition.composite_query.queries.builder_formula.spec.bucket_options.log`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--log--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--log--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_formula.spec.bucket_options.log.spec`
+
+Optional:
+
+- `scale` (Number)
+
+
+
 
 <a id="nestedatt--condition--composite_query--queries--builder_formula--spec--functions"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_formula.spec.functions`
@@ -567,6 +663,7 @@ Required:
 Optional:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--filter))
@@ -591,6 +688,53 @@ Optional:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.logs.bucket_options`
+
+Optional:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--log))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--linear"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.logs.bucket_options.linear`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--linear--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--linear--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.logs.bucket_options.linear.spec`
+
+Required:
+
+- `max_value` (Number)
+
+Optional:
+
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--log"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.logs.bucket_options.log`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--log--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--log--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.logs.bucket_options.log.spec`
+
+Optional:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--filter"></a>
@@ -768,6 +912,7 @@ Required:
 Optional:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--filter))
@@ -804,6 +949,53 @@ Required:
 
 - `operator` (String)
 - `threshold` (Number)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.metrics.bucket_options`
+
+Optional:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--log))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--linear"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.metrics.bucket_options.linear`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--linear--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--linear--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.metrics.bucket_options.linear.spec`
+
+Required:
+
+- `max_value` (Number)
+
+Optional:
+
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--log"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.metrics.bucket_options.log`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--log--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--log--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.metrics.bucket_options.log.spec`
+
+Optional:
+
+- `scale` (Number)
+
 
 
 
@@ -982,6 +1174,7 @@ Required:
 Optional:
 
 - `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options))
 - `cursor` (String)
 - `disabled` (Boolean)
 - `filter` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--filter))
@@ -1006,6 +1199,53 @@ Optional:
 
 - `alias` (String)
 - `expression` (String)
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.traces.bucket_options`
+
+Optional:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--log))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--linear"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.traces.bucket_options.linear`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--linear--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--linear--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.traces.bucket_options.linear.spec`
+
+Required:
+
+- `max_value` (Number)
+
+Optional:
+
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--log"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.traces.bucket_options.log`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--log--spec))
+
+<a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--log--spec"></a>
+### Nested Schema for `condition.composite_query.queries.builder_query.spec.traces.bucket_options.log.spec`
+
+Optional:
+
+- `scale` (Number)
+
+
 
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--filter"></a>

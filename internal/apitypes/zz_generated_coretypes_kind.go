@@ -12,6 +12,7 @@ const (
 	CoretypesKindCloudIntegration        CoretypesKind = "cloud-integration"
 	CoretypesKindCloudIntegrationService CoretypesKind = "cloud-integration-service"
 	CoretypesKindDashboard               CoretypesKind = "dashboard"
+	CoretypesKindDeploymentHost          CoretypesKind = "deployment-host"
 	CoretypesKindFactorApiKey            CoretypesKind = "factor-api-key"
 	CoretypesKindFactorPassword          CoretypesKind = "factor-password"
 	CoretypesKindIngestionKey            CoretypesKind = "ingestion-key"
@@ -60,6 +61,8 @@ func (e CoretypesKind) Valid() bool {
 	case CoretypesKindCloudIntegrationService:
 		return true
 	case CoretypesKindDashboard:
+		return true
+	case CoretypesKindDeploymentHost:
 		return true
 	case CoretypesKindFactorApiKey:
 		return true
