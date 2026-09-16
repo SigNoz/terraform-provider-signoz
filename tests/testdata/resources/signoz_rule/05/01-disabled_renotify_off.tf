@@ -1,7 +1,6 @@
 # Rule created in the disabled state, using the `not_equal` operator and an
 # explicitly disabled renotify block.
-# The rule below references this channel by display name; defining it here
-# replaces the suite's old hand-seeded channels.
+# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-05"
   display_name = "slack-scenario-05"

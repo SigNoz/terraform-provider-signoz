@@ -1,6 +1,5 @@
 # notification_settings.renotify.alert_states = [] must round-trip, not come back null.
-# The rule below references this channel by display name; defining it here
-# replaces the suite's old hand-seeded channels.
+# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-11"
   display_name = "slack-scenario-11"

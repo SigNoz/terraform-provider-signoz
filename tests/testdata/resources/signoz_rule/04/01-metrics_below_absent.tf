@@ -1,7 +1,6 @@
 # Metric rule using the `below` operator with the `on_average` match type, a
 # `table` panel, and absent-data alerting (alert_on_absent + absent_for).
-# The rule below references this channel by display name; defining it here
-# replaces the suite's old hand-seeded channels.
+# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-04"
   display_name = "slack-scenario-04"
