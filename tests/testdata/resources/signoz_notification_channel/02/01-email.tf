@@ -1,5 +1,4 @@
-# Scenario 02 — email notification channel. Proves a second `config` variant
-# round-trips cleanly (the union is exactly-one of ten kinds).
+# Email notification channel, a second config variant of the exactly-one union.
 resource "signoz_notification_channel" "scenario_02" {
   name         = "email-scenario-02"
   display_name = "Scenario 02 Email"

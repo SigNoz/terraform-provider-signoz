@@ -1,4 +1,4 @@
-# Scenario 00 — slack notification channel, minimal config.
+# Slack notification channel with minimal config.
 resource "signoz_notification_channel" "scenario_00" {
   name         = "slack-scenario-00"
   display_name = "Scenario 00 Slack"

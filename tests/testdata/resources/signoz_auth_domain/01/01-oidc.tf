@@ -1,5 +1,4 @@
-# Scenario 01 — oidc auth domain. Exercises the oidc config variant (issuer is
-# required for oidc). Create, no-drift, destroy.
+# OIDC auth domain (issuer is required for the oidc config variant).
 resource "signoz_auth_domain" "scenario_01" {
   name = "oidc.scenario-01.example.com"
   config = {

@@ -1,5 +1,4 @@
-# Metric rule using the `below` operator with the `on_average` match type, a
-# `table` panel, and absent-data alerting (alert_on_absent + absent_for).
+# Metric rule with the `below` operator, `on_average` match type, `table` panel, and absent-data alerting.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-04"
   display_name = "slack-scenario-04"

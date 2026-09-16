@@ -1,5 +1,4 @@
-# Scenario 02 — saml auth domain. Exercises the saml config variant, whose spec
-# requires an X.509 signing certificate. Create, no-drift, destroy.
+# SAML auth domain with the required X.509 signing certificate.
 resource "signoz_auth_domain" "scenario_02" {
   name    = "saml.scenario-02.example.com"
   enabled = true

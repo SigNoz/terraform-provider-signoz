@@ -1,8 +1,4 @@
-# Positive control for #154 ("dashboard create fails with invalid signal \"\"").
-# One builder query per signal in one dashboard: each variant's own signal must
-# reach the API. A metrics-only config cannot prove that — the generated union
-# builder pins signal to the variant's discriminator, so "metrics" would survive
-# even if the configured value were ignored. logs and traces are what discriminate.
+# Positive control for #154: one builder query per signal (metrics, logs, traces) in a single dashboard.
 resource "signoz_dashboard" "builder_query_signals" {
   schema_version = "v6"
   name           = "testdata-dashboard-builder-query-signals-tk52wr"

@@ -1,6 +1,4 @@
-# Scenario 00 — google auth domain, minimal required config. Create, no-drift,
-# destroy. Base-only scenarios may be authored in HCL (.tf); scenarios with JSON
-# patches use a .tf.json base (see scenario 03 and ../../../README.md).
+# Google auth domain with minimal required config.
 resource "signoz_auth_domain" "scenario_00" {
   name = "google.scenario-00.example.com"
   config = {

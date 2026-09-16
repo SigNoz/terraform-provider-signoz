@@ -1,8 +1,4 @@
-# Every dashboard attribute the schema types as opaque JSON, set through
-# jsonencode. There are 30 of them and only four distinct names --
-# step_interval, functions[].args[].value, step and default_value -- repeated
-# across mutually exclusive union arms, so the coverage comes from the spread of
-# panels, queries and composite sub-queries rather than from the field count.
+# Every dashboard attribute typed as opaque JSON, set through jsonencode.
 resource "signoz_dashboard" "json_encoded_fields" {
   schema_version = "v6"
   name           = "testdata-dashboard-json-encoded-fields-fyfgsb"

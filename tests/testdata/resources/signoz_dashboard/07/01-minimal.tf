@@ -1,6 +1,4 @@
-# Smallest valid signoz_dashboard: a single number panel in a single grid layout,
-# no variables. Exercises the required-attribute floor (schema_version, name,
-# tags, spec.display, spec.variables, spec.panels, spec.layouts).
+# Smallest valid dashboard: a single number panel in a single grid layout, no variables.
 resource "signoz_dashboard" "minimal" {
   schema_version = "v6"
   name           = "testdata-dashboard-minimal-mn19qd"
