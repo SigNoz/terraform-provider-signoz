@@ -2,7 +2,7 @@
   "resource": {
     "signoz_notification_channel": {
       "scenario_01": {
-        "name": "webhook.scenario-01",
+        "name": "webhook-scenario-01",
         "display_name": "Scenario 01 Webhook",
         "config": {
           "webhook": {
