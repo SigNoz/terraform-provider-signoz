@@ -19,10 +19,11 @@ resource "signoz_notification_channel" "oncall_slack" {
   display_name = "oncall-slack"
 
   config = {
-    webhook = {
-      kind = "webhook"
+    slack = {
+      kind = "slack"
       spec = {
-        url           = "https://example.com/webhook-oncall"
+        api_url       = "https://example.com/slack-webhook"
+        channel       = "#alerts-oncall"
         send_resolved = true
       }
     }
@@ -45,10 +46,11 @@ resource "signoz_notification_channel" "oncall_slack" {
   display_name = "oncall-slack"
 
   config = {
-    webhook = {
-      kind = "webhook"
+    slack = {
+      kind = "slack"
       spec = {
-        url           = "https://example.com/webhook-oncall"
+        api_url       = "https://example.com/slack-webhook"
+        channel       = "#alerts-oncall"
         send_resolved = true
       }
     }
