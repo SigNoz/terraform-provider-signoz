@@ -2,6 +2,7 @@
   "resource": {
     "signoz_notification_channel": {
       "slack": {
+        "name": "slack-scenario-01",
         "display_name": "slack-scenario-01",
         "config": {
           "webhook": {
@@ -14,6 +15,7 @@
         }
       },
       "pagerduty": {
+        "name": "pagerduty-scenario-01",
         "display_name": "pagerduty-scenario-01",
         "config": {
           "webhook": {

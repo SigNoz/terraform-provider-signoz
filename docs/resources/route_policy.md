@@ -15,6 +15,7 @@ description: |-
 ```terraform
 # Route policies reference channels by display name.
 resource "signoz_notification_channel" "oncall_slack" {
+  name         = "oncall-slack"
   display_name = "oncall-slack"
 
   config = {
@@ -40,6 +41,7 @@ resource "signoz_route_policy" "critical_to_oncall" {
 
 ```terraform
 resource "signoz_notification_channel" "oncall_slack" {
+  name         = "oncall-slack"
   display_name = "oncall-slack"
 
   config = {

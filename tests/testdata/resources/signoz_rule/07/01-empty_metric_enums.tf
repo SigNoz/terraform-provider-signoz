@@ -1,6 +1,7 @@
 # The rule below references this channel by display name; defining it here
 # replaces the suite's old hand-seeded channels.
 resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-07"
   display_name = "slack-scenario-07"
 
   config = {

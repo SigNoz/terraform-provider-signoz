@@ -2,6 +2,7 @@
   "resource": {
     "signoz_notification_channel": {
       "slack": {
+        "name": "slack-scenario-06",
         "display_name": "slack-scenario-06",
         "config": {
           "webhook": {

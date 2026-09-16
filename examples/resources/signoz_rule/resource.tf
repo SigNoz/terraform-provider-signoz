@@ -1,6 +1,7 @@
 # Rules reference channels by display name, so create them first and let the
 # reference order the apply.
 resource "signoz_notification_channel" "primary" {
+  name         = "webhook-primary"
   display_name = "webhook-primary"
 
   config = {
@@ -15,6 +16,7 @@ resource "signoz_notification_channel" "primary" {
 }
 
 resource "signoz_notification_channel" "escalation" {
+  name         = "webhook-escalation"
   display_name = "webhook-escalation"
 
   config = {

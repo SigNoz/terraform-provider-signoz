@@ -1,4 +1,5 @@
 resource "signoz_notification_channel" "oncall_slack" {
+  name         = "oncall-slack"
   display_name = "oncall-slack"
 
   config = {

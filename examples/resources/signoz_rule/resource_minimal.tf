@@ -1,4 +1,5 @@
 resource "signoz_notification_channel" "alerts" {
+  name         = "webhook-alerts"
   display_name = "webhook-alerts"
 
   config = {
