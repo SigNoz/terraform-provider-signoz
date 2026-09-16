@@ -1,4 +1,20 @@
 # notification_settings.group_by = [] must round-trip, not come back null.
+# The rule below references this channel by display name; defining it here
+# replaces the suite's old hand-seeded channels.
+resource "signoz_notification_channel" "slack" {
+  display_name = "slack-scenario-08"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_08" {
   alert          = "testdata-group-by-empty"
   alert_type     = "METRIC_BASED_ALERT"
@@ -40,7 +56,7 @@ resource "signoz_rule" "scenario_08" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "warning"
             op         = "above"

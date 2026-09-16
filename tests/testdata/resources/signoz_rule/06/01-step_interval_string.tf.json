@@ -1,5 +1,19 @@
 {
   "resource": {
+    "signoz_notification_channel": {
+      "slack": {
+        "display_name": "slack-scenario-06",
+        "config": {
+          "webhook": {
+            "kind": "webhook",
+            "spec": {
+              "url": "https://example.com/webhook",
+              "send_resolved": true
+            }
+          }
+        }
+      }
+    },
     "signoz_rule": {
       "scenario_06": {
         "alert": "testdata-step-interval-normalized",
@@ -41,7 +55,7 @@
               "kind": "basic",
               "spec": [
                 {
-                  "channels": ["slack"],
+                  "channels": ["${signoz_notification_channel.slack.display_name}"],
                   "match_type": "at_least_once",
                   "name": "warning",
                   "op": "above",

@@ -1,4 +1,20 @@
 # An empty notification_settings.renotify = {} must round-trip cleanly.
+# The rule below references this channel by display name; defining it here
+# replaces the suite's old hand-seeded channels.
+resource "signoz_notification_channel" "slack" {
+  display_name = "slack-scenario-09"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_09" {
   alert          = "testdata-renotify-empty"
   alert_type     = "METRIC_BASED_ALERT"
@@ -40,7 +56,7 @@ resource "signoz_rule" "scenario_09" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "warning"
             op         = "above"

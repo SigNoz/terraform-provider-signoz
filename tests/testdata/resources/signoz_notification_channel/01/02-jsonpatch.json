@@ -1,4 +1,5 @@
 [
   { "op": "replace", "path": "/config/webhook/spec/send_resolved", "value": true },
-  { "op": "add", "path": "/config/webhook/spec/username", "value": "signoz" }
+  { "op": "add", "path": "/config/webhook/spec/username", "value": "signoz" },
+  { "op": "add", "path": "/config/webhook/spec/password", "value": "scenario-01-secret" }
 ]

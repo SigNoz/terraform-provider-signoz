@@ -1,10 +1,10 @@
 [
-  { "op": "add", "path": "/condition/thresholds/basic/spec/0/channels/-", "value": "pagerduty" },
+  { "op": "add", "path": "/condition/thresholds/basic/spec/0/channels/-", "value": "${signoz_notification_channel.pagerduty.display_name}" },
   {
     "op": "add",
     "path": "/condition/thresholds/basic/spec/-",
     "value": {
-      "channels": ["slack"],
+      "channels": ["${signoz_notification_channel.slack.display_name}"],
       "match_type": "at_least_once",
       "name": "warning",
       "op": "above",

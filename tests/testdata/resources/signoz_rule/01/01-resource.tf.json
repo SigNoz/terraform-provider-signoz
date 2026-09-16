@@ -1,5 +1,31 @@
 {
   "resource": {
+    "signoz_notification_channel": {
+      "slack": {
+        "display_name": "slack-scenario-01",
+        "config": {
+          "webhook": {
+            "kind": "webhook",
+            "spec": {
+              "url": "https://example.com/webhook",
+              "send_resolved": true
+            }
+          }
+        }
+      },
+      "pagerduty": {
+        "display_name": "pagerduty-scenario-01",
+        "config": {
+          "webhook": {
+            "kind": "webhook",
+            "spec": {
+              "url": "https://example.com/webhook",
+              "send_resolved": true
+            }
+          }
+        }
+      }
+    },
     "signoz_rule": {
       "scenario_01": {
         "alert": "testdata-scenario-01",
@@ -40,7 +66,7 @@
               "kind": "basic",
               "spec": [
                 {
-                  "channels": ["slack"],
+                  "channels": ["${signoz_notification_channel.slack.display_name}"],
                   "match_type": "at_least_once",
                   "name": "warning",
                   "op": "above",

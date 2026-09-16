@@ -1,3 +1,17 @@
+resource "signoz_notification_channel" "alerts" {
+  display_name = "webhook-alerts"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook-alerts"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "minimal" {
   alert          = "minimal-required-only"
   alert_type     = "METRIC_BASED_ALERT"
@@ -31,7 +45,7 @@ resource "signoz_rule" "minimal" {
             op         = "above"
             match_type = "at_least_once"
             target     = 1
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.alerts.display_name]
           }
         ]
       }
