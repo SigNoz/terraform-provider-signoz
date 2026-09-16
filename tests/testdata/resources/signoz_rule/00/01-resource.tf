@@ -1,7 +1,4 @@
-# Scenario 00 — a base resource with no edits. The runner plans (create),
-# applies, plans again (no drift), then destroys. Base-only scenarios may be
-# authored in HCL (.tf); scenarios with JSON patches use a .tf.json base so the
-# patch has a JSON target (see scenario 01 and ../../../README.md).
+# Base metric threshold rule (CPU utilization above 0.7) notifying a slack channel.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-00"
   display_name = "slack-scenario-00"

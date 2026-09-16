@@ -1,6 +1,4 @@
-# Anomaly rule: alerts on deviation from a learned seasonal baseline rather than
-# a fixed target. Exercises the condition fields specific to anomaly detection
-# (algorithm, seasonality, require_min_points, required_num_points).
+# Anomaly rule alerting on deviation from a learned seasonal baseline.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-02"
   display_name = "slack-scenario-02"

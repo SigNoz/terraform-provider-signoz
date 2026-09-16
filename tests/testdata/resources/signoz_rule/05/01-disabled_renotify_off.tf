@@ -1,5 +1,4 @@
-# Rule created in the disabled state, using the `not_equal` operator and an
-# explicitly disabled renotify block.
+# Disabled rule using the `not_equal` operator and an explicitly disabled renotify block.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-05"
   display_name = "slack-scenario-05"
