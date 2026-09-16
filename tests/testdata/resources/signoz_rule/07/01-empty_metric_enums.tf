@@ -1,3 +1,18 @@
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-07"
+  display_name = "slack-scenario-07"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_07" {
   alert      = "testdata-empty-metric-enums"
   alert_type = "METRIC_BASED_ALERT"
@@ -45,7 +60,7 @@ resource "signoz_rule" "scenario_07" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "on_average"
             name       = "low free memory"
             op         = "below"

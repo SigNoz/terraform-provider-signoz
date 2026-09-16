@@ -1,5 +1,20 @@
 # Metric rule using the `below` operator with the `on_average` match type, a
 # `table` panel, and absent-data alerting (alert_on_absent + absent_for).
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-04"
+  display_name = "slack-scenario-04"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_04" {
   alert      = "testdata-metrics-below-absent"
   alert_type = "METRIC_BASED_ALERT"
@@ -48,7 +63,7 @@ resource "signoz_rule" "scenario_04" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "on_average"
             name       = "low free memory"
             op         = "below"

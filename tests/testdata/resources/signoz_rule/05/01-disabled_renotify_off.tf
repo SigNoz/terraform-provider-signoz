@@ -1,5 +1,20 @@
 # Rule created in the disabled state, using the `not_equal` operator and an
 # explicitly disabled renotify block.
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-05"
+  display_name = "slack-scenario-05"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_05" {
   alert      = "testdata-disabled-renotify-off"
   alert_type = "METRIC_BASED_ALERT"
@@ -41,7 +56,7 @@ resource "signoz_rule" "scenario_05" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "target down"
             op         = "not_equal"

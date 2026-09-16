@@ -1,4 +1,19 @@
 # Rule backed by a raw ClickHouse SQL query instead of the query builder.
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-03"
+  display_name = "slack-scenario-03"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_03" {
   alert      = "testdata-clickhouse-sql"
   alert_type = "METRIC_BASED_ALERT"
@@ -30,7 +45,7 @@ resource "signoz_rule" "scenario_03" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "critical"
             op         = "above"

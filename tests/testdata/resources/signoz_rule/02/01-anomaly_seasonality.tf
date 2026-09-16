@@ -1,6 +1,21 @@
 # Anomaly rule: alerts on deviation from a learned seasonal baseline rather than
 # a fixed target. Exercises the condition fields specific to anomaly detection
 # (algorithm, seasonality, require_min_points, required_num_points).
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-02"
+  display_name = "slack-scenario-02"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_02" {
   alert      = "testdata-anomaly-seasonality"
   alert_type = "METRIC_BASED_ALERT"
@@ -47,7 +62,7 @@ resource "signoz_rule" "scenario_02" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "traffic anomaly"
             op         = "above"

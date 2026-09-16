@@ -19,7 +19,7 @@ SKIPPED = {
     "tf_file",
     [pytest.param(tf_file, id=(rel := f"{tf_file.parent.name}/{tf_file.name}"), marks=[pytest.mark.skip(reason=SKIPPED[rel])] if rel in SKIPPED else []) for tf_file in RESOURCE_FILES],
 )
-def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tool_config: Path, signoz: SigNoz, tool_bin: str, webhook_channels: tuple[str, ...]):
+def test_resource_file_crud(tf_file: Path, workspace: Callable[[Path], Path], tool_config: Path, signoz: SigNoz, tool_bin: str):
     tool = Tool(workspace(tf_file), tool_config, signoz, tool_bin)
 
     tool.apply()

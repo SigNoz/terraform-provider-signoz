@@ -1,5 +1,20 @@
 # Basic threshold using the `above_or_equal` operator — the inclusive variant of
 # `above` must round-trip, not come back as `above`.
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-12"
+  display_name = "slack-scenario-12"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_12" {
   alert          = "testdata-threshold-above-or-equal"
   alert_type     = "METRIC_BASED_ALERT"
@@ -41,7 +56,7 @@ resource "signoz_rule" "scenario_12" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "warning"
             op         = "above_or_equal"

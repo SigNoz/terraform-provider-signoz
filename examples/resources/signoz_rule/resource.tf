@@ -1,3 +1,35 @@
+# Rules reference channels by display name, so create them first and let the
+# reference order the apply.
+resource "signoz_notification_channel" "primary" {
+  name         = "webhook-primary"
+  display_name = "webhook-primary"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook-primary"
+        send_resolved = true
+      }
+    }
+  }
+}
+
+resource "signoz_notification_channel" "escalation" {
+  name         = "webhook-escalation"
+  display_name = "webhook-escalation"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook-escalation"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "pod_cpu" {
   alert      = "Pod CPU above 80% of request"
   alert_type = "METRIC_BASED_ALERT"
@@ -64,7 +96,10 @@ resource "signoz_rule" "pod_cpu" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack", "pagerduty"]
+            channels = [
+              signoz_notification_channel.primary.display_name,
+              signoz_notification_channel.escalation.display_name,
+            ]
             match_type = "all_the_times"
             name       = "critical"
             op         = "above"

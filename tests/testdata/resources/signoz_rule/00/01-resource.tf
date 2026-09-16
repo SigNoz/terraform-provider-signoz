@@ -2,6 +2,21 @@
 # applies, plans again (no drift), then destroys. Base-only scenarios may be
 # authored in HCL (.tf); scenarios with JSON patches use a .tf.json base so the
 # patch has a JSON target (see scenario 01 and ../../../README.md).
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-00"
+  display_name = "slack-scenario-00"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_00" {
   alert          = "testdata-scenario-00"
   alert_type     = "METRIC_BASED_ALERT"
@@ -43,7 +58,7 @@ resource "signoz_rule" "scenario_00" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "warning"
             op         = "above"

@@ -12,7 +12,7 @@ SCENARIOS = sorted(p for p in (TESTDATA / "resources").glob("signoz_*/[0-9][0-9]
 
 
 @pytest.mark.parametrize("scenario", SCENARIOS, ids=[f"{s.parent.name}/{s.name}" for s in SCENARIOS])
-def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, signoz: SigNoz, tool_bin: str, webhook_channels: tuple[str, ...]):
+def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, signoz: SigNoz, tool_bin: str):
     bases = [p for p in scenario.iterdir() if p.name.endswith((".tf", ".tf.json")) and not p.name.endswith("-jsonpatch.json")]
     assert len(bases) == 1, f"{scenario}: expected exactly one base .tf/.tf.json, found {sorted(p.name for p in bases)}"
 
@@ -27,8 +27,10 @@ def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, s
 
     if is_json:
         doc = json.loads(base.read_text())
-        ((_rtype, named),) = doc["resource"].items()
-        ((rname, body),) = named.items()
+        # The resource under test is the one matching the scenario dir (signoz_<name>);
+        # the base may bundle prerequisites (e.g. a signoz_notification_channel).
+        rtype = scenario.parent.name
+        ((rname, body),) = doc["resource"][rtype].items()
 
         config = tmp_path / "resource.tf.json"
         config.write_text(json.dumps(doc, indent=2))
@@ -43,7 +45,7 @@ def test_scenario_lifecycle(scenario: Path, tmp_path: Path, tool_config: Path, s
 
         for patch in patches:
             body = jsonpatch.apply_patch(body, json.loads(patch.read_text()))
-            named[rname] = body
+            doc["resource"][rtype][rname] = body
             config.write_text(json.dumps(doc, indent=2))
 
             assert tool.plan_exit_code() == 2, f"{patch.name}: expected the edit to change the plan"

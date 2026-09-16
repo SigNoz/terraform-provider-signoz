@@ -132,6 +132,7 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 	return []func() resource.Resource{
 		services.NewAuthDomainResource,
 		services.NewDashboardResource,
+		services.NewNotificationChannelResource,
 		services.NewPlannedMaintenanceResource,
 		services.NewRoleResource,
 		services.NewRoutePolicyResource,
@@ -148,6 +149,7 @@ func (p *signozProvider) DataSources(_ context.Context) []func() datasource.Data
 	return []func() datasource.DataSource{
 		services.NewAuthDomainDataSource,
 		services.NewDashboardDataSource,
+		services.NewNotificationChannelDataSource,
 		services.NewPlannedMaintenanceDataSource,
 		services.NewRoleDataSource,
 		services.NewRoutePolicyDataSource,

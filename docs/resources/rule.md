@@ -15,6 +15,38 @@ description: |-
 ## Example Usage
 
 ```terraform
+# Rules reference channels by display name, so create them first and let the
+# reference order the apply.
+resource "signoz_notification_channel" "primary" {
+  name         = "webhook-primary"
+  display_name = "webhook-primary"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook-primary"
+        send_resolved = true
+      }
+    }
+  }
+}
+
+resource "signoz_notification_channel" "escalation" {
+  name         = "webhook-escalation"
+  display_name = "webhook-escalation"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook-escalation"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "pod_cpu" {
   alert      = "Pod CPU above 80% of request"
   alert_type = "METRIC_BASED_ALERT"
@@ -81,7 +113,10 @@ resource "signoz_rule" "pod_cpu" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack", "pagerduty"]
+            channels = [
+              signoz_notification_channel.primary.display_name,
+              signoz_notification_channel.escalation.display_name,
+            ]
             match_type = "all_the_times"
             name       = "critical"
             op         = "above"
@@ -123,6 +158,21 @@ resource "signoz_rule" "pod_cpu" {
 ```
 
 ```terraform
+resource "signoz_notification_channel" "alerts" {
+  name         = "webhook-alerts"
+  display_name = "webhook-alerts"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook-alerts"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "minimal" {
   alert          = "minimal-required-only"
   alert_type     = "METRIC_BASED_ALERT"
@@ -156,7 +206,7 @@ resource "signoz_rule" "minimal" {
             op         = "above"
             match_type = "at_least_once"
             target     = 1
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.alerts.display_name]
           }
         ]
       }

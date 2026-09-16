@@ -1,4 +1,19 @@
 # notification_settings.renotify.alert_states = [] must round-trip, not come back null.
+resource "signoz_notification_channel" "slack" {
+  name         = "slack-scenario-11"
+  display_name = "slack-scenario-11"
+
+  config = {
+    webhook = {
+      kind = "webhook"
+      spec = {
+        url           = "https://example.com/webhook"
+        send_resolved = true
+      }
+    }
+  }
+}
+
 resource "signoz_rule" "scenario_11" {
   alert          = "testdata-alert-states-empty"
   alert_type     = "METRIC_BASED_ALERT"
@@ -40,7 +55,7 @@ resource "signoz_rule" "scenario_11" {
         kind = "basic"
         spec = [
           {
-            channels   = ["slack"]
+            channels   = [signoz_notification_channel.slack.display_name]
             match_type = "at_least_once"
             name       = "warning"
             op         = "above"

@@ -74,4 +74,4 @@ Naming:
 - The base is the single `01-<name>.tf` or `01-<name>.tf.json` in the directory; the `<name>` says what the scenario exercises.
 - A JSON Patch (RFC 6902) needs a JSON target, so any scenario with patches uses a **`.tf.json`** base (Terraform JSON syntax, read natively by Terraform). Patch `path`s are relative to the single resource's body (e.g. `/condition/thresholds/basic/spec/0/target`). A patch-free scenario may use a plain HCL `.tf` base.
 
-Channels referenced by `thresholds[*].channels` must be seeded by the suite — `slack` and `pagerduty` are (see [`fixtures/channels.py`](fixtures/channels.py)).
+A scenario that references another resource (e.g. a rule's `thresholds[*].channels`) must **bundle the prerequisite into the same config** — define a `signoz_notification_channel` and reference it by `display_name` (rules and route policies resolve channels by display name). In a `.tf.json` base the prerequisite sits alongside the resource under test; patch paths stay relative to the resource matching the scenario directory (`signoz_<name>`), which is how the runner picks it out.

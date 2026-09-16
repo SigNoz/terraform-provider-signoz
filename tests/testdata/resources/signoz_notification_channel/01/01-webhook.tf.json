@@ -1,0 +1,19 @@
+{
+  "resource": {
+    "signoz_notification_channel": {
+      "scenario_01": {
+        "name": "webhook-scenario-01",
+        "display_name": "Scenario 01 Webhook",
+        "config": {
+          "webhook": {
+            "kind": "webhook",
+            "spec": {
+              "url": "https://alerts.example.com/scenario-01",
+              "send_resolved": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

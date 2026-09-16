@@ -6,7 +6,6 @@ from fixtures.tool_bin import TERRAFORM, TOOLS
 
 pytest_plugins = [
     "fixtures.signoz",
-    "fixtures.channels",
     "fixtures.tool_bin",
     "fixtures.tool",
 ]

@@ -23,7 +23,7 @@ The README covers the *mechanics* — layout (`resources/signoz_<name>/NN/`, a s
 - **Drift-prone edge values** — the shapes the server tends to drop, enrich, or normalize (see "When a round-trip won't converge"): empty enums; empty / zero / `null` / omitempty fields; every state of an optional sub-object (renotify off, `group_by` empty, `use_policy` false, `alert_states` empty); and string↔number coercions (e.g. `step_interval` as a string). This is where drift actually shows up.
 - **Real-world configs** — for a complex resource (dashboard), a few real exported configs converted to typed HCL, to catch shapes synthetic scenarios miss.
 
-Keep each scenario **minimal-but-valid** — the smallest config that isolates the thing under test. A scenario that references another resource (e.g. a channel) must have it seeded; the suite seeds `slack` / `pagerduty`.
+Keep each scenario **minimal-but-valid** — the smallest config that isolates the thing under test. A scenario that references another resource (e.g. a channel) must **bundle it into the same config** — define a `signoz_notification_channel` and reference it by `display_name` (rules and route policies resolve channels by display name).
 
 ## When a round-trip won't converge
 

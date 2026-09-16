@@ -237,6 +237,28 @@ resources:
         - updatedAt
         - updatedBy
         - generateName
+  notification_channel:
+    create:
+      path: /api/v2/notification_channels
+      method: POST
+    read:
+      path: /api/v2/notification_channels/{id}
+      method: GET
+    update:
+      path: /api/v2/notification_channels/{id}
+      method: PUT
+    delete:
+      path: /api/v2/notification_channels/{id}
+      method: DELETE
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+        - generateName
 
 data_sources:
   auth_domain:
@@ -370,6 +392,18 @@ data_sources:
   saved_view:
     read:
       path: /api/v2/saved_views/{id}
+      method: GET
+    schema:
+      ignores:
+        - data
+        - status
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+  notification_channel:
+    read:
+      path: /api/v2/notification_channels/{id}
       method: GET
     schema:
       ignores:
