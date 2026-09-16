@@ -1,4 +1,3 @@
-# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-07"
   display_name = "slack-scenario-07"

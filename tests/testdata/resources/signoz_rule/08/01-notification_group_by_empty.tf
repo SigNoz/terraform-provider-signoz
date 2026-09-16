@@ -1,5 +1,4 @@
 # notification_settings.group_by = [] must round-trip, not come back null.
-# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-08"
   display_name = "slack-scenario-08"

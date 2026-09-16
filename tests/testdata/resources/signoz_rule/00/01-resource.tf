@@ -2,7 +2,6 @@
 # applies, plans again (no drift), then destroys. Base-only scenarios may be
 # authored in HCL (.tf); scenarios with JSON patches use a .tf.json base so the
 # patch has a JSON target (see scenario 01 and ../../../README.md).
-# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-00"
   display_name = "slack-scenario-00"

@@ -1,5 +1,4 @@
 # An empty notification_settings.renotify = {} must round-trip cleanly.
-# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-09"
   display_name = "slack-scenario-09"

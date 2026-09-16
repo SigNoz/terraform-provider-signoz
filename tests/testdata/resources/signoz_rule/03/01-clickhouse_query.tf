@@ -1,5 +1,4 @@
 # Rule backed by a raw ClickHouse SQL query instead of the query builder.
-# Channel the rule below routes to; rules reference channels by display name.
 resource "signoz_notification_channel" "slack" {
   name         = "slack-scenario-03"
   display_name = "slack-scenario-03"
