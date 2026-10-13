@@ -169,13 +169,13 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 				Optional:    true,
 				Computed:    true,
 				ElementType: types.StringType,
-				Description: "Labels of the alert. Severity is a required label.",
+				Description: "Labels of the alert. Do not set a `severity` key here: the provider writes the top-level `severity` attribute into the alert's labels (overwriting any `severity` key given here) and reads it back from there.",
 			},
 			attr.PreferredChannels: schema.ListAttribute{
 				Optional:    true,
 				Computed:    true,
 				ElementType: types.StringType,
-				Description: "Preferred channels of the alert. By default, it is empty.",
+				Description: "Preferred channels of the alert. By default, it is empty. These are ignored when `broadcast_to_all` is true.",
 			},
 			attr.RuleType: schema.StringAttribute{
 				Optional: true,

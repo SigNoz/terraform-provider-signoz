@@ -13,4 +13,5 @@ const (
 	Traces                 = "traces"
 	TTLDurationHrs         = "ttl_duration_hrs"
 	ColdStorageDurationHrs = "cold_storage_duration_hrs"
+	ColdStorageVolume      = "cold_storage_volume"
 )

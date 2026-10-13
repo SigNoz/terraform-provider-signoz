@@ -3,8 +3,9 @@ page_title: "Migrating the fork's legacy resources to the upstream implementatio
 subcategory: ""
 description: |-
   The fork registered its own dashboard, notification_channel, route_policy and saved_view
-  resources (legacy v1 APIs) and a broken downtime_schedule. All five now use the upstream
-  v2-API implementations; this guide maps every old schema to the new one.
+  resources (legacy v1 APIs) and a broken downtime_schedule. The first four now use the
+  upstream v2-API implementations; the broken downtime_schedule is removed outright, with
+  `signoz_planned_maintenance` as its replacement. This guide maps every old schema to the new one.
 ---
 
 # Migrating the fork's legacy resources
@@ -226,7 +227,7 @@ resource "signoz_route_policy" "critical" {
     match_type  = "equals"
   }
 
-  channel_ids = [signoz_notification_channel.pagerduty.id]
+  channel_ids = [signoz_notification_channel.slack.id]
   group_wait  = "30s"
 }
 ```
@@ -238,7 +239,7 @@ resource "signoz_route_policy" "critical" {
   name       = "critical-alerts"
   kind       = "policy"
   expression = "severity == \"critical\""
-  channels   = [signoz_notification_channel.pagerduty.display_name]
+  channels   = [signoz_notification_channel.slack.display_name]
 }
 ```
 
@@ -325,8 +326,16 @@ feature correctly and is already registered.
 | `schedule { start_time, end_time, timezone }` block | `schedule = { start_time, end_time, timezone }` (object) |
 | `recurrence { type, days_of_week, duration }` | `recurrence = { repeat_type, repeat_on, duration }` (`repeat_on` = list of strings) |
 | `alert_ids` | `alert_ids` |
-| `all_alerts = true` | `scope` (server-defined scope value; see docs) |
+| `all_alerts = true` | omit `alert_ids` and leave `scope` empty — a maintenance with an empty `alert_ids` set applies to all alerts |
 | `id` | `id` (computed), `kind` (computed) |
+
+`scope` is not a keyword or enum: the server stores it as an
+[expr-lang](https://expr-lang.org/docs/language-definition) boolean expression evaluated
+against each alert's labels, and rejects unparseable expressions when you write the
+maintenance. Leave `alert_ids` empty to cover every alert, then use `scope` to narrow
+which of them are actually suppressed, e.g. `scope = "severity == \"critical\""`.
+See SigNoz's own documentation section,
+[Scoping with label expressions](https://signoz.io/docs/alerts-management/planned-maintenance/#scoping-with-label-expressions).
 
 Before:
 
@@ -355,6 +364,7 @@ After:
 resource "signoz_planned_maintenance" "weekly" {
   name = "Weekly Maintenance"
 
+  # No alert_ids and no scope: the window suppresses every alert.
   schedule = {
     start_time = "2026-01-15T02:00:00Z"
     end_time   = "2026-01-15T04:00:00Z"

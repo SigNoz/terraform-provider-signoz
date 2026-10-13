@@ -13,8 +13,12 @@ import (
 )
 
 const (
-	// logPipelinePath - URL path for log pipeline APIs.
+	// logPipelinePath - POST /api/v1/logs/pipelines (batch replace).
 	logPipelinePath = "api/v1/logs/pipelines"
+	// logPipelineLatestPath - GET /api/v1/logs/pipelines/{version}; the server
+	// only registers versioned GET paths ("latest" resolves to the newest
+	// pipeline version). A bare GET on logPipelinePath 404s.
+	logPipelineLatestPath = "api/v1/logs/pipelines/latest"
 )
 
 // logPipelinesResponse - Maps the response data of log pipeline APIs.
@@ -31,7 +35,7 @@ type logPipelinesData struct {
 
 // GetLogPipelines - Returns all log pipelines for the latest version.
 func (c *Client) GetLogPipelines(ctx context.Context) ([]model.LogPipeline, error) {
-	reqURL, err := url.JoinPath(c.hostURL.String(), logPipelinePath)
+	reqURL, err := url.JoinPath(c.hostURL.String(), logPipelineLatestPath)
 	if err != nil {
 		return nil, err
 	}

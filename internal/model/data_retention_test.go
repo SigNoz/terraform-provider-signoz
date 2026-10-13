@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -127,56 +128,66 @@ func TestDataRetention_UnmarshalFromAPI(t *testing.T) {
 	}
 }
 
-func TestDataRetentionUpdate_JSONSerialization(t *testing.T) {
-	update := DataRetentionUpdate{
-		Type:                   "metrics",
-		DurationHrs:            720,
-		ColdStorageDurationHrs: 360,
+func TestCustomRetentionTTLParams_JSONFieldNames(t *testing.T) {
+	params := CustomRetentionTTLParams{
+		Type:                    "logs",
+		DefaultTTLDays:          15,
+		TTLConditions:           []CustomRetentionRule{},
+		ColdStorageVolume:       "s3-bucket",
+		ColdStorageDurationDays: 7,
 	}
 
-	data, err := json.Marshal(update)
-	if err != nil {
-		t.Fatalf("Marshal failed: %v", err)
-	}
-
-	var update2 DataRetentionUpdate
-	err = json.Unmarshal(data, &update2)
-	if err != nil {
-		t.Fatalf("Unmarshal failed: %v", err)
-	}
-
-	if update2.Type != "metrics" {
-		t.Errorf("Type: expected metrics, got %s", update2.Type)
-	}
-	if update2.DurationHrs != 720 {
-		t.Errorf("DurationHrs: expected 720, got %d", update2.DurationHrs)
-	}
-	if update2.ColdStorageDurationHrs != 360 {
-		t.Errorf("ColdStorageDurationHrs: expected 360, got %d", update2.ColdStorageDurationHrs)
-	}
-}
-
-func TestDataRetentionUpdate_JSONFieldNames(t *testing.T) {
-	update := DataRetentionUpdate{
-		Type:                   "logs",
-		DurationHrs:            168,
-		ColdStorageDurationHrs: 72,
-	}
-
-	data, err := json.Marshal(update)
+	data, err := json.Marshal(params)
 	if err != nil {
 		t.Fatalf("Marshal failed: %v", err)
 	}
 
 	var raw map[string]interface{}
-	err = json.Unmarshal(data, &raw)
-	if err != nil {
+	if err := json.Unmarshal(data, &raw); err != nil {
 		t.Fatalf("Unmarshal to map failed: %v", err)
 	}
 
-	for _, field := range []string{"type", "duration_hrs", "cold_storage_duration_hrs"} {
+	for _, field := range []string{"type", "defaultTTLDays", "ttlConditions", "coldStorageVolume", "coldStorageDurationDays"} {
 		if _, ok := raw[field]; !ok {
 			t.Errorf("expected JSON field %q not found", field)
 		}
+	}
+}
+
+func TestCustomRetentionTTLParams_OmitEmptyColdStorage(t *testing.T) {
+	params := CustomRetentionTTLParams{
+		Type:           "logs",
+		DefaultTTLDays: 15,
+		TTLConditions:  []CustomRetentionRule{},
+	}
+
+	data, err := json.Marshal(params)
+	if err != nil {
+		t.Fatalf("Marshal failed: %v", err)
+	}
+
+	if strings.Contains(string(data), "coldStorage") {
+		t.Fatalf("cold storage keys must be omitted when unset: %s", data)
+	}
+}
+
+func TestCustomRetentionTTLResponseData_Decode(t *testing.T) {
+	apiJSON := `{
+		"version": "v2",
+		"status": "success",
+		"expected_logs_ttl_duration_hrs": 360,
+		"expected_logs_move_ttl_duration_hrs": 72,
+		"default_ttl_days": 15,
+		"cold_storage_volume": "s3-bucket",
+		"cold_storage_ttl_days": 3
+	}`
+
+	var resp CustomRetentionTTLResponseData
+	if err := json.Unmarshal([]byte(apiJSON), &resp); err != nil {
+		t.Fatalf("Unmarshal failed: %v", err)
+	}
+
+	if resp.DefaultTTLDays != 15 || resp.ColdStorageTTLDays != 3 || resp.ColdStorageVolume != "s3-bucket" {
+		t.Fatalf("decoded: %#v", resp)
 	}
 }

@@ -3,7 +3,9 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
@@ -28,8 +30,9 @@ var (
 	_ resource.ResourceWithImportState = &pluginDashboardResource{}
 )
 
-// NewPluginDashboardResource manages SigNoz V2 dashboards composed of
-// WebComponent plugin panels (Lacrosse plugin host).
+// NewPluginDashboardResource manages SigNoz v2 dashboards
+// (schemaVersion v6, POST/PUT /api/v2/dashboards) composed of WebComponent
+// plugin panels (signoz/WebComponentPanel).
 func NewPluginDashboardResource() resource.Resource {
 	return &pluginDashboardResource{}
 }
@@ -40,11 +43,12 @@ type pluginDashboardResource struct {
 
 type pluginDashboardModel struct {
 	ID          types.String      `tfsdk:"id"`
+	Name        types.String      `tfsdk:"name"`
 	Title       types.String      `tfsdk:"title"`
 	Description types.String      `tfsdk:"description"`
 	Tags        types.List        `tfsdk:"tags"`
 	Pages       []pluginPageModel `tfsdk:"page"`
-	// Rendered JSON payload (computed) for debugging / drift inspection.
+	// Canonical POST body JSON (computed) for debugging / drift inspection.
 	Document types.String `tfsdk:"document"`
 }
 
@@ -54,17 +58,18 @@ type pluginPageModel struct {
 }
 
 type pluginPanelModel struct {
-	ID         types.String `tfsdk:"id"`
-	Title      types.String `tfsdk:"title"`
-	PluginID   types.String `tfsdk:"plugin_id"`
-	Element    types.String `tfsdk:"element"`
-	Attributes types.Map    `tfsdk:"attributes"`
-	Properties types.String `tfsdk:"properties"` // JSON object string
-	ConfigKeys types.List   `tfsdk:"config_keys"`
-	X          types.Int64  `tfsdk:"x"`
-	Y          types.Int64  `tfsdk:"y"`
-	W          types.Int64  `tfsdk:"w"`
-	H          types.Int64  `tfsdk:"h"`
+	ID            types.String `tfsdk:"id"`
+	Title         types.String `tfsdk:"title"`
+	PluginID      types.String `tfsdk:"plugin_id"`
+	PluginVersion types.String `tfsdk:"plugin_version"`
+	Element       types.String `tfsdk:"element"`
+	Attributes    types.Map    `tfsdk:"attributes"`
+	Properties    types.String `tfsdk:"properties"` // JSON object string
+	ConfigKeys    types.List   `tfsdk:"config_keys"`
+	X             types.Int64  `tfsdk:"x"`
+	Y             types.Int64  `tfsdk:"y"`
+	W             types.Int64  `tfsdk:"w"`
+	H             types.Int64  `tfsdk:"h"`
 }
 
 func (r *pluginDashboardResource) Metadata(_ context.Context, _ resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -94,13 +99,21 @@ func (r *pluginDashboardResource) Schema(_ context.Context, _ resource.SchemaReq
 	emptyList, _ := types.ListValue(types.StringType, []attr.Value{})
 
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Creates a SigNoz **V2** dashboard page layout populated with **WebComponent plugin panels** " +
-			"(`signoz/WebComponentPanel`). Use this to manage Lacrosse plugin host dashboards as code " +
-			"(e.g. `plugin_id = \"hello\"`, `element = \"lax-hello-wc\"`).",
+		MarkdownDescription: "Creates a SigNoz **v2** dashboard (Perses spec, `schemaVersion v6`) populated with " +
+			"**WebComponent plugin panels** (`signoz/WebComponentPanel`). Panel versions and elements are " +
+			"resolved against the server plugin catalog at apply time. Use this to manage plugin-host " +
+			"dashboards as code (e.g. `plugin_id = \"hello\"`, `element = \"lax-hello-wc\"`).",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Dashboard UUID from SigNoz.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
+			},
+			"name": schema.StringAttribute{
+				Computed:            true,
+				MarkdownDescription: "Server-generated DNS name (immutable once created; regeneration requires replacement).",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
@@ -118,21 +131,24 @@ func (r *pluginDashboardResource) Schema(_ context.Context, _ resource.SchemaReq
 				Optional:            true,
 				Computed:            true,
 				Default:             listdefault.StaticValue(emptyList),
-				MarkdownDescription: "Tags (e.g. lacrosse, plugins).",
+				MarkdownDescription: "Tags. A plain string maps to tag key `tag`; use `key:value` for any other key.",
 			},
 			"document": schema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "Rendered V2 dashboard JSON document (for inspection).",
+				MarkdownDescription: "Canonical v2 dashboard JSON document (the POST body) for inspection.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 		},
 		Blocks: map[string]schema.Block{
 			"page": schema.ListNestedBlock{
-				MarkdownDescription: "Logical dashboard page / section. At least one page is required.",
+				MarkdownDescription: "Dashboard page; maps to one Grid layout. At least one `page` block is required — the framework lists blocks as optional, but a plan with no page fails validation.",
 				NestedObject: schema.NestedBlockObject{
 					Attributes: map[string]schema.Attribute{
 						"name": schema.StringAttribute{
 							Required:            true,
-							MarkdownDescription: "Page name (e.g. Overview, DevTime).",
+							MarkdownDescription: "Layout title (e.g. Overview, DevTime).",
 						},
 					},
 					Blocks: map[string]schema.Block{
@@ -142,18 +158,34 @@ func (r *pluginDashboardResource) Schema(_ context.Context, _ resource.SchemaReq
 								Attributes: map[string]schema.Attribute{
 									"id": schema.StringAttribute{
 										Optional:            true,
-										MarkdownDescription: "Stable panel id (UUID). Auto-generated at apply time if omitted (not stored as computed state).",
+										Computed:            true,
+										MarkdownDescription: "Panel id (the server panels-map key). Auto-generated when omitted and kept in state for stability.",
+										PlanModifiers: []planmodifier.String{
+											stringplanmodifier.UseStateForUnknown(),
+										},
 									},
 									"title": schema.StringAttribute{
 										Required: true,
 									},
 									"plugin_id": schema.StringAttribute{
 										Required:            true,
-										MarkdownDescription: "Registered plugin id (Phase 0: `hello`).",
+										MarkdownDescription: "Registered plugin id in the server catalog (GET /api/v1/plugins).",
+									},
+									"plugin_version": schema.StringAttribute{
+										Optional:            true,
+										Computed:            true,
+										MarkdownDescription: "Plugin version to pin. When omitted, the server catalog's default version is used and recorded here.",
+										PlanModifiers: []planmodifier.String{
+											stringplanmodifier.UseStateForUnknown(),
+										},
 									},
 									"element": schema.StringAttribute{
-										Required:            true,
-										MarkdownDescription: "Custom element tag (must contain a hyphen), e.g. `lax-hello-wc`.",
+										Optional:            true,
+										Computed:            true,
+										MarkdownDescription: "Custom element tag (must contain a hyphen). Filled from the plugin catalog manifest when omitted; a mismatch with the manifest is an error.",
+										PlanModifiers: []planmodifier.String{
+											stringplanmodifier.UseStateForUnknown(),
+										},
 									},
 									"attributes": schema.MapAttribute{
 										ElementType:         types.StringType,
@@ -162,12 +194,12 @@ func (r *pluginDashboardResource) Schema(_ context.Context, _ resource.SchemaReq
 									},
 									"properties": schema.StringAttribute{
 										Optional:            true,
-										MarkdownDescription: "JSON object of JS properties for the element.",
+										MarkdownDescription: "JSON object of JS properties for the element. Stored normalized (sorted keys, compact); formatting differences in config show as cosmetic diffs.",
 									},
 									"config_keys": schema.ListAttribute{
 										ElementType:         types.StringType,
 										Optional:            true,
-										MarkdownDescription: "Config keys this panel instance needs resolved (Phase 2).",
+										MarkdownDescription: "Config keys this panel instance needs resolved.",
 									},
 									"x": schema.Int64Attribute{
 										Optional: true,
@@ -206,34 +238,25 @@ func (r *pluginDashboardResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	pd, doc, diags := planToPluginDashboard(ctx, plan)
+	pd, diags := planToPluginDashboard(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Prefer classic v1 API (works on stock SigNoz 0.133+) with plugin metadata
-	// embedded in widget descriptions. Fall back to V2 if available.
-	v1 := pd.ToDashboardV1()
-	created, err := r.client.CreateDashboard(ctx, v1)
-	if err != nil {
-		// try V2
-		v2 := pd.ToDashboardV2()
-		createdV2, err2 := r.client.CreateDashboardV2(ctx, v2)
-		if err2 != nil {
-			resp.Diagnostics.AddError("Error creating plugin dashboard",
-				fmt.Sprintf("v1: %v; v2: %v", err, err2))
-			return
-		}
-		plan.ID = types.StringValue(createdV2.ID)
-		plan.Document = types.StringValue(doc)
-		resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	if err := r.resolvePluginVersions(ctx, &pd); err != nil {
+		resp.Diagnostics.AddError("Error resolving plugin catalog", err.Error())
 		return
 	}
 
-	plan.ID = types.StringValue(created.ID)
-	plan.Document = types.StringValue(doc)
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	created, err := r.client.CreateDashboardV2(ctx, pd.ToPostable())
+	if err != nil {
+		resp.Diagnostics.AddError("Error creating plugin dashboard", err.Error())
+		return
+	}
+
+	state := stateFromGettable(created)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (r *pluginDashboardResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -243,28 +266,20 @@ func (r *pluginDashboardResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	// Read via v1 (primary host path for plugin stub dashboards).
-	got, err := r.client.GetDashboard(ctx, state.ID.ValueString())
+	got, err := r.client.GetDashboardV2(ctx, state.ID.ValueString())
 	if err != nil {
-		if strings.Contains(err.Error(), "404") || strings.Contains(strings.ToLower(err.Error()), "not found") {
+		if isNotFound(err) {
 			resp.State.RemoveResource(ctx)
 			return
 		}
 		addErr(&resp.Diagnostics, err, operationRead, SigNozPluginDashboard)
 		return
 	}
-	if got.Data.Title != "" {
-		state.Title = types.StringValue(got.Data.Title)
-	}
-	if got.Data.Description != "" {
-		// strip our suffix for state stability if present
-		desc := strings.TrimSuffix(got.Data.Description, " [plugin-stub-widgets]")
-		state.Description = types.StringValue(desc)
-	}
-	if b, err := json.MarshalIndent(got.Data, "", "  "); err == nil {
-		state.Document = types.StringValue(string(b))
-	}
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	refreshed := stateFromGettable(got)
+	// Keep the dashboard id even when the server echoes it empty (defensive).
+	refreshed.ID = state.ID
+	resp.Diagnostics.Append(resp.State.Set(ctx, &refreshed)...)
 }
 
 func (r *pluginDashboardResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -273,34 +288,35 @@ func (r *pluginDashboardResource) Update(ctx context.Context, req resource.Updat
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	var state pluginDashboardModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	pd, doc, diags := planToPluginDashboard(ctx, plan)
+	pd, diags := planToPluginDashboard(ctx, plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	id := state.ID.ValueString()
-	if id == "" {
-		id = plan.ID.ValueString()
+	if err := r.resolvePluginVersions(ctx, &pd); err != nil {
+		resp.Diagnostics.AddError("Error resolving plugin catalog", err.Error())
+		return
 	}
-	v1 := pd.ToDashboardV1()
-	if err := r.client.UpdateDashboard(ctx, id, v1); err != nil {
-		v2 := pd.ToDashboardV2()
-		if err2 := r.client.UpdateDashboardV2(ctx, id, v2); err2 != nil {
-			resp.Diagnostics.AddError("Error updating plugin dashboard",
-				fmt.Sprintf("v1: %v; v2: %v", err, err2))
-			return
-		}
+
+	// name is immutable server-side: always send the one from state.
+	updated, err := r.client.UpdateDashboardV2(ctx, state.ID.ValueString(), pd.ToUpdatable(state.Name.ValueString()))
+	if err != nil {
+		resp.Diagnostics.AddError("Error updating plugin dashboard", err.Error())
+		return
 	}
-	plan.ID = types.StringValue(id)
-	plan.Document = types.StringValue(doc)
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	refreshed := stateFromGettable(updated)
+	refreshed.ID = state.ID
+	refreshed.Name = state.Name
+	resp.Diagnostics.Append(resp.State.Set(ctx, &refreshed)...)
 }
 
 func (r *pluginDashboardResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -309,12 +325,8 @@ func (r *pluginDashboardResource) Delete(ctx context.Context, req resource.Delet
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	if err := r.client.DeleteDashboardV2(ctx, state.ID.ValueString()); err != nil {
-		// Fall back to v1 delete path if v2 not available.
-		if err2 := r.client.DeleteDashboard(ctx, state.ID.ValueString()); err2 != nil {
-			addErr(&resp.Diagnostics, err, operationDelete, SigNozPluginDashboard)
-			return
-		}
+	if err := r.client.DeleteDashboardV2(ctx, state.ID.ValueString()); err != nil && !isNotFound(err) {
+		addErr(&resp.Diagnostics, err, operationDelete, SigNozPluginDashboard)
 	}
 }
 
@@ -322,8 +334,91 @@ func (r *pluginDashboardResource) ImportState(ctx context.Context, req resource.
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 
-func planToPluginDashboard(ctx context.Context, plan pluginDashboardModel) (model.PluginDashboard, string, diag.Diagnostics) {
+// resolvePluginVersions pins every panel against the server plugin catalog:
+// an explicit panel version must exist, otherwise the catalog's default
+// manifest fills the version (and the element when the panel omits it).
+func (r *pluginDashboardResource) resolvePluginVersions(ctx context.Context, pd *model.PluginDashboard) error {
+	for pi := range pd.Pages {
+		for fi := range pd.Pages[pi].Panels {
+			panel := &pd.Pages[pi].Panels[fi]
+
+			var (
+				manifest *model.PluginManifest
+				err      error
+			)
+
+			if panel.PluginVersion != "" {
+				manifest, err = r.client.GetPluginVersion(ctx, panel.PluginID, panel.PluginVersion)
+			} else {
+				manifest, err = r.client.GetPlugin(ctx, panel.PluginID)
+			}
+
+			if err != nil {
+				if isNotFound(err) {
+					return fmt.Errorf("panel %q (plugin %q): %w", panel.Title, panel.PluginID, r.pluginMissingErr(ctx, panel))
+				}
+				return fmt.Errorf("panel %q (plugin %q): %w", panel.Title, panel.PluginID, err)
+			}
+
+			if manifest.Element != "" {
+				switch {
+				case panel.Element == "":
+					panel.Element = manifest.Element
+				case panel.Element != manifest.Element:
+					return fmt.Errorf("panel %q (plugin %q): element %q does not match catalog element %q",
+						panel.Title, panel.PluginID, panel.Element, manifest.Element)
+				}
+			}
+
+			if manifest.Version != "" {
+				panel.PluginVersion = manifest.Version
+			}
+		}
+	}
+
+	tflog.Debug(ctx, "Resolved plugin versions", map[string]any{"title": pd.Title})
+
+	return nil
+}
+
+// pluginMissingErr lists the plugin ids (with versions) the server offers, to
+// make a bad plugin_id or typo'd version diagnosable from the plan alone.
+func (r *pluginDashboardResource) pluginMissingErr(ctx context.Context, panel *model.PluginPanel) error {
+	plugins, listErr := r.client.ListPlugins(ctx)
+	if listErr != nil {
+		return fmt.Errorf("plugin %q version %q not found in catalog", panel.PluginID, panel.PluginVersion)
+	}
+
+	byID := map[string][]string{}
+	for _, p := range plugins {
+		byID[p.ID] = append(byID[p.ID], p.Version)
+	}
+
+	ids := make([]string, 0, len(byID))
+	for id := range byID {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+
+	parts := make([]string, 0, len(ids))
+	for _, id := range ids {
+		versions := byID[id]
+		sort.Strings(versions)
+		parts = append(parts, fmt.Sprintf("%s (%s)", id, strings.Join(versions, ", ")))
+	}
+
+	return fmt.Errorf("plugin %q version %q not found in catalog; available: %s",
+		panel.PluginID, panel.PluginVersion, strings.Join(parts, ", "))
+}
+
+func isNotFound(err error) bool {
+	var apiErr *apiclients.APIError
+	return errors.As(err, &apiErr) && apiErr.StatusCode == 404
+}
+
+func planToPluginDashboard(ctx context.Context, plan pluginDashboardModel) (model.PluginDashboard, diag.Diagnostics) {
 	var diags diag.Diagnostics
+
 	pd := model.PluginDashboard{
 		Title:       plan.Title.ValueString(),
 		Description: plan.Description.ValueString(),
@@ -337,60 +432,140 @@ func planToPluginDashboard(ctx context.Context, plan pluginDashboardModel) (mode
 
 	if len(plan.Pages) == 0 {
 		diags.AddError("Invalid plugin dashboard", "At least one page { ... } block is required.")
-		return model.PluginDashboard{}, "", diags
+		return model.PluginDashboard{}, diags
 	}
 
 	for _, page := range plan.Pages {
 		pp := model.PluginPage{Name: page.Name.ValueString()}
+
 		if len(page.Panels) == 0 {
 			diags.AddError("Invalid page", fmt.Sprintf("page %q needs at least one plugin_panel", pp.Name))
 			continue
 		}
+
 		for _, panel := range page.Panels {
-			attrs := map[string]string{}
+			var attrs map[string]string
 			if !panel.Attributes.IsNull() && !panel.Attributes.IsUnknown() {
 				diags.Append(panel.Attributes.ElementsAs(ctx, &attrs, false)...)
 			}
-			props := map[string]interface{}{}
+
+			var props map[string]interface{}
 			if !panel.Properties.IsNull() && !panel.Properties.IsUnknown() && panel.Properties.ValueString() != "" {
 				if err := json.Unmarshal([]byte(panel.Properties.ValueString()), &props); err != nil {
 					diags.AddError("Invalid properties JSON", err.Error())
 				}
 			}
+
 			var cfgKeys []string
 			if !panel.ConfigKeys.IsNull() && !panel.ConfigKeys.IsUnknown() {
 				diags.Append(panel.ConfigKeys.ElementsAs(ctx, &cfgKeys, false)...)
 			}
-			// Fill element from devops catalog when omitted/mismatch-empty
-			el := panel.Element.ValueString()
-			if el == "" {
-				el = model.ResolveElement(panel.PluginID.ValueString())
-			}
+
 			pp.Panels = append(pp.Panels, model.PluginPanel{
-				ID:         panel.ID.ValueString(),
-				Title:      panel.Title.ValueString(),
-				PluginID:   panel.PluginID.ValueString(),
-				Element:    el,
-				Attributes: attrs,
-				Properties: props,
-				ConfigKeys: cfgKeys,
-				X:          int(panel.X.ValueInt64()),
-				Y:          int(panel.Y.ValueInt64()),
-				W:          int(panel.W.ValueInt64()),
-				H:          int(panel.H.ValueInt64()),
+				ID:            panel.ID.ValueString(),
+				Title:         panel.Title.ValueString(),
+				PluginID:      panel.PluginID.ValueString(),
+				PluginVersion: panel.PluginVersion.ValueString(),
+				Element:       panel.Element.ValueString(),
+				Attributes:    attrs,
+				Properties:    props,
+				ConfigKeys:    cfgKeys,
+				X:             int(panel.X.ValueInt64()),
+				Y:             int(panel.Y.ValueInt64()),
+				W:             int(panel.W.ValueInt64()),
+				H:             int(panel.H.ValueInt64()),
 			})
 		}
+
 		pd.Pages = append(pd.Pages, pp)
 	}
+
 	if diags.HasError() {
-		return model.PluginDashboard{}, "", diags
+		return model.PluginDashboard{}, diags
 	}
 
-	doc, err := pd.ToDashboardV2().ToJSON()
-	if err != nil {
-		diags.AddError("Failed to marshal dashboard document", err.Error())
-		return model.PluginDashboard{}, "", diags
+	return pd, diags
+}
+
+// stateFromGettable rebuilds TF state from a server dashboard: title and
+// description from spec.display, pages from layouts, panels keyed by their
+// server map key. Empty collections normalize to null so unset config matches.
+func stateFromGettable(g *model.GettableDashboardV2) pluginDashboardModel {
+	pd := model.FromGettable(*g)
+
+	state := pluginDashboardModel{
+		ID:          types.StringValue(g.ID),
+		Name:        types.StringValue(g.Name),
+		Title:       types.StringValue(pd.Title),
+		Description: types.StringNull(),
+		Tags:        types.ListValueMust(types.StringType, []attr.Value{}),
 	}
-	tflog.Debug(ctx, "Built plugin dashboard document", map[string]any{"title": pd.Title})
-	return pd, doc, diags
+
+	if pd.Description != "" {
+		state.Description = types.StringValue(pd.Description)
+	}
+
+	tagVals := make([]attr.Value, 0, len(pd.Tags))
+	for _, t := range pd.Tags {
+		tagVals = append(tagVals, types.StringValue(t))
+	}
+	if len(tagVals) > 0 {
+		state.Tags = types.ListValueMust(types.StringType, tagVals)
+	}
+
+	doc, err := pd.DocumentJSON()
+	if err == nil {
+		state.Document = types.StringValue(doc)
+	}
+
+	for _, page := range pd.Pages {
+		pm := pluginPageModel{Name: types.StringValue(page.Name)}
+
+		for _, panel := range page.Panels {
+			panelModel := pluginPanelModel{
+				ID:            types.StringValue(panel.ID),
+				Title:         types.StringValue(panel.Title),
+				PluginID:      types.StringValue(panel.PluginID),
+				PluginVersion: types.StringNull(),
+				Element:       types.StringValue(panel.Element),
+				Attributes:    types.MapNull(types.StringType),
+				Properties:    types.StringNull(),
+				ConfigKeys:    types.ListNull(types.StringType),
+				X:             types.Int64Value(int64(panel.X)),
+				Y:             types.Int64Value(int64(panel.Y)),
+				W:             types.Int64Value(int64(panel.W)),
+				H:             types.Int64Value(int64(panel.H)),
+			}
+
+			if panel.PluginVersion != "" {
+				panelModel.PluginVersion = types.StringValue(panel.PluginVersion)
+			}
+
+			if len(panel.Attributes) > 0 {
+				attrVals := map[string]attr.Value{}
+				for k, v := range panel.Attributes {
+					attrVals[k] = types.StringValue(v)
+				}
+				panelModel.Attributes = types.MapValueMust(types.StringType, attrVals)
+			}
+
+			if props := model.PropertiesJSON(panel.Properties); props != "" {
+				panelModel.Properties = types.StringValue(props)
+			}
+
+			if len(panel.ConfigKeys) > 0 {
+				keyVals := make([]attr.Value, 0, len(panel.ConfigKeys))
+				for _, k := range panel.ConfigKeys {
+					keyVals = append(keyVals, types.StringValue(k))
+				}
+				panelModel.ConfigKeys = types.ListValueMust(types.StringType, keyVals)
+			}
+
+			pm.Panels = append(pm.Panels, panelModel)
+		}
+
+		state.Pages = append(state.Pages, pm)
+	}
+
+	return state
 }

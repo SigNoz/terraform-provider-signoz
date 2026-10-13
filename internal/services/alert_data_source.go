@@ -133,12 +133,12 @@ func (d *alertDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, 
 			attr.Labels: schema.MapAttribute{
 				Computed:    true,
 				ElementType: types.StringType,
-				Description: "Labels of the alert. Severity is a required label.",
+				Description: "Labels of the alert. The alert's severity is stored server-side as a `severity` label and is also exposed as the top-level `severity` attribute.",
 			},
 			attr.PreferredChannels: schema.ListAttribute{
 				Computed:    true,
 				ElementType: types.StringType,
-				Description: "List of preferred channels of the alert. This is a noop if BroadcastToAll is true.",
+				Description: "List of preferred channels of the alert. This has no effect when `broadcast_to_all` is true.",
 			},
 			attr.RuleType: schema.StringAttribute{
 				Computed: true,

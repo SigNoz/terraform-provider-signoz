@@ -1,24 +1,31 @@
-# A logs-based threshold alert. The fork's signoz_alert keeps the v1 rules API:
-# `condition` is the composite-query JSON document the server expects.
-
-resource "signoz_alert" "api_error_rate" {
-  alert      = "High API Error Rate"
-  alert_type = "LOGS_BASED_ALERT"
-  severity   = "critical"
-
-  condition = jsonencode({
-    compositeQuery = {
-      queryType = "builder"
-      builderQueries = {
-        A = {
-          dataSource        = "logs"
-          queryName         = "A"
-          aggregateOperator = "count"
-        }
-      }
+terraform {
+  required_providers {
+    signoz = {
+      source = "registry.terraform.io/signoz/signoz"
     }
-    op        = "1"
-    target    = 100
-    matchType = "1"
+  }
+}
+
+provider "signoz" {
+  endpoint     = "http://localhost:3301"
+  access_token = "<SIGNOZ-API-KEY>"
+}
+
+resource "signoz_alert" "high_latency" {
+  alert      = "High API latency"
+  alert_type = "METRIC_BASED_ALERT"
+  condition = jsonencode({
+    op = "AND"
+    items = [
+      {
+        key         = "signoz_latency_p99"
+        op          = ">"
+        value       = "1000"
+        type        = "metric"
+        unit        = "ms"
+        aggregation = "p99"
+      }
+    ]
   })
+  severity = "warning"
 }

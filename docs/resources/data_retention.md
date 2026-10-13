@@ -38,8 +38,9 @@ terraform import signoz_data_retention.this settings
 
 ### Optional
 
-- `logs_move_ttl_duration_hrs` (Number) Hours before moving logs to cold storage. 0 means disabled.
-- `logs_ttl_duration_hrs` (Number) Hours to retain logs data. Default is 720 (30 days).
+- `cold_storage_volume` (String) Cold storage volume applied to every signal with a move TTL set. The server only performs a cold-storage move when a volume is configured; without it move settings are ignored.
+- `logs_move_ttl_duration_hrs` (Number) Hours before moving logs to cold storage (whole days). 0 means disabled; requires cold_storage_volume.
+- `logs_ttl_duration_hrs` (Number) Hours to retain logs data (whole days; set via the v2 custom-retention API). Default is 720 (30 days).
 - `metrics_move_ttl_duration_hrs` (Number) Hours before moving metrics to cold storage. 0 means disabled.
 - `metrics_ttl_duration_hrs` (Number) Hours to retain metrics data. Default is 720 (30 days).
 - `traces_move_ttl_duration_hrs` (Number) Hours before moving traces to cold storage. 0 means disabled.

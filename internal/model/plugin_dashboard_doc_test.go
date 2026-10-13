@@ -1,15 +1,78 @@
 package model_test
 
 import (
+	"bytes"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/model"
 )
 
-// Isolated package so pre-existing broken tests in package model do not block this suite.
+// Strict wire mirrors (server decodes with DisallowUnknownFields at every
+// level) to prove the document the builder emits is exactly the v2 contract.
+type wireSpec struct {
+	Display struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+	} `json:"display"`
+	Variables []map[string]any     `json:"variables"`
+	Panels    map[string]wirePanel `json:"panels"`
+	Layouts   []wireLayout         `json:"layouts"`
+}
 
-func TestToDashboardV2_MultiPageDevopsStubs(t *testing.T) {
+type wirePanel struct {
+	Kind string `json:"kind"`
+	Spec struct {
+		Display struct {
+			Name        string `json:"name"`
+			Description string `json:"description"`
+		} `json:"display"`
+		Plugin struct {
+			Kind string `json:"kind"`
+			Spec struct {
+				PluginID      string            `json:"pluginId"`
+				PluginVersion string            `json:"pluginVersion"`
+				Element       string            `json:"element"`
+				Attributes    map[string]string `json:"attributes"`
+				Properties    map[string]any    `json:"properties"`
+				ConfigKeys    []string          `json:"configKeys"`
+			} `json:"spec"`
+		} `json:"plugin"`
+		Queries []map[string]any `json:"queries"`
+	} `json:"spec"`
+}
+
+type wireLayout struct {
+	Kind string `json:"kind"`
+	Spec struct {
+		Display struct {
+			Title string `json:"title"`
+		} `json:"display"`
+		Items []struct {
+			X       int `json:"x"`
+			Y       int `json:"y"`
+			Width   int `json:"width"`
+			Height  int `json:"height"`
+			Content struct {
+				Ref string `json:"$ref"`
+			} `json:"content"`
+		} `json:"items"`
+	} `json:"spec"`
+}
+
+type wirePostable struct {
+	SchemaVersion string `json:"schemaVersion"`
+	Name          string `json:"name"`
+	GenerateName  bool   `json:"generateName"`
+	Tags          []struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	} `json:"tags"`
+	Spec wireSpec `json:"spec"`
+}
+
+func TestDocument_PostableWire_MultiPageDevopsStubs(t *testing.T) {
 	pd := model.PluginDashboard{
 		Title:       "Lacrosse DevOps Stubs",
 		Description: "stub widgets",
@@ -49,94 +112,47 @@ func TestToDashboardV2_MultiPageDevopsStubs(t *testing.T) {
 		},
 	}
 
-	v2 := pd.ToDashboardV2()
-	if v2.Title != "Lacrosse DevOps Stubs" {
-		t.Fatalf("title=%q", v2.Title)
-	}
-	panels, ok := v2.Data["panels"].(map[string]interface{})
-	if !ok {
-		t.Fatalf("panels type %T", v2.Data["panels"])
-	}
-	if len(panels) != 4 {
-		t.Fatalf("want 4 panels, got %d", len(panels))
-	}
-
-	// Spot-check fleet panel kind + empty queries + stub mode property
-	fleet := panels["panel-fleet"].(map[string]interface{})
-	spec := fleet["spec"].(map[string]interface{})
-	plugin := spec["plugin"].(map[string]interface{})
-	if plugin["kind"] != model.PanelKindWebComponent {
-		t.Fatalf("kind=%v", plugin["kind"])
-	}
-	pspec := plugin["spec"].(map[string]interface{})
-	if pspec["pluginId"] != "fleet-node-grid" || pspec["element"] != "lax-fleet-node-grid" {
-		t.Fatalf("plugin spec=%v", pspec)
-	}
-	if q := spec["queries"].([]interface{}); len(q) != 0 {
-		t.Fatalf("queries must be empty for WC: %v", q)
-	}
-	props := pspec["properties"].(map[string]interface{})
-	if props["mode"] != "stub" {
-		t.Fatalf("expected stub mode in properties, got %v", props)
-	}
-
-	pages, ok := v2.Data["pages"].([]string)
-	if !ok || len(pages) != 2 || pages[0] != "Fleet" {
-		t.Fatalf("pages=%v", v2.Data["pages"])
-	}
-
-	// Multi-page layouts map (values are []map[string]interface{} before JSON)
-	layouts, ok := v2.Data["layouts"].(map[string]interface{})
-	if !ok {
-		t.Fatalf("layouts type %T (multi-page should be map)", v2.Data["layouts"])
-	}
-	switch fleetLayout := layouts["Fleet"].(type) {
-	case []map[string]interface{}:
-		if len(fleetLayout) != 3 {
-			t.Fatalf("fleet layout len=%d", len(fleetLayout))
-		}
-	case []interface{}:
-		if len(fleetLayout) != 3 {
-			t.Fatalf("fleet layout len=%d", len(fleetLayout))
-		}
-	default:
-		t.Fatalf("fleet layout type %T", layouts["Fleet"])
-	}
-
-	b, err := json.Marshal(v2)
+	doc, err := pd.DocumentJSON()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !json.Valid(b) {
-		t.Fatal("invalid json")
-	}
-	// Input-sensitive: title must appear in document
-	if !containsBytes(b, []byte("fleet-node-grid")) || !containsBytes(b, []byte("Lacrosse DevOps Stubs")) {
-		t.Fatalf("document missing expected inputs: %s", b[:min(200, len(b))])
-	}
-}
 
-func containsBytes(hay, needle []byte) bool {
-	return len(hay) >= len(needle) && (string(hay) != "" && (len(needle) == 0 || indexOf(hay, needle) >= 0))
-}
-
-func indexOf(hay, needle []byte) int {
-	// simple search
-outer:
-	for i := 0; i+len(needle) <= len(hay); i++ {
-		for j := 0; j < len(needle); j++ {
-			if hay[i+j] != needle[j] {
-				continue outer
-			}
-		}
-		return i
+	dec := json.NewDecoder(strings.NewReader(doc))
+	dec.DisallowUnknownFields()
+	var post wirePostable
+	if err := dec.Decode(&post); err != nil {
+		t.Fatalf("document is not strict v2 wire shape: %v", err)
 	}
-	return -1
-}
 
-func min(a, b int) int {
-	if a < b {
-		return a
+	if post.SchemaVersion != "v6" || !post.GenerateName || post.Name != "" {
+		t.Fatalf("envelope: %+v", post)
 	}
-	return b
+	if len(post.Spec.Panels) != 4 || len(post.Spec.Layouts) != 2 {
+		t.Fatalf("panels %d layouts %d", len(post.Spec.Panels), len(post.Spec.Layouts))
+	}
+
+	fleet := post.Spec.Panels["panel-fleet"]
+	if fleet.Kind != model.PanelEnvelopeKind || fleet.Spec.Plugin.Kind != model.PanelKindWebComponent {
+		t.Fatalf("kinds: %q/%q", fleet.Kind, fleet.Spec.Plugin.Kind)
+	}
+	if fleet.Spec.Plugin.Spec.PluginID != "fleet-node-grid" || fleet.Spec.Plugin.Spec.Element != "lax-fleet-node-grid" {
+		t.Fatalf("plugin spec: %+v", fleet.Spec.Plugin.Spec)
+	}
+	if len(fleet.Spec.Queries) != 0 {
+		t.Fatalf("queries must be empty for WebComponent panels: %v", fleet.Spec.Queries)
+	}
+	if fleet.Spec.Plugin.Spec.Properties["mode"] != "stub" {
+		t.Fatalf("expected stub mode in properties: %v", fleet.Spec.Plugin.Spec.Properties)
+	}
+
+	if post.Spec.Layouts[0].Spec.Display.Title != "Fleet" || post.Spec.Layouts[1].Spec.Display.Title != "Data" {
+		t.Fatalf("layout titles: %q/%q", post.Spec.Layouts[0].Spec.Display.Title, post.Spec.Layouts[1].Spec.Display.Title)
+	}
+	if len(post.Spec.Layouts[0].Spec.Items) != 3 || len(post.Spec.Layouts[1].Spec.Items) != 1 {
+		t.Fatalf("layout item counts: %d/%d", len(post.Spec.Layouts[0].Spec.Items), len(post.Spec.Layouts[1].Spec.Items))
+	}
+
+	if !bytes.Contains([]byte(doc), []byte("fleet-node-grid")) || !bytes.Contains([]byte(doc), []byte("Lacrosse DevOps Stubs")) {
+		t.Fatal("document missing expected inputs")
+	}
 }

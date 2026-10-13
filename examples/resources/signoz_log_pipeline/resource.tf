@@ -41,7 +41,7 @@ resource "signoz_log_pipeline" "extract_severity" {
       type       = "grok_parser"
       output     = "severity"
       parse_from = "body"
-      pattern    = "%{WORD:severity}"
+      pattern    = "%%{WORD:severity}"
     }
   ])
 }

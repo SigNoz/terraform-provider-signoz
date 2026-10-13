@@ -31,7 +31,9 @@ func ResolveElement(pluginID string) string {
 	return ""
 }
 
-// NewStubPluginPanel builds a panel with embedded stub payload and mode=stub.
+// NewStubPluginPanel builds a panel carrying the Lacrosse stub-data convention:
+// properties {mode: "stub", stub: {...}} feed demo data to the widget element.
+// This is a data mode of the deployed plugins, not a stubbed API path.
 func NewStubPluginPanel(title, pluginID string, stub map[string]interface{}, x, y, w, h int) PluginPanel {
 	el := ResolveElement(pluginID)
 	if el == "" {

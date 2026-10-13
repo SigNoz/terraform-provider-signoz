@@ -6,14 +6,19 @@ import "github.com/SigNoz/terraform-provider-signoz/internal/model"
 
 // Re-export core types and builders used by Terraform and tooling.
 
-const PanelKindWebComponent = model.PanelKindWebComponent
+const (
+	PanelKindWebComponent    = model.PanelKindWebComponent
+	DashboardSchemaVersionV2 = model.DashboardSchemaVersionV2
+)
 
 type (
-	PluginDashboard = model.PluginDashboard
-	PluginPage      = model.PluginPage
-	PluginPanel     = model.PluginPanel
-	DashboardV2     = model.DashboardV2
-	DevOpsWidget    = model.DevOpsWidget
+	PluginDashboard      = model.PluginDashboard
+	PluginPage           = model.PluginPage
+	PluginPanel          = model.PluginPanel
+	PostableDashboardV2  = model.PostableDashboardV2
+	UpdatableDashboardV2 = model.UpdatableDashboardV2
+	GettableDashboardV2  = model.GettableDashboardV2
+	DevOpsWidget         = model.DevOpsWidget
 )
 
 var DevOpsCatalog = model.DevOpsCatalog

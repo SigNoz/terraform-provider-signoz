@@ -4,13 +4,24 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"strings"
 )
 
-// WebComponent panel kind used by the Lacrosse / noizu-forks SigNoz plugin host.
-const PanelKindWebComponent = "signoz/WebComponentPanel"
+// Contract constants mirroring SigNoz v2 dashboards
+// (pkg/types/dashboardtypes/perses_dashboard.go): schemaVersion "v6", the
+// panel envelope kind "Panel", the WebComponent plugin envelope kind, and the
+// key plain TF tag strings map to.
+const (
+	DashboardSchemaVersionV2 = "v6"
+	PanelEnvelopeKind        = "Panel"
+	PanelKindWebComponent    = "signoz/WebComponentPanel"
+	DefaultTagKey            = "tag"
+)
 
 // PluginDashboard is a high-level dashboard built from plugin pages/panels.
-// It is expanded into a SigNoz V2 dashboard document (Perses-style panels).
+// It is expanded into a SigNoz v2 dashboard (Perses spec) via ToPostable and
+// rebuilt from a server response via FromGettable.
 type PluginDashboard struct {
 	Title       string       `json:"title"`
 	Description string       `json:"description,omitempty"`
@@ -18,7 +29,7 @@ type PluginDashboard struct {
 	Pages       []PluginPage `json:"pages"`
 }
 
-// PluginPage groups plugin panels (a "page" in the UI / layout group).
+// PluginPage groups plugin panels (one Grid layout on the server).
 type PluginPage struct {
 	Name   string        `json:"name"`
 	Panels []PluginPanel `json:"panels"`
@@ -26,40 +37,148 @@ type PluginPage struct {
 
 // PluginPanel is one WebComponent plugin instance on a page.
 type PluginPanel struct {
-	ID         string                 `json:"id,omitempty"`
-	Title      string                 `json:"title"`
-	PluginID   string                 `json:"plugin_id"`
-	Element    string                 `json:"element"`
-	Attributes map[string]string      `json:"attributes,omitempty"`
-	Properties map[string]interface{} `json:"properties,omitempty"`
-	ConfigKeys []string               `json:"config_keys,omitempty"`
-	X          int                    `json:"x"`
-	Y          int                    `json:"y"`
-	W          int                    `json:"w"`
-	H          int                    `json:"h"`
+	ID            string                 `json:"id,omitempty"`
+	Title         string                 `json:"title"`
+	PluginID      string                 `json:"plugin_id"`
+	PluginVersion string                 `json:"plugin_version,omitempty"`
+	Element       string                 `json:"element"`
+	Attributes    map[string]string      `json:"attributes,omitempty"`
+	Properties    map[string]interface{} `json:"properties,omitempty"`
+	ConfigKeys    []string               `json:"config_keys,omitempty"`
+	X             int                    `json:"x"`
+	Y             int                    `json:"y"`
+	W             int                    `json:"w"`
+	H             int                    `json:"h"`
 }
 
-// DashboardV2 is the wire format for POST/PUT /api/v2/dashboards.
-type DashboardV2 struct {
-	Title       string                 `json:"title"`
-	Description string                 `json:"description,omitempty"`
-	Tags        []string               `json:"tags,omitempty"`
-	Data        map[string]interface{} `json:"data"`
+// PostableTag mirrors tagtypes.PostableTag.
+type PostableTag struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
-// DashboardV2Data is returned from GET /api/v2/dashboards/{id}.
-type DashboardV2Data struct {
-	ID          string                 `json:"id"`
-	CreatedAt   string                 `json:"createdAt,omitempty"`
-	CreatedBy   string                 `json:"createdBy,omitempty"`
-	UpdatedAt   string                 `json:"updatedAt,omitempty"`
-	UpdatedBy   string                 `json:"updatedBy,omitempty"`
-	Title       string                 `json:"title,omitempty"`
-	Description string                 `json:"description,omitempty"`
-	Tags        []string               `json:"tags,omitempty"`
-	Data        map[string]interface{} `json:"data,omitempty"`
-	// Some SigNoz versions nest fields under data only.
-	Raw map[string]interface{} `json:"-"`
+// GettableTag mirrors tagtypes.GettableTag.
+type GettableTag struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+// PostableDashboardV2 is the POST /api/v2/dashboards body. The server decodes
+// every level with DisallowUnknownFields, so only contract fields exist here.
+type PostableDashboardV2 struct {
+	SchemaVersion string          `json:"schemaVersion"`
+	Name          string          `json:"name"`
+	GenerateName  bool            `json:"generateName"`
+	Tags          []PostableTag   `json:"tags"`
+	Spec          DashboardSpecV2 `json:"spec"`
+}
+
+// UpdatableDashboardV2 is the PUT /api/v2/dashboards/{id} body. Name is the
+// server's DNS name and is immutable — always send the name from state.
+type UpdatableDashboardV2 struct {
+	SchemaVersion string          `json:"schemaVersion"`
+	Name          string          `json:"name"`
+	Tags          []PostableTag   `json:"tags"`
+	Spec          DashboardSpecV2 `json:"spec"`
+}
+
+// GettableDashboardV2 is the dashboard object inside the {status,data}
+// envelope of POST/GET/PUT responses.
+type GettableDashboardV2 struct {
+	ID            string          `json:"id"`
+	CreatedAt     string          `json:"createdAt,omitempty"`
+	UpdatedAt     string          `json:"updatedAt,omitempty"`
+	CreatedBy     string          `json:"createdBy,omitempty"`
+	UpdatedBy     string          `json:"updatedBy,omitempty"`
+	OrgID         string          `json:"orgId,omitempty"`
+	Locked        bool            `json:"locked"`
+	Source        string          `json:"source,omitempty"`
+	SchemaVersion string          `json:"schemaVersion,omitempty"`
+	Name          string          `json:"name"`
+	Tags          []GettableTag   `json:"tags"`
+	Spec          DashboardSpecV2 `json:"spec"`
+}
+
+// DashboardSpecV2 mirrors dashboardtypes.DashboardSpec. Variables, duration,
+// refreshInterval and links are not managed by the provider; variables are
+// decoded opaquely so a read of a dashboard edited elsewhere still round-trips.
+type DashboardSpecV2 struct {
+	Display         DisplayV2          `json:"display"`
+	Variables       []map[string]any   `json:"variables"`
+	Panels          map[string]PanelV2 `json:"panels"`
+	Layouts         []LayoutV2         `json:"layouts"`
+	Duration        string             `json:"duration,omitempty"`
+	RefreshInterval string             `json:"refreshInterval,omitempty"`
+}
+
+// DisplayV2 mirrors dashboardtypes.Display (name required, description always
+// serialized server-side).
+type DisplayV2 struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// PanelV2 mirrors dashboardtypes.Panel.
+type PanelV2 struct {
+	Kind string      `json:"kind"`
+	Spec PanelSpecV2 `json:"spec"`
+}
+
+// PanelSpecV2 mirrors dashboardtypes.PanelSpec. WebComponent panels must carry
+// an empty (non-null) queries list; queries are decoded opaquely so a read of
+// a panel edited elsewhere still round-trips.
+type PanelSpecV2 struct {
+	Display DisplayV2        `json:"display"`
+	Plugin  PanelPluginV2    `json:"plugin"`
+	Queries []map[string]any `json:"queries"`
+}
+
+// PanelPluginV2 mirrors dashboardtypes.PanelPlugin.
+type PanelPluginV2 struct {
+	Kind string                `json:"kind"`
+	Spec WebComponentPanelSpec `json:"spec"`
+}
+
+// WebComponentPanelSpec mirrors dashboardtypes.WebComponentPanelSpec.
+type WebComponentPanelSpec struct {
+	PluginID      string            `json:"pluginId,omitempty"`
+	PluginVersion string            `json:"pluginVersion,omitempty"`
+	Element       string            `json:"element,omitempty"`
+	Attributes    map[string]string `json:"attributes,omitempty"`
+	Properties    map[string]any    `json:"properties,omitempty"`
+	ConfigKeys    []string          `json:"configKeys,omitempty"`
+}
+
+// LayoutV2 mirrors dashboardtypes.Layout.
+type LayoutV2 struct {
+	Kind string           `json:"kind"`
+	Spec GridLayoutSpecV2 `json:"spec"`
+}
+
+// GridLayoutSpecV2 mirrors perses dashboard.GridLayoutSpec.
+type GridLayoutSpecV2 struct {
+	Display *GridLayoutDisplayV2 `json:"display,omitempty"`
+	Items   []GridItemV2         `json:"items"`
+}
+
+// GridLayoutDisplayV2 mirrors perses dashboard.GridLayoutDisplay.
+type GridLayoutDisplayV2 struct {
+	Title string `json:"title"`
+}
+
+// GridItemV2 mirrors perses dashboard.GridItem. Content references the panel
+// map by JSON pointer.
+type GridItemV2 struct {
+	X       int           `json:"x"`
+	Y       int           `json:"y"`
+	Width   int           `json:"width"`
+	Height  int           `json:"height"`
+	Content JSONPointerV2 `json:"content"`
+}
+
+// JSONPointerV2 mirrors perses common.JSONRef (only $ref is on the wire).
+type JSONPointerV2 struct {
+	Ref string `json:"$ref"`
 }
 
 func newPanelID() string {
@@ -68,21 +187,59 @@ func newPanelID() string {
 	return hex.EncodeToString(b[:])
 }
 
-// ToDashboardV2 expands plugin pages/panels into a V2 dashboard document.
-func (p PluginDashboard) ToDashboardV2() DashboardV2 {
-	panels := map[string]interface{}{}
-	// layouts: map page name → layout items
-	layouts := map[string]interface{}{}
-	// ordered page list for UI
-	var pageOrder []string
+// TagsToPostable maps TF tag strings onto the server's {key,value} pairs.
+// "k:v" becomes {key: k, value: v} (split at the first colon); a plain string
+// becomes {key: "tag", value: s}.
+func TagsToPostable(tags []string) []PostableTag {
+	out := make([]PostableTag, 0, len(tags))
+	for _, s := range tags {
+		key, value := DefaultTagKey, s
+		if i := strings.Index(s, ":"); i >= 0 {
+			key, value = s[:i], s[i+1:]
+		}
+		out = append(out, PostableTag{Key: key, Value: value})
+	}
+	return out
+}
+
+// TagsFromGettable reverses TagsToPostable exactly: {tag, v} renders as the
+// plain string v, everything else as "key:value".
+func TagsFromGettable(tags []GettableTag) []string {
+	out := make([]string, 0, len(tags))
+	for _, t := range tags {
+		if t.Key == DefaultTagKey {
+			out = append(out, t.Value)
+			continue
+		}
+		out = append(out, t.Key+":"+t.Value)
+	}
+	return out
+}
+
+// ToPostable expands plugin pages/panels into a POSTable v2 dashboard. A panel
+// id is generated when unset and used as the panels map key, so a dashboard
+// round-tripped through FromGettable keeps stable panel ids.
+func (p PluginDashboard) ToPostable() PostableDashboardV2 {
+	postable := PostableDashboardV2{
+		SchemaVersion: DashboardSchemaVersionV2,
+		GenerateName:  true,
+		Tags:          TagsToPostable(p.Tags),
+		Spec: DashboardSpecV2{
+			Display:   DisplayV2{Name: p.Title, Description: p.Description},
+			Variables: []map[string]any{},
+			Panels:    map[string]PanelV2{},
+			Layouts:   []LayoutV2{},
+		},
+	}
 
 	for _, page := range p.Pages {
-		pageName := page.Name
-		if pageName == "" {
-			pageName = "default"
+		layout := LayoutV2{
+			Kind: "Grid",
+			Spec: GridLayoutSpecV2{
+				Display: &GridLayoutDisplayV2{Title: page.Name},
+				Items:   []GridItemV2{},
+			},
 		}
-		pageOrder = append(pageOrder, pageName)
-		var layoutItems []map[string]interface{}
 
 		for _, panel := range page.Panels {
 			id := panel.ID
@@ -96,211 +253,122 @@ func (p PluginDashboard) ToDashboardV2() DashboardV2 {
 			if h <= 0 {
 				h = 4
 			}
-			attrs := panel.Attributes
-			if attrs == nil {
-				attrs = map[string]string{}
-			}
-			props := panel.Properties
-			if props == nil {
-				props = map[string]interface{}{}
-			}
-			cfgKeys := panel.ConfigKeys
-			if cfgKeys == nil {
-				cfgKeys = []string{}
-			}
 
-			panels[id] = map[string]interface{}{
-				"kind": "Panel",
-				"spec": map[string]interface{}{
-					"display": map[string]interface{}{
-						"name": panel.Title,
-					},
-					"plugin": map[string]interface{}{
-						"kind": PanelKindWebComponent,
-						"spec": map[string]interface{}{
-							"pluginId":   panel.PluginID,
-							"element":    panel.Element,
-							"attributes": attrs,
-							"properties": props,
-							"configKeys": cfgKeys,
+			postable.Spec.Panels[id] = PanelV2{
+				Kind: PanelEnvelopeKind,
+				Spec: PanelSpecV2{
+					Display: DisplayV2{Name: panel.Title},
+					Plugin: PanelPluginV2{
+						Kind: PanelKindWebComponent,
+						Spec: WebComponentPanelSpec{
+							PluginID:      panel.PluginID,
+							PluginVersion: panel.PluginVersion,
+							Element:       panel.Element,
+							Attributes:    panel.Attributes,
+							Properties:    panel.Properties,
+							ConfigKeys:    panel.ConfigKeys,
 						},
 					},
-					"queries": []interface{}{},
+					Queries: []map[string]any{},
 				},
 			}
-
-			layoutItems = append(layoutItems, map[string]interface{}{
-				"i":      id,
-				"x":      panel.X,
-				"y":      panel.Y,
-				"w":      w,
-				"h":      h,
-				"moved":  false,
-				"static": false,
+			layout.Spec.Items = append(layout.Spec.Items, GridItemV2{
+				X: panel.X, Y: panel.Y, Width: w, Height: h,
+				Content: JSONPointerV2{Ref: "#/spec/panels/" + id},
 			})
 		}
-		layouts[pageName] = layoutItems
+
+		postable.Spec.Layouts = append(postable.Spec.Layouts, layout)
 	}
 
-	// Prefer a single "default" layout array if only one page (matches many UIs).
-	var layoutWire interface{} = layouts
-	if len(pageOrder) == 1 {
-		layoutWire = layouts[pageOrder[0]]
-	}
+	return postable
+}
 
-	data := map[string]interface{}{
-		"panels":    panels,
-		"layouts":   layoutWire,
-		"variables": map[string]interface{}{},
-		"pages":     pageOrder,
-		// Lacrosse metadata for round-trip / debugging
-		"lacrosse": map[string]interface{}{
-			"kind":    "plugin_dashboard",
-			"version": 1,
-		},
-	}
-
-	return DashboardV2{
-		Title:       p.Title,
-		Description: p.Description,
-		Tags:        p.Tags,
-		Data:        data,
+// ToUpdatable renders the PUT body; name must be the name held in state (it is
+// immutable server-side).
+func (p PluginDashboard) ToUpdatable(name string) UpdatableDashboardV2 {
+	postable := p.ToPostable()
+	return UpdatableDashboardV2{
+		SchemaVersion: DashboardSchemaVersionV2,
+		Name:          name,
+		Tags:          postable.Tags,
+		Spec:          postable.Spec,
 	}
 }
 
-// ToJSON is a debug helper.
-func (d DashboardV2) ToJSON() (string, error) {
-	b, err := json.MarshalIndent(d, "", "  ")
+// FromGettable rebuilds the TF-shaped dashboard from a server response: title
+// and description from spec.display, tags reversed from {key,value}, pages
+// from layouts in order, and each panel from its layout item plus the panels
+// map entry (the map key is the panel id).
+func FromGettable(g GettableDashboardV2) PluginDashboard {
+	pd := PluginDashboard{
+		Title:       g.Spec.Display.Name,
+		Description: g.Spec.Display.Description,
+		Tags:        TagsFromGettable(g.Tags),
+	}
+
+	for _, layout := range g.Spec.Layouts {
+		page := PluginPage{}
+		if layout.Spec.Display != nil {
+			page.Name = layout.Spec.Display.Title
+		}
+
+		for _, item := range layout.Spec.Items {
+			id := panelIDFromRef(item.Content.Ref)
+			panel, ok := g.Spec.Panels[id]
+			if !ok {
+				continue
+			}
+			if panel.Spec.Plugin.Kind != PanelKindWebComponent {
+				continue
+			}
+			spec := panel.Spec.Plugin.Spec
+			page.Panels = append(page.Panels, PluginPanel{
+				ID:            id,
+				Title:         panel.Spec.Display.Name,
+				PluginID:      spec.PluginID,
+				PluginVersion: spec.PluginVersion,
+				Element:       spec.Element,
+				Attributes:    spec.Attributes,
+				Properties:    spec.Properties,
+				ConfigKeys:    spec.ConfigKeys,
+				X:             item.X,
+				Y:             item.Y,
+				W:             item.Width,
+				H:             item.Height,
+			})
+		}
+
+		pd.Pages = append(pd.Pages, page)
+	}
+
+	return pd
+}
+
+func panelIDFromRef(ref string) string {
+	const prefix = "#/spec/panels/"
+	return strings.TrimPrefix(ref, prefix)
+}
+
+// DocumentJSON renders the canonical POST body this dashboard would send —
+// deterministic (no server timestamps), for the TF `document` attribute.
+func (p PluginDashboard) DocumentJSON() (string, error) {
+	b, err := json.MarshalIndent(p.ToPostable(), "", "  ")
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("marshal dashboard document: %w", err)
 	}
 	return string(b), nil
 }
 
-// ToDashboardV1 expands plugin pages into a classic SigNoz v1/v4 dashboard.
-// Each WebComponent panel is stored as a widget whose description embeds the
-// lacrossePlugin spec + stub properties so stock SigNoz APIs can host the
-// document until a plugin-host image renders WC panels natively.
-func (p PluginDashboard) ToDashboardV1() *Dashboard {
-	v2 := p.ToDashboardV2()
-	panels, _ := v2.Data["panels"].(map[string]interface{})
-	var widgets []map[string]interface{}
-	var layout []map[string]interface{}
-	// Flatten page layouts in page order
-	pageOrder, _ := v2.Data["pages"].([]string)
-	if pageOrder == nil {
-		if pi, ok := v2.Data["pages"].([]interface{}); ok {
-			for _, x := range pi {
-				if s, ok := x.(string); ok {
-					pageOrder = append(pageOrder, s)
-				}
-			}
-		}
+// PropertiesJSON normalises a panel's properties map to a stable JSON string
+// (Go marshals map keys sorted) so plans stay stable across reads.
+func PropertiesJSON(props map[string]interface{}) string {
+	if len(props) == 0 {
+		return ""
 	}
-	// Collect layout items from layouts map or array
-	var layoutItems []map[string]interface{}
-	switch L := v2.Data["layouts"].(type) {
-	case []map[string]interface{}:
-		layoutItems = L
-	case []interface{}:
-		for _, it := range L {
-			if m, ok := it.(map[string]interface{}); ok {
-				layoutItems = append(layoutItems, m)
-			}
-		}
-	case map[string]interface{}:
-		for _, pname := range pageOrder {
-			if arr, ok := L[pname].([]map[string]interface{}); ok {
-				layoutItems = append(layoutItems, arr...)
-			} else if arr, ok := L[pname].([]interface{}); ok {
-				for _, it := range arr {
-					if m, ok := it.(map[string]interface{}); ok {
-						layoutItems = append(layoutItems, m)
-					}
-				}
-			}
-		}
-		if len(layoutItems) == 0 {
-			for _, v := range L {
-				if arr, ok := v.([]interface{}); ok {
-					for _, it := range arr {
-						if m, ok := it.(map[string]interface{}); ok {
-							layoutItems = append(layoutItems, m)
-						}
-					}
-				}
-			}
-		}
+	b, err := json.Marshal(props)
+	if err != nil {
+		return ""
 	}
-
-	// Index panels in stable order of layout items
-	seen := map[string]bool{}
-	for _, li := range layoutItems {
-		id, _ := li["i"].(string)
-		if id == "" || seen[id] {
-			continue
-		}
-		seen[id] = true
-		panel, ok := panels[id].(map[string]interface{})
-		if !ok {
-			continue
-		}
-		spec, _ := panel["spec"].(map[string]interface{})
-		display, _ := spec["display"].(map[string]interface{})
-		title, _ := display["name"].(string)
-		plugin := spec["plugin"]
-		meta, _ := json.Marshal(map[string]interface{}{
-			"lacrossePlugin": plugin,
-			"stubMode":       true,
-			"kind":           "plugin_panel",
-		})
-		widgets = append(widgets, map[string]interface{}{
-			"id":              id,
-			"title":           title,
-			"description":     string(meta),
-			"panelTypes":      "graph",
-			"nullZeroValues":  "zero",
-			"opacity":         "1",
-			"isStacked":       false,
-			"yAxisUnit":       "none",
-			"fillSpans":       false,
-			"softMax":         0,
-			"softMin":         0,
-			"stackedBarChart": false,
-			"query": map[string]interface{}{
-				"id":             "A",
-				"queryType":      "builder",
-				"promql":         []interface{}{},
-				"clickhouse_sql": []interface{}{},
-				"builder": map[string]interface{}{
-					"queryData":     []interface{}{},
-					"queryFormulas": []interface{}{},
-				},
-			},
-		})
-		// normalize layout keys to h,i,w,x,y
-		layout = append(layout, map[string]interface{}{
-			"i":      id,
-			"x":      li["x"],
-			"y":      li["y"],
-			"w":      li["w"],
-			"h":      li["h"],
-			"moved":  false,
-			"static": false,
-		})
-	}
-
-	return &Dashboard{
-		CollapsableRowsMigrated: true,
-		Description:             p.Description + " [plugin-stub-widgets]",
-		Layout:                  layout,
-		Name:                    p.Title,
-		Title:                   p.Title,
-		Tags:                    p.Tags,
-		UploadedGrafana:         false,
-		Variables:               map[string]interface{}{},
-		Version:                 "v4",
-		Widgets:                 widgets,
-		PanelMap:                map[string]interface{}{},
-	}
+	return string(b)
 }

@@ -52,6 +52,7 @@ type dataRetentionResourceModel struct {
 	LogsMoveTTLDurationHrs    types.Int64  `tfsdk:"logs_move_ttl_duration_hrs"`
 	TracesTTLDurationHrs      types.Int64  `tfsdk:"traces_ttl_duration_hrs"`
 	TracesMoveTTLDurationHrs  types.Int64  `tfsdk:"traces_move_ttl_duration_hrs"`
+	ColdStorageVolume         types.String `tfsdk:"cold_storage_volume"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -114,13 +115,13 @@ func (r *dataRetentionResource) Schema(_ context.Context, _ resource.SchemaReque
 				Optional:    true,
 				Computed:    true,
 				Default:     int64default.StaticInt64(dataRetentionDefaultTTLHrs),
-				Description: "Hours to retain logs data. Default is 720 (30 days).",
+				Description: "Hours to retain logs data (whole days; set via the v2 custom-retention API). Default is 720 (30 days).",
 			},
 			attr.LogsMoveTTLDuration: schema.Int64Attribute{
 				Optional:    true,
 				Computed:    true,
 				Default:     int64default.StaticInt64(dataRetentionDefaultMoveHrs),
-				Description: "Hours before moving logs to cold storage. 0 means disabled.",
+				Description: "Hours before moving logs to cold storage (whole days). 0 means disabled; requires cold_storage_volume.",
 			},
 			attr.TracesTTLDuration: schema.Int64Attribute{
 				Optional:    true,
@@ -133,6 +134,10 @@ func (r *dataRetentionResource) Schema(_ context.Context, _ resource.SchemaReque
 				Computed:    true,
 				Default:     int64default.StaticInt64(dataRetentionDefaultMoveHrs),
 				Description: "Hours before moving traces to cold storage. 0 means disabled.",
+			},
+			attr.ColdStorageVolume: schema.StringAttribute{
+				Optional:    true,
+				Description: "Cold storage volume applied to every signal with a move TTL set. The server only performs a cold-storage move when a volume is configured; without it move settings are ignored.",
 			},
 		},
 	}
@@ -231,7 +236,11 @@ func (r *dataRetentionResource) ImportState(ctx context.Context, req resource.Im
 }
 
 // setAllRetention POSTs retention settings for all three signal types.
+// Metrics/traces go to the v1 TTL endpoint (query params); logs go to the v2
+// custom-retention endpoint (days), which requires whole-day values.
 func (r *dataRetentionResource) setAllRetention(ctx context.Context, plan *dataRetentionResourceModel) error {
+	volume := plan.ColdStorageVolume.ValueString()
+
 	signals := []struct {
 		signalType  string
 		durationHrs int64
@@ -243,20 +252,31 @@ func (r *dataRetentionResource) setAllRetention(ctx context.Context, plan *dataR
 	}
 
 	for _, s := range signals {
-		// v0.104.0 only supports custom retention for logs
-		if s.signalType != "logs" {
-			continue
+		if s.moveHrs > 0 && volume == "" {
+			return fmt.Errorf("%s_move_ttl_duration_hrs is %d but cold_storage_volume is not set: "+
+				"the server ignores cold-storage moves without a volume", s.signalType, s.moveHrs)
 		}
+
+		if s.signalType == attr.Logs {
+			if s.durationHrs%24 != 0 {
+				return fmt.Errorf("logs_ttl_duration_hrs must be whole days (a multiple of 24); got %d", s.durationHrs)
+			}
+			if s.moveHrs%24 != 0 {
+				return fmt.Errorf("logs_move_ttl_duration_hrs must be whole days (a multiple of 24); got %d", s.moveHrs)
+			}
+		}
+
 		payload := &model.DataRetentionUpdate{
-			Type:                   s.signalType,
-			DurationHrs:            s.durationHrs,
-			ColdStorageDurationHrs: s.moveHrs,
+			Type:               s.signalType,
+			DurationHrs:        s.durationHrs,
+			ColdStorageVolume:  volume,
+			ColdStorageMoveHrs: s.moveHrs,
 		}
 
 		tflog.Debug(ctx, "Setting data retention", map[string]any{
-			"type":         s.signalType,
-			"duration_hrs": payload.DurationHrs,
-			"cold_hrs":     payload.ColdStorageDurationHrs,
+			"type":     s.signalType,
+			"ttl_hrs":  payload.DurationHrs,
+			"move_hrs": payload.ColdStorageMoveHrs,
 		})
 
 		err := r.client.SetDataRetention(ctx, payload)

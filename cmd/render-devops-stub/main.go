@@ -1,7 +1,7 @@
 // Command render-devops-stub builds the Lacrosse devops stub dashboard document
-// using the same shipped model.BuildDevOpsStubDashboard + ToDashboardV2 path that
+// using the same shipped model.BuildDevOpsStubDashboard + ToPostable path that
 // terraform signoz_plugin_dashboard uses. Reads stub JSON files and writes the
-// V2 dashboard document to stdout (or -o file).
+// v2 dashboard document to stdout (or -o file).
 package main
 
 import (
@@ -44,7 +44,7 @@ func main() {
 		"otel":    load("otel-endpoints.json"),
 		"pg":      load("pg-activity.json"),
 	})
-	doc, err := pd.ToDashboardV2().ToJSON()
+	doc, err := pd.DocumentJSON()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

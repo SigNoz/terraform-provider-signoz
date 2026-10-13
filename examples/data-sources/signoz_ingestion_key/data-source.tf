@@ -16,6 +16,6 @@ data "signoz_ingestion_key" "existing" {
 }
 
 output "ingestion_key" {
-  value     = data.signoz_ingestion_key.existing
+  value     = data.signoz_ingestion_key.existing.value
   sensitive = true
 }
