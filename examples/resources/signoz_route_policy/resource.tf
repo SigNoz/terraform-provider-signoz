@@ -1,35 +1,25 @@
-terraform {
-  required_providers {
-    signoz = {
-      source = "registry.terraform.io/signoz/signoz"
+# Route policies reference channels by display name.
+resource "signoz_notification_channel" "oncall_slack" {
+  name         = "oncall-slack"
+  display_name = "oncall-slack"
+
+  config = {
+    slack = {
+      kind = "slack"
+      spec = {
+        api_url       = "https://example.com/slack-webhook"
+        channel       = "#alerts-oncall"
+        send_resolved = true
+      }
     }
   }
 }
 
-provider "signoz" {
-  endpoint     = "http://localhost:3301"
-  access_token = "<SIGNOZ-API-KEY>"
-}
-
-resource "signoz_route_policy" "critical_alerts" {
-  route_name  = "critical-alerts"
-  description = "Route critical alerts to PagerDuty"
-  enabled     = true
-
-  matchers {
-    match_name  = "severity"
-    match_value = "critical"
-    match_type  = "equals"
-  }
-
-  channel_ids = ["1", "3"]
-
-  continue_matching = false
-  group_wait        = "30s"
-  group_interval    = "5m"
-  repeat_interval   = "4h"
-}
-
-output "route_policy" {
-  value = signoz_route_policy.critical_alerts
+resource "signoz_route_policy" "critical_to_oncall" {
+  name        = "route-critical-to-oncall"
+  description = "Route critical payments alerts to the on-call channel."
+  kind        = "policy"
+  expression  = "service == \"payments\" && severity == \"critical\""
+  channels    = [signoz_notification_channel.oncall_slack.display_name]
+  tags        = ["team:platform"]
 }

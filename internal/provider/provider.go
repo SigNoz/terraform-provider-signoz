@@ -131,27 +131,26 @@ func (p *signozProvider) Configure(ctx context.Context, req provider.ConfigureRe
 func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		services.NewAuthDomainResource,
+		services.NewDashboardResource,
+		services.NewNotificationChannelResource,
 		services.NewPlannedMaintenanceResource,
 		services.NewRoleResource,
+		services.NewRoutePolicyResource,
 		services.NewRuleResource,
+		services.NewSavedViewResource,
 		services.NewServiceAccountResource,
 		services.NewServiceAccountRoleResource,
 		services.NewUserResource,
 		services.NewUserRoleResource,
 
-		// Fork (legacy-API) resources. The four NewLegacy* names exist because
-		// upstream's generated dashboard/notification_channel/route_policy/
-		// saved_view resources target different server APIs under the same
-		// type names; they stay in the tree unregistered so the legacy
-		// schemas downstream configs depend on keep winning.
+		// Fork resources with no upstream equivalent. The legacy dashboard,
+		// notification_channel, route_policy and saved_view implementations
+		// were retired in favour of the generated ones above; the broken
+		// signoz_downtime_schedule was dropped for signoz_planned_maintenance.
+		// See docs/guides/migrate-fork-legacy-resources.md.
 		services.NewAlertResource,
-		services.NewLegacyDashboardResource,
 		services.NewPluginDashboardResource,
-		services.NewLegacyNotificationChannelResource,
-		services.NewLegacyRoutePolicyResource,
-		services.NewDowntimeScheduleResource,
 		services.NewDataRetentionResource,
-		services.NewLegacySavedViewResource,
 		services.NewIngestionKeyResource,
 		services.NewLogPipelineResource,
 	}
@@ -160,22 +159,21 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 func (p *signozProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		services.NewAuthDomainDataSource,
+		services.NewDashboardDataSource,
+		services.NewNotificationChannelDataSource,
 		services.NewPlannedMaintenanceDataSource,
 		services.NewRoleDataSource,
+		services.NewRoutePolicyDataSource,
 		services.NewRuleDataSource,
+		services.NewSavedViewDataSource,
 		services.NewServiceAccountDataSource,
 		services.NewServiceAccountRoleDataSource,
 		services.NewUserDataSource,
 		services.NewUserRoleDataSource,
 
-		// Fork (legacy-API) data sources — see the Resources note.
+		// Fork data sources — see the Resources note.
 		services.NewAlertDataSource,
-		services.NewLegacyDashboardDataSource,
-		services.NewLegacyNotificationChannelDataSource,
-		services.NewLegacyRoutePolicyDataSource,
-		services.NewDowntimeScheduleDataSource,
 		services.NewDataRetentionDataSource,
-		services.NewLegacySavedViewDataSource,
 		services.NewIngestionKeyDataSource,
 		services.NewLogPipelineDataSource,
 	}

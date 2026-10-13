@@ -48,3 +48,11 @@ provider "signoz" {
 - `endpoint` (String) SigNoz API endpoint URL. Defaults to http://localhost:8080 or SIGNOZ_ENDPOINT.
 - `http_max_retry` (Number) Max HTTP retries on transient failures. Read from SIGNOZ_HTTP_MAX_RETRY when unset.
 - `http_timeout` (String) HTTP request timeout (Go duration, e.g. "35s"). Read from SIGNOZ_HTTP_TIMEOUT when unset.
+
+## Guides
+
+- [Migrating the fork's legacy resources to the upstream implementations](guides/migrate-fork-legacy-resources.md) —
+  required reading after upgrading: the fork's `signoz_dashboard`, `signoz_notification_channel`,
+  `signoz_route_policy`, `signoz_saved_view` and `signoz_downtime_schedule` were replaced by the
+  upstream v2 resources.
+- [Migrating from signoz_alert to signoz_rule](guides/migrate-signoz-alert-to-signoz-rule.md)

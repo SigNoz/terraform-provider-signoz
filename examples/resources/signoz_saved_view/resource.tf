@@ -1,54 +1,69 @@
-terraform {
-  required_providers {
-    signoz = {
-      source = "registry.terraform.io/signoz/signoz"
-    }
-  }
-}
+# A saved view on the Logs explore page: errors for one service, rendered as a
+# list with a handful of columns selected. See the schema below for all attributes.
 
-provider "signoz" {
-  endpoint     = "http://localhost:3301"
-  access_token = "<SIGNOZ-API-KEY>"
-}
+resource "signoz_saved_view" "api_service_errors" {
+  name           = "api-service-errors"
+  source         = "logs"
+  schema_version = "v2"
 
-resource "signoz_saved_view" "error_logs" {
-  name        = "Error logs last 24h"
-  source_page = "logs"
-  tags        = ["production", "errors"]
-  category    = ""
+  spec = {
+    display_name = "API service errors"
+    panel_type   = "list"
+    request_type = "raw"
 
-  explorer_data = jsonencode(
-    {
-      query = {
-        queryType = "builder"
-        builder = {
-          queryData = [
-            {
-              dataSource = "logs"
-              queryName  = "A"
-              expression = "A"
-              filters = {
-                items = [
-                  {
-                    key = {
-                      key      = "severity_text"
-                      dataType = "string"
-                      type     = "tag"
-                    }
-                    op    = "="
-                    value = "ERROR"
-                  }
-                ]
-                op = "AND"
+    queries = [
+      {
+        builder_query = {
+          type = "builder_query"
+          spec = {
+            logs = {
+              name   = "A"
+              signal = "logs"
+
+              filter = {
+                expression = "service.name = 'api-service' AND severity_text = 'ERROR'"
               }
+
+              order = [
+                {
+                  direction = "desc"
+                  key = {
+                    name = "timestamp"
+                  }
+                }
+              ]
+
+              limit = 100
             }
-          ]
+          }
         }
       }
-    }
-  )
-}
+    ]
 
-output "saved_view" {
-  value = signoz_saved_view.error_logs
+    selected_fields = [
+      {
+        name = "timestamp"
+      },
+      {
+        name            = "service.name"
+        field_context   = "resource"
+        field_data_type = "string"
+      },
+      {
+        name            = "severity_text"
+        field_data_type = "string"
+      },
+      {
+        name            = "body"
+        field_context   = "body"
+        field_data_type = "string"
+      },
+    ]
+
+    display = {
+      font_size = "small"
+      format    = "list"
+      max_lines = 2
+    }
+  }
 }

@@ -30,3 +30,11 @@ be set with `SIGNOZ_ENDPOINT`.
 {{tffile "examples/provider/provider.tf"}}
 
 {{ .SchemaMarkdown | trimspace }}
+
+## Guides
+
+- [Migrating the fork's legacy resources to the upstream implementations](guides/migrate-fork-legacy-resources.md) —
+  required reading after upgrading: the fork's `signoz_dashboard`, `signoz_notification_channel`,
+  `signoz_route_policy`, `signoz_saved_view` and `signoz_downtime_schedule` were replaced by the
+  upstream v2 resources.
+- [Migrating from signoz_alert to signoz_rule](guides/migrate-signoz-alert-to-signoz-rule.md)
