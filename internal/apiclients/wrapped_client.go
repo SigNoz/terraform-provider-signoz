@@ -93,6 +93,29 @@ func (c *WrappedClient) BaseURL() string {
 	return strings.TrimRight(c.host.String(), "/")
 }
 
+// DoRequest executes a prepared request through the same auth + retry +
+// User-Agent transport as Do. It is the full-request variant of Do, used by
+// the legacy client whose hand-written endpoints build their own URLs and
+// query strings.
+func (c *WrappedClient) DoRequest(ctx context.Context, req *http.Request) ([]byte, error) {
+	resp, err := c.doer.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	raw, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode/100 != 2 {
+		return nil, ErrorFromResponse(resp, raw)
+	}
+
+	return raw, nil
+}
+
 // Do issues a request to a hand-written endpoint that isn't part of the
 // generated client, through the same auth + retry + User-Agent transport. It
 // returns the response body on a 2xx and an *APIError otherwise. The legacy
