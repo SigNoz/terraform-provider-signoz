@@ -151,6 +151,7 @@ func (p *signozProvider) Resources(_ context.Context) []func() resource.Resource
 		services.NewAlertResource,
 		services.NewPluginDashboardResource,
 		services.NewDataRetentionResource,
+		services.NewIngestionKeyLimitResource,
 		services.NewIngestionKeyResource,
 		services.NewLogPipelineResource,
 	}

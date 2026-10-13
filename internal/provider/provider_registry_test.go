@@ -56,6 +56,7 @@ func TestProviderRegistry(t *testing.T) {
 		"signoz_dashboard",
 		"signoz_data_retention",
 		"signoz_ingestion_key",
+		"signoz_ingestion_key_limit",
 		"signoz_log_pipeline",
 		"signoz_notification_channel",
 		"signoz_planned_maintenance",

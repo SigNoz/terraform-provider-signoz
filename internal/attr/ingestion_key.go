@@ -6,19 +6,44 @@ import (
 )
 
 const (
-	KeyName      = "name"
-	KeyValue     = "value"
-	IngestionURL = "ingestion_url"
-	RateLimits   = "rate_limits"
-	DayLimit     = "day_limit"
-	SecondLimit  = "second_limit"
-	ExpiresAt    = "expires_at"
-	KeyTags      = "tags"
+	KeyName   = "name"
+	KeyValue  = "value"
+	KeyTags   = "tags"
+	ExpiresAt = "expires_at"
+	KeyID     = "key_id"
+	Signal    = "signal"
+	Config    = "config"
+	Day       = "day"
+	Second    = "second"
+	Count     = "count"
+	Size      = "size"
+	Limits    = "limits"
+	Metric    = "metric"
+	Workspace = "workspace_id"
 )
 
-func RateLimitsAttrTypes() map[string]tfattr.Type {
+// LimitValueAttrTypes is the {size, count} object type shared by the config
+// and metric arms of a limit.
+func LimitValueAttrTypes() map[string]tfattr.Type {
 	return map[string]tfattr.Type{
-		DayLimit:    types.Int64Type,
-		SecondLimit: types.Int64Type,
+		Size:  types.Int64Type,
+		Count: types.Int64Type,
+	}
+}
+
+// LimitConfigAttrTypes is the {day, second} object type of a limit config.
+func LimitConfigAttrTypes() map[string]tfattr.Type {
+	return map[string]tfattr.Type{
+		Day:    types.ObjectType{AttrTypes: LimitValueAttrTypes()},
+		Second: types.ObjectType{AttrTypes: LimitValueAttrTypes()},
+	}
+}
+
+// LimitMetricAttrTypes is the {day, second} object type of a limit metric
+// snapshot (non-nullable count/size).
+func LimitMetricAttrTypes() map[string]tfattr.Type {
+	return map[string]tfattr.Type{
+		Day:    types.ObjectType{AttrTypes: map[string]tfattr.Type{Count: types.Int64Type, Size: types.Int64Type}},
+		Second: types.ObjectType{AttrTypes: map[string]tfattr.Type{Count: types.Int64Type, Size: types.Int64Type}},
 	}
 }

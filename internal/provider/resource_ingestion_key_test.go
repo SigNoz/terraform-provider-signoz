@@ -18,7 +18,6 @@ func TestAccResourceIngestionKey_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("signoz_ingestion_key.test", "name", "tf-acc-test-key"),
 					resource.TestCheckResourceAttrSet("signoz_ingestion_key.test", "id"),
 					resource.TestCheckResourceAttrSet("signoz_ingestion_key.test", "value"),
-					resource.TestCheckResourceAttrSet("signoz_ingestion_key.test", "ingestion_url"),
 				),
 			},
 			{
@@ -83,6 +82,46 @@ resource "signoz_ingestion_key" "test" {
   tags = ["terraform", "acc-test"]
 }
 `, name)
+}
+
+func TestAccResourceIngestionKeyLimit_basic(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccIngestionKeyLimitConfig_basic("tf-acc-test-limited-key"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttrSet("signoz_ingestion_key_limit.test", "id"),
+					resource.TestCheckResourceAttr("signoz_ingestion_key_limit.test", "signal", "logs"),
+					resource.TestCheckResourceAttr("signoz_ingestion_key_limit.test", "config.day.count", "1000"),
+				),
+			},
+			{
+				ResourceName:      "signoz_ingestion_key_limit.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccIngestionKeyLimitConfig_basic(keyName string) string {
+	return fmt.Sprintf(`
+resource "signoz_ingestion_key" "test" {
+  name = %[1]q
+}
+
+resource "signoz_ingestion_key_limit" "test" {
+  key_id  = signoz_ingestion_key.test.id
+  signal  = "logs"
+  config = {
+    day = {
+      count = 1000
+    }
+  }
+}
+`, keyName)
 }
 
 func testAccIngestionKeyDataSourceConfig(name string) string {

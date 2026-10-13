@@ -14,15 +14,14 @@ provider "signoz" {
 resource "signoz_ingestion_key" "production" {
   name       = "Production Ingest Key"
   tags       = ["production", "team-a"]
-  expires_at = ""
-
-  rate_limits = {
-    day_limit    = 1000000
-    second_limit = 1000
-  }
+  expires_at = "2027-01-01T00:00:00Z"
 }
 
-output "ingestion_key" {
-  value     = signoz_ingestion_key.production
+resource "signoz_ingestion_key" "permanent" {
+  name = "Permanent Ingest Key"
+}
+
+output "ingestion_key_value" {
+  value     = signoz_ingestion_key.production.value
   sensitive = true
 }

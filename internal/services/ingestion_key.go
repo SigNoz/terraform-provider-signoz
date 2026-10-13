@@ -3,13 +3,12 @@ package services
 import (
 	"context"
 	"fmt"
-	"strings"
+	"time"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
 	"github.com/SigNoz/terraform-provider-signoz/internal/attr"
 	"github.com/SigNoz/terraform-provider-signoz/internal/legacyclient"
 	"github.com/SigNoz/terraform-provider-signoz/internal/model"
-	"github.com/SigNoz/terraform-provider-signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -39,15 +38,14 @@ type ingestionKeyResource struct {
 
 // ingestionKeyResourceModel maps the resource schema data.
 type ingestionKeyResourceModel struct {
-	ID           types.String `tfsdk:"id"`
-	Name         types.String `tfsdk:"name"`
-	Value        types.String `tfsdk:"value"`
-	IngestionURL types.String `tfsdk:"ingestion_url"`
-	Tags         types.List   `tfsdk:"tags"`
-	ExpiresAt    types.String `tfsdk:"expires_at"`
-	RateLimits   types.Object `tfsdk:"rate_limits"`
-	CreatedAt    types.String `tfsdk:"created_at"`
-	UpdatedAt    types.String `tfsdk:"updated_at"`
+	ID          types.String `tfsdk:"id"`
+	Name        types.String `tfsdk:"name"`
+	Value       types.String `tfsdk:"value"`
+	WorkspaceID types.String `tfsdk:"workspace_id"`
+	Tags        types.List   `tfsdk:"tags"`
+	ExpiresAt   types.String `tfsdk:"expires_at"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Configure adds the provider configured client to the resource.
@@ -94,42 +92,23 @@ func (r *ingestionKeyResource) Schema(_ context.Context, _ resource.SchemaReques
 			attr.KeyValue: schema.StringAttribute{
 				Computed:    true,
 				Sensitive:   true,
-				Description: "The ingestion key value. Only returned on creation.",
+				Description: "The ingestion key value. Returned by the gateway at creation (and on reads); persisted in state and never cleared when a read omits it.",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			attr.IngestionURL: schema.StringAttribute{
+			attr.Workspace: schema.StringAttribute{
 				Computed:    true,
-				Description: "The ingestion URL associated with this key.",
+				Description: "ID of the workspace (organization) the key belongs to.",
 			},
 			attr.KeyTags: schema.ListAttribute{
 				Optional:    true,
-				Computed:    true,
 				ElementType: types.StringType,
-				Description: "Tags associated with the ingestion key.",
+				Description: "Tags associated with the ingestion key. Omit for no tags.",
 			},
 			attr.ExpiresAt: schema.StringAttribute{
 				Optional:    true,
-				Computed:    true,
-				Description: "Expiration time of the ingestion key.",
-			},
-			attr.RateLimits: schema.SingleNestedAttribute{
-				Optional:    true,
-				Computed:    true,
-				Description: "Rate limits for the ingestion key.",
-				Attributes: map[string]schema.Attribute{
-					attr.DayLimit: schema.Int64Attribute{
-						Optional:    true,
-						Computed:    true,
-						Description: "Maximum number of requests per day.",
-					},
-					attr.SecondLimit: schema.Int64Attribute{
-						Optional:    true,
-						Computed:    true,
-						Description: "Maximum number of requests per second.",
-					},
-				},
+				Description: "RFC 3339 UTC timestamp (Z suffix) after which the key stops being accepted, e.g. 2027-01-01T00:00:00Z. Omit for a key that never expires.",
 			},
 			// computed.
 			attr.ID: schema.StringAttribute{
@@ -138,11 +117,11 @@ func (r *ingestionKeyResource) Schema(_ context.Context, _ resource.SchemaReques
 			},
 			attr.CreatedAt: schema.StringAttribute{
 				Computed:    true,
-				Description: "Creation time of the ingestion key.",
+				Description: "Creation time of the ingestion key (RFC 3339).",
 			},
 			attr.UpdatedAt: schema.StringAttribute{
 				Computed:    true,
-				Description: "Last update time of the ingestion key.",
+				Description: "Last update time of the ingestion key (RFC 3339).",
 			},
 		},
 	}
@@ -150,85 +129,51 @@ func (r *ingestionKeyResource) Schema(_ context.Context, _ resource.SchemaReques
 
 // Create creates the resource and sets the initial Terraform state.
 func (r *ingestionKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	// Retrieve values from plan.
 	var plan ingestionKeyResourceModel
+
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Generate API request body.
-	keyPayload := &model.IngestionKey{
-		Name:      plan.Name.ValueString(),
-		ExpiresAt: plan.ExpiresAt.ValueString(),
-	}
+	postable, diags := keyPostableFromPlan(plan)
 
-	keyPayload.SetTags(ctx, plan.Tags)
-
-	tflog.Debug(ctx, "Creating ingestion key", map[string]any{"ingestionKey": keyPayload})
-
-	// Create new ingestion key.
-	key, err := r.client.CreateIngestionKey(ctx, keyPayload)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error creating ingestion key",
-			"Could not create ingestion key, unexpected error: "+err.Error(),
-		)
-		return
-	}
-
-	tflog.Debug(ctx, "Created ingestion key", map[string]any{"ingestionKey": key})
-
-	// If rate_limits specified, set them via the sub-endpoint.
-	if !utils.IsNullOrUnknown(plan.RateLimits) {
-		rateLimits := &model.IngestionRateLimit{}
-		attrs := plan.RateLimits.Attributes()
-		if v, ok := attrs[attr.DayLimit]; ok {
-			if i, ok2 := v.(types.Int64); ok2 && !utils.IsNullOrUnknown(i) {
-				rateLimits.DayLimit = i.ValueInt64()
-			}
-		}
-		if v, ok := attrs[attr.SecondLimit]; ok {
-			if i, ok2 := v.(types.Int64); ok2 && !utils.IsNullOrUnknown(i) {
-				rateLimits.SecondLimit = i.ValueInt64()
-			}
-		}
-
-		err := r.client.SetIngestionKeyLimits(ctx, key.ID, rateLimits)
-		if err != nil {
-			addErr(&resp.Diagnostics, err, operationCreate, "signoz_ingestion_key")
-			return
-		}
-		key.RateLimits = rateLimits
-	}
-
-	// Map response to schema and populate Computed attributes.
-	plan.ID = types.StringValue(key.ID)
-	plan.Value = types.StringValue(key.Value)
-	plan.IngestionURL = types.StringValue(key.IngestionURL)
-	plan.ExpiresAt = types.StringValue(key.ExpiresAt)
-	plan.CreatedAt = types.StringValue(key.CreatedAt)
-	plan.UpdatedAt = types.StringValue(key.UpdatedAt)
-
-	var diagTags diag.Diagnostics
-	plan.Tags, diagTags = key.TagsToTerraform()
-	resp.Diagnostics.Append(diagTags...)
-
-	var diagRateLimits diag.Diagnostics
-	plan.RateLimits, diagRateLimits = key.RateLimitsToTerraform()
-	resp.Diagnostics.Append(diagRateLimits...)
-
-	// Set state to populated data.
-	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	created, err := r.client.CreateIngestionKey(ctx, postable)
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationCreate, "signoz_ingestion_key")
+		return
+	}
+
+	key, err := r.client.GetIngestionKey(ctx, created.ID)
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead, "signoz_ingestion_key")
+		return
+	}
+
+	plan.ID = types.StringValue(created.ID)
+
+	plan.Value = types.StringValue(created.Value)
+	if created.Value == "" && key.Value != "" {
+		plan.Value = types.StringValue(key.Value)
+	}
+
+	resp.Diagnostics.Append(refreshKeyModel(&plan, key)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
 }
 
 // Read refreshes the Terraform state with the latest data.
 func (r *ingestionKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	// Get current state.
 	var state ingestionKeyResourceModel
+
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -236,146 +181,82 @@ func (r *ingestionKeyResource) Read(ctx context.Context, req resource.ReadReques
 
 	tflog.Debug(ctx, "Reading ingestion key", map[string]any{"id": state.ID.ValueString()})
 
-	// Get refreshed ingestion key from SigNoz.
 	key, err := r.client.GetIngestionKey(ctx, state.ID.ValueString())
 	if err != nil {
-		if strings.Contains(err.Error(), "404") || strings.Contains(err.Error(), "not found") {
+		if isNotFound(err) {
 			tflog.Warn(ctx, "Ingestion key not found, removing from state", map[string]any{"id": state.ID.ValueString()})
 			resp.State.RemoveResource(ctx)
 			return
 		}
+
 		addErr(&resp.Diagnostics, err, operationRead, "signoz_ingestion_key")
 		return
 	}
 
-	// Overwrite items with refreshed state.
-	state.Name = types.StringValue(key.Name)
-	state.IngestionURL = types.StringValue(key.IngestionURL)
-	state.ExpiresAt = types.StringValue(key.ExpiresAt)
-	state.CreatedAt = types.StringValue(key.CreatedAt)
-	state.UpdatedAt = types.StringValue(key.UpdatedAt)
-
-	// Preserve value from state if the API returns empty (value is only returned on creation).
-	if key.Value != "" {
-		state.Value = types.StringValue(key.Value)
-	}
-	// If key.Value is empty, state.Value retains its previous value from state.
-
-	var diagTags diag.Diagnostics
-	state.Tags, diagTags = key.TagsToTerraform()
-	resp.Diagnostics.Append(diagTags...)
-
-	var diagRateLimits diag.Diagnostics
-	state.RateLimits, diagRateLimits = key.RateLimitsToTerraform()
-	resp.Diagnostics.Append(diagRateLimits...)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(refreshKeyModel(&state, key)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 // Update updates the resource and sets the updated Terraform state on success.
 func (r *ingestionKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	// Retrieve values from plan.
 	var plan, state ingestionKeyResourceModel
+
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Generate API request body from plan.
-	keyUpdate := &model.IngestionKey{
-		Name:      plan.Name.ValueString(),
-		ExpiresAt: plan.ExpiresAt.ValueString(),
-	}
+	postable, diags := keyPostableFromPlan(plan)
 
-	keyUpdate.SetTags(ctx, plan.Tags)
-
-	tflog.Debug(ctx, "Updating ingestion key", map[string]any{"ingestionKey": keyUpdate})
-
-	// Update existing ingestion key.
-	err := r.client.UpdateIngestionKey(ctx, state.ID.ValueString(), keyUpdate)
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, "signoz_ingestion_key")
-		return
-	}
-
-	// Update rate limits if specified.
-	if !utils.IsNullOrUnknown(plan.RateLimits) {
-		rateLimits := &model.IngestionRateLimit{}
-		attrs := plan.RateLimits.Attributes()
-		if v, ok := attrs[attr.DayLimit]; ok {
-			if i, ok2 := v.(types.Int64); ok2 && !utils.IsNullOrUnknown(i) {
-				rateLimits.DayLimit = i.ValueInt64()
-			}
-		}
-		if v, ok := attrs[attr.SecondLimit]; ok {
-			if i, ok2 := v.(types.Int64); ok2 && !utils.IsNullOrUnknown(i) {
-				rateLimits.SecondLimit = i.ValueInt64()
-			}
-		}
-
-		err := r.client.SetIngestionKeyLimits(ctx, state.ID.ValueString(), rateLimits)
-		if err != nil {
-			addErr(&resp.Diagnostics, err, operationUpdate, "signoz_ingestion_key")
-			return
-		}
-	}
-
-	// Fetch updated ingestion key.
-	key, err := r.client.GetIngestionKey(ctx, state.ID.ValueString())
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, "signoz_ingestion_key")
-		return
-	}
-
-	// Overwrite items with refreshed state.
-	plan.ID = types.StringValue(key.ID)
-	plan.Name = types.StringValue(key.Name)
-	plan.IngestionURL = types.StringValue(key.IngestionURL)
-	plan.ExpiresAt = types.StringValue(key.ExpiresAt)
-	plan.CreatedAt = types.StringValue(key.CreatedAt)
-	plan.UpdatedAt = types.StringValue(key.UpdatedAt)
-
-	// Preserve value from state since GET may not return it.
-	if key.Value != "" {
-		plan.Value = types.StringValue(key.Value)
-	} else {
-		plan.Value = state.Value
-	}
-
-	var diagTags diag.Diagnostics
-	plan.Tags, diagTags = key.TagsToTerraform()
-	resp.Diagnostics.Append(diagTags...)
-
-	var diagRateLimits diag.Diagnostics
-	plan.RateLimits, diagRateLimits = key.RateLimitsToTerraform()
-	resp.Diagnostics.Append(diagRateLimits...)
-
-	// Set refreshed state.
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	if err := r.client.UpdateIngestionKey(ctx, state.ID.ValueString(), postable); err != nil {
+		addErr(&resp.Diagnostics, err, operationUpdate, "signoz_ingestion_key")
+		return
+	}
+
+	key, err := r.client.GetIngestionKey(ctx, state.ID.ValueString())
+	if err != nil {
+		addErr(&resp.Diagnostics, err, operationRead, "signoz_ingestion_key")
+		return
+	}
+
+	plan.ID = state.ID
+
+	resp.Diagnostics.Append(refreshKeyModel(&plan, key)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
 func (r *ingestionKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	// Retrieve values from state.
 	var state ingestionKeyResourceModel
+
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Delete existing ingestion key.
-	err := r.client.DeleteIngestionKey(ctx, state.ID.ValueString())
-	if err != nil {
+	if err := r.client.DeleteIngestionKey(ctx, state.ID.ValueString()); err != nil {
+		if isNotFound(err) {
+			return
+		}
+
 		addErr(&resp.Diagnostics, err, operationDelete, "signoz_ingestion_key")
 		return
 	}
@@ -383,6 +264,58 @@ func (r *ingestionKeyResource) Delete(ctx context.Context, req resource.DeleteRe
 
 // ImportState imports Terraform state into the resource.
 func (r *ingestionKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// Retrieve import ID and save to id attribute.
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resource.ImportStatePassthroughID(ctx, path.Root(attr.ID), req, resp)
+}
+
+// keyPostableFromPlan builds the shared create/update body from the plan.
+func keyPostableFromPlan(plan ingestionKeyResourceModel) (model.PostableIngestionKey, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	expiresAt, d := model.ExpiresAtToAPI(plan.ExpiresAt)
+
+	diags.Append(d...)
+
+	tags, d := model.TagsFromTerraform(plan.Tags)
+
+	diags.Append(d...)
+
+	if diags.HasError() {
+		return model.PostableIngestionKey{}, diags
+	}
+
+	return model.PostableIngestionKey{
+		Name:      plan.Name.ValueString(),
+		Tags:      tags,
+		ExpiresAt: expiresAt,
+	}, diags
+}
+
+// refreshKeyModel overwrites the model's server-owned fields from the fetched
+// key. The value attribute is preserved from the model when the server omits
+// it, so a read can never blank the stored secret.
+func refreshKeyModel(m *ingestionKeyResourceModel, key *model.IngestionKey) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	m.Name = types.StringValue(key.Name)
+	m.ExpiresAt = model.ExpiresAtToTerraform(key.ExpiresAt)
+	m.CreatedAt = types.StringValue(key.CreatedAt.Format(time.RFC3339Nano))
+	m.UpdatedAt = types.StringValue(key.UpdatedAt.Format(time.RFC3339Nano))
+
+	if key.WorkspaceID != "" {
+		m.WorkspaceID = types.StringValue(key.WorkspaceID)
+	} else {
+		m.WorkspaceID = types.StringNull()
+	}
+
+	var d diag.Diagnostics
+
+	m.Tags, d = key.TagsToTerraform()
+
+	diags.Append(d...)
+
+	if key.Value != "" {
+		m.Value = types.StringValue(key.Value)
+	}
+
+	return diags
 }

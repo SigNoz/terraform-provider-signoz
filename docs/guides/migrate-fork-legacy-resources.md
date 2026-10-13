@@ -391,3 +391,52 @@ See [`docs/resources/planned_maintenance.md`](../resources/planned_maintenance.m
 Unchanged. The fork's `signoz_alert` (v1 rules API) stays registered alongside upstream's
 `signoz_rule` (v2 rules API); migrating `alert → rule` is covered by
 [`migrate-signoz-alert-to-signoz-rule.md`](migrate-signoz-alert-to-signoz-rule.md).
+
+## signoz_ingestion_key: `rate_limits` split into their own resource
+
+The fork's `signoz_ingestion_key` embedded a `rate_limits` block (`day_limit` /
+`second_limit` plain integers, in requests only) and an `ingestion_url` attribute. The
+gateway API this resource is built against stores limits as separate server objects with
+per-signal, per-arm granularity, so the resource no longer carries them. Nothing is
+renamed; the key resource keeps `name`, `tags`, `expires_at` and `value`.
+
+| Old attribute | Now |
+|---|---|
+| `rate_limits.day_limit` | `signoz_ingestion_key_limit` `config.day.count` (per signal) |
+| `rate_limits.second_limit` | `signoz_ingestion_key_limit` `config.second.count` (per signal) |
+| `ingestion_url` | removed — never a server field; it always read back empty |
+| `expires_at = ""` | omit the attribute (`null`); a real timestamp still works, in RFC 3339 UTC (`...Z`) |
+| `rate_limits.size` bound | new: `config.day.size` / `config.second.size` (bytes) — the old fork had no byte bounds |
+
+The new limits are per **signal** (`logs`, `traces`, `metrics`). The old fork's
+`day_limit`/`second_limit` bounded ingest globally, so migrate each signal you want
+bounded as its own `signoz_ingestion_key_limit`:
+
+```terraform
+resource "signoz_ingestion_key" "production" {
+  name = "Production Ingest Key"
+}
+
+resource "signoz_ingestion_key_limit" "logs" {
+  key_id = signoz_ingestion_key.production.id
+  signal = "logs"
+
+  config = {
+    day = {
+      count = 1000000
+    }
+    second = {
+      count = 1000
+    }
+  }
+}
+```
+
+Migration flow: run `terraform plan` — old-state blocks with `rate_limits` or
+`expires_at = ""` show the usual removals-only diff; after applying, add the
+`signoz_ingestion_key_limit` blocks and import any limits that already exist on the key
+(`terraform import signoz_ingestion_key_limit.logs <limit-id>`; find limit ids in the key's
+data source `limits` list).
+
+See [`docs/resources/ingestion_key.md`](../resources/ingestion_key.md) and
+[`docs/resources/ingestion_key_limit.md`](../resources/ingestion_key_limit.md).

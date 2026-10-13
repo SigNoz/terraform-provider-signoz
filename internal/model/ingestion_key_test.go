@@ -1,223 +1,105 @@
 package model
 
 import (
-	"context"
 	"testing"
+	"time"
 
-	"github.com/SigNoz/terraform-provider-signoz/internal/attr"
-	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func TestIngestionKey_TagsRoundTrip(t *testing.T) {
-	ctx := context.Background()
-
-	original := []string{"env:prod", "team:platform", "service:api"}
-
-	key := &IngestionKey{Tags: original}
-
-	tfList, diags := key.TagsToTerraform()
-	if diags.HasError() {
-		t.Fatalf("TagsToTerraform had errors: %v", diags)
+func TestNoExpiry(t *testing.T) {
+	cases := map[string]struct {
+		input time.Time
+		want  bool
+	}{
+		"literal zero":                 {input: time.Time{}, want: true},
+		"reconstructed zero":           {input: time.UnixMilli(time.Time{}.UnixMilli()), want: true},
+		"unix millisecond zero (1970)": {input: time.UnixMilli(0), want: false},
+		"real date":                    {input: time.Date(2027, 3, 1, 0, 0, 0, 0, time.UTC), want: false},
 	}
 
-	if len(tfList.Elements()) != 3 {
-		t.Fatalf("expected 3 tags, got %d", len(tfList.Elements()))
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			if got := NoExpiry(tc.input); got != tc.want {
+				t.Fatalf("NoExpiry(%v) = %v, want %v", tc.input, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestExpiresAtSentinelRoundTrip(t *testing.T) {
+	// Null attribute -> zero time on the wire.
+	wire, diags := ExpiresAtToAPI(types.StringNull())
+	if diags.HasError() || !wire.IsZero() {
+		t.Fatalf("null -> wire: %v %v", wire, diags)
 	}
 
-	key2 := &IngestionKey{}
-	key2.SetTags(ctx, tfList)
-
-	if len(key2.Tags) != len(original) {
-		t.Fatalf("expected %d tags, got %d", len(original), len(key2.Tags))
+	// Zero time on the wire -> null attribute (no diff against an omitted expires_at).
+	if got := ExpiresAtToTerraform(time.Time{}); !got.IsNull() {
+		t.Fatalf("zero wire -> terraform: %v", got)
 	}
-	for i, tag := range original {
-		if key2.Tags[i] != tag {
-			t.Errorf("tag[%d]: expected %s, got %s", i, tag, key2.Tags[i])
+
+	// A reconstructed zero (what the server round-trips) also maps to null.
+	reconstructed := time.Time{}.UTC()
+	if got := ExpiresAtToTerraform(reconstructed); !got.IsNull() {
+		t.Fatalf("reconstructed zero -> terraform: %v", got)
+	}
+
+	// A real expiry round-trips through the same instant.
+	expiry := time.Date(2027, 3, 1, 12, 0, 0, 0, time.UTC)
+
+	wire, diags = ExpiresAtToAPI(types.StringValue("2027-03-01T12:00:00Z"))
+	if diags.HasError() || !wire.Equal(expiry) {
+		t.Fatalf("value -> wire: %v %v", wire, diags)
+	}
+
+	attr := ExpiresAtToTerraform(wire)
+	if attr.ValueString() != "2027-03-01T12:00:00Z" {
+		t.Fatalf("wire -> value: %v", attr)
+	}
+}
+
+func TestExpiresAtToAPIRejectsNonRFC3339(t *testing.T) {
+	for _, bad := range []string{"2027-03-01", "not-a-time", "2027-03-01T12:00:00 +0000 UTC"} {
+		_, diags := ExpiresAtToAPI(types.StringValue(bad))
+		if !diags.HasError() {
+			t.Fatalf("expected error for %q", bad)
 		}
 	}
 }
 
-func TestIngestionKey_TagsEmpty(t *testing.T) {
-	key := &IngestionKey{Tags: []string{}}
-
-	tfList, diags := key.TagsToTerraform()
-	if diags.HasError() {
-		t.Fatalf("TagsToTerraform had errors: %v", diags)
-	}
-
-	if len(tfList.Elements()) != 0 {
-		t.Errorf("expected 0 tags, got %d", len(tfList.Elements()))
-	}
-}
-
-func TestIngestionKey_TagsNil(t *testing.T) {
-	key := &IngestionKey{Tags: nil}
-
-	tfList, diags := key.TagsToTerraform()
-	if diags.HasError() {
-		t.Fatalf("TagsToTerraform had errors: %v", diags)
-	}
-
-	_ = tfList
-}
-
-func TestIngestionKey_SetTagsNull(t *testing.T) {
-	ctx := context.Background()
-
-	nullList := types.ListNull(types.StringType)
-
-	key := &IngestionKey{Tags: []string{"existing"}}
-	key.SetTags(ctx, nullList)
-
-	// Should not modify when null
-	if len(key.Tags) != 1 || key.Tags[0] != "existing" {
-		t.Errorf("expected tags to remain unchanged, got %v", key.Tags)
-	}
-}
-
-func TestIngestionKey_SetTagsFromConstructed(t *testing.T) {
-	ctx := context.Background()
-
-	tfList, _ := types.ListValue(types.StringType, []tfattr.Value{
-		types.StringValue("k1"),
-		types.StringValue("k2"),
-	})
-
+func TestIngestionKeyTagsRoundTrip(t *testing.T) {
+	// nil wire tags stay null so a key created without tags does not diff.
 	key := &IngestionKey{}
-	key.SetTags(ctx, tfList)
 
-	if len(key.Tags) != 2 || key.Tags[0] != "k1" || key.Tags[1] != "k2" {
-		t.Errorf("unexpected tags: %v", key.Tags)
-	}
-}
-
-func TestIngestionKey_RateLimitsRoundTrip(t *testing.T) {
-	ctx := context.Background()
-
-	key := &IngestionKey{
-		RateLimits: &IngestionRateLimit{
-			DayLimit:    1000000,
-			SecondLimit: 1000,
-		},
+	list, diags := key.TagsToTerraform()
+	if diags.HasError() || !list.IsNull() {
+		t.Fatalf("nil tags -> %v %v", list, diags)
 	}
 
-	tfObj, diags := key.RateLimitsToTerraform()
-	if diags.HasError() {
-		t.Fatalf("RateLimitsToTerraform had errors: %v", diags)
+	tags, diags := TagsFromTerraform(list)
+	if diags.HasError() || tags != nil {
+		t.Fatalf("null list -> %v %v", tags, diags)
 	}
 
-	if tfObj.IsNull() {
-		t.Fatal("expected non-null rate limits object")
+	// A populated list round-trips.
+	key = &IngestionKey{Tags: []string{"env:prod", "team:platform"}}
+
+	list, diags = key.TagsToTerraform()
+	if diags.HasError() || list.IsNull() || len(list.Elements()) != 2 {
+		t.Fatalf("tags -> %v %v", list, diags)
 	}
 
-	// Verify attributes
-	attrs := tfObj.Attributes()
-	dayVal, ok := attrs[attr.DayLimit].(types.Int64)
-	if !ok {
-		t.Fatal("expected day_limit to be Int64")
-	}
-	if dayVal.ValueInt64() != 1000000 {
-		t.Errorf("DayLimit: expected 1000000, got %d", dayVal.ValueInt64())
+	tags, diags = TagsFromTerraform(list)
+	if diags.HasError() || len(tags) != 2 || tags[0] != "env:prod" || tags[1] != "team:platform" {
+		t.Fatalf("round trip: %v %v", tags, diags)
 	}
 
-	secVal, ok := attrs[attr.SecondLimit].(types.Int64)
-	if !ok {
-		t.Fatal("expected second_limit to be Int64")
-	}
-	if secVal.ValueInt64() != 1000 {
-		t.Errorf("SecondLimit: expected 1000, got %d", secVal.ValueInt64())
-	}
+	// Empty (non-nil) stays an empty list, not null.
+	key = &IngestionKey{Tags: []string{}}
 
-	key2 := &IngestionKey{}
-	key2.SetRateLimits(ctx, tfObj)
-
-	if key2.RateLimits == nil {
-		t.Fatal("expected non-nil rate limits")
-	}
-	if key2.RateLimits.DayLimit != 1000000 {
-		t.Errorf("DayLimit: expected 1000000, got %d", key2.RateLimits.DayLimit)
-	}
-	if key2.RateLimits.SecondLimit != 1000 {
-		t.Errorf("SecondLimit: expected 1000, got %d", key2.RateLimits.SecondLimit)
-	}
-}
-
-func TestIngestionKey_RateLimitsNil(t *testing.T) {
-	key := &IngestionKey{RateLimits: nil}
-
-	tfObj, diags := key.RateLimitsToTerraform()
-	if diags.HasError() {
-		t.Fatalf("RateLimitsToTerraform had errors: %v", diags)
-	}
-
-	if !tfObj.IsNull() {
-		t.Error("expected null for nil RateLimits")
-	}
-}
-
-func TestIngestionKey_SetRateLimitsNull(t *testing.T) {
-	ctx := context.Background()
-
-	rateLimitsAttrTypes := attr.RateLimitsAttrTypes()
-	nullObj := types.ObjectNull(rateLimitsAttrTypes)
-
-	key := &IngestionKey{}
-	key.SetRateLimits(ctx, nullObj)
-
-	if key.RateLimits != nil {
-		t.Errorf("expected nil rate limits for null input, got %v", key.RateLimits)
-	}
-}
-
-func TestIngestionKey_RateLimitsZeroValues(t *testing.T) {
-	ctx := context.Background()
-
-	key := &IngestionKey{
-		RateLimits: &IngestionRateLimit{
-			DayLimit:    0,
-			SecondLimit: 0,
-		},
-	}
-
-	tfObj, diags := key.RateLimitsToTerraform()
-	if diags.HasError() {
-		t.Fatalf("RateLimitsToTerraform had errors: %v", diags)
-	}
-
-	key2 := &IngestionKey{}
-	key2.SetRateLimits(ctx, tfObj)
-
-	if key2.RateLimits == nil {
-		t.Fatal("expected non-nil rate limits even with zero values")
-	}
-	if key2.RateLimits.DayLimit != 0 {
-		t.Errorf("DayLimit: expected 0, got %d", key2.RateLimits.DayLimit)
-	}
-	if key2.RateLimits.SecondLimit != 0 {
-		t.Errorf("SecondLimit: expected 0, got %d", key2.RateLimits.SecondLimit)
-	}
-}
-
-func TestIngestionKey_SetRateLimitsFromConstructed(t *testing.T) {
-	ctx := context.Background()
-
-	rateLimitsAttrTypes := attr.RateLimitsAttrTypes()
-	tfObj, _ := types.ObjectValue(rateLimitsAttrTypes, map[string]tfattr.Value{
-		attr.DayLimit:    types.Int64Value(500),
-		attr.SecondLimit: types.Int64Value(10),
-	})
-
-	key := &IngestionKey{}
-	key.SetRateLimits(ctx, tfObj)
-
-	if key.RateLimits == nil {
-		t.Fatal("expected non-nil rate limits")
-	}
-	if key.RateLimits.DayLimit != 500 {
-		t.Errorf("DayLimit: expected 500, got %d", key.RateLimits.DayLimit)
-	}
-	if key.RateLimits.SecondLimit != 10 {
-		t.Errorf("SecondLimit: expected 10, got %d", key.RateLimits.SecondLimit)
+	list, diags = key.TagsToTerraform()
+	if diags.HasError() || list.IsNull() || len(list.Elements()) != 0 {
+		t.Fatalf("empty tags -> %v %v", list, diags)
 	}
 }
