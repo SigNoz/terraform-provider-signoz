@@ -1,12 +1,7 @@
-// Package legacyclient carries the fork's hand-written SigNoz API endpoints:
-// the legacy alert/dashboard APIs plus the fork-added plugin-dashboard-v2,
-// data_retention, downtime_schedule, ingestion_key, log_pipeline,
-// notification_channel, route_policy and saved_view endpoints.
-//
-// Endpoint methods, request shapes, and response parsing are unchanged from
-// the original fork client; transport (SIGNOZ-API-KEY auth header, heimdall
-// retries, User-Agent) is delegated to the upstream WrappedClient so that
-// generated and hand-written calls share one configuration path.
+// Package legacyclient holds the fork's hand-written SigNoz endpoints — the
+// legacy alert/dashboard APIs plus the fork-only resources. Transport
+// (auth header, retries, User-Agent) is delegated to the upstream
+// WrappedClient so generated and hand-written calls share one config path.
 package legacyclient
 
 import (

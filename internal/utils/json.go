@@ -3,10 +3,8 @@ package utils
 import "encoding/json"
 
 // FlattenJsonToString compacts a JSON object into a string; an empty object
-// flattens to "".
-//
-// Drop-in replacement for github.com/hashicorp/terraform-plugin-sdk/helper/structure.FlattenJsonToString
-// (SDKv1), which upstream no longer depends on.
+// flattens to "". Replaces the SDKv1 helper/structure function of the same
+// name, which upstream no longer depends on.
 func FlattenJsonToString(input map[string]interface{}) (string, error) {
 	if len(input) == 0 {
 		return "", nil
@@ -21,8 +19,7 @@ func FlattenJsonToString(input map[string]interface{}) (string, error) {
 }
 
 // ExpandJsonFromString unmarshals a JSON string into a generic object.
-//
-// Drop-in replacement for github.com/hashicorp/terraform-plugin-sdk/helper/structure.ExpandJsonFromString.
+// Replaces the SDKv1 helper/structure function of the same name.
 func ExpandJsonFromString(jsonString string) (map[string]interface{}, error) {
 	var result map[string]interface{}
 
