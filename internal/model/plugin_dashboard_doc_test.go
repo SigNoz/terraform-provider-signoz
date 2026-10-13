@@ -40,6 +40,7 @@ type wirePanel struct {
 			} `json:"spec"`
 		} `json:"plugin"`
 		Queries []map[string]any `json:"queries"`
+		Links   []map[string]any `json:"links"`
 	} `json:"spec"`
 }
 
@@ -63,6 +64,7 @@ type wireLayout struct {
 
 type wirePostable struct {
 	SchemaVersion string `json:"schemaVersion"`
+	Image         string `json:"image"`
 	Name          string `json:"name"`
 	GenerateName  bool   `json:"generateName"`
 	Tags          []struct {
@@ -154,5 +156,13 @@ func TestDocument_PostableWire_MultiPageDevopsStubs(t *testing.T) {
 
 	if !bytes.Contains([]byte(doc), []byte("fleet-node-grid")) || !bytes.Contains([]byte(doc), []byte("Lacrosse DevOps Stubs")) {
 		t.Fatal("document missing expected inputs")
+	}
+
+	if !bytes.Contains([]byte(doc), []byte(`"image": ""`)) {
+		t.Fatal("image must always serialize (the server contract has no omitempty on image)")
+	}
+
+	if bytes.Contains([]byte(doc), []byte(`"links"`)) {
+		t.Fatal("panels without links must not emit a links field")
 	}
 }

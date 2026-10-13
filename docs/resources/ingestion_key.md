@@ -73,3 +73,5 @@ Import by key ID:
 ```shell
 terraform import signoz_ingestion_key.<key-alias> <key-id>
 ```
+
+-> `value` is not populated on import: the gateway never returns the key value on reads. Keep the original value in your secret store, or delete and recreate the key if it is lost.

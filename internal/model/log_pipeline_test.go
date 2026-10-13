@@ -101,10 +101,37 @@ func TestLogPipeline_ConfigRoundTrip(t *testing.T) {
 		t.Fatalf("expected 2 config items, got %d", len(pipeline2.Config))
 	}
 
-	orig, _ := json.Marshal(original)
-	result, _ := json.Marshal(pipeline2.Config)
-	if string(orig) != string(result) {
-		t.Errorf("round-trip mismatch:\n  original: %s\n  result:   %s", orig, result)
+	// The server requires an id and a non-zero orderId on every operator
+	// (pipelinetypes.PostablePipeline.IsValid), so SetConfig fills them in
+	// positionally when the user omits them.
+	for i, op := range pipeline2.Config {
+		id, _ := op["id"].(string)
+		order, _ := op["orderId"].(float64)
+
+		if id == "" {
+			t.Errorf("operator %d missing generated id", i)
+		}
+
+		if order != float64(i+1) {
+			t.Errorf("operator %d orderId = %v, want %d", i, order, i+1)
+		}
+	}
+
+	// A second round-trip must be a fixed point (stable across plans).
+	tfValue2, err := pipeline2.ConfigToTerraform()
+	if err != nil {
+		t.Fatalf("second ConfigToTerraform failed: %v", err)
+	}
+
+	pipeline3 := &LogPipeline{}
+	if err := pipeline3.SetConfig(tfValue2); err != nil {
+		t.Fatalf("second SetConfig failed: %v", err)
+	}
+
+	again, _ := json.Marshal(pipeline3.Config)
+	first, _ := json.Marshal(pipeline2.Config)
+	if string(again) != string(first) {
+		t.Errorf("normalization not stable:\n  first:  %s\n  second: %s", first, again)
 	}
 }
 

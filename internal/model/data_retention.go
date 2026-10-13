@@ -23,12 +23,20 @@ type DataRetentionUpdate struct {
 	ColdStorageMoveHrs int64
 }
 
-// CustomRetentionRule is a per-condition log retention rule; not managed by
-// the provider (an empty list is sent and preserved server-side).
+// CustomRetentionRule is a per-condition log retention rule, mirroring the
+// server's retentiontypes.CustomRetentionRule (conditions/ttlDays json tags).
+// The provider does not manage rules: SetDataRetention reads the live set and
+// carries it back into the POST body, because the server's SetTTLV2 replaces
+// the whole rule set — an empty or omitted ttlConditions wipes every rule
+// (validateTTLConditions accepts an empty list).
 type CustomRetentionRule struct {
-	ColumnName string `json:"columnName"`
-	Operator   string `json:"operator"`
-	Value      string `json:"value"`
+	Filters []FilterCondition `json:"conditions"`
+	TTLDays int               `json:"ttlDays"`
+}
+
+type FilterCondition struct {
+	Key    string   `json:"key"`
+	Values []string `json:"values"`
 }
 
 // CustomRetentionTTLParams is the POST /api/v2/settings/ttl body (logs only).

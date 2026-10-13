@@ -3,12 +3,12 @@
 page_title: "signoz_notification_channel Resource - SigNoz"
 subcategory: ""
 description: |-
-  
+  Creates and manages notification channel resources in SigNoz.
 ---
 
 # signoz_notification_channel (Resource)
 
-
+Creates and manages notification channel resources in SigNoz.
 
 ## Example Usage
 
@@ -344,5 +344,5 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 
 ```shell
 # Notification channels are imported using their ID.
-terraform import signoz_notification_channel.slack_oncall 0192a9c2-1234-7abc-8def-0123456789ab
+terraform import signoz_notification_channel.<channel-alias> <channel-id>
 ```

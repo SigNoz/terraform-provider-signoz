@@ -73,7 +73,7 @@ output "log_pipeline" {
 
 ### Required
 
-- `config` (String) Processor configuration for the log pipeline as a JSON array string.
+- `config` (String) Processor configuration for the log pipeline as a JSON array string. Operator `id` and `orderId` are filled in when omitted (position-based), so config comparisons ignore them.
 - `filter` (String) Filter configuration for the log pipeline as a JSON string.
 - `name` (String) Name of the log pipeline.
 - `order_id` (Number) Order ID of the log pipeline, determining processing order.

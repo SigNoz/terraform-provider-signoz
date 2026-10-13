@@ -123,7 +123,10 @@ func (r *logPipelineResource) Schema(_ context.Context, _ resource.SchemaRequest
 			},
 			attr.PipelineConfig: schema.StringAttribute{
 				Required:    true,
-				Description: "Processor configuration for the log pipeline as a JSON array string.",
+				Description: "Processor configuration for the log pipeline as a JSON array string. Operator `id` and `orderId` are filled in when omitted (position-based), so config comparisons ignore them.",
+				PlanModifiers: []planmodifier.String{
+					configNormalizerPlanModifier{},
+				},
 			},
 			// computed.
 			attr.ID: schema.StringAttribute{
@@ -367,4 +370,43 @@ func (r *logPipelineResource) Delete(ctx context.Context, req resource.DeleteReq
 func (r *logPipelineResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Retrieve import ID and save to id attribute.
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
+
+// configNormalizerPlanModifier compares the config JSON by normalized content
+// (operator ids and orderIds filled in, keys compact) so the provider-injected
+// operator fields never surface as perpetual diffs.
+type configNormalizerPlanModifier struct{}
+
+func (configNormalizerPlanModifier) Description(_ context.Context) string {
+	return "Ignores provider-injected operator id/orderId fields when comparing config"
+}
+
+func (configNormalizerPlanModifier) MarkdownDescription(_ context.Context) string {
+	return "Ignores provider-injected operator id/orderId fields when comparing config"
+}
+
+func (configNormalizerPlanModifier) PlanModifyString(_ context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
+	if req.State.Raw.IsNull() || req.PlanValue.IsUnknown() || req.StateValue.IsNull() {
+		return
+	}
+
+	if pipelineConfigEquivalent(req.PlanValue.ValueString(), req.StateValue.ValueString()) {
+		resp.PlanValue = req.StateValue
+	}
+}
+
+// pipelineConfigEquivalent reports whether two config JSON strings normalize
+// to the same operators (provider-injected id/orderId ignored).
+func pipelineConfigEquivalent(planRaw, stateRaw string) bool {
+	planNorm, err := model.NormalizePipelineConfigString(planRaw)
+	if err != nil {
+		return false
+	}
+
+	stateNorm, err := model.NormalizePipelineConfigString(stateRaw)
+	if err != nil {
+		return false
+	}
+
+	return planNorm == stateNorm
 }

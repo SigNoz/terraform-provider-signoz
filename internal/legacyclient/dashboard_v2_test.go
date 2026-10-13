@@ -97,6 +97,7 @@ type v2WirePanel struct {
 			} `json:"spec"`
 		} `json:"plugin"`
 		Queries []map[string]any `json:"queries"`
+		Links   []map[string]any `json:"links"`
 	} `json:"spec"`
 }
 
@@ -125,6 +126,7 @@ type v2WireTag struct {
 
 type v2WirePostable struct {
 	SchemaVersion string      `json:"schemaVersion"`
+	Image         string      `json:"image"`
 	Name          string      `json:"name"`
 	GenerateName  bool        `json:"generateName"`
 	Tags          []v2WireTag `json:"tags"`
@@ -133,6 +135,7 @@ type v2WirePostable struct {
 
 type v2WireUpdatable struct {
 	SchemaVersion string      `json:"schemaVersion"`
+	Image         string      `json:"image"`
 	Name          string      `json:"name"`
 	Tags          []v2WireTag `json:"tags"`
 	Spec          v2WireSpec  `json:"spec"`
@@ -262,6 +265,7 @@ func specFromWire(w v2WireSpec) model.DashboardSpecV2 {
 					},
 				},
 				Queries: p.Spec.Queries,
+				Links:   p.Spec.Links,
 			},
 		}
 	}
@@ -313,6 +317,7 @@ func (s *dashboardV2Store) Handler(t *testing.T) http.Handler {
 				ID:            fmt.Sprintf("%08d", s.next),
 				Name:          fmt.Sprintf("dash-%08d", s.next),
 				SchemaVersion: "v6",
+				Image:         post.Image,
 				Tags:          tagsToWire(post.Tags),
 				Spec:          specFromWire(post.Spec),
 			}
@@ -345,6 +350,7 @@ func (s *dashboardV2Store) Handler(t *testing.T) http.Handler {
 			validateDashboardV2Body(t, up.Tags, up.Spec)
 
 			existing.Tags = tagsToWire(up.Tags)
+			existing.Image = up.Image
 			existing.Spec = specFromWire(up.Spec)
 			s.updated++
 
@@ -396,7 +402,13 @@ func TestDashboardV2_CRUDRoundTrip(t *testing.T) {
 		t.Fatalf("get mismatch: %+v vs %+v", got, created)
 	}
 
-	// Update: change title + tags through the updatable shape.
+	// Update: change title + tags through the updatable shape, carrying the
+	// server-owned image and a panel link so the PUT must not blank them.
+	got.Image = "icon-dashboards/fleet.svg"
+	panel := got.Spec.Panels["panel-a"]
+	panel.Spec.Links = []map[string]any{{"name": "runbook", "url": "https://runbook.example"}}
+	got.Spec.Panels["panel-a"] = panel
+
 	pd := model.FromGettable(*got)
 	pd.Title = "Fleet DevOps v2"
 	pd.Tags = append(pd.Tags, "extra")
@@ -411,8 +423,25 @@ func TestDashboardV2_CRUDRoundTrip(t *testing.T) {
 	if len(updated.Tags) != 3 {
 		t.Fatalf("update tags: %+v", updated.Tags)
 	}
+	if updated.Image != "icon-dashboards/fleet.svg" {
+		t.Fatalf("image lost on update: %q", updated.Image)
+	}
+	if links := updated.Spec.Panels["panel-a"].Spec.Links; len(links) != 1 || links[0]["url"] != "https://runbook.example" {
+		t.Fatalf("links lost on update: %#v", links)
+	}
 	if store.updated != 1 {
 		t.Fatalf("update count: %d", store.updated)
+	}
+
+	fetched, err := client.GetDashboardV2(ctx, created.ID)
+	if err != nil {
+		t.Fatalf("get after update: %v", err)
+	}
+	if fetched.Image != "icon-dashboards/fleet.svg" {
+		t.Fatalf("image lost on re-read: %q", fetched.Image)
+	}
+	if links := fetched.Spec.Panels["panel-a"].Spec.Links; len(links) != 1 {
+		t.Fatalf("links lost on re-read: %#v", links)
 	}
 
 	if err := client.DeleteDashboardV2(ctx, created.ID); err != nil {

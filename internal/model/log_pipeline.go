@@ -2,23 +2,26 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 
 	structure "github.com/SigNoz/terraform-provider-signoz/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// LogPipeline model.
+// LogPipeline model matches server contract: pkg/types/pipelinetypes/pipeline.go
 type LogPipeline struct {
 	ID          string                   `json:"id"`
 	Alias       string                   `json:"alias,omitempty"`
 	Name        string                   `json:"name"`
 	Description string                   `json:"description,omitempty"`
 	Enabled     bool                     `json:"enabled"`
-	OrderID     int                      `json:"order_id"`
+	OrderID     int                      `json:"orderId"`
 	Filter      map[string]interface{}   `json:"filter"`
 	Config      []map[string]interface{} `json:"config"`
-	CreatedBy   string                   `json:"created_by,omitempty"`
-	CreatedAt   string                   `json:"created_at,omitempty"`
+	CreatedBy   string                   `json:"createdBy,omitempty"`
+	CreatedAt   string                   `json:"createdAt,omitempty"`
+	UpdatedBy   string                   `json:"updatedBy,omitempty"`
+	UpdatedAt   string                   `json:"updatedAt,omitempty"`
 }
 
 // LogPipelinesPayload is the request/response body for the batch pipeline API.
@@ -57,14 +60,58 @@ func (p *LogPipeline) SetFilter(tfFilter types.String) error {
 	return nil
 }
 
-// SetConfig parses a JSON array string from Terraform and sets the config field.
+// SetConfig parses a JSON array string from Terraform and sets the config
+// field, filling in the operator fields the server requires and the user may
+// omit: an id (generated "op-<position>" when absent) and a non-zero orderId
+// (sequence position). Routing rules (output on every operator but the last,
+// unique ids) stay the user's responsibility — the server rejects the rest.
 func (p *LogPipeline) SetConfig(tfConfig types.String) error {
-	var config []map[string]interface{}
-	err := json.Unmarshal([]byte(tfConfig.ValueString()), &config)
+	config, err := expandPipelineConfig(tfConfig.ValueString())
 	if err != nil {
 		return err
 	}
 
 	p.Config = config
 	return nil
+}
+
+// expandPipelineConfig parses the TF config JSON and normalizes operators.
+func expandPipelineConfig(raw string) ([]map[string]interface{}, error) {
+	var config []map[string]interface{}
+	if err := json.Unmarshal([]byte(raw), &config); err != nil {
+		return nil, err
+	}
+
+	for i, op := range config {
+		if op == nil {
+			continue
+		}
+
+		if id, ok := op["id"].(string); !ok || id == "" {
+			op["id"] = fmt.Sprintf("op-%d", i+1)
+		}
+
+		if order, ok := op["orderId"].(float64); !ok || order == 0 {
+			op["orderId"] = float64(i + 1)
+		}
+	}
+
+	return config, nil
+}
+
+// NormalizePipelineConfigString applies the same operator normalization as
+// SetConfig to a config JSON string and returns it compactly marshaled, so
+// plan-time comparison can treat user input and server echo as equal.
+func NormalizePipelineConfigString(raw string) (string, error) {
+	config, err := expandPipelineConfig(raw)
+	if err != nil {
+		return "", err
+	}
+
+	b, err := json.Marshal(config)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }

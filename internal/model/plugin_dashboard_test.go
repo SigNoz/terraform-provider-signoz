@@ -215,6 +215,75 @@ func TestPluginDashboard_ToUpdatable(t *testing.T) {
 	}
 }
 
+func TestPluginDashboard_CarryServerPreserved(t *testing.T) {
+	server := GettableDashboardV2{
+		ID:    "dash-1",
+		Name:  "fleet-devops",
+		Image: "icon-dashboards/fleet.svg",
+	}
+	server.Spec.Display = DisplayV2{Name: "Fleet DevOps"}
+	server.Spec.Links = []map[string]any{{"name": "docs", "url": "https://docs.example"}}
+	server.Spec.Panels = map[string]PanelV2{
+		"fixed01": {
+			Kind: PanelEnvelopeKind,
+			Spec: PanelSpecV2{
+				Display: DisplayV2{Name: "Status"},
+				Plugin: PanelPluginV2{
+					Kind: PanelKindWebComponent,
+					Spec: WebComponentPanelSpec{PluginID: "system-status-board", Element: "lax-system-status-board"},
+				},
+				Queries: []map[string]any{},
+				Links:   []map[string]any{{"name": "runbook", "url": "https://runbook.example"}},
+			},
+		},
+	}
+	server.Spec.Layouts = []LayoutV2{{
+		Kind: "Grid",
+		Spec: GridLayoutSpecV2{
+			Items: []GridItemV2{{
+				X: 8, Y: 0, Width: 4, Height: 6,
+				Content: JSONPointerV2{Ref: "#/spec/panels/fixed01"},
+			}},
+		},
+	}}
+
+	pd := sampleDashboard()
+	pd.Image = "stale-value"
+	pd.CarryServerPreserved(FromGettable(server))
+
+	if pd.Image != "icon-dashboards/fleet.svg" {
+		t.Fatalf("image must come from the server: %q", pd.Image)
+	}
+
+	var links []map[string]any
+	for _, page := range pd.Pages {
+		for _, panel := range page.Panels {
+			switch panel.ID {
+			case "fixed01":
+				links = panel.Links
+			default:
+				if panel.Links != nil {
+					t.Fatalf("panel %q without a server entry must not gain links", panel.ID)
+				}
+			}
+		}
+	}
+	if len(links) != 1 || links[0]["url"] != "https://runbook.example" {
+		t.Fatalf("links not carried by panel id: %#v", links)
+	}
+
+	up := pd.ToUpdatable("fleet-devops")
+	if up.Image != "icon-dashboards/fleet.svg" {
+		t.Fatalf("updatable image: %q", up.Image)
+	}
+	if got := up.Spec.Panels["fixed01"].Spec.Links; len(got) != 1 {
+		t.Fatalf("updatable links: %#v", got)
+	}
+	if got := up.Spec.Links; len(got) != 1 || got[0]["url"] != "https://docs.example" {
+		t.Fatalf("spec-level links not carried: %#v", got)
+	}
+}
+
 func TestPluginDashboard_DocumentJSONDeterministic(t *testing.T) {
 	pd := sampleDashboard()
 	// Pin panel ids: generated ids are per-ToPostable random by design.

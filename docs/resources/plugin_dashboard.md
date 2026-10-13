@@ -16,7 +16,9 @@ Catalog resolution, per panel:
 - `plugin_version` set → that exact version must exist in the catalog, else the plan fails listing available versions.
 - `element` omitted → filled from the catalog manifest; set to something else → error.
 
-Tag strings map onto the server's `{key, value}` pairs: a plain string becomes key `tag`, and `key:value` becomes that pair. A server tag with key `tag` and value `foo` therefore reads back as plain `foo` — avoid configuring the literal string `tag:foo`.
+Tag strings map onto the server's `{key, value}` pairs: a plain string becomes key `tag`, and `key:value` becomes that pair. A server tag with key `tag` and value `foo` therefore reads back as plain `foo` — avoid configuring the literal string `tag:foo`. Tag keys `name`, `description`, `created_at`, `updated_at`, `created_by`, `locked`, and `source` are reserved by the server and rejected at plan time; at most 10 tags are allowed.
+
+Grid rules (also validated at plan time): every panel needs `w >= 1`, `h >= 1`, `x >= 0`, `y >= 0`, and `x + w <= 12`; panels on a page must not overlap; at most 100 panels per page and 500 pages per dashboard.
 
 Panel `id` is the server's panels-map key. It is generated when omitted and kept in state so plans stay stable. The `properties` JSON string is stored normalized (sorted keys, compact); whitespace differences in your config surface as cosmetic diffs only.
 
@@ -24,22 +26,47 @@ Panel `id` is the server's panels-map key. It is generated when omitted and kept
 
 ```terraform
 # Manage a SigNoz v2 dashboard of WebComponent plugin panels.
-resource "signoz_plugin_dashboard" "hello" {
-  title = "Plugin Demo"
+# devops-status ships in the SigNoz plugin catalog (plugins/devops-status);
+# check your server's catalog via GET /api/v1/plugins for available ids.
+resource "signoz_plugin_dashboard" "devops_status" {
+  title       = "DevOps Status"
+  description = "Real-time infrastructure and application status dashboard"
+  tags        = ["devops", "team:platform"]
 
   page {
     name = "Overview"
 
     plugin_panel {
-      title     = "Hello"
-      plugin_id = "hello"
-      element   = "lax-hello-wc"
+      title     = "System Status"
+      plugin_id = "devops-status"
+      element   = "lax-devops-status"
+
+      x = 0
+      y = 0
+      w = 6
+      h = 4
+
+      # HTML attributes on the custom element (the plugin reads env)
+      attributes = {
+        env = "prod"
+      }
+    }
+
+    plugin_panel {
+      title     = "Alerts"
+      plugin_id = "devops-status"
+      element   = "lax-devops-status"
+
+      x = 6
+      y = 0
+      w = 6
+      h = 4
     }
   }
 }
 ```
 
-A fuller Lacrosse devops board with pinned versions and stub data:
+A fuller board with a pinned plugin version and stub data passed via properties:
 
 ```terraform
 # Lacrosse devops board: pinned plugin version, element auto-filled from the

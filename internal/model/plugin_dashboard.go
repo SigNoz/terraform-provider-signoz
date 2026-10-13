@@ -21,12 +21,20 @@ const (
 
 // PluginDashboard is a high-level dashboard built from plugin pages/panels.
 // It is expanded into a SigNoz v2 dashboard (Perses spec) via ToPostable and
-// rebuilt from a server response via FromGettable.
+// rebuilt from a server response via FromGettable. Image is server-owned: it
+// only ever flows from the live dashboard into the next PUT (see
+// CarryServerPreserved).
+// PluginDashboard is the provider-shaped view of a v2 dashboard. SpecLinks is
+// not a TF attribute: it holds the server's spec-level links so they survive
+// an update (CarryServerPreserved), exactly like per-panel links.
 type PluginDashboard struct {
 	Title       string       `json:"title"`
 	Description string       `json:"description,omitempty"`
+	Image       string       `json:"image,omitempty"`
 	Tags        []string     `json:"tags,omitempty"`
 	Pages       []PluginPage `json:"pages"`
+
+	SpecLinks []map[string]any `json:"-"`
 }
 
 // PluginPage groups plugin panels (one Grid layout on the server).
@@ -35,7 +43,8 @@ type PluginPage struct {
 	Panels []PluginPanel `json:"panels"`
 }
 
-// PluginPanel is one WebComponent plugin instance on a page.
+// PluginPanel is one WebComponent plugin instance on a page. Links is
+// server-owned and carried through updates opaquely.
 type PluginPanel struct {
 	ID            string                 `json:"id,omitempty"`
 	Title         string                 `json:"title"`
@@ -45,6 +54,7 @@ type PluginPanel struct {
 	Attributes    map[string]string      `json:"attributes,omitempty"`
 	Properties    map[string]interface{} `json:"properties,omitempty"`
 	ConfigKeys    []string               `json:"config_keys,omitempty"`
+	Links         []map[string]any       `json:"links,omitempty"`
 	X             int                    `json:"x"`
 	Y             int                    `json:"y"`
 	W             int                    `json:"w"`
@@ -67,6 +77,7 @@ type GettableTag struct {
 // every level with DisallowUnknownFields, so only contract fields exist here.
 type PostableDashboardV2 struct {
 	SchemaVersion string          `json:"schemaVersion"`
+	Image         string          `json:"image"`
 	Name          string          `json:"name"`
 	GenerateName  bool            `json:"generateName"`
 	Tags          []PostableTag   `json:"tags"`
@@ -77,6 +88,7 @@ type PostableDashboardV2 struct {
 // server's DNS name and is immutable — always send the name from state.
 type UpdatableDashboardV2 struct {
 	SchemaVersion string          `json:"schemaVersion"`
+	Image         string          `json:"image"`
 	Name          string          `json:"name"`
 	Tags          []PostableTag   `json:"tags"`
 	Spec          DashboardSpecV2 `json:"spec"`
@@ -94,6 +106,7 @@ type GettableDashboardV2 struct {
 	Locked        bool            `json:"locked"`
 	Source        string          `json:"source,omitempty"`
 	SchemaVersion string          `json:"schemaVersion,omitempty"`
+	Image         string          `json:"image"`
 	Name          string          `json:"name"`
 	Tags          []GettableTag   `json:"tags"`
 	Spec          DashboardSpecV2 `json:"spec"`
@@ -109,6 +122,7 @@ type DashboardSpecV2 struct {
 	Layouts         []LayoutV2         `json:"layouts"`
 	Duration        string             `json:"duration,omitempty"`
 	RefreshInterval string             `json:"refreshInterval,omitempty"`
+	Links           []map[string]any   `json:"links,omitzero"`
 }
 
 // DisplayV2 mirrors dashboardtypes.Display (name required, description always
@@ -125,12 +139,13 @@ type PanelV2 struct {
 }
 
 // PanelSpecV2 mirrors dashboardtypes.PanelSpec. WebComponent panels must carry
-// an empty (non-null) queries list; queries are decoded opaquely so a read of
-// a panel edited elsewhere still round-trips.
+// an empty (non-null) queries list; queries and links are decoded opaquely so a
+// read of a panel edited elsewhere still round-trips.
 type PanelSpecV2 struct {
 	Display DisplayV2        `json:"display"`
 	Plugin  PanelPluginV2    `json:"plugin"`
 	Queries []map[string]any `json:"queries"`
+	Links   []map[string]any `json:"links,omitzero"`
 }
 
 // PanelPluginV2 mirrors dashboardtypes.PanelPlugin.
@@ -223,6 +238,7 @@ func (p PluginDashboard) ToPostable() PostableDashboardV2 {
 	postable := PostableDashboardV2{
 		SchemaVersion: DashboardSchemaVersionV2,
 		GenerateName:  true,
+		Image:         p.Image,
 		Tags:          TagsToPostable(p.Tags),
 		Spec: DashboardSpecV2{
 			Display:   DisplayV2{Name: p.Title, Description: p.Description},
@@ -270,6 +286,7 @@ func (p PluginDashboard) ToPostable() PostableDashboardV2 {
 						},
 					},
 					Queries: []map[string]any{},
+					Links:   panel.Links,
 				},
 			}
 			layout.Spec.Items = append(layout.Spec.Items, GridItemV2{
@@ -281,6 +298,8 @@ func (p PluginDashboard) ToPostable() PostableDashboardV2 {
 		postable.Spec.Layouts = append(postable.Spec.Layouts, layout)
 	}
 
+	postable.Spec.Links = p.SpecLinks
+
 	return postable
 }
 
@@ -290,9 +309,34 @@ func (p PluginDashboard) ToUpdatable(name string) UpdatableDashboardV2 {
 	postable := p.ToPostable()
 	return UpdatableDashboardV2{
 		SchemaVersion: DashboardSchemaVersionV2,
+		Image:         postable.Image,
 		Name:          name,
 		Tags:          postable.Tags,
 		Spec:          postable.Spec,
+	}
+}
+
+// CarryServerPreserved copies the fields the provider does not manage — the
+// dashboard image, the spec-level links and each panel's links — from the
+// server's view onto p, keyed by panel id, so the next PUT does not blank them.
+func (p *PluginDashboard) CarryServerPreserved(server PluginDashboard) {
+	p.Image = server.Image
+	p.SpecLinks = server.SpecLinks
+
+	links := map[string][]map[string]any{}
+	for _, page := range server.Pages {
+		for _, panel := range page.Panels {
+			if panel.ID != "" {
+				links[panel.ID] = panel.Links
+			}
+		}
+	}
+
+	for pi := range p.Pages {
+		for fi := range p.Pages[pi].Panels {
+			panel := &p.Pages[pi].Panels[fi]
+			panel.Links = links[panel.ID]
+		}
 	}
 }
 
@@ -304,7 +348,9 @@ func FromGettable(g GettableDashboardV2) PluginDashboard {
 	pd := PluginDashboard{
 		Title:       g.Spec.Display.Name,
 		Description: g.Spec.Display.Description,
+		Image:       g.Image,
 		Tags:        TagsFromGettable(g.Tags),
+		SpecLinks:   g.Spec.Links,
 	}
 
 	for _, layout := range g.Spec.Layouts {
@@ -332,6 +378,7 @@ func FromGettable(g GettableDashboardV2) PluginDashboard {
 				Attributes:    spec.Attributes,
 				Properties:    spec.Properties,
 				ConfigKeys:    spec.ConfigKeys,
+				Links:         panel.Spec.Links,
 				X:             item.X,
 				Y:             item.Y,
 				W:             item.Width,

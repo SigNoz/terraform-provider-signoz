@@ -3,12 +3,12 @@
 page_title: "signoz_notification_channel Data Source - SigNoz"
 subcategory: ""
 description: |-
-  
+  Fetches a notification channel from SigNoz using its ID.
 ---
 
 # signoz_notification_channel (Data Source)
 
-
+Fetches a notification channel from SigNoz using its ID.
 
 ## Example Usage
 
