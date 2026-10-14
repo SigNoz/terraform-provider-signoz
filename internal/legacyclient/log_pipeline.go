@@ -182,13 +182,19 @@ func (c *Client) UpdateLogPipeline(ctx context.Context, id string, pipeline *mod
 		return nil, fmt.Errorf("log pipeline with ID %s not found for update", id)
 	}
 
-	saved, err := c.SaveLogPipelines(ctx, existing)
+	_, err = c.SaveLogPipelines(ctx, existing)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, p := range saved {
-		if p.ID == id {
+	// The server reassigns pipeline IDs on every batch save; match the
+	// updated row by its stable alias/name in the fresh array.
+	fresh, err := c.GetLogPipelines(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range fresh {
+		if p.Alias == pipeline.Alias && p.Name == pipeline.Name {
 			return &p, nil
 		}
 	}
@@ -197,7 +203,9 @@ func (c *Client) UpdateLogPipeline(ctx context.Context, id string, pipeline *mod
 }
 
 // DeleteLogPipeline - Deletes a log pipeline by removing it from the array and POSTing.
-func (c *Client) DeleteLogPipeline(ctx context.Context, id string) error {
+// The server reassigns pipeline IDs on every batch save, so the row may live
+// under a new ID; alias+name are stable and match it there.
+func (c *Client) DeleteLogPipeline(ctx context.Context, id, alias, name string) error {
 	existing, err := c.GetLogPipelines(ctx)
 	if err != nil {
 		return fmt.Errorf("error fetching existing pipelines for delete: %w", err)
@@ -206,7 +214,7 @@ func (c *Client) DeleteLogPipeline(ctx context.Context, id string) error {
 	updated := make([]model.LogPipeline, 0, len(existing))
 	found := false
 	for _, p := range existing {
-		if p.ID == id {
+		if p.ID == id || (alias != "" && p.Alias == alias && p.Name == name) {
 			found = true
 			continue
 		}

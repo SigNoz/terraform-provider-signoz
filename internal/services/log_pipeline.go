@@ -2,7 +2,9 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/apiclients"
@@ -25,6 +27,7 @@ var (
 	_ resource.Resource                = &logPipelineResource{}
 	_ resource.ResourceWithConfigure   = &logPipelineResource{}
 	_ resource.ResourceWithImportState = &logPipelineResource{}
+	_ resource.ResourceWithModifyPlan  = &logPipelineResource{}
 )
 
 // NewLogPipelineResource is a helper function to simplify the provider implementation.
@@ -218,24 +221,46 @@ func (r *logPipelineResource) Create(ctx context.Context, req resource.CreateReq
 	plan.CreatedBy = types.StringValue(pipeline.CreatedBy)
 	plan.CreatedAt = types.StringValue(pipeline.CreatedAt)
 
-	// Use the plan's filter/config to avoid extra keys from server response.
-	plan.Filter, err = pipelinePayload.FilterToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate, "signoz_log_pipeline")
-		return
-	}
-
-	plan.Config, err = pipelinePayload.ConfigToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationCreate, "signoz_log_pipeline")
-		return
-	}
+	// Keep the plan's filter/config shapes: re-serializing the payload forms
+	// would reintroduce explicit-zero keys (dataType, isColumn, isJSON) the
+	// config never had, diffing on the first plan after create.
 
 	// Set state to populated data.
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+}
+
+// ModifyPlan unpins the server-churned identity fields (id, created_at,
+// created_by) when the plan actually changes something: the server reassigns
+// the pipeline row on every save, so a pinned value fails the apply. No-op
+// plans keep the pinned values (UseStateForUnknown) and stay clean.
+func (r *logPipelineResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() {
+		return
+	}
+
+	var plan, state logPipelineResourceModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	p, s := plan, state
+	p.ID, s.ID = types.StringNull(), types.StringNull()
+	p.CreatedAt, s.CreatedAt = types.StringNull(), types.StringNull()
+	p.CreatedBy, s.CreatedBy = types.StringNull(), types.StringNull()
+
+	if reflect.DeepEqual(p, s) {
+		return
+	}
+
+	plan.ID = types.StringUnknown()
+	plan.CreatedAt = types.StringUnknown()
+	plan.CreatedBy = types.StringUnknown()
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, &plan)...)
 }
 
 // Read refreshes the Terraform state with the latest data.
@@ -271,10 +296,16 @@ func (r *logPipelineResource) Read(ctx context.Context, req resource.ReadRequest
 	state.CreatedBy = types.StringValue(pipeline.CreatedBy)
 	state.CreatedAt = types.StringValue(pipeline.CreatedAt)
 
-	state.Filter, err = pipeline.FilterToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationRead, "signoz_log_pipeline")
+	// The server serializes filter items with explicit-zero keys the config
+	// never carries (dataType "", isColumn/isJSON false); when the fresh
+	// filter is equivalent, keep the stored shape so refresh plans stay clean.
+	serverFilter, filterErr := pipeline.FilterToTerraform()
+	if filterErr != nil {
+		addErr(&resp.Diagnostics, filterErr, operationRead, "signoz_log_pipeline")
 		return
+	}
+	if !pipelineFilterEquivalent(serverFilter.ValueString(), state.Filter.ValueString()) {
+		state.Filter = serverFilter
 	}
 
 	state.Config, err = pipeline.ConfigToTerraform()
@@ -345,18 +376,8 @@ func (r *logPipelineResource) Update(ctx context.Context, req resource.UpdateReq
 	plan.CreatedBy = types.StringValue(pipeline.CreatedBy)
 	plan.CreatedAt = types.StringValue(pipeline.CreatedAt)
 
-	// Use the plan's filter/config to avoid extra keys from server response.
-	plan.Filter, err = pipelineUpdate.FilterToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, "signoz_log_pipeline")
-		return
-	}
-
-	plan.Config, err = pipelineUpdate.ConfigToTerraform()
-	if err != nil {
-		addErr(&resp.Diagnostics, err, operationUpdate, "signoz_log_pipeline")
-		return
-	}
+	// Keep the plan's filter/config shapes (see Read); re-serializing the
+	// payload would add explicit-zero keys the config never had.
 
 	// Set refreshed state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -375,7 +396,7 @@ func (r *logPipelineResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	// Delete existing log pipeline.
-	err := r.client.DeleteLogPipeline(ctx, state.ID.ValueString())
+	err := r.client.DeleteLogPipeline(ctx, state.ID.ValueString(), state.Alias.ValueString(), state.Name.ValueString())
 	if err != nil {
 		addErr(&resp.Diagnostics, err, operationDelete, "signoz_log_pipeline")
 		return
@@ -425,4 +446,48 @@ func pipelineConfigEquivalent(planRaw, stateRaw string) bool {
 	}
 
 	return planNorm == stateNorm
+}
+
+// pipelineFilterEquivalent reports whether two filter JSON strings match once
+// the server's explicit-zero item keys (dataType "", isColumn/isJSON false)
+// are dropped — the config never carries them, so they must not diff.
+func pipelineFilterEquivalent(a, b string) bool {
+	return normalizePipelineFilter(a) == normalizePipelineFilter(b)
+}
+
+func normalizePipelineFilter(raw string) string {
+	if raw == "" {
+		return ""
+	}
+
+	var doc struct {
+		Op    string           `json:"op"`
+		Items []map[string]any `json:"items"`
+	}
+	if err := json.Unmarshal([]byte(raw), &doc); err != nil {
+		return raw
+	}
+
+	for _, item := range doc.Items {
+		key, ok := item["key"].(map[string]any)
+		if !ok {
+			continue
+		}
+		if v, ok := key["dataType"]; ok && (v == "" || v == nil) {
+			delete(key, "dataType")
+		}
+		if v, ok := key["isColumn"]; ok && v == false {
+			delete(key, "isColumn")
+		}
+		if v, ok := key["isJSON"]; ok && v == false {
+			delete(key, "isJSON")
+		}
+	}
+
+	norm, err := json.Marshal(doc)
+	if err != nil {
+		return raw
+	}
+
+	return string(norm)
 }
