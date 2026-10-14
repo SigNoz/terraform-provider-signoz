@@ -2,7 +2,8 @@
 
 ## 2026-10-14
 
-- RequiresReplace on `signoz_user.email`, `signoz_auth_domain.name`, `signoz_notification_channel.name` and `signoz_route_policy.name`: the server's PUT endpoints accept these changes with a 204 but keep the stored value (verified against a live server), so an in-place update plan produced "Provider produced inconsistent result after apply" — a rename now plans destroy/create instead. Generated schemas patched pending the upstream skaff knob for per-attribute replacement.
+- RequiresReplace on `signoz_user.email` and `signoz_auth_domain.name` plus `signoz_notification_channel.name`: the server's PUT endpoints accept these changes with a 204 but keep the stored value (verified against a live server), so an in-place update plan produced "Provider produced inconsistent result after apply" — a rename now plans destroy/create instead. Generated schemas patched pending the upstream skaff knob for per-attribute replacement. `signoz_route_policy.name` was checked and found genuinely updatable, so it stays in-place.
+- `signoz_plugin_dashboard.document` no longer pins the pre-update document via UseStateForUnknown: a title/panel update changed the server document, and the stale planned value failed the update with "Provider produced inconsistent result after apply". The attribute now plans unknown on every change and settles from the apply response.
 
 ## 2026-10-13
 

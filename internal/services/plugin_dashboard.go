@@ -138,9 +138,6 @@ func (r *pluginDashboardResource) Schema(_ context.Context, _ resource.SchemaReq
 			"document": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Canonical v2 dashboard JSON document (the POST body) for inspection.",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 		},
 		Blocks: map[string]schema.Block{
