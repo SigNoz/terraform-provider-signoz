@@ -409,6 +409,15 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.UpdateAt = types.StringValue(alert.UpdateAt)
 	plan.UpdateBy = types.StringValue(alert.UpdateBy)
 
+	// rule_type is Optional+Computed without a Default: with it unset the plan
+	// value stays unknown after apply unless Create fills it from the response
+	// ("Provider returned invalid result object"). The other server-supplied
+	// fields (eval_window, frequency, version) have static plan-time defaults,
+	// so overwriting them here would fight the planned values.
+	if alert.RuleType != "" {
+		plan.RuleType = types.StringValue(alert.RuleType)
+	}
+
 	//As condition is JSON string, updated response contains extra keys
 	plan.Condition, err = alertPayload.ConditionToTerraform()
 	if err != nil {

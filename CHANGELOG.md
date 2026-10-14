@@ -2,6 +2,8 @@
 
 ## 2026-10-14
 
+- `signoz_alert` Create now copies the server's `rule_type` into state: the attribute is Optional+Computed with no Default, so a config that omits it stayed unknown after apply and failed with "Provider returned invalid result object". The other server-supplied fields keep their plan-time defaults.
+- `signoz_log_pipeline` `created_at`/`created_by` pin their state via UseStateForUnknown: they were planned unknown on every run, so a freshly created pipeline diffed forever.
 - RequiresReplace on `signoz_user.email` and `signoz_auth_domain.name` plus `signoz_notification_channel.name`: the server's PUT endpoints accept these changes with a 204 but keep the stored value (verified against a live server), so an in-place update plan produced "Provider produced inconsistent result after apply" — a rename now plans destroy/create instead. Generated schemas patched pending the upstream skaff knob for per-attribute replacement. `signoz_route_policy.name` was checked and found genuinely updatable, so it stays in-place.
 - `signoz_plugin_dashboard.document` no longer pins the pre-update document via UseStateForUnknown: a title/panel update changed the server document, and the stale planned value failed the update with "Provider produced inconsistent result after apply". The attribute now plans unknown on every change and settles from the apply response.
 

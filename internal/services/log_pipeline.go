@@ -139,10 +139,16 @@ func (r *logPipelineResource) Schema(_ context.Context, _ resource.SchemaRequest
 			attr.CreatedBy: schema.StringAttribute{
 				Computed:    true,
 				Description: "User who created the log pipeline.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			attr.CreatedAt: schema.StringAttribute{
 				Computed:    true,
 				Description: "Timestamp when the log pipeline was created.",
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 		},
 	}
