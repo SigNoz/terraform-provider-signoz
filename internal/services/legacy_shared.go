@@ -26,7 +26,10 @@ const (
 	alertDefaultFrequency    = "1m0s"
 	alertDefaultSummary      = "The rule threshold is set to {{$threshold}}, and the observed metric value is {{$value}}"
 	alertDefaultSourceSuffix = "alerts"
-	alertDefaultVersion      = "v4"
+	// The server's v5 rules API rejects every other version ("only v5 is
+	// supported"), so a v4 default made creates fail and downgraded v5 rules
+	// on refresh plans.
+	alertDefaultVersion = "v5"
 )
 
 // addErr adds an error to the diagnostics (resource operations).

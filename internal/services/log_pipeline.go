@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -114,8 +115,12 @@ func (r *logPipelineResource) Schema(_ context.Context, _ resource.SchemaRequest
 				Default:     booldefault.StaticBool(true),
 			},
 			attr.OrderID: schema.Int64Attribute{
-				Required:    true,
-				Description: "Order ID of the log pipeline, determining processing order.",
+				Optional:    true,
+				Computed:    true,
+				Description: "Order ID of the log pipeline. The server assigns the position (it renumbers across pipelines), so omit this and let the server decide; an explicitly configured value may keep diffing.",
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			attr.PipelineFilter: schema.StringAttribute{
 				Required:    true,
@@ -164,12 +169,17 @@ func (r *logPipelineResource) Create(ctx context.Context, req resource.CreateReq
 	}
 
 	// Generate API request body.
+	orderID := plan.OrderID.ValueInt64()
+	if orderID == 0 {
+		orderID = 1
+	}
+
 	pipelinePayload := &model.LogPipeline{
 		Name:        plan.Name.ValueString(),
 		Alias:       plan.Alias.ValueString(),
 		Description: plan.Description.ValueString(),
 		Enabled:     plan.Enabled.ValueBool(),
-		OrderID:     int(plan.OrderID.ValueInt64()),
+		OrderID:     int(orderID),
 	}
 
 	err := pipelinePayload.SetFilter(plan.Filter)

@@ -214,7 +214,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 			attr.Version: schema.StringAttribute{
 				Optional:    true,
 				Computed:    true,
-				Description: "Version of the alert. By default, it is v4.",
+				Description: "Version of the alert. The server only accepts v5, which is the default.",
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(regexp.MustCompile(`v\d+`), "alert version should be of the form v3, v4, etc."),
 				},
@@ -674,26 +674,14 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	} else if plan.SchemaVersion.IsUnknown() || plan.SchemaVersion.IsNull() {
 		plan.SchemaVersion = types.StringValue("")
 	}
-	if alert.CreateAt != "" {
-		plan.CreateAt = types.StringValue(alert.CreateAt)
-	} else {
-		plan.CreateAt = state.CreateAt
-	}
-	if alert.CreateBy != "" {
-		plan.CreateBy = types.StringValue(alert.CreateBy)
-	} else {
-		plan.CreateBy = state.CreateBy
-	}
-	if alert.UpdateAt != "" {
-		plan.UpdateAt = types.StringValue(alert.UpdateAt)
-	} else {
-		plan.UpdateAt = state.UpdateAt
-	}
-	if alert.UpdateBy != "" {
-		plan.UpdateBy = types.StringValue(alert.UpdateBy)
-	} else {
-		plan.UpdateBy = state.UpdateBy
-	}
+	// Server timestamps churn on every write; the plan pins the pre-update
+	// values (UseStateForUnknown), so writing the bumped ones here would fail
+	// the apply with an inconsistent-result error. The next plan's Read
+	// refresh converges them.
+	plan.CreateAt = state.CreateAt
+	plan.CreateBy = state.CreateBy
+	plan.UpdateAt = state.UpdateAt
+	plan.UpdateBy = state.UpdateBy
 
 	// Condition: use the payload to avoid extra keys from API response
 	plan.Condition, err = alertUpdate.ConditionToTerraform()
