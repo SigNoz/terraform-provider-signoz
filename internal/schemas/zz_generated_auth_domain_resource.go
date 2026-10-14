@@ -5,6 +5,9 @@ package schemas
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+
 	"github.com/SigNoz/terraform-provider-signoz/internal/validators"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -256,8 +259,12 @@ func AuthDomainResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.StringAttribute{
 				Computed: true,
 			},
+			// Server PUT /api/v2/auth_domains/{id} silently ignores name changes (observed via API probe); replacement is the only correct plan.
 			"name": schema.StringAttribute{
 				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"org_id": schema.StringAttribute{
 				Computed: true,

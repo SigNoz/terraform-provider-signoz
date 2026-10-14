@@ -5,6 +5,9 @@ package schemas
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -39,8 +42,12 @@ func RoutePolicyResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			// Server PUT /api/v1/route_policies/{id} silently ignores name changes (observed via API probe); replacement is the only correct plan.
 			"name": schema.StringAttribute{
 				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"tags": schema.ListAttribute{
 				ElementType: types.StringType,

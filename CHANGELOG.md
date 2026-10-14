@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-14
+
+- RequiresReplace on `signoz_user.email`, `signoz_auth_domain.name`, `signoz_notification_channel.name` and `signoz_route_policy.name`: the server's PUT endpoints accept these changes with a 204 but keep the stored value (verified against a live server), so an in-place update plan produced "Provider produced inconsistent result after apply" — a rename now plans destroy/create instead. Generated schemas patched pending the upstream skaff knob for per-attribute replacement.
+
 ## 2026-10-13
 
 - `signoz_data_retention` logs updates no longer wipe server-side custom retention rules: the server's `SetTTLV2` replaces the whole rule set (an empty or omitted `ttlConditions` passes `validateTTLConditions` and rebuilds the retention expression default-only), so the client now reads the live rule set via `GET /api/v2/settings/ttl` and carries it back into the POST body (kept verbatim when present; a missing v2 endpoint still posts). `model.CustomRetentionRule` documented as the server-mirrored carry-through type.
