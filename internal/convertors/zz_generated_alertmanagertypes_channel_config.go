@@ -173,6 +173,23 @@ func ExpandAlertmanagertypesChannelConfig(ctx context.Context, v customtypes.Ale
 		return &out, diags
 	}
 
+	if !v.Telegram.IsNull() && !v.Telegram.IsUnknown() {
+		typed, d := alertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValueFromObject(ctx, v.Telegram)
+		diags.Append(d...)
+		member, d := ExpandAlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfig(ctx, typed)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if member != nil {
+			if err := out.FromAlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfig(*member); err != nil {
+				diags.AddError("Failed to encode telegram union variant", err.Error())
+				return nil, diags
+			}
+		}
+		return &out, diags
+	}
+
 	if !v.Webhook.IsNull() && !v.Webhook.IsUnknown() {
 		typed, d := alertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfigValueFromObject(ctx, v.Webhook)
 		diags.Append(d...)
@@ -208,6 +225,7 @@ func FlattenAlertmanagertypesChannelConfig(ctx context.Context, in *apitypes.Ale
 		"opsgenie":   basetypes.NewObjectNull(customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelOpsgenieConfigValue{}.AttributeTypes(ctx)),
 		"pagerduty":  basetypes.NewObjectNull(customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelPagerdutyConfigValue{}.AttributeTypes(ctx)),
 		"slack":      basetypes.NewObjectNull(customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelSlackConfigValue{}.AttributeTypes(ctx)),
+		"telegram":   basetypes.NewObjectNull(customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx)),
 		"webhook":    basetypes.NewObjectNull(customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfigValue{}.AttributeTypes(ctx)),
 	}
 	disc, err := in.ValueByDiscriminator()
@@ -270,6 +288,12 @@ func FlattenAlertmanagertypesChannelConfig(ctx context.Context, in *apitypes.Ale
 		ov, d := fv.ToObjectValue(ctx)
 		diags.Append(d...)
 		attrs["slack"] = ov
+	case apitypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfig:
+		fv, d := FlattenAlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfig(ctx, &member)
+		diags.Append(d...)
+		ov, d := fv.ToObjectValue(ctx)
+		diags.Append(d...)
+		attrs["telegram"] = ov
 	case apitypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfig:
 		fv, d := FlattenAlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfig(ctx, &member)
 		diags.Append(d...)

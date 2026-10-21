@@ -89,7 +89,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 														"linear": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"kind": schema.StringAttribute{
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "How the upper bounds are spaced.",
+																	MarkdownDescription: "How the upper bounds are spaced.",
 																},
 																"spec": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
@@ -105,7 +107,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "The evenly spaced bucket specification.",
+																	MarkdownDescription: "The evenly spaced bucket specification.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -118,7 +122,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 														"log": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"kind": schema.StringAttribute{
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "How the upper bounds are spaced.",
+																	MarkdownDescription: "How the upper bounds are spaced.",
 																},
 																"spec": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
@@ -131,7 +137,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "The logarithmic bucket specification.",
+																	MarkdownDescription: "The logarithmic bucket specification.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -481,10 +489,14 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
 												},
 											},
-											Computed: true,
+											Computed:            true,
+											Description:         "The AI builder query specification.",
+											MarkdownDescription: "The AI builder query specification.",
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Computed:            true,
+											Description:         "The type of the query.",
+											MarkdownDescription: "The type of the query.",
 										},
 									},
 									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiType{
@@ -503,7 +515,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 														"linear": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"kind": schema.StringAttribute{
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "How the upper bounds are spaced.",
+																	MarkdownDescription: "How the upper bounds are spaced.",
 																},
 																"spec": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
@@ -519,7 +533,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "The evenly spaced bucket specification.",
+																	MarkdownDescription: "The evenly spaced bucket specification.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -532,7 +548,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 														"log": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"kind": schema.StringAttribute{
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "How the upper bounds are spaced.",
+																	MarkdownDescription: "How the upper bounds are spaced.",
 																},
 																"spec": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
@@ -545,7 +563,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Computed: true,
+																	Computed:            true,
+																	Description:         "The logarithmic bucket specification.",
+																	MarkdownDescription: "The logarithmic bucket specification.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -677,10 +697,14 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderFormulaValue{}.AttributeTypes(ctx),
 												},
 											},
-											Computed: true,
+											Computed:            true,
+											Description:         "The formula specification.",
+											MarkdownDescription: "The formula specification.",
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Computed:            true,
+											Description:         "The type of the query.",
+											MarkdownDescription: "The type of the query.",
 										},
 									},
 									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeFormulaType{
@@ -719,7 +743,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																"linear": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"kind": schema.StringAttribute{
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "How the upper bounds are spaced.",
+																			MarkdownDescription: "How the upper bounds are spaced.",
 																		},
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
@@ -735,7 +761,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																				},
 																			},
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "The evenly spaced bucket specification.",
+																			MarkdownDescription: "The evenly spaced bucket specification.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -748,7 +776,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																"log": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"kind": schema.StringAttribute{
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "How the upper bounds are spaced.",
+																			MarkdownDescription: "How the upper bounds are spaced.",
 																		},
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
@@ -761,7 +791,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																				},
 																			},
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "The logarithmic bucket specification.",
+																			MarkdownDescription: "The logarithmic bucket specification.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -1163,7 +1195,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																"linear": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"kind": schema.StringAttribute{
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "How the upper bounds are spaced.",
+																			MarkdownDescription: "How the upper bounds are spaced.",
 																		},
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
@@ -1179,7 +1213,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																				},
 																			},
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "The evenly spaced bucket specification.",
+																			MarkdownDescription: "The evenly spaced bucket specification.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -1192,7 +1228,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																"log": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"kind": schema.StringAttribute{
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "How the upper bounds are spaced.",
+																			MarkdownDescription: "How the upper bounds are spaced.",
 																		},
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
@@ -1205,7 +1243,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																				},
 																			},
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "The logarithmic bucket specification.",
+																			MarkdownDescription: "The logarithmic bucket specification.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -1582,7 +1622,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																"linear": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"kind": schema.StringAttribute{
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "How the upper bounds are spaced.",
+																			MarkdownDescription: "How the upper bounds are spaced.",
 																		},
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
@@ -1598,7 +1640,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																				},
 																			},
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "The evenly spaced bucket specification.",
+																			MarkdownDescription: "The evenly spaced bucket specification.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -1611,7 +1655,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																"log": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"kind": schema.StringAttribute{
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "How the upper bounds are spaced.",
+																			MarkdownDescription: "How the upper bounds are spaced.",
 																		},
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
@@ -1624,7 +1670,9 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																				},
 																			},
-																			Computed: true,
+																			Computed:            true,
+																			Description:         "The logarithmic bucket specification.",
+																			MarkdownDescription: "The logarithmic bucket specification.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -1982,13 +2030,17 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: customtypes.Querybuildertypesv5BuilderQuerySpecValue{}.AttributeTypes(ctx),
 												},
 											},
-											Computed: true,
+											Computed:            true,
+											Description:         "The builder query specification.",
+											MarkdownDescription: "The builder query specification.",
 											Validators: []validator.Object{
 												validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
 											},
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Computed:            true,
+											Description:         "The type of the query.",
+											MarkdownDescription: "The type of the query.",
 										},
 									},
 									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderType{
@@ -2217,10 +2269,14 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderTraceOperatorValue{}.AttributeTypes(ctx),
 												},
 											},
-											Computed: true,
+											Computed:            true,
+											Description:         "The trace operator specification.",
+											MarkdownDescription: "The trace operator specification.",
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Computed:            true,
+											Description:         "The type of the query.",
+											MarkdownDescription: "The type of the query.",
 										},
 									},
 									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeTraceOperatorType{
@@ -2252,10 +2308,14 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: customtypes.Querybuildertypesv5ClickHouseQueryValue{}.AttributeTypes(ctx),
 												},
 											},
-											Computed: true,
+											Computed:            true,
+											Description:         "The ClickHouse SQL query specification.",
+											MarkdownDescription: "The ClickHouse SQL query specification.",
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Computed:            true,
+											Description:         "The type of the query.",
+											MarkdownDescription: "The type of the query.",
 										},
 									},
 									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeClickHouseSqlType{
@@ -2294,10 +2354,14 @@ func SavedViewDataSourceSchema(ctx context.Context) schema.Schema {
 													AttrTypes: customtypes.Querybuildertypesv5PromQueryValue{}.AttributeTypes(ctx),
 												},
 											},
-											Computed: true,
+											Computed:            true,
+											Description:         "The PromQL query specification.",
+											MarkdownDescription: "The PromQL query specification.",
 										},
 										"type": schema.StringAttribute{
-											Computed: true,
+											Computed:            true,
+											Description:         "The type of the query.",
+											MarkdownDescription: "The type of the query.",
 										},
 									},
 									CustomType: customtypes.Querybuildertypesv5QueryEnvelopePromQlType{

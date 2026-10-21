@@ -39,6 +39,24 @@ func (t AlertmanagertypesChannelSlackConfigType) ValueFromObject(ctx context.Con
 
 	attributes := in.Attributes()
 
+	actionsAttribute, ok := attributes["actions"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`actions is missing from object`)
+
+		return nil, diags
+	}
+
+	actionsVal, ok := actionsAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`actions expected to be basetypes.ListValue, was: %T`, actionsAttribute))
+	}
+
 	apiUrlAttribute, ok := attributes["api_url"]
 
 	if !ok {
@@ -73,6 +91,96 @@ func (t AlertmanagertypesChannelSlackConfigType) ValueFromObject(ctx context.Con
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`channel expected to be basetypes.StringValue, was: %T`, channelAttribute))
+	}
+
+	colorAttribute, ok := attributes["color"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`color is missing from object`)
+
+		return nil, diags
+	}
+
+	colorVal, ok := colorAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`color expected to be basetypes.StringValue, was: %T`, colorAttribute))
+	}
+
+	fallbackAttribute, ok := attributes["fallback"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`fallback is missing from object`)
+
+		return nil, diags
+	}
+
+	fallbackVal, ok := fallbackAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`fallback expected to be basetypes.StringValue, was: %T`, fallbackAttribute))
+	}
+
+	fieldsAttribute, ok := attributes["fields"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`fields is missing from object`)
+
+		return nil, diags
+	}
+
+	fieldsVal, ok := fieldsAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`fields expected to be basetypes.ListValue, was: %T`, fieldsAttribute))
+	}
+
+	footerAttribute, ok := attributes["footer"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`footer is missing from object`)
+
+		return nil, diags
+	}
+
+	footerVal, ok := footerAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`footer expected to be basetypes.StringValue, was: %T`, footerAttribute))
+	}
+
+	pretextAttribute, ok := attributes["pretext"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`pretext is missing from object`)
+
+		return nil, diags
+	}
+
+	pretextVal, ok := pretextAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`pretext expected to be basetypes.StringValue, was: %T`, pretextAttribute))
 	}
 
 	sendResolvedAttribute, ok := attributes["send_resolved"]
@@ -129,16 +237,41 @@ func (t AlertmanagertypesChannelSlackConfigType) ValueFromObject(ctx context.Con
 			fmt.Sprintf(`title expected to be basetypes.StringValue, was: %T`, titleAttribute))
 	}
 
+	titleLinkAttribute, ok := attributes["title_link"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`title_link is missing from object`)
+
+		return nil, diags
+	}
+
+	titleLinkVal, ok := titleLinkAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`title_link expected to be basetypes.StringValue, was: %T`, titleLinkAttribute))
+	}
+
 	if diags.HasError() {
 		return nil, diags
 	}
 
 	return AlertmanagertypesChannelSlackConfigValue{
+		Actions:      actionsVal,
 		ApiUrl:       apiUrlVal,
 		Channel:      channelVal,
+		Color:        colorVal,
+		Fallback:     fallbackVal,
+		Fields:       fieldsVal,
+		Footer:       footerVal,
+		Pretext:      pretextVal,
 		SendResolved: sendResolvedVal,
 		Text:         textVal,
 		Title:        titleVal,
+		TitleLink:    titleLinkVal,
 		state:        attr.ValueStateKnown,
 	}, diags
 }
@@ -206,6 +339,24 @@ func NewAlertmanagertypesChannelSlackConfigValue(attributeTypes map[string]attr.
 		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
 	}
 
+	actionsAttribute, ok := attributes["actions"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`actions is missing from object`)
+
+		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
+	}
+
+	actionsVal, ok := actionsAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`actions expected to be basetypes.ListValue, was: %T`, actionsAttribute))
+	}
+
 	apiUrlAttribute, ok := attributes["api_url"]
 
 	if !ok {
@@ -240,6 +391,96 @@ func NewAlertmanagertypesChannelSlackConfigValue(attributeTypes map[string]attr.
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`channel expected to be basetypes.StringValue, was: %T`, channelAttribute))
+	}
+
+	colorAttribute, ok := attributes["color"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`color is missing from object`)
+
+		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
+	}
+
+	colorVal, ok := colorAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`color expected to be basetypes.StringValue, was: %T`, colorAttribute))
+	}
+
+	fallbackAttribute, ok := attributes["fallback"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`fallback is missing from object`)
+
+		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
+	}
+
+	fallbackVal, ok := fallbackAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`fallback expected to be basetypes.StringValue, was: %T`, fallbackAttribute))
+	}
+
+	fieldsAttribute, ok := attributes["fields"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`fields is missing from object`)
+
+		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
+	}
+
+	fieldsVal, ok := fieldsAttribute.(basetypes.ListValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`fields expected to be basetypes.ListValue, was: %T`, fieldsAttribute))
+	}
+
+	footerAttribute, ok := attributes["footer"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`footer is missing from object`)
+
+		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
+	}
+
+	footerVal, ok := footerAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`footer expected to be basetypes.StringValue, was: %T`, footerAttribute))
+	}
+
+	pretextAttribute, ok := attributes["pretext"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`pretext is missing from object`)
+
+		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
+	}
+
+	pretextVal, ok := pretextAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`pretext expected to be basetypes.StringValue, was: %T`, pretextAttribute))
 	}
 
 	sendResolvedAttribute, ok := attributes["send_resolved"]
@@ -296,16 +537,41 @@ func NewAlertmanagertypesChannelSlackConfigValue(attributeTypes map[string]attr.
 			fmt.Sprintf(`title expected to be basetypes.StringValue, was: %T`, titleAttribute))
 	}
 
+	titleLinkAttribute, ok := attributes["title_link"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`title_link is missing from object`)
+
+		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
+	}
+
+	titleLinkVal, ok := titleLinkAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`title_link expected to be basetypes.StringValue, was: %T`, titleLinkAttribute))
+	}
+
 	if diags.HasError() {
 		return NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
 	}
 
 	return AlertmanagertypesChannelSlackConfigValue{
+		Actions:      actionsVal,
 		ApiUrl:       apiUrlVal,
 		Channel:      channelVal,
+		Color:        colorVal,
+		Fallback:     fallbackVal,
+		Fields:       fieldsVal,
+		Footer:       footerVal,
+		Pretext:      pretextVal,
 		SendResolved: sendResolvedVal,
 		Text:         textVal,
 		Title:        titleVal,
+		TitleLink:    titleLinkVal,
 		state:        attr.ValueStateKnown,
 	}, diags
 }
@@ -378,31 +644,57 @@ func (t AlertmanagertypesChannelSlackConfigType) ValueType(ctx context.Context) 
 var _ basetypes.ObjectValuable = AlertmanagertypesChannelSlackConfigValue{}
 
 type AlertmanagertypesChannelSlackConfigValue struct {
+	Actions      basetypes.ListValue   `tfsdk:"actions"`
 	ApiUrl       basetypes.StringValue `tfsdk:"api_url"`
 	Channel      basetypes.StringValue `tfsdk:"channel"`
+	Color        basetypes.StringValue `tfsdk:"color"`
+	Fallback     basetypes.StringValue `tfsdk:"fallback"`
+	Fields       basetypes.ListValue   `tfsdk:"fields"`
+	Footer       basetypes.StringValue `tfsdk:"footer"`
+	Pretext      basetypes.StringValue `tfsdk:"pretext"`
 	SendResolved basetypes.BoolValue   `tfsdk:"send_resolved"`
 	Text         basetypes.StringValue `tfsdk:"text"`
 	Title        basetypes.StringValue `tfsdk:"title"`
+	TitleLink    basetypes.StringValue `tfsdk:"title_link"`
 	state        attr.ValueState
 }
 
 func (v AlertmanagertypesChannelSlackConfigValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 5)
+	attrTypes := make(map[string]tftypes.Type, 12)
 
 	var val tftypes.Value
 	var err error
 
+	attrTypes["actions"] = basetypes.ListType{
+		ElemType: AlertmanagertypesChannelSlackActionValue{}.Type(ctx),
+	}.TerraformType(ctx)
 	attrTypes["api_url"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["channel"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["color"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["fallback"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["fields"] = basetypes.ListType{
+		ElemType: AlertmanagertypesChannelSlackFieldValue{}.Type(ctx),
+	}.TerraformType(ctx)
+	attrTypes["footer"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["pretext"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["send_resolved"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["text"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["title"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["title_link"] = basetypes.StringType{}.TerraformType(ctx)
 
 	objectType := tftypes.Object{AttributeTypes: attrTypes}
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 5)
+		vals := make(map[string]tftypes.Value, 12)
+
+		val, err = v.Actions.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["actions"] = val
 
 		val, err = v.ApiUrl.ToTerraformValue(ctx)
 
@@ -419,6 +711,46 @@ func (v AlertmanagertypesChannelSlackConfigValue) ToTerraformValue(ctx context.C
 		}
 
 		vals["channel"] = val
+
+		val, err = v.Color.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["color"] = val
+
+		val, err = v.Fallback.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["fallback"] = val
+
+		val, err = v.Fields.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["fields"] = val
+
+		val, err = v.Footer.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["footer"] = val
+
+		val, err = v.Pretext.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["pretext"] = val
 
 		val, err = v.SendResolved.ToTerraformValue(ctx)
 
@@ -443,6 +775,14 @@ func (v AlertmanagertypesChannelSlackConfigValue) ToTerraformValue(ctx context.C
 		}
 
 		vals["title"] = val
+
+		val, err = v.TitleLink.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["title_link"] = val
 
 		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
@@ -473,12 +813,81 @@ func (v AlertmanagertypesChannelSlackConfigValue) String() string {
 func (v AlertmanagertypesChannelSlackConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	actions := types.ListValueMust(
+		AlertmanagertypesChannelSlackActionType{
+			basetypes.ObjectType{
+				AttrTypes: AlertmanagertypesChannelSlackActionValue{}.AttributeTypes(ctx),
+			},
+		},
+		v.Actions.Elements(),
+	)
+
+	if v.Actions.IsNull() {
+		actions = types.ListNull(
+			AlertmanagertypesChannelSlackActionType{
+				basetypes.ObjectType{
+					AttrTypes: AlertmanagertypesChannelSlackActionValue{}.AttributeTypes(ctx),
+				},
+			},
+		)
+	}
+
+	if v.Actions.IsUnknown() {
+		actions = types.ListUnknown(
+			AlertmanagertypesChannelSlackActionType{
+				basetypes.ObjectType{
+					AttrTypes: AlertmanagertypesChannelSlackActionValue{}.AttributeTypes(ctx),
+				},
+			},
+		)
+	}
+
+	fields := types.ListValueMust(
+		AlertmanagertypesChannelSlackFieldType{
+			basetypes.ObjectType{
+				AttrTypes: AlertmanagertypesChannelSlackFieldValue{}.AttributeTypes(ctx),
+			},
+		},
+		v.Fields.Elements(),
+	)
+
+	if v.Fields.IsNull() {
+		fields = types.ListNull(
+			AlertmanagertypesChannelSlackFieldType{
+				basetypes.ObjectType{
+					AttrTypes: AlertmanagertypesChannelSlackFieldValue{}.AttributeTypes(ctx),
+				},
+			},
+		)
+	}
+
+	if v.Fields.IsUnknown() {
+		fields = types.ListUnknown(
+			AlertmanagertypesChannelSlackFieldType{
+				basetypes.ObjectType{
+					AttrTypes: AlertmanagertypesChannelSlackFieldValue{}.AttributeTypes(ctx),
+				},
+			},
+		)
+	}
+
 	attributeTypes := map[string]attr.Type{
-		"api_url":       basetypes.StringType{},
-		"channel":       basetypes.StringType{},
+		"actions": basetypes.ListType{
+			ElemType: AlertmanagertypesChannelSlackActionValue{}.Type(ctx),
+		},
+		"api_url":  basetypes.StringType{},
+		"channel":  basetypes.StringType{},
+		"color":    basetypes.StringType{},
+		"fallback": basetypes.StringType{},
+		"fields": basetypes.ListType{
+			ElemType: AlertmanagertypesChannelSlackFieldValue{}.Type(ctx),
+		},
+		"footer":        basetypes.StringType{},
+		"pretext":       basetypes.StringType{},
 		"send_resolved": basetypes.BoolType{},
 		"text":          basetypes.StringType{},
 		"title":         basetypes.StringType{},
+		"title_link":    basetypes.StringType{},
 	}
 
 	if v.IsNull() {
@@ -492,11 +901,18 @@ func (v AlertmanagertypesChannelSlackConfigValue) ToObjectValue(ctx context.Cont
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
+			"actions":       actions,
 			"api_url":       v.ApiUrl,
 			"channel":       v.Channel,
+			"color":         v.Color,
+			"fallback":      v.Fallback,
+			"fields":        fields,
+			"footer":        v.Footer,
+			"pretext":       v.Pretext,
 			"send_resolved": v.SendResolved,
 			"text":          v.Text,
 			"title":         v.Title,
+			"title_link":    v.TitleLink,
 		})
 
 	return objVal, diags
@@ -517,11 +933,35 @@ func (v AlertmanagertypesChannelSlackConfigValue) Equal(o attr.Value) bool {
 		return true
 	}
 
+	if !v.Actions.Equal(other.Actions) {
+		return false
+	}
+
 	if !v.ApiUrl.Equal(other.ApiUrl) {
 		return false
 	}
 
 	if !v.Channel.Equal(other.Channel) {
+		return false
+	}
+
+	if !v.Color.Equal(other.Color) {
+		return false
+	}
+
+	if !v.Fallback.Equal(other.Fallback) {
+		return false
+	}
+
+	if !v.Fields.Equal(other.Fields) {
+		return false
+	}
+
+	if !v.Footer.Equal(other.Footer) {
+		return false
+	}
+
+	if !v.Pretext.Equal(other.Pretext) {
 		return false
 	}
 
@@ -534,6 +974,10 @@ func (v AlertmanagertypesChannelSlackConfigValue) Equal(o attr.Value) bool {
 	}
 
 	if !v.Title.Equal(other.Title) {
+		return false
+	}
+
+	if !v.TitleLink.Equal(other.TitleLink) {
 		return false
 	}
 
@@ -550,10 +994,21 @@ func (v AlertmanagertypesChannelSlackConfigValue) Type(ctx context.Context) attr
 
 func (v AlertmanagertypesChannelSlackConfigValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
-		"api_url":       basetypes.StringType{},
-		"channel":       basetypes.StringType{},
+		"actions": basetypes.ListType{
+			ElemType: AlertmanagertypesChannelSlackActionValue{}.Type(ctx),
+		},
+		"api_url":  basetypes.StringType{},
+		"channel":  basetypes.StringType{},
+		"color":    basetypes.StringType{},
+		"fallback": basetypes.StringType{},
+		"fields": basetypes.ListType{
+			ElemType: AlertmanagertypesChannelSlackFieldValue{}.Type(ctx),
+		},
+		"footer":        basetypes.StringType{},
+		"pretext":       basetypes.StringType{},
 		"send_resolved": basetypes.BoolType{},
 		"text":          basetypes.StringType{},
 		"title":         basetypes.StringType{},
+		"title_link":    basetypes.StringType{},
 	}
 }

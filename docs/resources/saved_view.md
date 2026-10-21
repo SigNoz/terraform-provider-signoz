@@ -231,11 +231,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec))
+- `spec` (Attributes) The AI builder query specification. (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec))
 
 <a id="nestedatt--spec--queries--builder_ai_query--spec"></a>
 ### Nested Schema for `spec.queries.builder_ai_query.spec`
@@ -287,8 +287,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--queries--builder_ai_query--spec--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.queries.builder_ai_query.spec.bucket_options.linear.spec`
@@ -308,8 +308,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_ai_query--spec--bucket_options--log--spec))
 
 <a id="nestedatt--spec--queries--builder_ai_query--spec--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.queries.builder_ai_query.spec.bucket_options.log.spec`
@@ -492,11 +492,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec))
+- `spec` (Attributes) The formula specification. (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec))
 
 <a id="nestedatt--spec--queries--builder_formula--spec"></a>
 ### Nested Schema for `spec.queries.builder_formula.spec`
@@ -526,8 +526,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--queries--builder_formula--spec--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.queries.builder_formula.spec.bucket_options.linear.spec`
@@ -547,8 +547,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_formula--spec--bucket_options--log--spec))
 
 <a id="nestedatt--spec--queries--builder_formula--spec--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.queries.builder_formula.spec.bucket_options.log.spec`
@@ -618,11 +618,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec))
+- `spec` (Attributes) The builder query specification. (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec))
 
 <a id="nestedatt--spec--queries--builder_query--spec"></a>
 ### Nested Schema for `spec.queries.builder_query.spec`
@@ -683,8 +683,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--queries--builder_query--spec--logs--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.queries.builder_query.spec.logs.bucket_options.linear.spec`
@@ -704,8 +704,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--logs--bucket_options--log--spec))
 
 <a id="nestedatt--spec--queries--builder_query--spec--logs--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.queries.builder_query.spec.logs.bucket_options.log.spec`
@@ -945,8 +945,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.queries.builder_query.spec.metrics.bucket_options.linear.spec`
@@ -966,8 +966,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--metrics--bucket_options--log--spec))
 
 <a id="nestedatt--spec--queries--builder_query--spec--metrics--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.queries.builder_query.spec.metrics.bucket_options.log.spec`
@@ -1194,8 +1194,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--queries--builder_query--spec--traces--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.queries.builder_query.spec.traces.bucket_options.linear.spec`
@@ -1215,8 +1215,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--queries--builder_query--spec--traces--bucket_options--log--spec))
 
 <a id="nestedatt--spec--queries--builder_query--spec--traces--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.queries.builder_query.spec.traces.bucket_options.log.spec`
@@ -1400,11 +1400,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec))
+- `spec` (Attributes) The trace operator specification. (see [below for nested schema](#nestedatt--spec--queries--builder_trace_operator--spec))
 
 <a id="nestedatt--spec--queries--builder_trace_operator--spec"></a>
 ### Nested Schema for `spec.queries.builder_trace_operator.spec`
@@ -1535,11 +1535,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--clickhouse_sql--spec))
+- `spec` (Attributes) The ClickHouse SQL query specification. (see [below for nested schema](#nestedatt--spec--queries--clickhouse_sql--spec))
 
 <a id="nestedatt--spec--queries--clickhouse_sql--spec"></a>
 ### Nested Schema for `spec.queries.clickhouse_sql.spec`
@@ -1558,11 +1558,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--queries--promql--spec))
+- `spec` (Attributes) The PromQL query specification. (see [below for nested schema](#nestedatt--spec--queries--promql--spec))
 
 <a id="nestedatt--spec--queries--promql--spec"></a>
 ### Nested Schema for `spec.queries.promql.spec`

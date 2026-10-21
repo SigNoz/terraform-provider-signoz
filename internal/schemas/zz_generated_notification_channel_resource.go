@@ -499,11 +499,111 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
+									"actions": schema.ListNestedAttribute{
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"confirm": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"dismiss_text": schema.StringAttribute{
+															Optional: true,
+															Computed: true,
+														},
+														"ok_text": schema.StringAttribute{
+															Optional: true,
+															Computed: true,
+														},
+														"text": schema.StringAttribute{
+															Required: true,
+														},
+														"title": schema.StringAttribute{
+															Optional: true,
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.AlertmanagertypesChannelSlackConfirmationType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.AlertmanagertypesChannelSlackConfirmationValue{}.AttributeTypes(ctx),
+														},
+													},
+													Optional: true,
+													Computed: true,
+												},
+												"name": schema.StringAttribute{
+													Optional: true,
+													Computed: true,
+												},
+												"style": schema.StringAttribute{
+													Optional: true,
+													Computed: true,
+												},
+												"text": schema.StringAttribute{
+													Required: true,
+												},
+												"type": schema.StringAttribute{
+													Required: true,
+												},
+												"url": schema.StringAttribute{
+													Optional: true,
+													Computed: true,
+												},
+												"value": schema.StringAttribute{
+													Optional: true,
+													Computed: true,
+												},
+											},
+											CustomType: customtypes.AlertmanagertypesChannelSlackActionType{
+												ObjectType: types.ObjectType{
+													AttrTypes: customtypes.AlertmanagertypesChannelSlackActionValue{}.AttributeTypes(ctx),
+												},
+											},
+										},
+										Optional: true,
+										Computed: true,
+									},
 									"api_url": schema.StringAttribute{
 										Required:  true,
 										Sensitive: true,
 									},
 									"channel": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"color": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"fallback": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"fields": schema.ListNestedAttribute{
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"short": schema.BoolAttribute{
+													Optional: true,
+													Computed: true,
+												},
+												"title": schema.StringAttribute{
+													Required: true,
+												},
+												"value": schema.StringAttribute{
+													Required: true,
+												},
+											},
+											CustomType: customtypes.AlertmanagertypesChannelSlackFieldType{
+												ObjectType: types.ObjectType{
+													AttrTypes: customtypes.AlertmanagertypesChannelSlackFieldValue{}.AttributeTypes(ctx),
+												},
+											},
+										},
+										Optional: true,
+										Computed: true,
+									},
+									"footer": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"pretext": schema.StringAttribute{
 										Optional: true,
 										Computed: true,
 									},
@@ -519,6 +619,10 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 										Optional: true,
 										Computed: true,
 									},
+									"title_link": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelSlackConfigType{
 									ObjectType: types.ObjectType{
@@ -531,6 +635,66 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelSlackConfigType{
 							ObjectType: types.ObjectType{
 								AttrTypes: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelSlackConfigValue{}.AttributeTypes(ctx),
+							},
+						},
+						Optional: true,
+						Computed: true,
+					},
+					"telegram": schema.SingleNestedAttribute{
+						Attributes: map[string]schema.Attribute{
+							"kind": schema.StringAttribute{
+								Required: true,
+								Validators: []validator.String{
+									stringvalidator.OneOf(
+										"telegram",
+									),
+								},
+							},
+							"spec": schema.SingleNestedAttribute{
+								Attributes: map[string]schema.Attribute{
+									"api_url": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"bot_token": schema.StringAttribute{
+										Required:  true,
+										Sensitive: true,
+									},
+									"chat_id": schema.Int64Attribute{
+										Required: true,
+									},
+									"disable_notifications": schema.BoolAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"message": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"message_thread_id": schema.Int64Attribute{
+										Optional: true,
+										Computed: true,
+									},
+									"send_resolved": schema.BoolAttribute{
+										Optional: true,
+										Computed: true,
+									},
+									"title": schema.StringAttribute{
+										Optional: true,
+										Computed: true,
+									},
+								},
+								CustomType: customtypes.AlertmanagertypesChannelTelegramConfigType{
+									ObjectType: types.ObjectType{
+										AttrTypes: customtypes.AlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
+									},
+								},
+								Required: true,
+							},
+						},
+						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigType{
+							ObjectType: types.ObjectType{
+								AttrTypes: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
 							},
 						},
 						Optional: true,
@@ -595,7 +759,7 @@ func NotificationChannelResourceSchema(ctx context.Context) schema.Schema {
 				},
 				Required: true,
 				Validators: []validator.Object{
-					validators.ExactlyOneNestedAttribute("email", "googlechat", "incidentio", "jira", "jsmops", "msteams", "opsgenie", "pagerduty", "slack", "webhook"),
+					validators.ExactlyOneNestedAttribute("email", "googlechat", "incidentio", "jira", "jsmops", "msteams", "opsgenie", "pagerduty", "slack", "telegram", "webhook"),
 				},
 			},
 			"display_name": schema.StringAttribute{

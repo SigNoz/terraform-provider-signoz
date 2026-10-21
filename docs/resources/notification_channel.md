@@ -77,6 +77,7 @@ Optional:
 - `opsgenie` (Attributes) (see [below for nested schema](#nestedatt--config--opsgenie))
 - `pagerduty` (Attributes) (see [below for nested schema](#nestedatt--config--pagerduty))
 - `slack` (Attributes) (see [below for nested schema](#nestedatt--config--slack))
+- `telegram` (Attributes) (see [below for nested schema](#nestedatt--config--telegram))
 - `webhook` (Attributes) (see [below for nested schema](#nestedatt--config--webhook))
 
 <a id="nestedatt--config--email"></a>
@@ -307,9 +308,87 @@ Required:
 
 Optional:
 
+- `actions` (Attributes List) (see [below for nested schema](#nestedatt--config--slack--spec--actions))
 - `channel` (String)
+- `color` (String)
+- `fallback` (String)
+- `fields` (Attributes List) (see [below for nested schema](#nestedatt--config--slack--spec--fields))
+- `footer` (String)
+- `pretext` (String)
 - `send_resolved` (Boolean)
 - `text` (String)
+- `title` (String)
+- `title_link` (String)
+
+<a id="nestedatt--config--slack--spec--actions"></a>
+### Nested Schema for `config.slack.spec.actions`
+
+Required:
+
+- `text` (String)
+- `type` (String)
+
+Optional:
+
+- `confirm` (Attributes) (see [below for nested schema](#nestedatt--config--slack--spec--actions--confirm))
+- `name` (String)
+- `style` (String)
+- `url` (String)
+- `value` (String)
+
+<a id="nestedatt--config--slack--spec--actions--confirm"></a>
+### Nested Schema for `config.slack.spec.actions.confirm`
+
+Required:
+
+- `text` (String)
+
+Optional:
+
+- `dismiss_text` (String)
+- `ok_text` (String)
+- `title` (String)
+
+
+
+<a id="nestedatt--config--slack--spec--fields"></a>
+### Nested Schema for `config.slack.spec.fields`
+
+Required:
+
+- `title` (String)
+- `value` (String)
+
+Optional:
+
+- `short` (Boolean)
+
+
+
+
+<a id="nestedatt--config--telegram"></a>
+### Nested Schema for `config.telegram`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--telegram--spec))
+
+<a id="nestedatt--config--telegram--spec"></a>
+### Nested Schema for `config.telegram.spec`
+
+Required:
+
+- `bot_token` (String, Sensitive)
+- `chat_id` (Number)
+
+Optional:
+
+- `api_url` (String)
+- `disable_notifications` (Boolean)
+- `message` (String)
+- `message_thread_id` (Number)
+- `send_resolved` (Boolean)
 - `title` (String)
 
 

@@ -482,7 +482,9 @@ Optional:
 
 Optional:
 
+- `area_chart_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel))
 - `bar_chart_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel))
+- `heatmap_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel))
 - `histogram_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel))
 - `list_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel))
 - `number_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel))
@@ -490,6 +492,103 @@ Optional:
 - `table_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel))
 - `text_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel))
 - `time_series_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel))
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec`
+
+Optional:
+
+- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--axes))
+- `chart_appearance` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance))
+- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--formatting))
+- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--legend))
+- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--thresholds))
+- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--axes"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.axes`
+
+Optional:
+
+- `is_log_scale` (Boolean)
+- `soft_max` (Number)
+- `soft_min` (Number)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.chart_appearance`
+
+Optional:
+
+- `fill_mode` (String)
+- `fill_opacity` (Number)
+- `line_interpolation` (String)
+- `line_style` (String)
+- `show_points` (Boolean)
+- `span_gaps` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance--span_gaps))
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance--span_gaps"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.chart_appearance.span_gaps`
+
+Optional:
+
+- `fill_less_than` (String) The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected.
+- `fill_only_below` (Boolean) Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected.
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.formatting`
+
+Optional:
+
+- `decimal_precision` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--legend"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.legend`
+
+Optional:
+
+- `custom_colors` (Map of String)
+- `mode` (String)
+- `position` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--thresholds"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.thresholds`
+
+Required:
+
+- `color` (String)
+- `value` (Number)
+
+Optional:
+
+- `label` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.visualization`
+
+Optional:
+
+- `fill_spans` (Boolean)
+- `stack` (String)
+- `time_preference` (String)
+
+
+
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel"></a>
 ### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel`
@@ -560,6 +659,92 @@ Optional:
 
 - `fill_spans` (Boolean)
 - `stacked_bar_chart` (Boolean)
+- `time_preference` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec`
+
+Optional:
+
+- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes))
+- `chart_appearance` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance))
+- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--formatting))
+- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--legend))
+- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.axes`
+
+Optional:
+
+- `y` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes--y))
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes--y"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.axes.y`
+
+Optional:
+
+- `scale` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.chart_appearance`
+
+Optional:
+
+- `colors` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance--colors))
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance--colors"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.chart_appearance.colors`
+
+Optional:
+
+- `fill` (String)
+- `max_count` (Number)
+- `min_count` (Number)
+- `mode` (String)
+- `palette` (String)
+- `scale` (String)
+- `steps` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.formatting`
+
+Optional:
+
+- `decimal_precision` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--legend"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.legend`
+
+Optional:
+
+- `custom_colors` (Map of String)
+- `mode` (String)
+- `position` (String)
+
+
+<a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.visualization`
+
+Optional:
+
 - `time_preference` (String)
 
 
@@ -943,12 +1128,271 @@ Optional:
 
 Optional:
 
+- `aibuilder_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query))
 - `builder_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query))
 - `click_house_sql` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql))
 - `composite_query` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query))
 - `formula` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula))
 - `prom_qlquery` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery))
 - `trace_operator` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query`
+
+Required:
+
+- `kind` (String)
+- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec`
+
+Required:
+
+- `signal` (String)
+
+Optional:
+
+- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--aggregations))
+- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options))
+- `cursor` (String)
+- `disabled` (Boolean)
+- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--filter))
+- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions))
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--group_by))
+- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--having))
+- `legend` (String)
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--limit_by))
+- `name` (String)
+- `offset` (Number)
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order))
+- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations))
+- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--select_fields))
+- `source` (String)
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.bucket_options`
+
+Optional:
+
+- `linear` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--linear))
+- `log` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--log))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--linear"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.bucket_options.linear`
+
+Required:
+
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--linear--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--linear--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.bucket_options.linear.spec`
+
+Required:
+
+- `max_value` (Number)
+
+Optional:
+
+- `num_buckets` (Number)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--log"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.bucket_options.log`
+
+Required:
+
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--log--spec))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options--log--spec"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.bucket_options.log.spec`
+
+Optional:
+
+- `scale` (Number)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--filter"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.filter`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.functions`
+
+Optional:
+
+- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions--args))
+- `name` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions--args"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.functions.args`
+
+Optional:
+
+- `name` (String)
+- `value` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--having"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.having`
+
+Optional:
+
+- `expression` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.secondary_aggregations`
+
+Optional:
+
+- `alias` (String)
+- `expression` (String)
+- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--group_by))
+- `limit` (Number)
+- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--limit_by))
+- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order))
+- `step_interval` (String)
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--group_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.secondary_aggregations.group_by`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--limit_by"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.secondary_aggregations.limit_by`
+
+Optional:
+
+- `keys` (List of String)
+- `value` (String)
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.secondary_aggregations.order`
+
+Optional:
+
+- `direction` (String)
+- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order--key))
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order--key"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.secondary_aggregations.order.key`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
+
+<a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--select_fields"></a>
+### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.select_fields`
+
+Required:
+
+- `name` (String)
+
+Optional:
+
+- `description` (String)
+- `field_context` (String)
+- `field_data_type` (String)
+- `signal` (String)
+- `unit` (String)
+
+
+
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query`
@@ -1017,8 +1461,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.bucket_options.linear.spec`
@@ -1038,8 +1482,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.bucket_options.log.spec`
@@ -1279,8 +1723,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.bucket_options.linear.spec`
@@ -1300,8 +1744,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.bucket_options.log.spec`
@@ -1528,8 +1972,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.bucket_options.linear.spec`
@@ -1549,8 +1993,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.bucket_options.log.spec`
@@ -1781,11 +2225,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec))
+- `spec` (Attributes) The AI builder query specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec`
@@ -1837,8 +2281,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.bucket_options.linear.spec`
@@ -1858,8 +2302,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.bucket_options.log.spec`
@@ -2042,11 +2486,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec))
+- `spec` (Attributes) The formula specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec`
@@ -2076,8 +2520,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options.linear.spec`
@@ -2097,8 +2541,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options.log.spec`
@@ -2168,11 +2612,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec))
+- `spec` (Attributes) The builder query specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec`
@@ -2233,8 +2677,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.bucket_options.linear.spec`
@@ -2254,8 +2698,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.bucket_options.log.spec`
@@ -2495,8 +2939,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.bucket_options.linear.spec`
@@ -2516,8 +2960,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.bucket_options.log.spec`
@@ -2744,8 +3188,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.bucket_options.linear.spec`
@@ -2765,8 +3209,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.bucket_options.log.spec`
@@ -2950,11 +3394,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec))
+- `spec` (Attributes) The trace operator specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec`
@@ -3085,11 +3529,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql--spec))
+- `spec` (Attributes) The ClickHouse SQL query specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--clickhouse_sql--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.clickhouse_sql.spec`
@@ -3108,11 +3552,11 @@ Optional:
 
 Required:
 
-- `type` (String)
+- `type` (String) The type of the query.
 
 Optional:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql--spec))
+- `spec` (Attributes) The PromQL query specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--promql--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.promql.spec`
@@ -3167,8 +3611,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--linear--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--linear--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options.linear.spec`
@@ -3188,8 +3632,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--log--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options--log--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options.log.spec`

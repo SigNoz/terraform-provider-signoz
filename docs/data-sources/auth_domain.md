@@ -44,8 +44,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--google--spec))
+- `kind` (String) The kind of authn provider.
+- `spec` (Attributes) The google auth configuration. (see [below for nested schema](#nestedatt--config--google--spec))
 
 <a id="nestedatt--config--google--spec"></a>
 ### Nested Schema for `config.google.spec`
@@ -68,8 +68,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--oidc--spec))
+- `kind` (String) The kind of authn provider.
+- `spec` (Attributes) The oidc configuration. (see [below for nested schema](#nestedatt--config--oidc--spec))
 
 <a id="nestedatt--config--oidc--spec"></a>
 ### Nested Schema for `config.oidc.spec`
@@ -102,8 +102,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--saml--spec))
+- `kind` (String) The kind of authn provider.
+- `spec` (Attributes) The saml configuration. (see [below for nested schema](#nestedatt--config--saml--spec))
 
 <a id="nestedatt--config--saml--spec"></a>
 ### Nested Schema for `config.saml.spec`
