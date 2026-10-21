@@ -20,6 +20,23 @@ func ExpandDashboardtypesQueryPlugin(ctx context.Context, v customtypes.Dashboar
 	}
 	var out apitypes.DashboardtypesQueryPlugin
 
+	if !v.AibuilderQuery.IsNull() && !v.AibuilderQuery.IsUnknown() {
+		typed, d := dashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpecValueFromObject(ctx, v.AibuilderQuery)
+		diags.Append(d...)
+		member, d := ExpandDashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec(ctx, typed)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if member != nil {
+			if err := out.FromDashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec(*member); err != nil {
+				diags.AddError("Failed to encode aibuilder_query union variant", err.Error())
+				return nil, diags
+			}
+		}
+		return &out, diags
+	}
+
 	if !v.BuilderQuery.IsNull() && !v.BuilderQuery.IsUnknown() {
 		typed, d := dashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpecValueFromObject(ctx, v.BuilderQuery)
 		diags.Append(d...)
@@ -131,6 +148,7 @@ func FlattenDashboardtypesQueryPlugin(ctx context.Context, in *apitypes.Dashboar
 		return customtypes.NewDashboardtypesQueryPluginValueNull(), diags
 	}
 	attrs := map[string]attr.Value{
+		"aibuilder_query": basetypes.NewObjectNull(customtypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx)),
 		"builder_query":   basetypes.NewObjectNull(customtypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpecValue{}.AttributeTypes(ctx)),
 		"click_house_sql": basetypes.NewObjectNull(customtypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQueryValue{}.AttributeTypes(ctx)),
 		"composite_query": basetypes.NewObjectNull(customtypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQueryValue{}.AttributeTypes(ctx)),
@@ -144,6 +162,12 @@ func FlattenDashboardtypesQueryPlugin(ctx context.Context, in *apitypes.Dashboar
 		return customtypes.NewDashboardtypesQueryPluginValueUnknown(), diags
 	}
 	switch member := disc.(type) {
+	case apitypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec:
+		fv, d := FlattenDashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec(ctx, &member)
+		diags.Append(d...)
+		ov, d := fv.ToObjectValue(ctx)
+		diags.Append(d...)
+		attrs["aibuilder_query"] = ov
 	case apitypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpec:
 		fv, d := FlattenDashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpec(ctx, &member)
 		diags.Append(d...)

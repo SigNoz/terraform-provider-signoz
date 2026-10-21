@@ -20,15 +20,26 @@ func ExpandAlertmanagertypesChannelSlackConfig(ctx context.Context, v customtype
 		return nil, diags
 	}
 
+	actions, d := ExpandAlertmanagertypesChannelSlackActionList(ctx, v.Actions)
+	diags.Append(d...)
+	fields, d := ExpandAlertmanagertypesChannelSlackFieldList(ctx, v.Fields)
+	diags.Append(d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 	return &apitypes.AlertmanagertypesChannelSlackConfig{
+		Actions:      actions,
 		ApiUrl:       v.ApiUrl.ValueString(),
 		Channel:      convtypes.StringPointer(v.Channel),
+		Color:        convtypes.StringPointer(v.Color),
+		Fallback:     convtypes.StringPointer(v.Fallback),
+		Fields:       fields,
+		Footer:       convtypes.StringPointer(v.Footer),
+		Pretext:      convtypes.StringPointer(v.Pretext),
 		SendResolved: convtypes.BoolPointer(v.SendResolved),
 		Text:         convtypes.StringPointer(v.Text),
 		Title:        convtypes.StringPointer(v.Title),
+		TitleLink:    convtypes.StringPointer(v.TitleLink),
 	}, diags
 }
 
@@ -38,6 +49,10 @@ func FlattenAlertmanagertypesChannelSlackConfig(ctx context.Context, in *apitype
 		return customtypes.NewAlertmanagertypesChannelSlackConfigValueNull(), diags
 	}
 
+	actionsFlat, d := FlattenAlertmanagertypesChannelSlackActionList(ctx, in.Actions)
+	diags.Append(d...)
+	fieldsFlat, d := FlattenAlertmanagertypesChannelSlackFieldList(ctx, in.Fields)
+	diags.Append(d...)
 	if diags.HasError() {
 		return customtypes.NewAlertmanagertypesChannelSlackConfigValueUnknown(), diags
 	}
@@ -45,11 +60,18 @@ func FlattenAlertmanagertypesChannelSlackConfig(ctx context.Context, in *apitype
 	rv, d := customtypes.NewAlertmanagertypesChannelSlackConfigValue(
 		customtypes.AlertmanagertypesChannelSlackConfigValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
+			"actions":       actionsFlat,
 			"api_url":       types.StringValue(in.ApiUrl),
 			"channel":       convtypes.StringFromPointer(in.Channel),
+			"color":         convtypes.StringFromPointer(in.Color),
+			"fallback":      convtypes.StringFromPointer(in.Fallback),
+			"fields":        fieldsFlat,
+			"footer":        convtypes.StringFromPointer(in.Footer),
+			"pretext":       convtypes.StringFromPointer(in.Pretext),
 			"send_resolved": convtypes.BoolFromPointer(in.SendResolved),
 			"text":          convtypes.StringFromPointer(in.Text),
 			"title":         convtypes.StringFromPointer(in.Title),
+			"title_link":    convtypes.StringFromPointer(in.TitleLink),
 		},
 	)
 	diags.Append(d...)

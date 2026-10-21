@@ -240,6 +240,172 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 										},
 										"plugin": schema.SingleNestedAttribute{
 											Attributes: map[string]schema.Attribute{
+												"area_chart_panel": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"kind": schema.StringAttribute{
+															Computed: true,
+														},
+														"spec": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"axes": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"is_log_scale": schema.BoolAttribute{
+																			Computed: true,
+																		},
+																		"soft_max": schema.NumberAttribute{
+																			Computed: true,
+																		},
+																		"soft_min": schema.NumberAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesAxesType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesAxesValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"chart_appearance": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"fill_mode": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"fill_opacity": schema.NumberAttribute{
+																			Computed: true,
+																		},
+																		"line_interpolation": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"line_style": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"show_points": schema.BoolAttribute{
+																			Computed: true,
+																		},
+																		"span_gaps": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"fill_less_than": schema.StringAttribute{
+																					Computed:            true,
+																					Description:         "The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected.",
+																					MarkdownDescription: "The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected.",
+																				},
+																				"fill_only_below": schema.BoolAttribute{
+																					Computed:            true,
+																					Description:         "Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected.",
+																					MarkdownDescription: "Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected.",
+																				},
+																			},
+																			CustomType: customtypes.DashboardtypesSpanGapsType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.DashboardtypesSpanGapsValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesAreaChartAppearanceType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesAreaChartAppearanceValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"formatting": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"decimal_precision": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"unit": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesPanelFormattingType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesPanelFormattingValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"legend": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"custom_colors": schema.MapAttribute{
+																			ElementType: types.StringType,
+																			Computed:    true,
+																		},
+																		"mode": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"position": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesLegendType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesLegendValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"thresholds": schema.ListNestedAttribute{
+																	NestedObject: schema.NestedAttributeObject{
+																		Attributes: map[string]schema.Attribute{
+																			"color": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"label": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"unit": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"value": schema.Float64Attribute{
+																				Computed: true,
+																			},
+																		},
+																		CustomType: customtypes.DashboardtypesThresholdWithLabelType{
+																			ObjectType: types.ObjectType{
+																				AttrTypes: customtypes.DashboardtypesThresholdWithLabelValue{}.AttributeTypes(ctx),
+																			},
+																		},
+																	},
+																	Computed: true,
+																},
+																"visualization": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"fill_spans": schema.BoolAttribute{
+																			Computed: true,
+																		},
+																		"stack": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"time_preference": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesAreaChartVisualizationType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesAreaChartVisualizationValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.DashboardtypesAreaChartPanelSpecType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.DashboardtypesAreaChartPanelSpecValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpecType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpecValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
 												"bar_chart_panel": schema.SingleNestedAttribute{
 													Attributes: map[string]schema.Attribute{
 														"kind": schema.StringAttribute{
@@ -357,6 +523,142 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 													CustomType: customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpecType{
 														ObjectType: types.ObjectType{
 															AttrTypes: customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpecValue{}.AttributeTypes(ctx),
+														},
+													},
+													Computed: true,
+												},
+												"heatmap_panel": schema.SingleNestedAttribute{
+													Attributes: map[string]schema.Attribute{
+														"kind": schema.StringAttribute{
+															Computed: true,
+														},
+														"spec": schema.SingleNestedAttribute{
+															Attributes: map[string]schema.Attribute{
+																"axes": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"y": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"scale": schema.StringAttribute{
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.DashboardtypesHeatmapAxisType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.DashboardtypesHeatmapAxisValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesHeatmapAxesType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesHeatmapAxesValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"chart_appearance": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"colors": schema.SingleNestedAttribute{
+																			Attributes: map[string]schema.Attribute{
+																				"fill": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"max_count": schema.NumberAttribute{
+																					Computed: true,
+																				},
+																				"min_count": schema.NumberAttribute{
+																					Computed: true,
+																				},
+																				"mode": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"palette": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"scale": schema.StringAttribute{
+																					Computed: true,
+																				},
+																				"steps": schema.Int64Attribute{
+																					Computed: true,
+																				},
+																			},
+																			CustomType: customtypes.DashboardtypesHeatmapColorsType{
+																				ObjectType: types.ObjectType{
+																					AttrTypes: customtypes.DashboardtypesHeatmapColorsValue{}.AttributeTypes(ctx),
+																				},
+																			},
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesHeatmapChartAppearanceType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesHeatmapChartAppearanceValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"formatting": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"decimal_precision": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"unit": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesPanelFormattingType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesPanelFormattingValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"legend": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"custom_colors": schema.MapAttribute{
+																			ElementType: types.StringType,
+																			Computed:    true,
+																		},
+																		"mode": schema.StringAttribute{
+																			Computed: true,
+																		},
+																		"position": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesLegendType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesLegendValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+																"visualization": schema.SingleNestedAttribute{
+																	Attributes: map[string]schema.Attribute{
+																		"time_preference": schema.StringAttribute{
+																			Computed: true,
+																		},
+																	},
+																	CustomType: customtypes.DashboardtypesBasicVisualizationType{
+																		ObjectType: types.ObjectType{
+																			AttrTypes: customtypes.DashboardtypesBasicVisualizationValue{}.AttributeTypes(ctx),
+																		},
+																	},
+																	Computed: true,
+																},
+															},
+															CustomType: customtypes.DashboardtypesHeatmapPanelSpecType{
+																ObjectType: types.ObjectType{
+																	AttrTypes: customtypes.DashboardtypesHeatmapPanelSpecValue{}.AttributeTypes(ctx),
+																},
+															},
+															Computed: true,
+														},
+													},
+													CustomType: customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpecType{
+														ObjectType: types.ObjectType{
+															AttrTypes: customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpecValue{}.AttributeTypes(ctx),
 														},
 													},
 													Computed: true,
@@ -939,7 +1241,7 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 											},
 											Computed: true,
 											Validators: []validator.Object{
-												validators.ExactlyOneNestedAttribute("bar_chart_panel", "histogram_panel", "list_panel", "number_panel", "pie_chart_panel", "table_panel", "text_panel", "time_series_panel"),
+												validators.ExactlyOneNestedAttribute("area_chart_panel", "bar_chart_panel", "heatmap_panel", "histogram_panel", "list_panel", "number_panel", "pie_chart_panel", "table_panel", "text_panel", "time_series_panel"),
 											},
 										},
 										"queries": schema.ListNestedAttribute{
@@ -955,6 +1257,446 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 															},
 															"plugin": schema.SingleNestedAttribute{
 																Attributes: map[string]schema.Attribute{
+																	"aibuilder_query": schema.SingleNestedAttribute{
+																		Attributes: map[string]schema.Attribute{
+																			"kind": schema.StringAttribute{
+																				Computed: true,
+																			},
+																			"spec": schema.SingleNestedAttribute{
+																				Attributes: map[string]schema.Attribute{
+																					"aggregations": schema.ListNestedAttribute{
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"alias": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"expression": schema.StringAttribute{
+																									Computed: true,
+																								},
+																							},
+																							CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
+																								ObjectType: types.ObjectType{
+																									AttrTypes: customtypes.Querybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
+																								},
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"bucket_options": schema.SingleNestedAttribute{
+																						Attributes: map[string]schema.Attribute{
+																							"linear": schema.SingleNestedAttribute{
+																								Attributes: map[string]schema.Attribute{
+																									"kind": schema.StringAttribute{
+																										Computed:            true,
+																										Description:         "How the upper bounds are spaced.",
+																										MarkdownDescription: "How the upper bounds are spaced.",
+																									},
+																									"spec": schema.SingleNestedAttribute{
+																										Attributes: map[string]schema.Attribute{
+																											"max_value": schema.Float64Attribute{
+																												Computed: true,
+																											},
+																											"num_buckets": schema.Int64Attribute{
+																												Computed: true,
+																											},
+																										},
+																										CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
+																											ObjectType: types.ObjectType{
+																												AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
+																											},
+																										},
+																										Computed:            true,
+																										Description:         "The evenly spaced bucket specification.",
+																										MarkdownDescription: "The evenly spaced bucket specification.",
+																									},
+																								},
+																								CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
+																									ObjectType: types.ObjectType{
+																										AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLinearValue{}.AttributeTypes(ctx),
+																									},
+																								},
+																								Computed: true,
+																							},
+																							"log": schema.SingleNestedAttribute{
+																								Attributes: map[string]schema.Attribute{
+																									"kind": schema.StringAttribute{
+																										Computed:            true,
+																										Description:         "How the upper bounds are spaced.",
+																										MarkdownDescription: "How the upper bounds are spaced.",
+																									},
+																									"spec": schema.SingleNestedAttribute{
+																										Attributes: map[string]schema.Attribute{
+																											"scale": schema.Int64Attribute{
+																												Computed: true,
+																											},
+																										},
+																										CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
+																											ObjectType: types.ObjectType{
+																												AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
+																											},
+																										},
+																										Computed:            true,
+																										Description:         "The logarithmic bucket specification.",
+																										MarkdownDescription: "The logarithmic bucket specification.",
+																									},
+																								},
+																								CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
+																									ObjectType: types.ObjectType{
+																										AttrTypes: customtypes.Querybuildertypesv5BucketOptionsLogValue{}.AttributeTypes(ctx),
+																									},
+																								},
+																								Computed: true,
+																							},
+																						},
+																						CustomType: customtypes.Querybuildertypesv5BucketOptionsType{
+																							ObjectType: types.ObjectType{
+																								AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
+																							},
+																						},
+																						Computed: true,
+																						Validators: []validator.Object{
+																							validators.ExactlyOneNestedAttribute("linear", "log"),
+																						},
+																					},
+																					"cursor": schema.StringAttribute{
+																						Computed: true,
+																					},
+																					"disabled": schema.BoolAttribute{
+																						Computed: true,
+																					},
+																					"filter": schema.SingleNestedAttribute{
+																						Attributes: map[string]schema.Attribute{
+																							"expression": schema.StringAttribute{
+																								Computed: true,
+																							},
+																						},
+																						CustomType: customtypes.Querybuildertypesv5FilterType{
+																							ObjectType: types.ObjectType{
+																								AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"functions": schema.ListNestedAttribute{
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"args": schema.ListNestedAttribute{
+																									NestedObject: schema.NestedAttributeObject{
+																										Attributes: map[string]schema.Attribute{
+																											"name": schema.StringAttribute{
+																												Computed: true,
+																											},
+																											"value": schema.StringAttribute{
+																												CustomType: jsontypes.NormalizedType{},
+																												Computed:   true,
+																											},
+																										},
+																										CustomType: customtypes.Querybuildertypesv5FunctionArgType{
+																											ObjectType: types.ObjectType{
+																												AttrTypes: customtypes.Querybuildertypesv5FunctionArgValue{}.AttributeTypes(ctx),
+																											},
+																										},
+																									},
+																									Computed: true,
+																								},
+																								"name": schema.StringAttribute{
+																									Computed: true,
+																								},
+																							},
+																							CustomType: customtypes.Querybuildertypesv5FunctionType{
+																								ObjectType: types.ObjectType{
+																									AttrTypes: customtypes.Querybuildertypesv5FunctionValue{}.AttributeTypes(ctx),
+																								},
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"group_by": schema.ListNestedAttribute{
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"description": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"field_context": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"field_data_type": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"name": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"signal": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"unit": schema.StringAttribute{
+																									Computed: true,
+																								},
+																							},
+																							CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																								ObjectType: types.ObjectType{
+																									AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																								},
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"having": schema.SingleNestedAttribute{
+																						Attributes: map[string]schema.Attribute{
+																							"expression": schema.StringAttribute{
+																								Computed: true,
+																							},
+																						},
+																						CustomType: customtypes.Querybuildertypesv5HavingType{
+																							ObjectType: types.ObjectType{
+																								AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"legend": schema.StringAttribute{
+																						Computed: true,
+																					},
+																					"limit": schema.Int64Attribute{
+																						Computed: true,
+																					},
+																					"limit_by": schema.SingleNestedAttribute{
+																						Attributes: map[string]schema.Attribute{
+																							"keys": schema.ListAttribute{
+																								ElementType: types.StringType,
+																								Computed:    true,
+																							},
+																							"value": schema.StringAttribute{
+																								Computed: true,
+																							},
+																						},
+																						CustomType: customtypes.Querybuildertypesv5LimitByType{
+																							ObjectType: types.ObjectType{
+																								AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"name": schema.StringAttribute{
+																						Computed: true,
+																					},
+																					"offset": schema.Int64Attribute{
+																						Computed: true,
+																					},
+																					"order": schema.ListNestedAttribute{
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"direction": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"key": schema.SingleNestedAttribute{
+																									Attributes: map[string]schema.Attribute{
+																										"description": schema.StringAttribute{
+																											Computed: true,
+																										},
+																										"field_context": schema.StringAttribute{
+																											Computed: true,
+																										},
+																										"field_data_type": schema.StringAttribute{
+																											Computed: true,
+																										},
+																										"name": schema.StringAttribute{
+																											Computed: true,
+																										},
+																										"signal": schema.StringAttribute{
+																											Computed: true,
+																										},
+																										"unit": schema.StringAttribute{
+																											Computed: true,
+																										},
+																									},
+																									CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																										ObjectType: types.ObjectType{
+																											AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																										},
+																									},
+																									Computed: true,
+																								},
+																							},
+																							CustomType: customtypes.Querybuildertypesv5OrderByType{
+																								ObjectType: types.ObjectType{
+																									AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																								},
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"secondary_aggregations": schema.ListNestedAttribute{
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"alias": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"expression": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"group_by": schema.ListNestedAttribute{
+																									NestedObject: schema.NestedAttributeObject{
+																										Attributes: map[string]schema.Attribute{
+																											"description": schema.StringAttribute{
+																												Computed: true,
+																											},
+																											"field_context": schema.StringAttribute{
+																												Computed: true,
+																											},
+																											"field_data_type": schema.StringAttribute{
+																												Computed: true,
+																											},
+																											"name": schema.StringAttribute{
+																												Computed: true,
+																											},
+																											"signal": schema.StringAttribute{
+																												Computed: true,
+																											},
+																											"unit": schema.StringAttribute{
+																												Computed: true,
+																											},
+																										},
+																										CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
+																											ObjectType: types.ObjectType{
+																												AttrTypes: customtypes.Querybuildertypesv5GroupByKeyValue{}.AttributeTypes(ctx),
+																											},
+																										},
+																									},
+																									Computed: true,
+																								},
+																								"limit": schema.Int64Attribute{
+																									Computed: true,
+																								},
+																								"limit_by": schema.SingleNestedAttribute{
+																									Attributes: map[string]schema.Attribute{
+																										"keys": schema.ListAttribute{
+																											ElementType: types.StringType,
+																											Computed:    true,
+																										},
+																										"value": schema.StringAttribute{
+																											Computed: true,
+																										},
+																									},
+																									CustomType: customtypes.Querybuildertypesv5LimitByType{
+																										ObjectType: types.ObjectType{
+																											AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
+																										},
+																									},
+																									Computed: true,
+																								},
+																								"order": schema.ListNestedAttribute{
+																									NestedObject: schema.NestedAttributeObject{
+																										Attributes: map[string]schema.Attribute{
+																											"direction": schema.StringAttribute{
+																												Computed: true,
+																											},
+																											"key": schema.SingleNestedAttribute{
+																												Attributes: map[string]schema.Attribute{
+																													"description": schema.StringAttribute{
+																														Computed: true,
+																													},
+																													"field_context": schema.StringAttribute{
+																														Computed: true,
+																													},
+																													"field_data_type": schema.StringAttribute{
+																														Computed: true,
+																													},
+																													"name": schema.StringAttribute{
+																														Computed: true,
+																													},
+																													"signal": schema.StringAttribute{
+																														Computed: true,
+																													},
+																													"unit": schema.StringAttribute{
+																														Computed: true,
+																													},
+																												},
+																												CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
+																													ObjectType: types.ObjectType{
+																														AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
+																													},
+																												},
+																												Computed: true,
+																											},
+																										},
+																										CustomType: customtypes.Querybuildertypesv5OrderByType{
+																											ObjectType: types.ObjectType{
+																												AttrTypes: customtypes.Querybuildertypesv5OrderByValue{}.AttributeTypes(ctx),
+																											},
+																										},
+																									},
+																									Computed: true,
+																								},
+																								"step_interval": schema.StringAttribute{
+																									CustomType: jsontypes.NormalizedType{},
+																									Computed:   true,
+																								},
+																							},
+																							CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
+																								ObjectType: types.ObjectType{
+																									AttrTypes: customtypes.Querybuildertypesv5SecondaryAggregationValue{}.AttributeTypes(ctx),
+																								},
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"select_fields": schema.ListNestedAttribute{
+																						NestedObject: schema.NestedAttributeObject{
+																							Attributes: map[string]schema.Attribute{
+																								"description": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"field_context": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"field_data_type": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"name": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"signal": schema.StringAttribute{
+																									Computed: true,
+																								},
+																								"unit": schema.StringAttribute{
+																									Computed: true,
+																								},
+																							},
+																							CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
+																								ObjectType: types.ObjectType{
+																									AttrTypes: customtypes.TelemetrytypesTelemetryFieldKeyValue{}.AttributeTypes(ctx),
+																								},
+																							},
+																						},
+																						Computed: true,
+																					},
+																					"signal": schema.StringAttribute{
+																						Computed: true,
+																					},
+																					"source": schema.StringAttribute{
+																						Computed: true,
+																					},
+																					"step_interval": schema.StringAttribute{
+																						CustomType: jsontypes.NormalizedType{},
+																						Computed:   true,
+																					},
+																				},
+																				CustomType: customtypes.DashboardtypesAibuilderQuerySpecType{
+																					ObjectType: types.ObjectType{
+																						AttrTypes: customtypes.DashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+																					},
+																				},
+																				Computed: true,
+																			},
+																		},
+																		CustomType: customtypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecType{
+																			ObjectType: types.ObjectType{
+																				AttrTypes: customtypes.DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+																			},
+																		},
+																		Computed: true,
+																	},
 																	"builder_query": schema.SingleNestedAttribute{
 																		Attributes: map[string]schema.Attribute{
 																			"kind": schema.StringAttribute{
@@ -987,7 +1729,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																									"linear": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
 																											"kind": schema.StringAttribute{
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "How the upper bounds are spaced.",
+																												MarkdownDescription: "How the upper bounds are spaced.",
 																											},
 																											"spec": schema.SingleNestedAttribute{
 																												Attributes: map[string]schema.Attribute{
@@ -1003,7 +1747,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																													},
 																												},
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "The evenly spaced bucket specification.",
+																												MarkdownDescription: "The evenly spaced bucket specification.",
 																											},
 																										},
 																										CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -1016,7 +1762,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																									"log": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
 																											"kind": schema.StringAttribute{
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "How the upper bounds are spaced.",
+																												MarkdownDescription: "How the upper bounds are spaced.",
 																											},
 																											"spec": schema.SingleNestedAttribute{
 																												Attributes: map[string]schema.Attribute{
@@ -1029,7 +1777,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																													},
 																												},
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "The logarithmic bucket specification.",
+																												MarkdownDescription: "The logarithmic bucket specification.",
 																											},
 																										},
 																										CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -1431,7 +2181,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																									"linear": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
 																											"kind": schema.StringAttribute{
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "How the upper bounds are spaced.",
+																												MarkdownDescription: "How the upper bounds are spaced.",
 																											},
 																											"spec": schema.SingleNestedAttribute{
 																												Attributes: map[string]schema.Attribute{
@@ -1447,7 +2199,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																													},
 																												},
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "The evenly spaced bucket specification.",
+																												MarkdownDescription: "The evenly spaced bucket specification.",
 																											},
 																										},
 																										CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -1460,7 +2214,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																									"log": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
 																											"kind": schema.StringAttribute{
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "How the upper bounds are spaced.",
+																												MarkdownDescription: "How the upper bounds are spaced.",
 																											},
 																											"spec": schema.SingleNestedAttribute{
 																												Attributes: map[string]schema.Attribute{
@@ -1473,7 +2229,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																													},
 																												},
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "The logarithmic bucket specification.",
+																												MarkdownDescription: "The logarithmic bucket specification.",
 																											},
 																										},
 																										CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -1850,7 +2608,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																									"linear": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
 																											"kind": schema.StringAttribute{
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "How the upper bounds are spaced.",
+																												MarkdownDescription: "How the upper bounds are spaced.",
 																											},
 																											"spec": schema.SingleNestedAttribute{
 																												Attributes: map[string]schema.Attribute{
@@ -1866,7 +2626,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																													},
 																												},
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "The evenly spaced bucket specification.",
+																												MarkdownDescription: "The evenly spaced bucket specification.",
 																											},
 																										},
 																										CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -1879,7 +2641,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																									"log": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
 																											"kind": schema.StringAttribute{
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "How the upper bounds are spaced.",
+																												MarkdownDescription: "How the upper bounds are spaced.",
 																											},
 																											"spec": schema.SingleNestedAttribute{
 																												Attributes: map[string]schema.Attribute{
@@ -1892,7 +2656,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																													},
 																												},
-																												Computed: true,
+																												Computed:            true,
+																												Description:         "The logarithmic bucket specification.",
+																												MarkdownDescription: "The logarithmic bucket specification.",
 																											},
 																										},
 																										CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -2335,7 +3101,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														"linear": schema.SingleNestedAttribute{
 																															Attributes: map[string]schema.Attribute{
 																																"kind": schema.StringAttribute{
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "How the upper bounds are spaced.",
+																																	MarkdownDescription: "How the upper bounds are spaced.",
 																																},
 																																"spec": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
@@ -2351,7 +3119,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																			AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																																		},
 																																	},
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "The evenly spaced bucket specification.",
+																																	MarkdownDescription: "The evenly spaced bucket specification.",
 																																},
 																															},
 																															CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -2364,7 +3134,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														"log": schema.SingleNestedAttribute{
 																															Attributes: map[string]schema.Attribute{
 																																"kind": schema.StringAttribute{
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "How the upper bounds are spaced.",
+																																	MarkdownDescription: "How the upper bounds are spaced.",
 																																},
 																																"spec": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
@@ -2377,7 +3149,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																			AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																																		},
 																																	},
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "The logarithmic bucket specification.",
+																																	MarkdownDescription: "The logarithmic bucket specification.",
 																																},
 																															},
 																															CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -2727,10 +3501,14 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationValue{}.AttributeTypes(ctx),
 																												},
 																											},
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The AI builder query specification.",
+																											MarkdownDescription: "The AI builder query specification.",
 																										},
 																										"type": schema.StringAttribute{
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The type of the query.",
+																											MarkdownDescription: "The type of the query.",
 																										},
 																									},
 																									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderAiType{
@@ -2749,7 +3527,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														"linear": schema.SingleNestedAttribute{
 																															Attributes: map[string]schema.Attribute{
 																																"kind": schema.StringAttribute{
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "How the upper bounds are spaced.",
+																																	MarkdownDescription: "How the upper bounds are spaced.",
 																																},
 																																"spec": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
@@ -2765,7 +3545,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																			AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																																		},
 																																	},
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "The evenly spaced bucket specification.",
+																																	MarkdownDescription: "The evenly spaced bucket specification.",
 																																},
 																															},
 																															CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -2778,7 +3560,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																														"log": schema.SingleNestedAttribute{
 																															Attributes: map[string]schema.Attribute{
 																																"kind": schema.StringAttribute{
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "How the upper bounds are spaced.",
+																																	MarkdownDescription: "How the upper bounds are spaced.",
 																																},
 																																"spec": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
@@ -2791,7 +3575,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																			AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																																		},
 																																	},
-																																	Computed: true,
+																																	Computed:            true,
+																																	Description:         "The logarithmic bucket specification.",
+																																	MarkdownDescription: "The logarithmic bucket specification.",
 																																},
 																															},
 																															CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -2923,10 +3709,14 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderFormulaValue{}.AttributeTypes(ctx),
 																												},
 																											},
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The formula specification.",
+																											MarkdownDescription: "The formula specification.",
 																										},
 																										"type": schema.StringAttribute{
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The type of the query.",
+																											MarkdownDescription: "The type of the query.",
 																										},
 																									},
 																									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeFormulaType{
@@ -2965,7 +3755,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																"linear": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
 																																		"kind": schema.StringAttribute{
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "How the upper bounds are spaced.",
+																																			MarkdownDescription: "How the upper bounds are spaced.",
 																																		},
 																																		"spec": schema.SingleNestedAttribute{
 																																			Attributes: map[string]schema.Attribute{
@@ -2981,7 +3773,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																																				},
 																																			},
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "The evenly spaced bucket specification.",
+																																			MarkdownDescription: "The evenly spaced bucket specification.",
 																																		},
 																																	},
 																																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -2994,7 +3788,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																"log": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
 																																		"kind": schema.StringAttribute{
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "How the upper bounds are spaced.",
+																																			MarkdownDescription: "How the upper bounds are spaced.",
 																																		},
 																																		"spec": schema.SingleNestedAttribute{
 																																			Attributes: map[string]schema.Attribute{
@@ -3007,7 +3803,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																																				},
 																																			},
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "The logarithmic bucket specification.",
+																																			MarkdownDescription: "The logarithmic bucket specification.",
 																																		},
 																																	},
 																																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -3409,7 +4207,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																"linear": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
 																																		"kind": schema.StringAttribute{
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "How the upper bounds are spaced.",
+																																			MarkdownDescription: "How the upper bounds are spaced.",
 																																		},
 																																		"spec": schema.SingleNestedAttribute{
 																																			Attributes: map[string]schema.Attribute{
@@ -3425,7 +4225,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																																				},
 																																			},
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "The evenly spaced bucket specification.",
+																																			MarkdownDescription: "The evenly spaced bucket specification.",
 																																		},
 																																	},
 																																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -3438,7 +4240,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																"log": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
 																																		"kind": schema.StringAttribute{
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "How the upper bounds are spaced.",
+																																			MarkdownDescription: "How the upper bounds are spaced.",
 																																		},
 																																		"spec": schema.SingleNestedAttribute{
 																																			Attributes: map[string]schema.Attribute{
@@ -3451,7 +4255,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																																				},
 																																			},
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "The logarithmic bucket specification.",
+																																			MarkdownDescription: "The logarithmic bucket specification.",
 																																		},
 																																	},
 																																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -3828,7 +4634,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																"linear": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
 																																		"kind": schema.StringAttribute{
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "How the upper bounds are spaced.",
+																																			MarkdownDescription: "How the upper bounds are spaced.",
 																																		},
 																																		"spec": schema.SingleNestedAttribute{
 																																			Attributes: map[string]schema.Attribute{
@@ -3844,7 +4652,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																					AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																																				},
 																																			},
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "The evenly spaced bucket specification.",
+																																			MarkdownDescription: "The evenly spaced bucket specification.",
 																																		},
 																																	},
 																																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -3857,7 +4667,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																"log": schema.SingleNestedAttribute{
 																																	Attributes: map[string]schema.Attribute{
 																																		"kind": schema.StringAttribute{
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "How the upper bounds are spaced.",
+																																			MarkdownDescription: "How the upper bounds are spaced.",
 																																		},
 																																		"spec": schema.SingleNestedAttribute{
 																																			Attributes: map[string]schema.Attribute{
@@ -3870,7 +4682,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																																					AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																																				},
 																																			},
-																																			Computed: true,
+																																			Computed:            true,
+																																			Description:         "The logarithmic bucket specification.",
+																																			MarkdownDescription: "The logarithmic bucket specification.",
 																																		},
 																																	},
 																																	CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -4228,13 +5042,17 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																													AttrTypes: customtypes.Querybuildertypesv5BuilderQuerySpecValue{}.AttributeTypes(ctx),
 																												},
 																											},
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The builder query specification.",
+																											MarkdownDescription: "The builder query specification.",
 																											Validators: []validator.Object{
 																												validators.ExactlyOneNestedAttribute("logs", "metrics", "traces"),
 																											},
 																										},
 																										"type": schema.StringAttribute{
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The type of the query.",
+																											MarkdownDescription: "The type of the query.",
 																										},
 																									},
 																									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeBuilderType{
@@ -4463,10 +5281,14 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																													AttrTypes: customtypes.Querybuildertypesv5QueryBuilderTraceOperatorValue{}.AttributeTypes(ctx),
 																												},
 																											},
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The trace operator specification.",
+																											MarkdownDescription: "The trace operator specification.",
 																										},
 																										"type": schema.StringAttribute{
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The type of the query.",
+																											MarkdownDescription: "The type of the query.",
 																										},
 																									},
 																									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeTraceOperatorType{
@@ -4498,10 +5320,14 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																													AttrTypes: customtypes.Querybuildertypesv5ClickHouseQueryValue{}.AttributeTypes(ctx),
 																												},
 																											},
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The ClickHouse SQL query specification.",
+																											MarkdownDescription: "The ClickHouse SQL query specification.",
 																										},
 																										"type": schema.StringAttribute{
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The type of the query.",
+																											MarkdownDescription: "The type of the query.",
 																										},
 																									},
 																									CustomType: customtypes.Querybuildertypesv5QueryEnvelopeClickHouseSqlType{
@@ -4540,10 +5366,14 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																													AttrTypes: customtypes.Querybuildertypesv5PromQueryValue{}.AttributeTypes(ctx),
 																												},
 																											},
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The PromQL query specification.",
+																											MarkdownDescription: "The PromQL query specification.",
 																										},
 																										"type": schema.StringAttribute{
-																											Computed: true,
+																											Computed:            true,
+																											Description:         "The type of the query.",
+																											MarkdownDescription: "The type of the query.",
 																										},
 																									},
 																									CustomType: customtypes.Querybuildertypesv5QueryEnvelopePromQlType{
@@ -4595,7 +5425,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																							"linear": schema.SingleNestedAttribute{
 																								Attributes: map[string]schema.Attribute{
 																									"kind": schema.StringAttribute{
-																										Computed: true,
+																										Computed:            true,
+																										Description:         "How the upper bounds are spaced.",
+																										MarkdownDescription: "How the upper bounds are spaced.",
 																									},
 																									"spec": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
@@ -4611,7 +5443,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																												AttrTypes: customtypes.Querybuildertypesv5LinearBucketsSpecValue{}.AttributeTypes(ctx),
 																											},
 																										},
-																										Computed: true,
+																										Computed:            true,
+																										Description:         "The evenly spaced bucket specification.",
+																										MarkdownDescription: "The evenly spaced bucket specification.",
 																									},
 																								},
 																								CustomType: customtypes.Querybuildertypesv5BucketOptionsLinearType{
@@ -4624,7 +5458,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																							"log": schema.SingleNestedAttribute{
 																								Attributes: map[string]schema.Attribute{
 																									"kind": schema.StringAttribute{
-																										Computed: true,
+																										Computed:            true,
+																										Description:         "How the upper bounds are spaced.",
+																										MarkdownDescription: "How the upper bounds are spaced.",
 																									},
 																									"spec": schema.SingleNestedAttribute{
 																										Attributes: map[string]schema.Attribute{
@@ -4637,7 +5473,9 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																												AttrTypes: customtypes.Querybuildertypesv5LogBucketsSpecValue{}.AttributeTypes(ctx),
 																											},
 																										},
-																										Computed: true,
+																										Computed:            true,
+																										Description:         "The logarithmic bucket specification.",
+																										MarkdownDescription: "The logarithmic bucket specification.",
 																									},
 																								},
 																								CustomType: customtypes.Querybuildertypesv5BucketOptionsLogType{
@@ -5061,7 +5899,7 @@ func DashboardDataSourceSchema(ctx context.Context) schema.Schema {
 																},
 																Computed: true,
 																Validators: []validator.Object{
-																	validators.ExactlyOneNestedAttribute("builder_query", "click_house_sql", "composite_query", "formula", "prom_qlquery", "trace_operator"),
+																	validators.ExactlyOneNestedAttribute("aibuilder_query", "builder_query", "click_house_sql", "composite_query", "formula", "prom_qlquery", "trace_operator"),
 																},
 															},
 														},

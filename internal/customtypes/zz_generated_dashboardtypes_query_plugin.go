@@ -39,6 +39,24 @@ func (t DashboardtypesQueryPluginType) ValueFromObject(ctx context.Context, in b
 
 	attributes := in.Attributes()
 
+	aibuilderQueryAttribute, ok := attributes["aibuilder_query"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`aibuilder_query is missing from object`)
+
+		return nil, diags
+	}
+
+	aibuilderQueryVal, ok := aibuilderQueryAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`aibuilder_query expected to be basetypes.ObjectValue, was: %T`, aibuilderQueryAttribute))
+	}
+
 	builderQueryAttribute, ok := attributes["builder_query"]
 
 	if !ok {
@@ -152,6 +170,7 @@ func (t DashboardtypesQueryPluginType) ValueFromObject(ctx context.Context, in b
 	}
 
 	return DashboardtypesQueryPluginValue{
+		AibuilderQuery: aibuilderQueryVal,
 		BuilderQuery:   builderQueryVal,
 		ClickHouseSql:  clickHouseSqlVal,
 		CompositeQuery: compositeQueryVal,
@@ -225,6 +244,24 @@ func NewDashboardtypesQueryPluginValue(attributeTypes map[string]attr.Type, attr
 		return NewDashboardtypesQueryPluginValueUnknown(), diags
 	}
 
+	aibuilderQueryAttribute, ok := attributes["aibuilder_query"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`aibuilder_query is missing from object`)
+
+		return NewDashboardtypesQueryPluginValueUnknown(), diags
+	}
+
+	aibuilderQueryVal, ok := aibuilderQueryAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`aibuilder_query expected to be basetypes.ObjectValue, was: %T`, aibuilderQueryAttribute))
+	}
+
 	builderQueryAttribute, ok := attributes["builder_query"]
 
 	if !ok {
@@ -338,6 +375,7 @@ func NewDashboardtypesQueryPluginValue(attributeTypes map[string]attr.Type, attr
 	}
 
 	return DashboardtypesQueryPluginValue{
+		AibuilderQuery: aibuilderQueryVal,
 		BuilderQuery:   builderQueryVal,
 		ClickHouseSql:  clickHouseSqlVal,
 		CompositeQuery: compositeQueryVal,
@@ -416,6 +454,7 @@ func (t DashboardtypesQueryPluginType) ValueType(ctx context.Context) attr.Value
 var _ basetypes.ObjectValuable = DashboardtypesQueryPluginValue{}
 
 type DashboardtypesQueryPluginValue struct {
+	AibuilderQuery basetypes.ObjectValue `tfsdk:"aibuilder_query"`
 	BuilderQuery   basetypes.ObjectValue `tfsdk:"builder_query"`
 	ClickHouseSql  basetypes.ObjectValue `tfsdk:"click_house_sql"`
 	CompositeQuery basetypes.ObjectValue `tfsdk:"composite_query"`
@@ -426,11 +465,14 @@ type DashboardtypesQueryPluginValue struct {
 }
 
 func (v DashboardtypesQueryPluginValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 6)
+	attrTypes := make(map[string]tftypes.Type, 7)
 
 	var val tftypes.Value
 	var err error
 
+	attrTypes["aibuilder_query"] = basetypes.ObjectType{
+		AttrTypes: DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+	}.TerraformType(ctx)
 	attrTypes["builder_query"] = basetypes.ObjectType{
 		AttrTypes: DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpecValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -454,7 +496,15 @@ func (v DashboardtypesQueryPluginValue) ToTerraformValue(ctx context.Context) (t
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 6)
+		vals := make(map[string]tftypes.Value, 7)
+
+		val, err = v.AibuilderQuery.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["aibuilder_query"] = val
 
 		val, err = v.BuilderQuery.ToTerraformValue(ctx)
 
@@ -532,6 +582,27 @@ func (v DashboardtypesQueryPluginValue) String() string {
 
 func (v DashboardtypesQueryPluginValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
+
+	var aibuilderQuery basetypes.ObjectValue
+
+	if v.AibuilderQuery.IsNull() {
+		aibuilderQuery = types.ObjectNull(
+			DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if v.AibuilderQuery.IsUnknown() {
+		aibuilderQuery = types.ObjectUnknown(
+			DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if !v.AibuilderQuery.IsNull() && !v.AibuilderQuery.IsUnknown() {
+		aibuilderQuery = types.ObjectValueMust(
+			DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+			v.AibuilderQuery.Attributes(),
+		)
+	}
 
 	var builderQuery basetypes.ObjectValue
 
@@ -660,6 +731,9 @@ func (v DashboardtypesQueryPluginValue) ToObjectValue(ctx context.Context) (base
 	}
 
 	attributeTypes := map[string]attr.Type{
+		"aibuilder_query": basetypes.ObjectType{
+			AttrTypes: DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+		},
 		"builder_query": basetypes.ObjectType{
 			AttrTypes: DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpecValue{}.AttributeTypes(ctx),
 		},
@@ -691,6 +765,7 @@ func (v DashboardtypesQueryPluginValue) ToObjectValue(ctx context.Context) (base
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
+			"aibuilder_query": aibuilderQuery,
 			"builder_query":   builderQuery,
 			"click_house_sql": clickHouseSql,
 			"composite_query": compositeQuery,
@@ -715,6 +790,10 @@ func (v DashboardtypesQueryPluginValue) Equal(o attr.Value) bool {
 
 	if v.state != attr.ValueStateKnown {
 		return true
+	}
+
+	if !v.AibuilderQuery.Equal(other.AibuilderQuery) {
+		return false
 	}
 
 	if !v.BuilderQuery.Equal(other.BuilderQuery) {
@@ -754,6 +833,9 @@ func (v DashboardtypesQueryPluginValue) Type(ctx context.Context) attr.Type {
 
 func (v DashboardtypesQueryPluginValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
+		"aibuilder_query": basetypes.ObjectType{
+			AttrTypes: DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAibuilderQuerySpecValue{}.AttributeTypes(ctx),
+		},
 		"builder_query": basetypes.ObjectType{
 			AttrTypes: DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBuilderQuerySpecValue{}.AttributeTypes(ctx),
 		},

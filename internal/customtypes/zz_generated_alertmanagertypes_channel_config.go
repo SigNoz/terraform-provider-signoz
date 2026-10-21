@@ -201,6 +201,24 @@ func (t AlertmanagertypesChannelConfigType) ValueFromObject(ctx context.Context,
 			fmt.Sprintf(`slack expected to be basetypes.ObjectValue, was: %T`, slackAttribute))
 	}
 
+	telegramAttribute, ok := attributes["telegram"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`telegram is missing from object`)
+
+		return nil, diags
+	}
+
+	telegramVal, ok := telegramAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`telegram expected to be basetypes.ObjectValue, was: %T`, telegramAttribute))
+	}
+
 	webhookAttribute, ok := attributes["webhook"]
 
 	if !ok {
@@ -233,6 +251,7 @@ func (t AlertmanagertypesChannelConfigType) ValueFromObject(ctx context.Context,
 		Opsgenie:   opsgenieVal,
 		Pagerduty:  pagerdutyVal,
 		Slack:      slackVal,
+		Telegram:   telegramVal,
 		Webhook:    webhookVal,
 		state:      attr.ValueStateKnown,
 	}, diags
@@ -463,6 +482,24 @@ func NewAlertmanagertypesChannelConfigValue(attributeTypes map[string]attr.Type,
 			fmt.Sprintf(`slack expected to be basetypes.ObjectValue, was: %T`, slackAttribute))
 	}
 
+	telegramAttribute, ok := attributes["telegram"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`telegram is missing from object`)
+
+		return NewAlertmanagertypesChannelConfigValueUnknown(), diags
+	}
+
+	telegramVal, ok := telegramAttribute.(basetypes.ObjectValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`telegram expected to be basetypes.ObjectValue, was: %T`, telegramAttribute))
+	}
+
 	webhookAttribute, ok := attributes["webhook"]
 
 	if !ok {
@@ -495,6 +532,7 @@ func NewAlertmanagertypesChannelConfigValue(attributeTypes map[string]attr.Type,
 		Opsgenie:   opsgenieVal,
 		Pagerduty:  pagerdutyVal,
 		Slack:      slackVal,
+		Telegram:   telegramVal,
 		Webhook:    webhookVal,
 		state:      attr.ValueStateKnown,
 	}, diags
@@ -577,12 +615,13 @@ type AlertmanagertypesChannelConfigValue struct {
 	Opsgenie   basetypes.ObjectValue `tfsdk:"opsgenie"`
 	Pagerduty  basetypes.ObjectValue `tfsdk:"pagerduty"`
 	Slack      basetypes.ObjectValue `tfsdk:"slack"`
+	Telegram   basetypes.ObjectValue `tfsdk:"telegram"`
 	Webhook    basetypes.ObjectValue `tfsdk:"webhook"`
 	state      attr.ValueState
 }
 
 func (v AlertmanagertypesChannelConfigValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 10)
+	attrTypes := make(map[string]tftypes.Type, 11)
 
 	var val tftypes.Value
 	var err error
@@ -614,6 +653,9 @@ func (v AlertmanagertypesChannelConfigValue) ToTerraformValue(ctx context.Contex
 	attrTypes["slack"] = basetypes.ObjectType{
 		AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelSlackConfigValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
+	attrTypes["telegram"] = basetypes.ObjectType{
+		AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
+	}.TerraformType(ctx)
 	attrTypes["webhook"] = basetypes.ObjectType{
 		AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfigValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -622,7 +664,7 @@ func (v AlertmanagertypesChannelConfigValue) ToTerraformValue(ctx context.Contex
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 10)
+		vals := make(map[string]tftypes.Value, 11)
 
 		val, err = v.Email.ToTerraformValue(ctx)
 
@@ -695,6 +737,14 @@ func (v AlertmanagertypesChannelConfigValue) ToTerraformValue(ctx context.Contex
 		}
 
 		vals["slack"] = val
+
+		val, err = v.Telegram.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["telegram"] = val
 
 		val, err = v.Webhook.ToTerraformValue(ctx)
 
@@ -922,6 +972,27 @@ func (v AlertmanagertypesChannelConfigValue) ToObjectValue(ctx context.Context) 
 		)
 	}
 
+	var telegram basetypes.ObjectValue
+
+	if v.Telegram.IsNull() {
+		telegram = types.ObjectNull(
+			AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if v.Telegram.IsUnknown() {
+		telegram = types.ObjectUnknown(
+			AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if !v.Telegram.IsNull() && !v.Telegram.IsUnknown() {
+		telegram = types.ObjectValueMust(
+			AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
+			v.Telegram.Attributes(),
+		)
+	}
+
 	var webhook basetypes.ObjectValue
 
 	if v.Webhook.IsNull() {
@@ -971,6 +1042,9 @@ func (v AlertmanagertypesChannelConfigValue) ToObjectValue(ctx context.Context) 
 		"slack": basetypes.ObjectType{
 			AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelSlackConfigValue{}.AttributeTypes(ctx),
 		},
+		"telegram": basetypes.ObjectType{
+			AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
+		},
 		"webhook": basetypes.ObjectType{
 			AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfigValue{}.AttributeTypes(ctx),
 		},
@@ -996,6 +1070,7 @@ func (v AlertmanagertypesChannelConfigValue) ToObjectValue(ctx context.Context) 
 			"opsgenie":   opsgenie,
 			"pagerduty":  pagerduty,
 			"slack":      slack,
+			"telegram":   telegram,
 			"webhook":    webhook,
 		})
 
@@ -1053,6 +1128,10 @@ func (v AlertmanagertypesChannelConfigValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.Telegram.Equal(other.Telegram) {
+		return false
+	}
+
 	if !v.Webhook.Equal(other.Webhook) {
 		return false
 	}
@@ -1096,6 +1175,9 @@ func (v AlertmanagertypesChannelConfigValue) AttributeTypes(ctx context.Context)
 		},
 		"slack": basetypes.ObjectType{
 			AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelSlackConfigValue{}.AttributeTypes(ctx),
+		},
+		"telegram": basetypes.ObjectType{
+			AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
 		},
 		"webhook": basetypes.ObjectType{
 			AttrTypes: AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfigValue{}.AttributeTypes(ctx),

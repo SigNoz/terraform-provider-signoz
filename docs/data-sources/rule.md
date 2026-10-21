@@ -78,8 +78,8 @@ Read-Only:
 
 Read-Only:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec))
-- `type` (String)
+- `spec` (Attributes) The AI builder query specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec))
+- `type` (String) The type of the query.
 
 <a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec`
@@ -128,8 +128,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--linear--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--linear--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.bucket_options.linear.spec`
@@ -146,8 +146,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--log--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_ai_query--spec--bucket_options--log--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_ai_query.spec.bucket_options.log.spec`
@@ -315,8 +315,8 @@ Read-Only:
 
 Read-Only:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec))
-- `type` (String)
+- `spec` (Attributes) The formula specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec))
+- `type` (String) The type of the query.
 
 <a id="nestedatt--condition--composite_query--queries--builder_formula--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_formula.spec`
@@ -346,8 +346,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--linear--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--linear--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_formula.spec.bucket_options.linear.spec`
@@ -364,8 +364,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--log--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_formula--spec--bucket_options--log--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_formula.spec.bucket_options.log.spec`
@@ -432,8 +432,8 @@ Read-Only:
 
 Read-Only:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec))
-- `type` (String)
+- `spec` (Attributes) The builder query specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec))
+- `type` (String) The type of the query.
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_query.spec`
@@ -491,8 +491,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--linear--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--linear--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_query.spec.logs.bucket_options.linear.spec`
@@ -509,8 +509,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--log--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--logs--bucket_options--log--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_query.spec.logs.bucket_options.log.spec`
@@ -732,8 +732,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--linear--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--linear--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_query.spec.metrics.bucket_options.linear.spec`
@@ -750,8 +750,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--log--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--metrics--bucket_options--log--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_query.spec.metrics.bucket_options.log.spec`
@@ -960,8 +960,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--linear--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The evenly spaced bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--linear--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--linear--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_query.spec.traces.bucket_options.linear.spec`
@@ -978,8 +978,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--log--spec))
+- `kind` (String) How the upper bounds are spaced.
+- `spec` (Attributes) The logarithmic bucket specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--log--spec))
 
 <a id="nestedatt--condition--composite_query--queries--builder_query--spec--traces--bucket_options--log--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_query.spec.traces.bucket_options.log.spec`
@@ -1148,8 +1148,8 @@ Read-Only:
 
 Read-Only:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_trace_operator--spec))
-- `type` (String)
+- `spec` (Attributes) The trace operator specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--builder_trace_operator--spec))
+- `type` (String) The type of the query.
 
 <a id="nestedatt--condition--composite_query--queries--builder_trace_operator--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.builder_trace_operator.spec`
@@ -1271,8 +1271,8 @@ Read-Only:
 
 Read-Only:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--clickhouse_sql--spec))
-- `type` (String)
+- `spec` (Attributes) The ClickHouse SQL query specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--clickhouse_sql--spec))
+- `type` (String) The type of the query.
 
 <a id="nestedatt--condition--composite_query--queries--clickhouse_sql--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.clickhouse_sql.spec`
@@ -1291,8 +1291,8 @@ Read-Only:
 
 Read-Only:
 
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--condition--composite_query--queries--promql--spec))
-- `type` (String)
+- `spec` (Attributes) The PromQL query specification. (see [below for nested schema](#nestedatt--condition--composite_query--queries--promql--spec))
+- `type` (String) The type of the query.
 
 <a id="nestedatt--condition--composite_query--queries--promql--spec"></a>
 ### Nested Schema for `condition.composite_query.queries.promql.spec`
@@ -1322,8 +1322,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes List) (see [below for nested schema](#nestedatt--condition--thresholds--basic--spec))
+- `kind` (String) The kind of threshold.
+- `spec` (Attributes List) The basic threshold specification (array of thresholds). (see [below for nested schema](#nestedatt--condition--thresholds--basic--spec))
 
 <a id="nestedatt--condition--thresholds--basic--spec"></a>
 ### Nested Schema for `condition.thresholds.basic.spec`
@@ -1355,8 +1355,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--evaluation--cumulative--spec))
+- `kind` (String) The kind of evaluation.
+- `spec` (Attributes) The cumulative window evaluation specification. (see [below for nested schema](#nestedatt--evaluation--cumulative--spec))
 
 <a id="nestedatt--evaluation--cumulative--spec"></a>
 ### Nested Schema for `evaluation.cumulative.spec`
@@ -1386,8 +1386,8 @@ Read-Only:
 
 Read-Only:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--evaluation--rolling--spec))
+- `kind` (String) The kind of evaluation.
+- `spec` (Attributes) The rolling window evaluation specification. (see [below for nested schema](#nestedatt--evaluation--rolling--spec))
 
 <a id="nestedatt--evaluation--rolling--spec"></a>
 ### Nested Schema for `evaluation.rolling.spec`

@@ -20,6 +20,23 @@ func ExpandDashboardtypesPanelPlugin(ctx context.Context, v customtypes.Dashboar
 	}
 	var out apitypes.DashboardtypesPanelPlugin
 
+	if !v.AreaChartPanel.IsNull() && !v.AreaChartPanel.IsUnknown() {
+		typed, d := dashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpecValueFromObject(ctx, v.AreaChartPanel)
+		diags.Append(d...)
+		member, d := ExpandDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpec(ctx, typed)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if member != nil {
+			if err := out.FromDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpec(*member); err != nil {
+				diags.AddError("Failed to encode area_chart_panel union variant", err.Error())
+				return nil, diags
+			}
+		}
+		return &out, diags
+	}
+
 	if !v.BarChartPanel.IsNull() && !v.BarChartPanel.IsUnknown() {
 		typed, d := dashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpecValueFromObject(ctx, v.BarChartPanel)
 		diags.Append(d...)
@@ -31,6 +48,23 @@ func ExpandDashboardtypesPanelPlugin(ctx context.Context, v customtypes.Dashboar
 		if member != nil {
 			if err := out.FromDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpec(*member); err != nil {
 				diags.AddError("Failed to encode bar_chart_panel union variant", err.Error())
+				return nil, diags
+			}
+		}
+		return &out, diags
+	}
+
+	if !v.HeatmapPanel.IsNull() && !v.HeatmapPanel.IsUnknown() {
+		typed, d := dashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpecValueFromObject(ctx, v.HeatmapPanel)
+		diags.Append(d...)
+		member, d := ExpandDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpec(ctx, typed)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if member != nil {
+			if err := out.FromDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpec(*member); err != nil {
+				diags.AddError("Failed to encode heatmap_panel union variant", err.Error())
 				return nil, diags
 			}
 		}
@@ -165,7 +199,9 @@ func FlattenDashboardtypesPanelPlugin(ctx context.Context, in *apitypes.Dashboar
 		return customtypes.NewDashboardtypesPanelPluginValueNull(), diags
 	}
 	attrs := map[string]attr.Value{
+		"area_chart_panel":  basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpecValue{}.AttributeTypes(ctx)),
 		"bar_chart_panel":   basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpecValue{}.AttributeTypes(ctx)),
+		"heatmap_panel":     basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpecValue{}.AttributeTypes(ctx)),
 		"histogram_panel":   basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHistogramPanelSpecValue{}.AttributeTypes(ctx)),
 		"list_panel":        basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesListPanelSpecValue{}.AttributeTypes(ctx)),
 		"number_panel":      basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesNumberPanelSpecValue{}.AttributeTypes(ctx)),
@@ -180,12 +216,24 @@ func FlattenDashboardtypesPanelPlugin(ctx context.Context, in *apitypes.Dashboar
 		return customtypes.NewDashboardtypesPanelPluginValueUnknown(), diags
 	}
 	switch member := disc.(type) {
+	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpec:
+		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpec(ctx, &member)
+		diags.Append(d...)
+		ov, d := fv.ToObjectValue(ctx)
+		diags.Append(d...)
+		attrs["area_chart_panel"] = ov
 	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpec:
 		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpec(ctx, &member)
 		diags.Append(d...)
 		ov, d := fv.ToObjectValue(ctx)
 		diags.Append(d...)
 		attrs["bar_chart_panel"] = ov
+	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpec:
+		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpec(ctx, &member)
+		diags.Append(d...)
+		ov, d := fv.ToObjectValue(ctx)
+		diags.Append(d...)
+		attrs["heatmap_panel"] = ov
 	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHistogramPanelSpec:
 		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHistogramPanelSpec(ctx, &member)
 		diags.Append(d...)

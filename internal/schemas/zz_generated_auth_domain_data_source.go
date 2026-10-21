@@ -21,7 +21,9 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 					"google": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The kind of authn provider.",
+								MarkdownDescription: "The kind of authn provider.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
@@ -59,7 +61,9 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AuthtypesGoogleConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The google auth configuration.",
+								MarkdownDescription: "The google auth configuration.",
 							},
 						},
 						CustomType: customtypes.AuthtypesAuthDomainConfigGoogleType{
@@ -72,7 +76,9 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 					"oidc": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The kind of authn provider.",
+								MarkdownDescription: "The kind of authn provider.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
@@ -123,7 +129,9 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AuthtypesOidcconfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The oidc configuration.",
+								MarkdownDescription: "The oidc configuration.",
 							},
 						},
 						CustomType: customtypes.AuthtypesAuthDomainConfigOidcType{
@@ -136,7 +144,9 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 					"saml": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The kind of authn provider.",
+								MarkdownDescription: "The kind of authn provider.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
@@ -180,7 +190,9 @@ func AuthDomainDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AuthtypesSamlConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The saml configuration.",
+								MarkdownDescription: "The saml configuration.",
 							},
 						},
 						CustomType: customtypes.AuthtypesAuthDomainConfigSamlType{
