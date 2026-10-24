@@ -78,6 +78,7 @@ func RoleResourceSchema(ctx context.Context) schema.Schema {
 													"meter-metrics",
 													"logs-field",
 													"traces-field",
+													"metrics-field",
 												),
 											},
 										},
