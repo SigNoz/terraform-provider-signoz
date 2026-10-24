@@ -24,13 +24,10 @@ func ExpandRuletypesThresholdBasic(ctx context.Context, v customtypes.RuletypesT
 	if diags.HasError() {
 		return nil, diags
 	}
-	out := &apitypes.RuletypesThresholdBasic{
+	return &apitypes.RuletypesThresholdBasic{
 		Kind: apitypes.RuletypesThresholdKind(v.Kind.ValueString()),
-	}
-	if spec != nil {
-		out.Spec = *spec
-	}
-	return out, diags
+		Spec: spec,
+	}, diags
 }
 
 func FlattenRuletypesThresholdBasic(ctx context.Context, in *apitypes.RuletypesThresholdBasic) (customtypes.RuletypesThresholdBasicValue, diag.Diagnostics) {
@@ -39,7 +36,7 @@ func FlattenRuletypesThresholdBasic(ctx context.Context, in *apitypes.RuletypesT
 		return customtypes.NewRuletypesThresholdBasicValueNull(), diags
 	}
 
-	specFlat, d := FlattenRuletypesBasicRuleThresholdList(ctx, &in.Spec)
+	specFlat, d := FlattenRuletypesBasicRuleThresholdList(ctx, in.Spec)
 	diags.Append(d...)
 	if diags.HasError() {
 		return customtypes.NewRuletypesThresholdBasicValueUnknown(), diags
