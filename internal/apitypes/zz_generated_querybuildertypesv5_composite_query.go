@@ -5,5 +5,6 @@ package apitypes
 
 // Querybuildertypesv5CompositeQuery Composite query containing one or more query envelopes. Each query envelope specifies its type and corresponding spec.
 type Querybuildertypesv5CompositeQuery struct {
-	Queries *[]Querybuildertypesv5QueryEnvelope `json:"queries,omitempty"`
+	// Queries The queries to run, each wrapped in a type-discriminated envelope. Names must be unique; formulas and trace operators reference other queries by name.
+	Queries *[]Querybuildertypesv5QueryEnvelope `json:"queries,omitempty" jsonschema:"The queries to run, each wrapped in a type-discriminated envelope. Names must be unique; formulas and trace operators reference other queries by name."`
 }

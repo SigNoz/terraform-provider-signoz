@@ -20,9 +20,12 @@ func (e DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuilde
 
 // DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperator defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperator.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperator struct {
-	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperatorKind `json:"kind"`
-	Spec Querybuildertypesv5QueryBuilderTraceOperator                                                                                   `json:"spec"`
+	// Kind The query kind.
+	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperatorKind `json:"kind" jsonschema:"The query kind."`
+
+	// Spec The kind-specific query spec.
+	Spec Querybuildertypesv5QueryBuilderTraceOperator `json:"spec" jsonschema:"The kind-specific query spec."`
 }
 
-// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperatorKind defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperator.Kind.
+// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperatorKind The query kind.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5QueryBuilderTraceOperatorKind string

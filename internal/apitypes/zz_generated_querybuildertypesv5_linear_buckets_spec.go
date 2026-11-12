@@ -5,6 +5,9 @@ package apitypes
 
 // Querybuildertypesv5LinearBucketsSpec defines model for Querybuildertypesv5LinearBucketsSpec.
 type Querybuildertypesv5LinearBucketsSpec struct {
-	MaxValue   float64 `json:"maxValue"`
-	NumBuckets *int    `json:"numBuckets,omitempty"`
+	// MaxValue The upper bound of the last regular band; values above it are counted in a trailing overflow band.
+	MaxValue float64 `json:"maxValue" jsonschema:"The upper bound of the last regular band; values above it are counted in a trailing overflow band."`
+
+	// NumBuckets The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
+	NumBuckets *int `json:"numBuckets,omitempty" jsonschema:"The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0."`
 }

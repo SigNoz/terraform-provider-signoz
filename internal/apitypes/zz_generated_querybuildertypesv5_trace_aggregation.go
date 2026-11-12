@@ -5,6 +5,9 @@ package apitypes
 
 // Querybuildertypesv5TraceAggregation defines model for Querybuildertypesv5TraceAggregation.
 type Querybuildertypesv5TraceAggregation struct {
-	Alias      *string `json:"alias,omitempty"`
-	Expression *string `json:"expression,omitempty"`
+	// Alias The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+	Alias *string `json:"alias,omitempty" jsonschema:"The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation."`
+
+	// Expression The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).
+	Expression *string `json:"expression,omitempty" jsonschema:"The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10)."`
 }

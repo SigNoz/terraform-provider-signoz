@@ -20,9 +20,12 @@ func (e DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardty
 
 // DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec struct {
-	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpecKind `json:"kind"`
-	Spec DashboardtypesAIBuilderQuerySpec                                                                  `json:"spec"`
+	// Kind The query kind.
+	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpecKind `json:"kind" jsonschema:"The query kind."`
+
+	// Spec The kind-specific query spec.
+	Spec DashboardtypesAIBuilderQuerySpec `json:"spec" jsonschema:"The kind-specific query spec."`
 }
 
-// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpecKind defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpec.Kind.
+// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpecKind The query kind.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAIBuilderQuerySpecKind string

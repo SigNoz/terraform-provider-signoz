@@ -20,9 +20,12 @@ func (e DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardty
 
 // DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec defines model for DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec.
 type DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec struct {
-	Kind DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecKind `json:"kind"`
-	Spec DashboardtypesTextPanelSpec                                                                  `json:"spec"`
+	// Kind The panel kind.
+	Kind DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecKind `json:"kind" jsonschema:"The panel kind."`
+
+	// Spec The options for this panel kind. {} accepts every default.
+	Spec DashboardtypesTextPanelSpec `json:"spec" jsonschema:"The options for this panel kind. {} accepts every default."`
 }
 
-// DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecKind defines model for DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpec.Kind.
+// DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecKind The panel kind.
 type DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecKind string

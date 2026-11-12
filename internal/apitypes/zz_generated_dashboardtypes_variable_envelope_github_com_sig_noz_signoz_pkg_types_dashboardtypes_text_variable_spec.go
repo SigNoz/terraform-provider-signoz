@@ -20,9 +20,12 @@ func (e DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtype
 
 // DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpec defines model for DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpec.
 type DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpec struct {
-	Kind DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpecKind `json:"kind"`
-	Spec DashboardtypesTextVariableSpec                                                                `json:"spec"`
+	// Kind The variable kind.
+	Kind DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpecKind `json:"kind" jsonschema:"The variable kind."`
+
+	// Spec The kind-specific variable spec.
+	Spec DashboardtypesTextVariableSpec `json:"spec" jsonschema:"The kind-specific variable spec."`
 }
 
-// DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpecKind defines model for DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpec.Kind.
+// DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpecKind The variable kind.
 type DashboardtypesVariableEnvelopeGithubComSigNozSignozPkgTypesDashboardtypesTextVariableSpecKind string

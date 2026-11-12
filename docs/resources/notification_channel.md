@@ -52,16 +52,16 @@ resource "signoz_notification_channel" "webhook_pager" {
 
 ### Required
 
-- `config` (Attributes) (see [below for nested schema](#nestedatt--config))
+- `config` (Attributes) The provider kind and its spec. (see [below for nested schema](#nestedatt--config))
 
 ### Optional
 
-- `display_name` (String)
-- `name` (String)
+- `display_name` (String) The label shown in the UI. Alert rules and routing policies reference it, not name. Defaults to name; required when generateName is true.
+- `name` (String) The immutable DNS-1123 identifier of the channel (lowercase letters, digits and hyphens, at most 63 characters). Required unless generateName is true, in which case it must be empty. Alert rules and routing policies reference displayName, not name.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The channel UUID.
 
 <a id="nestedatt--config"></a>
 ### Nested Schema for `config`
@@ -85,21 +85,21 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--email--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--email--spec))
 
 <a id="nestedatt--config--email--spec"></a>
 ### Nested Schema for `config.email.spec`
 
 Required:
 
-- `to` (String)
+- `to` (String) The recipient addresses, comma separated.
 
 Optional:
 
-- `headers` (Map of String)
-- `html` (String)
-- `send_resolved` (Boolean)
+- `headers` (Map of String) Extra SMTP headers keyed by canonical MIME header name, such as Subject.
+- `html` (String) Alertmanager template for the HTML body; defaults to the Alertmanager email default.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to false.
 
 
 
@@ -108,21 +108,21 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--googlechat--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--googlechat--spec))
 
 <a id="nestedatt--config--googlechat--spec"></a>
 ### Nested Schema for `config.googlechat.spec`
 
 Required:
 
-- `webhook_url` (String, Sensitive)
+- `webhook_url` (String, Sensitive) The Google Chat space webhook URL. A secret; returned by create, update and fetch by ID, never by list.
 
 Optional:
 
-- `send_resolved` (Boolean)
-- `text` (String)
-- `title` (String)
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to false.
+- `text` (String) Alertmanager template for the message body; defaults to the SigNoz Google Chat default.
+- `title` (String) Alertmanager template for the message title; defaults to the SigNoz Google Chat default.
 
 
 
@@ -131,23 +131,23 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--incidentio--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--incidentio--spec))
 
 <a id="nestedatt--config--incidentio--spec"></a>
 ### Nested Schema for `config.incidentio.spec`
 
 Required:
 
-- `token` (String, Sensitive)
-- `url` (String)
+- `token` (String, Sensitive) The alert source secret token, without the Bearer prefix. A secret; returned by create, update and fetch by ID, never by list.
+- `url` (String) The alert source HTTP alert events endpoint copied from its setup page.
 
 Optional:
 
-- `description` (String)
-- `metadata` (Map of String)
-- `send_resolved` (Boolean)
-- `title` (String)
+- `description` (String) Alertmanager template for the alert description, rendered as markdown; defaults to the SigNoz incident.io default.
+- `metadata` (Map of String) Extra event metadata keyed by name, merged over the group's common labels; values are Alertmanager templates.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to false.
+- `title` (String) Alertmanager template for the alert title; defaults to the SigNoz incident.io default.
 
 
 
@@ -156,32 +156,42 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--jira--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--jira--spec))
 
 <a id="nestedatt--config--jira--spec"></a>
 ### Nested Schema for `config.jira.spec`
 
 Required:
 
-- `api_token` (String, Sensitive)
-- `email` (String)
-- `issue_type` (String)
-- `project` (String)
-- `site` (String)
+- `auth` (Attributes) The credentials: email and apiToken when deployment is cloud, pat when deployment is selfhosted. (see [below for nested schema](#nestedatt--config--jira--spec--auth))
+- `deployment` (String) The Jira edition: cloud for an Atlassian-hosted site, selfhosted for Jira Server or Data Center.
+- `issue_type` (String) The issue type name, such as Bug.
+- `project` (String) The key of the project issues are created in.
+- `site` (String) The base URL of the Jira site, for example https://example.atlassian.net or https://jira.example.com.
 
 Optional:
 
-- `custom_fields` (Map of String)
-- `description` (String)
-- `labels` (List of String)
-- `priority` (String)
-- `reopen_duration` (String)
-- `reopen_transition` (String)
-- `resolve_transition` (String)
-- `send_resolved` (Boolean)
-- `summary` (String)
-- `wont_fix_resolution` (String)
+- `custom_fields` (Map of String) Extra issue fields keyed by Jira field ID. Stored, but not currently included in the issue Jira receives.
+- `description` (String) Alertmanager template for the issue description, rendered as markdown; defaults to the SigNoz Jira default.
+- `labels` (List of String) Labels added to every issue.
+- `priority` (String) The priority name assigned to new issues.
+- `reopen_duration` (String) How long after resolution a firing alert reopens the issue instead of creating a new one, as a Prometheus duration in canonical form such as 3d; defaults to 3d.
+- `reopen_transition` (String) The transition applied when an alert fires again on a resolved issue.
+- `resolve_transition` (String) The transition applied to the issue when the alert resolves.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to false.
+- `summary` (String) Alertmanager template for the issue summary; defaults to the SigNoz Jira default.
+- `wont_fix_resolution` (String) The resolution name that stops an issue from being reopened.
+
+<a id="nestedatt--config--jira--spec--auth"></a>
+### Nested Schema for `config.jira.spec.auth`
+
+Optional:
+
+- `api_token` (String, Sensitive) The Atlassian API token paired with email. Required when deployment is cloud. A secret; returned by create, update and fetch by ID, never by list.
+- `email` (String) The Atlassian account email used for basic auth. Required when deployment is cloud.
+- `pat` (String, Sensitive) The Jira personal access token, sent as a Bearer header. Required when deployment is selfhosted. A secret; returned by create, update and fetch by ID, never by list.
+
 
 
 
@@ -190,23 +200,23 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--jsmops--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--jsmops--spec))
 
 <a id="nestedatt--config--jsmops--spec"></a>
 ### Nested Schema for `config.jsmops.spec`
 
 Required:
 
-- `api_key` (String, Sensitive)
+- `api_key` (String, Sensitive) The JSM Ops integration API key. A secret; returned by create, update and fetch by ID, never by list.
 
 Optional:
 
-- `description` (String)
-- `message` (String)
-- `priority` (String)
-- `send_resolved` (Boolean)
-- `tags` (String)
+- `description` (String) Alertmanager template for the alert description; defaults to the SigNoz JSM Ops default.
+- `message` (String) Alertmanager template for the alert message; defaults to the SigNoz JSM Ops default.
+- `priority` (String) The alert priority, P1 to P5.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to false.
+- `tags` (String) Comma-separated tags attached to the alert; defaults to signoz.
 
 
 
@@ -215,21 +225,21 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--msteams--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--msteams--spec))
 
 <a id="nestedatt--config--msteams--spec"></a>
 ### Nested Schema for `config.msteams.spec`
 
 Required:
 
-- `webhook_url` (String, Sensitive)
+- `webhook_url` (String, Sensitive) The Teams incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list.
 
 Optional:
 
-- `send_resolved` (Boolean)
-- `text` (String)
-- `title` (String)
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to true.
+- `text` (String) Alertmanager template for the card body; defaults to the Alertmanager Teams default.
+- `title` (String) Alertmanager template for the card title; defaults to the Alertmanager Teams default.
 
 
 
@@ -238,25 +248,25 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--opsgenie--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--opsgenie--spec))
 
 <a id="nestedatt--config--opsgenie--spec"></a>
 ### Nested Schema for `config.opsgenie.spec`
 
 Required:
 
-- `api_key` (String, Sensitive)
+- `api_key` (String, Sensitive) The Opsgenie API integration key. A secret; returned by create, update and fetch by ID, never by list.
 
 Optional:
 
-- `api_url` (String)
-- `description` (String)
-- `details` (Map of String)
-- `message` (String)
-- `priority` (String)
-- `send_resolved` (Boolean)
-- `source` (String)
+- `api_url` (String) The Opsgenie API host; empty uses the global Alertmanager default.
+- `description` (String) Alertmanager template for the alert description; defaults to the Alertmanager Opsgenie default.
+- `details` (Map of String) Custom alert details keyed by name, each an Alertmanager template.
+- `message` (String) Alertmanager template for the alert message; defaults to the Alertmanager Opsgenie default.
+- `priority` (String) The alert priority, P1 to P5.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to true.
+- `source` (String) Alertmanager template for the alert source; defaults to the Alertmanager Opsgenie default.
 
 
 
@@ -265,29 +275,29 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--pagerduty--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--pagerduty--spec))
 
 <a id="nestedatt--config--pagerduty--spec"></a>
 ### Nested Schema for `config.pagerduty.spec`
 
 Required:
 
-- `routing_key` (String, Sensitive)
+- `routing_key` (String, Sensitive) The Events API v2 integration key. A secret; returned by create, update and fetch by ID, never by list.
 
 Optional:
 
-- `class` (String)
-- `client` (String)
-- `client_url` (String)
-- `component` (String)
-- `description` (String)
-- `details` (Map of String)
-- `group` (String)
-- `send_resolved` (Boolean)
-- `severity` (String)
-- `source` (String)
-- `url` (String)
+- `class` (String) The class or type of the event.
+- `client` (String) Alertmanager template for the client identifier; defaults to the Alertmanager PagerDuty default.
+- `client_url` (String) Alertmanager template for the client URL; defaults to the Alertmanager PagerDuty default.
+- `component` (String) The component of the source machine that is responsible for the event.
+- `description` (String) Alertmanager template for the incident summary; defaults to the Alertmanager PagerDuty default.
+- `details` (Map of String) Custom details keyed by name, each an Alertmanager template; defaults to the Alertmanager firing and resolved summary set.
+- `group` (String) The logical grouping of components the event belongs to.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to true.
+- `severity` (String) The incident severity: critical, error, warning or info.
+- `source` (String) Alertmanager template for the unique location of the affected system; defaults to client.
+- `url` (String) The Events API endpoint; empty uses the PagerDuty default.
 
 
 
@@ -296,58 +306,58 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--slack--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--slack--spec))
 
 <a id="nestedatt--config--slack--spec"></a>
 ### Nested Schema for `config.slack.spec`
 
 Required:
 
-- `api_url` (String, Sensitive)
+- `api_url` (String, Sensitive) The Slack incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list.
 
 Optional:
 
-- `actions` (Attributes List) (see [below for nested schema](#nestedatt--config--slack--spec--actions))
-- `channel` (String)
-- `color` (String)
-- `fallback` (String)
-- `fields` (Attributes List) (see [below for nested schema](#nestedatt--config--slack--spec--fields))
-- `footer` (String)
-- `pretext` (String)
-- `send_resolved` (Boolean)
-- `text` (String)
-- `title` (String)
-- `title_link` (String)
+- `actions` (Attributes List) Attachment buttons; each requires type and text plus url or name. (see [below for nested schema](#nestedatt--config--slack--spec--actions))
+- `channel` (String) The channel or user to post to, such as #alerts; empty uses the webhook default.
+- `color` (String) Alertmanager template for the attachment color; defaults to the Alertmanager Slack default.
+- `fallback` (String) Alertmanager template for the plain-text summary shown where attachments cannot render; defaults to the Alertmanager Slack default.
+- `fields` (Attributes List) Attachment fields appended to the message; each requires title and value. (see [below for nested schema](#nestedatt--config--slack--spec--fields))
+- `footer` (String) Alertmanager template for the attachment footer; defaults to the Alertmanager Slack default.
+- `pretext` (String) Alertmanager template for the text shown above the attachment; defaults to the Alertmanager Slack default.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to false.
+- `text` (String) Alertmanager template for the message body; defaults to the Alertmanager Slack default.
+- `title` (String) Alertmanager template for the message title; defaults to the Alertmanager Slack default.
+- `title_link` (String) Alertmanager template for the link the title opens; defaults to the Alertmanager Slack default.
 
 <a id="nestedatt--config--slack--spec--actions"></a>
 ### Nested Schema for `config.slack.spec.actions`
 
 Required:
 
-- `text` (String)
-- `type` (String)
+- `text` (String) The button label.
+- `type` (String) The Slack action type, normally button.
 
 Optional:
 
-- `confirm` (Attributes) (see [below for nested schema](#nestedatt--config--slack--spec--actions--confirm))
-- `name` (String)
-- `style` (String)
-- `url` (String)
-- `value` (String)
+- `confirm` (Attributes) A confirmation dialog shown before the action runs. (see [below for nested schema](#nestedatt--config--slack--spec--actions--confirm))
+- `name` (String) The action name Slack posts back for a message button; required unless url is set.
+- `style` (String) The button style: default, primary or danger.
+- `url` (String) The link the button opens; required unless name is set.
+- `value` (String) The value Slack posts back with a message button.
 
 <a id="nestedatt--config--slack--spec--actions--confirm"></a>
 ### Nested Schema for `config.slack.spec.actions.confirm`
 
 Required:
 
-- `text` (String)
+- `text` (String) The dialog body.
 
 Optional:
 
-- `dismiss_text` (String)
-- `ok_text` (String)
-- `title` (String)
+- `dismiss_text` (String) The label of the cancel button.
+- `ok_text` (String) The label of the confirm button.
+- `title` (String) The dialog title.
 
 
 
@@ -356,12 +366,12 @@ Optional:
 
 Required:
 
-- `title` (String)
-- `value` (String)
+- `title` (String) The field title.
+- `value` (String) The field value; an Alertmanager template.
 
 Optional:
 
-- `short` (Boolean)
+- `short` (Boolean) Render the field side by side with other short fields.
 
 
 
@@ -371,8 +381,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--telegram--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--telegram--spec))
 
 <a id="nestedatt--config--telegram--spec"></a>
 ### Nested Schema for `config.telegram.spec`
@@ -398,22 +408,22 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--config--webhook--spec))
+- `kind` (String) The channel provider kind this variant accepts.
+- `spec` (Attributes) The provider-specific configuration for this kind. (see [below for nested schema](#nestedatt--config--webhook--spec))
 
 <a id="nestedatt--config--webhook--spec"></a>
 ### Nested Schema for `config.webhook.spec`
 
 Required:
 
-- `url` (String, Sensitive)
+- `url` (String, Sensitive) The endpoint that receives the Alertmanager webhook payload. A secret; returned by create, update and fetch by ID, never by list.
 
 Optional:
 
-- `bearer_token` (String, Sensitive)
-- `password` (String, Sensitive)
-- `send_resolved` (Boolean)
-- `username` (String)
+- `bearer_token` (String, Sensitive) The bearer token sent in the Authorization header; cannot be combined with username or password.
+- `password` (String, Sensitive) The basic auth password; cannot be combined with bearerToken.
+- `send_resolved` (Boolean) Also notify when the alert resolves. Defaults to true.
+- `username` (String) The basic auth user; cannot be combined with bearerToken.
 
 ## Import
 

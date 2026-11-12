@@ -5,6 +5,9 @@ package apitypes
 
 // DashboardtypesPanelFormatting defines model for DashboardtypesPanelFormatting.
 type DashboardtypesPanelFormatting struct {
-	DecimalPrecision *DashboardtypesPrecisionOption `json:"decimalPrecision,omitempty"`
-	Unit             *string                        `json:"unit,omitempty"`
+	// DecimalPrecision Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+	DecimalPrecision *DashboardtypesPrecisionOption `json:"decimalPrecision,omitempty" jsonschema:"Decimal places shown: 0, 1, 2 (default), 3, 4 or full."`
+
+	// Unit The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers.
+	Unit *string `json:"unit,omitempty" jsonschema:"The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers."`
 }

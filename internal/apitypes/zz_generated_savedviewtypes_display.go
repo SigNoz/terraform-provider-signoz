@@ -5,8 +5,15 @@ package apitypes
 
 // SavedviewtypesDisplay defines model for SavedviewtypesDisplay.
 type SavedviewtypesDisplay struct {
-	Color    *string `json:"color,omitempty"`
-	FontSize *string `json:"fontSize,omitempty"`
-	Format   *string `json:"format,omitempty"`
-	MaxLines *int    `json:"maxLines,omitempty"`
+	// Color A CSS color such as a hex code, shown as the view's color in the explorer view picker; the saved views panel does not use it. Empty leaves the default.
+	Color *string `json:"color,omitempty" jsonschema:"A CSS color such as a hex code, shown as the view's color in the explorer view picker; the saved views panel does not use it. Empty leaves the default."`
+
+	// FontSize The row font size in list views: small, medium or large. Empty leaves the explorer default.
+	FontSize *string `json:"fontSize,omitempty" jsonschema:"The row font size in list views: small, medium or large. Empty leaves the explorer default."`
+
+	// Format The list rendering mode in the logs explorer: raw, table or list. Empty leaves the explorer default.
+	Format *string `json:"format,omitempty" jsonschema:"The list rendering mode in the logs explorer: raw, table or list. Empty leaves the explorer default."`
+
+	// MaxLines The number of lines shown per row before the body is truncated in logs list views. 0 leaves the explorer default.
+	MaxLines *int `json:"maxLines,omitempty" jsonschema:"The number of lines shown per row before the body is truncated in logs list views. 0 leaves the explorer default."`
 }

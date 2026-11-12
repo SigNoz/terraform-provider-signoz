@@ -5,7 +5,12 @@ package apitypes
 
 // DashboardtypesTablePanelSpec defines model for DashboardtypesTablePanelSpec.
 type DashboardtypesTablePanelSpec struct {
-	Formatting    *DashboardtypesTableFormatting    `json:"formatting,omitempty"`
-	Thresholds    *[]DashboardtypesTableThreshold   `json:"thresholds,omitempty"`
-	Visualization *DashboardtypesBasicVisualization `json:"visualization,omitempty"`
+	// Formatting Per-column units and decimal precision.
+	Formatting *DashboardtypesTableFormatting `json:"formatting,omitempty" jsonschema:"Per-column units and decimal precision."`
+
+	// Thresholds Rules that recolor a cell when its column value compares to a threshold as specified.
+	Thresholds *[]DashboardtypesTableThreshold `json:"thresholds,omitempty" jsonschema:"Rules that recolor a cell when its column value compares to a threshold as specified."`
+
+	// Visualization The time range the rows are computed over.
+	Visualization *DashboardtypesBasicVisualization `json:"visualization,omitempty" jsonschema:"The time range the rows are computed over."`
 }

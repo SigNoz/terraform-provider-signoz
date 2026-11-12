@@ -20,9 +20,12 @@ func (e DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboar
 
 // DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpec defines model for DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpec.
 type DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpec struct {
-	Kind DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpecKind `json:"kind"`
-	Spec DashboardtypesCustomVariableSpec                                                                     `json:"spec"`
+	// Kind The value source kind.
+	Kind DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpecKind `json:"kind" jsonschema:"The value source kind."`
+
+	// Spec The kind-specific value source spec.
+	Spec DashboardtypesCustomVariableSpec `json:"spec" jsonschema:"The kind-specific value source spec."`
 }
 
-// DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpecKind defines model for DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpec.Kind.
+// DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpecKind The value source kind.
 type DashboardtypesVariablePluginVariantGithubComSigNozSignozPkgTypesDashboardtypesCustomVariableSpecKind string

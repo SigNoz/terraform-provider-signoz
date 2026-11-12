@@ -5,9 +5,18 @@ package apitypes
 
 // DashboardtypesLink defines model for DashboardtypesLink.
 type DashboardtypesLink struct {
-	Name            *string `json:"name,omitempty"`
-	RenderVariables *bool   `json:"renderVariables,omitempty"`
-	TargetBlank     *bool   `json:"targetBlank,omitempty"`
-	Tooltip         *string `json:"tooltip,omitempty"`
-	Url             *string `json:"url,omitempty"`
+	// Name The link label.
+	Name *string `json:"name,omitempty" jsonschema:"The link label."`
+
+	// RenderVariables Whether dashboard variable values are substituted into url before opening it.
+	RenderVariables *bool `json:"renderVariables,omitempty" jsonschema:"Whether dashboard variable values are substituted into url before opening it."`
+
+	// TargetBlank Whether the link opens in a new tab.
+	TargetBlank *bool `json:"targetBlank,omitempty" jsonschema:"Whether the link opens in a new tab."`
+
+	// Tooltip Hover text for the link. Stored, but not shown by the UI.
+	Tooltip *string `json:"tooltip,omitempty" jsonschema:"Hover text for the link. Stored, but not shown by the UI."`
+
+	// Url The link target. May reference dashboard variables as {{name}} when renderVariables is true.
+	Url *string `json:"url,omitempty" jsonschema:"The link target. May reference dashboard variables as {{name}} when renderVariables is true."`
 }

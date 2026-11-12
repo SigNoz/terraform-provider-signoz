@@ -5,8 +5,15 @@ package apitypes
 
 // DashboardtypesThresholdWithLabel defines model for DashboardtypesThresholdWithLabel.
 type DashboardtypesThresholdWithLabel struct {
-	Color string  `json:"color"`
-	Label *string `json:"label,omitempty"`
-	Unit  *string `json:"unit,omitempty"`
-	Value float64 `json:"value"`
+	// Color The CSS color of the line, for example #F1575F, which matches the SigNoz red preset; CSS named colors such as red also work.
+	Color string `json:"color" jsonschema:"The CSS color of the line, for example #F1575F, which matches the SigNoz red preset; CSS named colors such as red also work."`
+
+	// Label The caption shown on the line.
+	Label *string `json:"label,omitempty" jsonschema:"The caption shown on the line."`
+
+	// Unit The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms.
+	Unit *string `json:"unit,omitempty" jsonschema:"The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms."`
+
+	// Value The value the line is drawn at, in unit.
+	Value float64 `json:"value" jsonschema:"The value the line is drawn at, in unit."`
 }

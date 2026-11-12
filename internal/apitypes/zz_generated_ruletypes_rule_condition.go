@@ -5,13 +5,27 @@ package apitypes
 
 // RuletypesRuleCondition defines model for RuletypesRuleCondition.
 type RuletypesRuleCondition struct {
-	AbsentFor         *int                         `json:"absentFor,omitempty"`
-	AlertOnAbsent     *bool                        `json:"alertOnAbsent,omitempty"`
-	Algorithm         *string                      `json:"algorithm,omitempty"`
-	CompositeQuery    RuletypesAlertCompositeQuery `json:"compositeQuery"`
-	RequireMinPoints  *bool                        `json:"requireMinPoints,omitempty"`
-	RequiredNumPoints *int                         `json:"requiredNumPoints,omitempty"`
-	Seasonality       *RuletypesSeasonality        `json:"seasonality,omitempty"`
-	SelectedQueryName string                       `json:"selectedQueryName"`
-	Thresholds        RuletypesRuleThresholdData   `json:"thresholds"`
+	// AbsentFor How many minutes without data pass before the nodata alert fires. Ignored unless alertOnAbsent is true.
+	AbsentFor *int `json:"absentFor,omitempty" jsonschema:"How many minutes without data pass before the nodata alert fires. Ignored unless alertOnAbsent is true."`
+
+	// AlertOnAbsent Whether to fire a nodata alert when the query returns no data. Defaults to false.
+	AlertOnAbsent *bool `json:"alertOnAbsent,omitempty" jsonschema:"Whether to fire a nodata alert when the query returns no data. Defaults to false."`
+
+	// CompositeQuery The queries whose result is compared against the thresholds.
+	CompositeQuery RuletypesAlertCompositeQuery `json:"compositeQuery" jsonschema:"The queries whose result is compared against the thresholds."`
+
+	// RequireMinPoints Whether a series is skipped until it has at least requiredNumPoints points in the window. Defaults to false.
+	RequireMinPoints *bool `json:"requireMinPoints,omitempty" jsonschema:"Whether a series is skipped until it has at least requiredNumPoints points in the window. Defaults to false."`
+
+	// RequiredNumPoints The minimum number of points a series needs before it is evaluated. Must be greater than 0 when requireMinPoints is true.
+	RequiredNumPoints *int `json:"requiredNumPoints,omitempty" jsonschema:"The minimum number of points a series needs before it is evaluated. Must be greater than 0 when requireMinPoints is true."`
+
+	// Seasonality anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly.
+	Seasonality *RuletypesSeasonality `json:"seasonality,omitempty" jsonschema:"anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly."`
+
+	// SelectedQueryName The name of the query whose result is evaluated, such as A or F1. Must match a query in compositeQuery.
+	SelectedQueryName string `json:"selectedQueryName" jsonschema:"The name of the query whose result is evaluated, such as A or F1. Must match a query in compositeQuery."`
+
+	// Thresholds The thresholds to evaluate, as a kind and spec.
+	Thresholds RuletypesRuleThresholdData `json:"thresholds" jsonschema:"The thresholds to evaluate, as a kind and spec."`
 }

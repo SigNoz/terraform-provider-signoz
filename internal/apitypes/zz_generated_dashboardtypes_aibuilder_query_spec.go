@@ -20,28 +20,63 @@ func (e DashboardtypesAIBuilderQuerySpecSignal) Valid() bool {
 
 // DashboardtypesAIBuilderQuerySpec defines model for DashboardtypesAIBuilderQuerySpec.
 type DashboardtypesAIBuilderQuerySpec struct {
-	Aggregations          *[]Querybuildertypesv5TraceAggregation     `json:"aggregations,omitempty"`
-	BucketOptions         *Querybuildertypesv5BucketOptions          `json:"bucketOptions,omitempty"`
-	Cursor                *string                                    `json:"cursor,omitempty"`
-	Disabled              *bool                                      `json:"disabled,omitempty"`
-	Filter                *Querybuildertypesv5Filter                 `json:"filter,omitempty"`
-	Functions             *[]Querybuildertypesv5Function             `json:"functions,omitempty"`
-	GroupBy               *[]Querybuildertypesv5GroupByKey           `json:"groupBy,omitempty"`
-	Having                *Querybuildertypesv5Having                 `json:"having,omitempty"`
-	Legend                *string                                    `json:"legend,omitempty"`
-	Limit                 *int                                       `json:"limit,omitempty"`
-	LimitBy               *Querybuildertypesv5LimitBy                `json:"limitBy,omitempty"`
-	Name                  *string                                    `json:"name,omitempty"`
-	Offset                *int                                       `json:"offset,omitempty"`
-	Order                 *[]Querybuildertypesv5OrderBy              `json:"order,omitempty"`
-	SecondaryAggregations *[]Querybuildertypesv5SecondaryAggregation `json:"secondaryAggregations,omitempty"`
-	SelectFields          *[]TelemetrytypesTelemetryFieldKey         `json:"selectFields,omitempty"`
-	Signal                DashboardtypesAIBuilderQuerySpecSignal     `json:"signal"`
-	Source                *TelemetrytypesSource                      `json:"source,omitempty"`
+	// Aggregations The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.
+	Aggregations *[]Querybuildertypesv5TraceAggregation `json:"aggregations,omitempty" jsonschema:"The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests."`
 
-	// StepInterval Step interval. Accepts a Go duration string (e.g., "60s", "1m", "1h") or a number representing seconds (e.g., 60).
-	StepInterval *Querybuildertypesv5Step `json:"stepInterval,omitempty"`
+	// BucketOptions The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.
+	BucketOptions *Querybuildertypesv5BucketOptions `json:"bucketOptions,omitempty" jsonschema:"The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw."`
+
+	// Cursor The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+	Cursor *string `json:"cursor,omitempty" jsonschema:"The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it."`
+
+	// Disabled When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+	Disabled *bool `json:"disabled,omitempty" jsonschema:"When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false."`
+
+	// Filter The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500.
+	Filter *Querybuildertypesv5Filter `json:"filter,omitempty" jsonschema:"The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500."`
+
+	// Functions Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.
+	Functions *[]Querybuildertypesv5Function `json:"functions,omitempty" jsonschema:"Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly."`
+
+	// GroupBy The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.
+	GroupBy *[]Querybuildertypesv5GroupByKey `json:"groupBy,omitempty" jsonschema:"The fields to group aggregations by; each group becomes a series or a row with the field as a label or column."`
+
+	// Having A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.
+	Having *Querybuildertypesv5Having `json:"having,omitempty" jsonschema:"A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100."`
+
+	// Legend The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+	Legend *string `json:"legend,omitempty" jsonschema:"The display name template for each series; {{field}} placeholders are replaced by group-by label values."`
+
+	// Limit The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+	Limit *int `json:"limit,omitempty" jsonschema:"The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows."`
+
+	// LimitBy Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.
+	LimitBy *Querybuildertypesv5LimitBy `json:"limitBy,omitempty" jsonschema:"Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored."`
+
+	// Name The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+	Name *string `json:"name,omitempty" jsonschema:"The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it."`
+
+	// Offset The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+	Offset *int `json:"offset,omitempty" jsonschema:"The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging."`
+
+	// Order The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.
+	Order *[]Querybuildertypesv5OrderBy `json:"order,omitempty" jsonschema:"The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp."`
+
+	// SecondaryAggregations Accepted but currently ignored, including their nested order, limit and limitBy.
+	SecondaryAggregations *[]Querybuildertypesv5SecondaryAggregation `json:"secondaryAggregations,omitempty" jsonschema:"Accepted but currently ignored, including their nested order, limit and limitBy."`
+
+	// SelectFields The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.
+	SelectFields *[]TelemetrytypesTelemetryFieldKey `json:"selectFields,omitempty" jsonschema:"The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests."`
+
+	// Signal The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
+	Signal DashboardtypesAIBuilderQuerySpecSignal `json:"signal" jsonschema:"The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query."`
+
+	// Source The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+	Source *TelemetrytypesSource `json:"source,omitempty" jsonschema:"The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry."`
+
+	// StepInterval The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
+	StepInterval *Querybuildertypesv5Step `json:"stepInterval,omitempty" jsonschema:"The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted."`
 }
 
-// DashboardtypesAIBuilderQuerySpecSignal defines model for DashboardtypesAIBuilderQuerySpec.Signal.
+// DashboardtypesAIBuilderQuerySpecSignal The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 type DashboardtypesAIBuilderQuerySpecSignal string

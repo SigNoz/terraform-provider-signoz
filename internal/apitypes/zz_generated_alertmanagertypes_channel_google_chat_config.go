@@ -5,8 +5,15 @@ package apitypes
 
 // AlertmanagertypesChannelGoogleChatConfig defines model for AlertmanagertypesChannelGoogleChatConfig.
 type AlertmanagertypesChannelGoogleChatConfig struct {
-	SendResolved *bool   `json:"sendResolved,omitempty"`
-	Text         *string `json:"text,omitempty"`
-	Title        *string `json:"title,omitempty"`
-	WebhookUrl   string  `json:"webhookUrl"`
+	// SendResolved Also notify when the alert resolves. Defaults to false.
+	SendResolved *bool `json:"sendResolved,omitempty" jsonschema:"Also notify when the alert resolves. Defaults to false."`
+
+	// Text Alertmanager template for the message body; defaults to the SigNoz Google Chat default.
+	Text *string `json:"text,omitempty" jsonschema:"Alertmanager template for the message body; defaults to the SigNoz Google Chat default."`
+
+	// Title Alertmanager template for the message title; defaults to the SigNoz Google Chat default.
+	Title *string `json:"title,omitempty" jsonschema:"Alertmanager template for the message title; defaults to the SigNoz Google Chat default."`
+
+	// WebhookUrl The Google Chat space webhook URL. A secret; returned by create, update and fetch by ID, never by list.
+	WebhookUrl string `json:"webhookUrl" jsonschema:"The Google Chat space webhook URL. A secret; returned by create, update and fetch by ID, never by list."`
 }

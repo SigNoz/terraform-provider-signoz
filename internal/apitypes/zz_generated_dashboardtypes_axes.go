@@ -5,7 +5,12 @@ package apitypes
 
 // DashboardtypesAxes defines model for DashboardtypesAxes.
 type DashboardtypesAxes struct {
-	IsLogScale *bool    `json:"isLogScale,omitempty"`
-	SoftMax    *float32 `json:"softMax,omitempty"`
-	SoftMin    *float32 `json:"softMin,omitempty"`
+	// IsLogScale Whether the Y axis uses a logarithmic scale.
+	IsLogScale *bool `json:"isLogScale,omitempty" jsonschema:"Whether the Y axis uses a logarithmic scale."`
+
+	// SoftMax The highest value the Y axis always shows; data above it still extends the axis. Null fits the data.
+	SoftMax *float32 `json:"softMax,omitempty" jsonschema:"The highest value the Y axis always shows; data above it still extends the axis. Null fits the data."`
+
+	// SoftMin The lowest value the Y axis always shows; data below it still extends the axis. Null fits the data.
+	SoftMin *float32 `json:"softMin,omitempty" jsonschema:"The lowest value the Y axis always shows; data below it still extends the axis. Null fits the data."`
 }

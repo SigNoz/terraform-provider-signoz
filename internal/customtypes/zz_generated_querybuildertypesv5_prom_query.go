@@ -112,6 +112,24 @@ func (t Querybuildertypesv5PromQueryType) ValueFromObject(ctx context.Context, i
 			fmt.Sprintf(`query expected to be basetypes.StringValue, was: %T`, queryAttribute))
 	}
 
+	skipStepAlignmentAttribute, ok := attributes["skip_step_alignment"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`skip_step_alignment is missing from object`)
+
+		return nil, diags
+	}
+
+	skipStepAlignmentVal, ok := skipStepAlignmentAttribute.(basetypes.BoolValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`skip_step_alignment expected to be basetypes.BoolValue, was: %T`, skipStepAlignmentAttribute))
+	}
+
 	statsAttribute, ok := attributes["stats"]
 
 	if !ok {
@@ -153,13 +171,14 @@ func (t Querybuildertypesv5PromQueryType) ValueFromObject(ctx context.Context, i
 	}
 
 	return Querybuildertypesv5PromQueryValue{
-		Disabled: disabledVal,
-		Legend:   legendVal,
-		Name:     nameVal,
-		Query:    queryVal,
-		Stats:    statsVal,
-		Step:     stepVal,
-		state:    attr.ValueStateKnown,
+		Disabled:          disabledVal,
+		Legend:            legendVal,
+		Name:              nameVal,
+		Query:             queryVal,
+		SkipStepAlignment: skipStepAlignmentVal,
+		Stats:             statsVal,
+		Step:              stepVal,
+		state:             attr.ValueStateKnown,
 	}, diags
 }
 
@@ -298,6 +317,24 @@ func NewQuerybuildertypesv5PromQueryValue(attributeTypes map[string]attr.Type, a
 			fmt.Sprintf(`query expected to be basetypes.StringValue, was: %T`, queryAttribute))
 	}
 
+	skipStepAlignmentAttribute, ok := attributes["skip_step_alignment"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`skip_step_alignment is missing from object`)
+
+		return NewQuerybuildertypesv5PromQueryValueUnknown(), diags
+	}
+
+	skipStepAlignmentVal, ok := skipStepAlignmentAttribute.(basetypes.BoolValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`skip_step_alignment expected to be basetypes.BoolValue, was: %T`, skipStepAlignmentAttribute))
+	}
+
 	statsAttribute, ok := attributes["stats"]
 
 	if !ok {
@@ -339,13 +376,14 @@ func NewQuerybuildertypesv5PromQueryValue(attributeTypes map[string]attr.Type, a
 	}
 
 	return Querybuildertypesv5PromQueryValue{
-		Disabled: disabledVal,
-		Legend:   legendVal,
-		Name:     nameVal,
-		Query:    queryVal,
-		Stats:    statsVal,
-		Step:     stepVal,
-		state:    attr.ValueStateKnown,
+		Disabled:          disabledVal,
+		Legend:            legendVal,
+		Name:              nameVal,
+		Query:             queryVal,
+		SkipStepAlignment: skipStepAlignmentVal,
+		Stats:             statsVal,
+		Step:              stepVal,
+		state:             attr.ValueStateKnown,
 	}, diags
 }
 
@@ -417,17 +455,18 @@ func (t Querybuildertypesv5PromQueryType) ValueType(ctx context.Context) attr.Va
 var _ basetypes.ObjectValuable = Querybuildertypesv5PromQueryValue{}
 
 type Querybuildertypesv5PromQueryValue struct {
-	Disabled basetypes.BoolValue   `tfsdk:"disabled"`
-	Legend   basetypes.StringValue `tfsdk:"legend"`
-	Name     basetypes.StringValue `tfsdk:"name"`
-	Query    basetypes.StringValue `tfsdk:"query"`
-	Stats    basetypes.BoolValue   `tfsdk:"stats"`
-	Step     jsontypes.Normalized  `tfsdk:"step"`
-	state    attr.ValueState
+	Disabled          basetypes.BoolValue   `tfsdk:"disabled"`
+	Legend            basetypes.StringValue `tfsdk:"legend"`
+	Name              basetypes.StringValue `tfsdk:"name"`
+	Query             basetypes.StringValue `tfsdk:"query"`
+	SkipStepAlignment basetypes.BoolValue   `tfsdk:"skip_step_alignment"`
+	Stats             basetypes.BoolValue   `tfsdk:"stats"`
+	Step              jsontypes.Normalized  `tfsdk:"step"`
+	state             attr.ValueState
 }
 
 func (v Querybuildertypesv5PromQueryValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 6)
+	attrTypes := make(map[string]tftypes.Type, 7)
 
 	var val tftypes.Value
 	var err error
@@ -436,6 +475,7 @@ func (v Querybuildertypesv5PromQueryValue) ToTerraformValue(ctx context.Context)
 	attrTypes["legend"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["name"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["query"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["skip_step_alignment"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["stats"] = basetypes.BoolType{}.TerraformType(ctx)
 	attrTypes["step"] = jsontypes.NormalizedType{}.TerraformType(ctx)
 
@@ -443,7 +483,7 @@ func (v Querybuildertypesv5PromQueryValue) ToTerraformValue(ctx context.Context)
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 6)
+		vals := make(map[string]tftypes.Value, 7)
 
 		val, err = v.Disabled.ToTerraformValue(ctx)
 
@@ -476,6 +516,14 @@ func (v Querybuildertypesv5PromQueryValue) ToTerraformValue(ctx context.Context)
 		}
 
 		vals["query"] = val
+
+		val, err = v.SkipStepAlignment.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["skip_step_alignment"] = val
 
 		val, err = v.Stats.ToTerraformValue(ctx)
 
@@ -523,12 +571,13 @@ func (v Querybuildertypesv5PromQueryValue) ToObjectValue(ctx context.Context) (b
 	var diags diag.Diagnostics
 
 	attributeTypes := map[string]attr.Type{
-		"disabled": basetypes.BoolType{},
-		"legend":   basetypes.StringType{},
-		"name":     basetypes.StringType{},
-		"query":    basetypes.StringType{},
-		"stats":    basetypes.BoolType{},
-		"step":     jsontypes.NormalizedType{},
+		"disabled":            basetypes.BoolType{},
+		"legend":              basetypes.StringType{},
+		"name":                basetypes.StringType{},
+		"query":               basetypes.StringType{},
+		"skip_step_alignment": basetypes.BoolType{},
+		"stats":               basetypes.BoolType{},
+		"step":                jsontypes.NormalizedType{},
 	}
 
 	if v.IsNull() {
@@ -542,12 +591,13 @@ func (v Querybuildertypesv5PromQueryValue) ToObjectValue(ctx context.Context) (b
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"disabled": v.Disabled,
-			"legend":   v.Legend,
-			"name":     v.Name,
-			"query":    v.Query,
-			"stats":    v.Stats,
-			"step":     v.Step,
+			"disabled":            v.Disabled,
+			"legend":              v.Legend,
+			"name":                v.Name,
+			"query":               v.Query,
+			"skip_step_alignment": v.SkipStepAlignment,
+			"stats":               v.Stats,
+			"step":                v.Step,
 		})
 
 	return objVal, diags
@@ -584,6 +634,10 @@ func (v Querybuildertypesv5PromQueryValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.SkipStepAlignment.Equal(other.SkipStepAlignment) {
+		return false
+	}
+
 	if !v.Stats.Equal(other.Stats) {
 		return false
 	}
@@ -605,11 +659,12 @@ func (v Querybuildertypesv5PromQueryValue) Type(ctx context.Context) attr.Type {
 
 func (v Querybuildertypesv5PromQueryValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
-		"disabled": basetypes.BoolType{},
-		"legend":   basetypes.StringType{},
-		"name":     basetypes.StringType{},
-		"query":    basetypes.StringType{},
-		"stats":    basetypes.BoolType{},
-		"step":     jsontypes.NormalizedType{},
+		"disabled":            basetypes.BoolType{},
+		"legend":              basetypes.StringType{},
+		"name":                basetypes.StringType{},
+		"query":               basetypes.StringType{},
+		"skip_step_alignment": basetypes.BoolType{},
+		"stats":               basetypes.BoolType{},
+		"step":                jsontypes.NormalizedType{},
 	}
 }

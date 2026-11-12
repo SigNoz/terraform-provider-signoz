@@ -5,6 +5,9 @@ package apitypes
 
 // Querybuildertypesv5LogAggregation defines model for Querybuildertypesv5LogAggregation.
 type Querybuildertypesv5LogAggregation struct {
-	Alias      *string `json:"alias,omitempty"`
-	Expression *string `json:"expression,omitempty"`
+	// Alias The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+	Alias *string `json:"alias,omitempty" jsonschema:"The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation."`
+
+	// Expression The aggregation over log records, such as count(), sum(item_price), count_distinct(user_id) or countIf(day > 10).
+	Expression *string `json:"expression,omitempty" jsonschema:"The aggregation over log records, such as count(), sum(item_price), count_distinct(user_id) or countIf(day > 10)."`
 }

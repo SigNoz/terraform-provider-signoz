@@ -7,7 +7,6 @@ import (
 
 	"github.com/SigNoz/terraform-provider-signoz/internal/validators"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,10 +20,14 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"alert": schema.StringAttribute{
-				Required: true,
+				Required:            true,
+				Description:         "The display name of the alert rule.",
+				MarkdownDescription: "The display name of the alert rule.",
 			},
 			"alert_type": schema.StringAttribute{
-				Required: true,
+				Required:            true,
+				Description:         "The signal the rule evaluates: METRIC_BASED_ALERT, TRACES_BASED_ALERT, LOGS_BASED_ALERT, EXCEPTIONS_BASED_ALERT or AI_TRACES_BASED_ALERT.",
+				MarkdownDescription: "The signal the rule evaluates: METRIC_BASED_ALERT, TRACES_BASED_ALERT, LOGS_BASED_ALERT, EXCEPTIONS_BASED_ALERT or AI_TRACES_BASED_ALERT.",
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"METRIC_BASED_ALERT",
@@ -36,31 +39,35 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"annotations": schema.MapAttribute{
-				ElementType: types.StringType,
-				Optional:    true,
-				Computed:    true,
+				ElementType:         types.StringType,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Free text attached to every alert, conventionally summary and description. Values may use Go templates with $value, $threshold and $labels.",
+				MarkdownDescription: "Free text attached to every alert, conventionally summary and description. Values may use Go templates with $value, $threshold and $labels.",
 			},
 			"condition": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"absent_for": schema.Int64Attribute{
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "How many minutes without data pass before the nodata alert fires. Ignored unless alertOnAbsent is true.",
+						MarkdownDescription: "How many minutes without data pass before the nodata alert fires. Ignored unless alertOnAbsent is true.",
 						Validators: []validator.Int64{
 							int64validator.AtLeast(0),
 						},
 					},
 					"alert_on_absent": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
-					},
-					"algorithm": schema.StringAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "Whether to fire a nodata alert when the query returns no data. Defaults to false.",
+						MarkdownDescription: "Whether to fire a nodata alert when the query returns no data. Defaults to false.",
 					},
 					"composite_query": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"panel_type": schema.StringAttribute{
-								Required: true,
+								Required:            true,
+								Description:         "The panel the UI renders the queries with: graph, table or value. Use graph for alerts.",
+								MarkdownDescription: "The panel the UI renders the queries with: graph, table or value. Use graph for alerts.",
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"value",
@@ -80,12 +87,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"alias": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																		MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																	},
 																	"expression": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).",
+																		MarkdownDescription: "The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
@@ -94,8 +105,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
+															MarkdownDescription: "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
 														},
 														"bucket_options": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
@@ -115,11 +128,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
 																				"max_value": schema.Float64Attribute{
-																					Required: true,
+																					Required:            true,
+																					Description:         "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
+																					MarkdownDescription: "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
 																				},
 																				"num_buckets": schema.Int64Attribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
+																					MarkdownDescription: "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
 																				},
 																			},
 																			CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
@@ -156,8 +173,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
 																				"scale": schema.Int64Attribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
+																					MarkdownDescription: "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
 																				},
 																			},
 																			CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
@@ -184,25 +203,33 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
+															MarkdownDescription: "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
 															Validators: []validator.Object{
 																validators.ExactlyOneNestedAttribute("linear", "log"),
 															},
 														},
 														"cursor": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
+															MarkdownDescription: "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
 														},
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
+															MarkdownDescription: "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
 														},
 														"filter": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"expression": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
+																	MarkdownDescription: "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5FilterType{
@@ -210,8 +237,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500.",
+															MarkdownDescription: "The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500.",
 														},
 														"functions": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
@@ -220,8 +249,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		NestedObject: schema.NestedAttributeObject{
 																			Attributes: map[string]schema.Attribute{
 																				"name": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
+																					MarkdownDescription: "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
 																				},
 																				"value": schema.StringAttribute{
 																					CustomType: jsontypes.NormalizedType{},
@@ -235,12 +266,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
+																		MarkdownDescription: "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
 																	},
 																	"name": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
+																		MarkdownDescription: "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"cutoffmin",
@@ -271,19 +306,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
+															MarkdownDescription: "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
 														},
 														"group_by": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"description": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Human-readable summary of the field, present only for well-known fields.",
+																		MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																	},
 																	"field_context": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																		MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"metric",
@@ -299,8 +340,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"field_data_type": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																		MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"string",
@@ -313,11 +356,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"name": schema.StringAttribute{
-																		Required: true,
+																		Required:            true,
+																		Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																		MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																	},
 																	"signal": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																		MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"traces",
@@ -328,8 +375,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"unit": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Unit of the field values, present only for well-known fields.",
+																		MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -338,14 +387,18 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
+															MarkdownDescription: "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
 														},
 														"having": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"expression": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
+																	MarkdownDescription: "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5HavingType{
@@ -353,27 +406,37 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
+															MarkdownDescription: "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
 														},
 														"legend": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
+															MarkdownDescription: "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
 														},
 														"limit": schema.Int64Attribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
+															MarkdownDescription: "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
 														},
 														"limit_by": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"keys": schema.ListAttribute{
-																	ElementType: types.StringType,
-																	Optional:    true,
-																	Computed:    true,
+																	ElementType:         types.StringType,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The group-by field names that partition the result before the limit is applied.",
+																	MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																},
 																"value": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																	MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -381,23 +444,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
+															MarkdownDescription: "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
 														},
 														"name": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
+															MarkdownDescription: "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
 														},
 														"offset": schema.Int64Attribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
+															MarkdownDescription: "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
 														},
 														"order": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"direction": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The sort direction: asc or desc.",
+																		MarkdownDescription: "The sort direction: asc or desc.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"asc",
@@ -408,12 +479,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	"key": schema.SingleNestedAttribute{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -429,8 +504,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -443,11 +520,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -458,8 +539,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -467,8 +550,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																		MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -477,30 +562,40 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
+															MarkdownDescription: "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
 														},
 														"secondary_aggregations": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"alias": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																		MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																	},
 																	"expression": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
+																		MarkdownDescription: "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
 																	},
 																	"group_by": schema.ListNestedAttribute{
 																		NestedObject: schema.NestedAttributeObject{
 																			Attributes: map[string]schema.Attribute{
 																				"description": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "Human-readable summary of the field, present only for well-known fields.",
+																					MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																				},
 																				"field_context": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																					MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																					Validators: []validator.String{
 																						stringvalidator.OneOf(
 																							"metric",
@@ -516,8 +611,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																					},
 																				},
 																				"field_data_type": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																					MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																					Validators: []validator.String{
 																						stringvalidator.OneOf(
 																							"string",
@@ -530,11 +627,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																					},
 																				},
 																				"name": schema.StringAttribute{
-																					Required: true,
+																					Required:            true,
+																					Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																					MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																				},
 																				"signal": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																					MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																					Validators: []validator.String{
 																						stringvalidator.OneOf(
 																							"traces",
@@ -545,8 +646,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																					},
 																				},
 																				"unit": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "Unit of the field values, present only for well-known fields.",
+																					MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																				},
 																			},
 																			CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -555,23 +658,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The fields to group this aggregation by.",
+																		MarkdownDescription: "The fields to group this aggregation by.",
 																	},
 																	"limit": schema.Int64Attribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The maximum number of groups to return. Unlimited when 0.",
+																		MarkdownDescription: "The maximum number of groups to return. Unlimited when 0.",
 																	},
 																	"limit_by": schema.SingleNestedAttribute{
 																		Attributes: map[string]schema.Attribute{
 																			"keys": schema.ListAttribute{
-																				ElementType: types.StringType,
-																				Optional:    true,
-																				Computed:    true,
+																				ElementType:         types.StringType,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The group-by field names that partition the result before the limit is applied.",
+																				MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																			},
 																			"value": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																				MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -579,15 +690,19 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Applies limit within each distinct combination of the given keys.",
+																		MarkdownDescription: "Applies limit within each distinct combination of the given keys.",
 																	},
 																	"order": schema.ListNestedAttribute{
 																		NestedObject: schema.NestedAttributeObject{
 																			Attributes: map[string]schema.Attribute{
 																				"direction": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The sort direction: asc or desc.",
+																					MarkdownDescription: "The sort direction: asc or desc.",
 																					Validators: []validator.String{
 																						stringvalidator.OneOf(
 																							"asc",
@@ -598,12 +713,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				"key": schema.SingleNestedAttribute{
 																					Attributes: map[string]schema.Attribute{
 																						"description": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Human-readable summary of the field, present only for well-known fields.",
+																							MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																						},
 																						"field_context": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																							MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"metric",
@@ -619,8 +738,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"field_data_type": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																							MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"string",
@@ -633,11 +754,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"name": schema.StringAttribute{
-																							Required: true,
+																							Required:            true,
+																							Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																							MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																						},
 																						"signal": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																							MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"traces",
@@ -648,8 +773,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"unit": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Unit of the field values, present only for well-known fields.",
+																							MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -657,8 +784,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																						},
 																					},
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																					MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																				},
 																			},
 																			CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -667,13 +796,17 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The sort order of this aggregation result.",
+																		MarkdownDescription: "The sort order of this aggregation result.",
 																	},
 																	"step_interval": schema.StringAttribute{
-																		CustomType: jsontypes.NormalizedType{},
-																		Optional:   true,
-																		Computed:   true,
+																		CustomType:          jsontypes.NormalizedType{},
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
+																		MarkdownDescription: "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
@@ -682,19 +815,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Accepted but currently ignored, including their nested order, limit and limitBy.",
+															MarkdownDescription: "Accepted but currently ignored, including their nested order, limit and limitBy.",
 														},
 														"select_fields": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"description": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Human-readable summary of the field, present only for well-known fields.",
+																		MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																	},
 																	"field_context": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																		MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"metric",
@@ -710,8 +849,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"field_data_type": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																		MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"string",
@@ -724,11 +865,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"name": schema.StringAttribute{
-																		Required: true,
+																		Required:            true,
+																		Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																		MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																	},
 																	"signal": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																		MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"traces",
@@ -739,8 +884,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"unit": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Unit of the field values, present only for well-known fields.",
+																		MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																	},
 																},
 																CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
@@ -749,11 +896,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
+															MarkdownDescription: "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
 														},
 														"signal": schema.StringAttribute{
-															Required: true,
+															Required:            true,
+															Description:         "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
+															MarkdownDescription: "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
 															Validators: []validator.String{
 																stringvalidator.OneOf(
 																	"traces",
@@ -761,8 +912,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 															},
 														},
 														"source": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
+															MarkdownDescription: "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
 															Validators: []validator.String{
 																stringvalidator.OneOf(
 																	"meter",
@@ -771,9 +924,11 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 															},
 														},
 														"step_interval": schema.StringAttribute{
-															CustomType: jsontypes.NormalizedType{},
-															Optional:   true,
-															Computed:   true,
+															CustomType:          jsontypes.NormalizedType{},
+															Optional:            true,
+															Computed:            true,
+															Description:         "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
+															MarkdownDescription: "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
 														},
 													},
 													CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationType{
@@ -832,11 +987,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
 																				"max_value": schema.Float64Attribute{
-																					Required: true,
+																					Required:            true,
+																					Description:         "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
+																					MarkdownDescription: "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
 																				},
 																				"num_buckets": schema.Int64Attribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
+																					MarkdownDescription: "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
 																				},
 																			},
 																			CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
@@ -873,8 +1032,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		"spec": schema.SingleNestedAttribute{
 																			Attributes: map[string]schema.Attribute{
 																				"scale": schema.Int64Attribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
+																					MarkdownDescription: "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
 																				},
 																			},
 																			CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
@@ -901,19 +1062,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The value axis to count the formula result into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
+															MarkdownDescription: "The value axis to count the formula result into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
 															Validators: []validator.Object{
 																validators.ExactlyOneNestedAttribute("linear", "log"),
 															},
 														},
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "When true, the result is excluded from the response; the formula may still be evaluated. Defaults to false.",
+															MarkdownDescription: "When true, the result is excluded from the response; the formula may still be evaluated. Defaults to false.",
 														},
 														"expression": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "An arithmetic expression over builder query names, for example A / B * 100. Reference queries, not other formulas.",
+															MarkdownDescription: "An arithmetic expression over builder query names, for example A / B * 100. Reference queries, not other formulas.",
 														},
 														"functions": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
@@ -922,8 +1089,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		NestedObject: schema.NestedAttributeObject{
 																			Attributes: map[string]schema.Attribute{
 																				"name": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
+																					MarkdownDescription: "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
 																				},
 																				"value": schema.StringAttribute{
 																					CustomType: jsontypes.NormalizedType{},
@@ -937,12 +1106,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
+																		MarkdownDescription: "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
 																	},
 																	"name": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
+																		MarkdownDescription: "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"cutoffmin",
@@ -973,14 +1146,18 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Post-processing functions applied in order to each result series.",
+															MarkdownDescription: "Post-processing functions applied in order to each result series.",
 														},
 														"having": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"expression": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
+																	MarkdownDescription: "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5HavingType{
@@ -988,27 +1165,43 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "A filter on the formula values, referencing the formula by its name or as __result, for example F1 > 0. A time series keeps only the points that match and drops a series with none left; a scalar result keeps only the rows that match.",
+															MarkdownDescription: "A filter on the formula values, referencing the formula by its name or as __result, for example F1 > 0. A time series keeps only the points that match and drops a series with none left; a scalar result keeps only the rows that match.",
 														},
 														"legend": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The display name template for each series; {{field}} placeholders are replaced by label values.",
+															MarkdownDescription: "The display name template for each series; {{field}} placeholders are replaced by label values.",
 														},
 														"limit": schema.Int64Attribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The maximum number of series or rows to return. Unlimited when 0.",
+															MarkdownDescription: "The maximum number of series or rows to return. Unlimited when 0.",
 														},
 														"name": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The unique name of the formula, such as F1, used by selectedQueryName and by panels. Referencing a formula from another formula is not reliable.",
+															MarkdownDescription: "The unique name of the formula, such as F1, used by selectedQueryName and by panels. Referencing a formula from another formula is not reliable.",
+														},
+														"offset": schema.Int64Attribute{
+															Optional:            true,
+															Computed:            true,
+															Description:         "The number of ordered series or rows to skip before the page starts. Requires limit.",
+															MarkdownDescription: "The number of ordered series or rows to skip before the page starts. Requires limit.",
 														},
 														"order": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"direction": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The sort direction: asc or desc.",
+																		MarkdownDescription: "The sort direction: asc or desc.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"asc",
@@ -1019,12 +1212,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	"key": schema.SingleNestedAttribute{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -1040,8 +1237,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -1054,11 +1253,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -1069,8 +1272,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -1078,8 +1283,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																		MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -1088,8 +1295,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The sort order of the formula result.",
+															MarkdownDescription: "The sort order of the formula result.",
 														},
 													},
 													CustomType: customtypes.Querybuildertypesv5QueryBuilderFormulaType{
@@ -1136,12 +1345,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"alias": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																				MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																			},
 																			"expression": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The aggregation over log records, such as count(), sum(item_price), count_distinct(user_id) or countIf(day > 10).",
+																				MarkdownDescription: "The aggregation over log records, such as count(), sum(item_price), count_distinct(user_id) or countIf(day > 10).",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5LogAggregationType{
@@ -1150,8 +1363,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
+																	MarkdownDescription: "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
 																},
 																"bucket_options": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
@@ -1171,11 +1386,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				"spec": schema.SingleNestedAttribute{
 																					Attributes: map[string]schema.Attribute{
 																						"max_value": schema.Float64Attribute{
-																							Required: true,
+																							Required:            true,
+																							Description:         "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
+																							MarkdownDescription: "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
 																						},
 																						"num_buckets": schema.Int64Attribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
+																							MarkdownDescription: "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
@@ -1212,8 +1431,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				"spec": schema.SingleNestedAttribute{
 																					Attributes: map[string]schema.Attribute{
 																						"scale": schema.Int64Attribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
+																							MarkdownDescription: "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
@@ -1240,25 +1461,33 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
+																	MarkdownDescription: "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
 																	Validators: []validator.Object{
 																		validators.ExactlyOneNestedAttribute("linear", "log"),
 																	},
 																},
 																"cursor": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
+																	MarkdownDescription: "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
 																},
 																"disabled": schema.BoolAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
+																	MarkdownDescription: "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
 																},
 																"filter": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"expression": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
+																			MarkdownDescription: "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5FilterType{
@@ -1266,8 +1495,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The filter that selects log records, in the query filter syntax, for example severity_text = 'ERROR' AND body CONTAINS 'timeout'.",
+																	MarkdownDescription: "The filter that selects log records, in the query filter syntax, for example severity_text = 'ERROR' AND body CONTAINS 'timeout'.",
 																},
 																"functions": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
@@ -1276,8 +1507,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"name": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
+																							MarkdownDescription: "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
 																						},
 																						"value": schema.StringAttribute{
 																							CustomType: jsontypes.NormalizedType{},
@@ -1291,12 +1524,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
+																				MarkdownDescription: "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
 																			},
 																			"name": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
+																				MarkdownDescription: "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"cutoffmin",
@@ -1327,19 +1564,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
+																	MarkdownDescription: "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
 																},
 																"group_by": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -1355,8 +1598,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -1369,11 +1614,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -1384,8 +1633,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -1394,14 +1645,18 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
+																	MarkdownDescription: "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
 																},
 																"having": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"expression": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
+																			MarkdownDescription: "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5HavingType{
@@ -1409,27 +1664,37 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
+																	MarkdownDescription: "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
 																},
 																"legend": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
+																	MarkdownDescription: "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
 																},
 																"limit": schema.Int64Attribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
+																	MarkdownDescription: "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
 																},
 																"limit_by": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"keys": schema.ListAttribute{
-																			ElementType: types.StringType,
-																			Optional:    true,
-																			Computed:    true,
+																			ElementType:         types.StringType,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "The group-by field names that partition the result before the limit is applied.",
+																			MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																		},
 																		"value": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																			MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -1437,23 +1702,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
+																	MarkdownDescription: "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
 																},
 																"name": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
+																	MarkdownDescription: "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
 																},
 																"offset": schema.Int64Attribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
+																	MarkdownDescription: "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
 																},
 																"order": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"direction": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort direction: asc or desc.",
+																				MarkdownDescription: "The sort direction: asc or desc.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"asc",
@@ -1464,12 +1737,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			"key": schema.SingleNestedAttribute{
 																				Attributes: map[string]schema.Attribute{
 																					"description": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Human-readable summary of the field, present only for well-known fields.",
+																						MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																					},
 																					"field_context": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																						MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"metric",
@@ -1485,8 +1762,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"field_data_type": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																						MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"string",
@@ -1499,11 +1778,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"name": schema.StringAttribute{
-																						Required: true,
+																						Required:            true,
+																						Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																						MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																					},
 																					"signal": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																						MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"traces",
@@ -1514,8 +1797,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"unit": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Unit of the field values, present only for well-known fields.",
+																						MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																					},
 																				},
 																				CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -1523,8 +1808,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																				MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -1533,30 +1820,40 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
+																	MarkdownDescription: "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
 																},
 																"secondary_aggregations": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"alias": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																				MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																			},
 																			"expression": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
+																				MarkdownDescription: "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
 																			},
 																			"group_by": schema.ListNestedAttribute{
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"description": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Human-readable summary of the field, present only for well-known fields.",
+																							MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																						},
 																						"field_context": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																							MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"metric",
@@ -1572,8 +1869,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"field_data_type": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																							MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"string",
@@ -1586,11 +1885,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"name": schema.StringAttribute{
-																							Required: true,
+																							Required:            true,
+																							Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																							MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																						},
 																						"signal": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																							MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"traces",
@@ -1601,8 +1904,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"unit": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Unit of the field values, present only for well-known fields.",
+																							MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -1611,23 +1916,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The fields to group this aggregation by.",
+																				MarkdownDescription: "The fields to group this aggregation by.",
 																			},
 																			"limit": schema.Int64Attribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The maximum number of groups to return. Unlimited when 0.",
+																				MarkdownDescription: "The maximum number of groups to return. Unlimited when 0.",
 																			},
 																			"limit_by": schema.SingleNestedAttribute{
 																				Attributes: map[string]schema.Attribute{
 																					"keys": schema.ListAttribute{
-																						ElementType: types.StringType,
-																						Optional:    true,
-																						Computed:    true,
+																						ElementType:         types.StringType,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The group-by field names that partition the result before the limit is applied.",
+																						MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																					},
 																					"value": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																						MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																					},
 																				},
 																				CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -1635,15 +1948,19 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Applies limit within each distinct combination of the given keys.",
+																				MarkdownDescription: "Applies limit within each distinct combination of the given keys.",
 																			},
 																			"order": schema.ListNestedAttribute{
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"direction": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The sort direction: asc or desc.",
+																							MarkdownDescription: "The sort direction: asc or desc.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"asc",
@@ -1654,12 +1971,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						"key": schema.SingleNestedAttribute{
 																							Attributes: map[string]schema.Attribute{
 																								"description": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Human-readable summary of the field, present only for well-known fields.",
+																									MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																								},
 																								"field_context": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																									MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"metric",
@@ -1675,8 +1996,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"field_data_type": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																									MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"string",
@@ -1689,11 +2012,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"name": schema.StringAttribute{
-																									Required: true,
+																									Required:            true,
+																									Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																									MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																								},
 																								"signal": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																									MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"traces",
@@ -1704,8 +2031,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"unit": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Unit of the field values, present only for well-known fields.",
+																									MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																								},
 																							},
 																							CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -1713,8 +2042,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																								},
 																							},
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																							MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -1723,13 +2054,17 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort order of this aggregation result.",
+																				MarkdownDescription: "The sort order of this aggregation result.",
 																			},
 																			"step_interval": schema.StringAttribute{
-																				CustomType: jsontypes.NormalizedType{},
-																				Optional:   true,
-																				Computed:   true,
+																				CustomType:          jsontypes.NormalizedType{},
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
+																				MarkdownDescription: "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
@@ -1738,19 +2073,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Accepted but currently ignored, including their nested order, limit and limitBy.",
+																	MarkdownDescription: "Accepted but currently ignored, including their nested order, limit and limitBy.",
 																},
 																"select_fields": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -1766,8 +2107,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -1780,11 +2123,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -1795,8 +2142,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
@@ -1805,11 +2154,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
+																	MarkdownDescription: "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
 																},
 																"signal": schema.StringAttribute{
-																	Required: true,
+																	Required:            true,
+																	Description:         "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
+																	MarkdownDescription: "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"logs",
@@ -1817,8 +2170,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 																"source": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
+																	MarkdownDescription: "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"meter",
@@ -1827,9 +2182,11 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 																"step_interval": schema.StringAttribute{
-																	CustomType: jsontypes.NormalizedType{},
-																	Optional:   true,
-																	Computed:   true,
+																	CustomType:          jsontypes.NormalizedType{},
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
+																	MarkdownDescription: "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5LogAggregationType{
@@ -1848,10 +2205,14 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			"comparison_space_aggregation_param": schema.SingleNestedAttribute{
 																				Attributes: map[string]schema.Attribute{
 																					"operator": schema.StringAttribute{
-																						Required: true,
+																						Required:            true,
+																						Description:         "Comparison applied to histogram bucket bounds when spaceAggregation is count: <= gives the estimated count of observations at or below threshold, > the estimated count above it.",
+																						MarkdownDescription: "Comparison applied to histogram bucket bounds when spaceAggregation is count: <= gives the estimated count of observations at or below threshold, > the estimated count above it.",
 																					},
 																					"threshold": schema.Float64Attribute{
-																						Required: true,
+																						Required:            true,
+																						Description:         "Bucket bound the comparison uses, in the unit of the histogram metric. The count is exact when threshold equals one of the metric's le bucket bounds, and otherwise an estimate interpolated linearly between the two nearest bounds.",
+																						MarkdownDescription: "Bucket bound the comparison uses, in the unit of the histogram metric. The count is exact when threshold equals one of the metric's le bucket bounds, and otherwise an estimate interpolated linearly between the two nearest bounds.",
 																					},
 																				},
 																				CustomType: customtypes.MetrictypesComparisonSpaceAggregationParamType{
@@ -1859,16 +2220,22 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						AttrTypes: customtypes.MetrictypesComparisonSpaceAggregationParamValue{}.AttributeTypes(ctx),
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Histogram metrics with spaceAggregation count only: the comparison operator and bucket bound used to estimate how many observations fall at or below, or above, the threshold. Ignored for other metric types and aggregations.",
+																				MarkdownDescription: "Histogram metrics with spaceAggregation count only: the comparison operator and bucket bound used to estimate how many observations fall at or below, or above, the threshold. Ignored for other metric types and aggregations.",
 																			},
 																			"metric_name": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The name of the metric to query, for example k8s.pod.cpu_request_utilization.",
+																				MarkdownDescription: "The name of the metric to query, for example k8s.pod.cpu_request_utilization.",
 																			},
 																			"reduce_to": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "How a series collapses to one number in scalar requests: sum, count, avg, min, max, last or median. Ignored by time_series requests.",
+																				MarkdownDescription: "How a series collapses to one number in scalar requests: sum, count, avg, min, max, last or median. Ignored by time_series requests.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"sum",
@@ -1882,8 +2249,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"space_aggregation": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "How series are combined across each group, such as sum, avg, min, max or count; histograms take percentiles such as p50, p90, p95 or p99.",
+																				MarkdownDescription: "How series are combined across each group, such as sum, avg, min, max or count; histograms take percentiles such as p50, p90, p95 or p99.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"sum",
@@ -1900,8 +2269,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"temporality": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The temporality of the metric: delta, cumulative or unspecified. Resolved from the metric metadata when omitted.",
+																				MarkdownDescription: "The temporality of the metric: delta, cumulative or unspecified. Resolved from the metric metadata when omitted.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"delta",
@@ -1912,8 +2283,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"time_aggregation": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "How samples of one series are combined within each step, such as avg, sum, min, max, count, count_distinct, latest, rate or increase.",
+																				MarkdownDescription: "How samples of one series are combined within each step, such as avg, sum, min, max, count, count_distinct, latest, rate or increase.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"latest",
@@ -1936,8 +2309,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
+																	MarkdownDescription: "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
 																},
 																"bucket_options": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
@@ -1957,11 +2332,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				"spec": schema.SingleNestedAttribute{
 																					Attributes: map[string]schema.Attribute{
 																						"max_value": schema.Float64Attribute{
-																							Required: true,
+																							Required:            true,
+																							Description:         "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
+																							MarkdownDescription: "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
 																						},
 																						"num_buckets": schema.Int64Attribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
+																							MarkdownDescription: "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
@@ -1998,8 +2377,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				"spec": schema.SingleNestedAttribute{
 																					Attributes: map[string]schema.Attribute{
 																						"scale": schema.Int64Attribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
+																							MarkdownDescription: "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
@@ -2026,25 +2407,33 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
+																	MarkdownDescription: "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
 																	Validators: []validator.Object{
 																		validators.ExactlyOneNestedAttribute("linear", "log"),
 																	},
 																},
 																"cursor": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
+																	MarkdownDescription: "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
 																},
 																"disabled": schema.BoolAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
+																	MarkdownDescription: "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
 																},
 																"filter": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"expression": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
+																			MarkdownDescription: "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5FilterType{
@@ -2052,8 +2441,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The filter that selects series by their attributes, in the query filter syntax, for example k8s.namespace.name = 'prod' AND k8s.pod.name LIKE 'api%'.",
+																	MarkdownDescription: "The filter that selects series by their attributes, in the query filter syntax, for example k8s.namespace.name = 'prod' AND k8s.pod.name LIKE 'api%'.",
 																},
 																"functions": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
@@ -2062,8 +2453,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"name": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
+																							MarkdownDescription: "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
 																						},
 																						"value": schema.StringAttribute{
 																							CustomType: jsontypes.NormalizedType{},
@@ -2077,12 +2470,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
+																				MarkdownDescription: "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
 																			},
 																			"name": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
+																				MarkdownDescription: "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"cutoffmin",
@@ -2113,19 +2510,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
+																	MarkdownDescription: "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
 																},
 																"group_by": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -2141,8 +2544,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -2155,11 +2560,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -2170,8 +2579,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -2180,14 +2591,18 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
+																	MarkdownDescription: "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
 																},
 																"having": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"expression": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
+																			MarkdownDescription: "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5HavingType{
@@ -2195,27 +2610,37 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
+																	MarkdownDescription: "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
 																},
 																"legend": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
+																	MarkdownDescription: "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
 																},
 																"limit": schema.Int64Attribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
+																	MarkdownDescription: "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
 																},
 																"limit_by": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"keys": schema.ListAttribute{
-																			ElementType: types.StringType,
-																			Optional:    true,
-																			Computed:    true,
+																			ElementType:         types.StringType,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "The group-by field names that partition the result before the limit is applied.",
+																			MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																		},
 																		"value": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																			MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -2223,23 +2648,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
+																	MarkdownDescription: "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
 																},
 																"name": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
+																	MarkdownDescription: "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
 																},
 																"offset": schema.Int64Attribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
+																	MarkdownDescription: "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
 																},
 																"order": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"direction": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort direction: asc or desc.",
+																				MarkdownDescription: "The sort direction: asc or desc.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"asc",
@@ -2250,12 +2683,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			"key": schema.SingleNestedAttribute{
 																				Attributes: map[string]schema.Attribute{
 																					"description": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Human-readable summary of the field, present only for well-known fields.",
+																						MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																					},
 																					"field_context": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																						MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"metric",
@@ -2271,8 +2708,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"field_data_type": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																						MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"string",
@@ -2285,11 +2724,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"name": schema.StringAttribute{
-																						Required: true,
+																						Required:            true,
+																						Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																						MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																					},
 																					"signal": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																						MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"traces",
@@ -2300,8 +2743,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"unit": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Unit of the field values, present only for well-known fields.",
+																						MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																					},
 																				},
 																				CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -2309,8 +2754,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																				MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -2319,30 +2766,40 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
+																	MarkdownDescription: "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
 																},
 																"secondary_aggregations": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"alias": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																				MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																			},
 																			"expression": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
+																				MarkdownDescription: "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
 																			},
 																			"group_by": schema.ListNestedAttribute{
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"description": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Human-readable summary of the field, present only for well-known fields.",
+																							MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																						},
 																						"field_context": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																							MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"metric",
@@ -2358,8 +2815,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"field_data_type": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																							MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"string",
@@ -2372,11 +2831,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"name": schema.StringAttribute{
-																							Required: true,
+																							Required:            true,
+																							Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																							MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																						},
 																						"signal": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																							MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"traces",
@@ -2387,8 +2850,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"unit": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Unit of the field values, present only for well-known fields.",
+																							MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -2397,23 +2862,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The fields to group this aggregation by.",
+																				MarkdownDescription: "The fields to group this aggregation by.",
 																			},
 																			"limit": schema.Int64Attribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The maximum number of groups to return. Unlimited when 0.",
+																				MarkdownDescription: "The maximum number of groups to return. Unlimited when 0.",
 																			},
 																			"limit_by": schema.SingleNestedAttribute{
 																				Attributes: map[string]schema.Attribute{
 																					"keys": schema.ListAttribute{
-																						ElementType: types.StringType,
-																						Optional:    true,
-																						Computed:    true,
+																						ElementType:         types.StringType,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The group-by field names that partition the result before the limit is applied.",
+																						MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																					},
 																					"value": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																						MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																					},
 																				},
 																				CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -2421,15 +2894,19 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Applies limit within each distinct combination of the given keys.",
+																				MarkdownDescription: "Applies limit within each distinct combination of the given keys.",
 																			},
 																			"order": schema.ListNestedAttribute{
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"direction": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The sort direction: asc or desc.",
+																							MarkdownDescription: "The sort direction: asc or desc.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"asc",
@@ -2440,12 +2917,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						"key": schema.SingleNestedAttribute{
 																							Attributes: map[string]schema.Attribute{
 																								"description": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Human-readable summary of the field, present only for well-known fields.",
+																									MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																								},
 																								"field_context": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																									MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"metric",
@@ -2461,8 +2942,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"field_data_type": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																									MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"string",
@@ -2475,11 +2958,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"name": schema.StringAttribute{
-																									Required: true,
+																									Required:            true,
+																									Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																									MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																								},
 																								"signal": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																									MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"traces",
@@ -2490,8 +2977,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"unit": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Unit of the field values, present only for well-known fields.",
+																									MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																								},
 																							},
 																							CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -2499,8 +2988,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																								},
 																							},
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																							MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -2509,13 +3000,17 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort order of this aggregation result.",
+																				MarkdownDescription: "The sort order of this aggregation result.",
 																			},
 																			"step_interval": schema.StringAttribute{
-																				CustomType: jsontypes.NormalizedType{},
-																				Optional:   true,
-																				Computed:   true,
+																				CustomType:          jsontypes.NormalizedType{},
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
+																				MarkdownDescription: "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
@@ -2524,19 +3019,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Accepted but currently ignored, including their nested order, limit and limitBy.",
+																	MarkdownDescription: "Accepted but currently ignored, including their nested order, limit and limitBy.",
 																},
 																"select_fields": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -2552,8 +3053,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -2566,11 +3069,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -2581,8 +3088,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
@@ -2591,11 +3100,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
+																	MarkdownDescription: "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
 																},
 																"signal": schema.StringAttribute{
-																	Required: true,
+																	Required:            true,
+																	Description:         "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
+																	MarkdownDescription: "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"metrics",
@@ -2603,8 +3116,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 																"source": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
+																	MarkdownDescription: "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"meter",
@@ -2613,9 +3128,11 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 																"step_interval": schema.StringAttribute{
-																	CustomType: jsontypes.NormalizedType{},
-																	Optional:   true,
-																	Computed:   true,
+																	CustomType:          jsontypes.NormalizedType{},
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
+																	MarkdownDescription: "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5MetricAggregationType{
@@ -2632,12 +3149,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"alias": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																				MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																			},
 																			"expression": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).",
+																				MarkdownDescription: "The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
@@ -2646,8 +3167,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
+																	MarkdownDescription: "The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests.",
 																},
 																"bucket_options": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
@@ -2667,11 +3190,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				"spec": schema.SingleNestedAttribute{
 																					Attributes: map[string]schema.Attribute{
 																						"max_value": schema.Float64Attribute{
-																							Required: true,
+																							Required:            true,
+																							Description:         "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
+																							MarkdownDescription: "The upper bound of the last regular band; values above it are counted in a trailing overflow band.",
 																						},
 																						"num_buckets": schema.Int64Attribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
+																							MarkdownDescription: "The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5LinearBucketsSpecType{
@@ -2708,8 +3235,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				"spec": schema.SingleNestedAttribute{
 																					Attributes: map[string]schema.Attribute{
 																						"scale": schema.Int64Attribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
+																							MarkdownDescription: "The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5LogBucketsSpecType{
@@ -2736,25 +3265,33 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5BucketOptionsValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
+																	MarkdownDescription: "The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.",
 																	Validators: []validator.Object{
 																		validators.ExactlyOneNestedAttribute("linear", "log"),
 																	},
 																},
 																"cursor": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
+																	MarkdownDescription: "The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.",
 																},
 																"disabled": schema.BoolAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
+																	MarkdownDescription: "When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.",
 																},
 																"filter": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"expression": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
+																			MarkdownDescription: "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5FilterType{
@@ -2762,8 +3299,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500.",
+																	MarkdownDescription: "The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500.",
 																},
 																"functions": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
@@ -2772,8 +3311,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"name": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
+																							MarkdownDescription: "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
 																						},
 																						"value": schema.StringAttribute{
 																							CustomType: jsontypes.NormalizedType{},
@@ -2787,12 +3328,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
+																				MarkdownDescription: "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
 																			},
 																			"name": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
+																				MarkdownDescription: "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"cutoffmin",
@@ -2823,19 +3368,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
+																	MarkdownDescription: "Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly.",
 																},
 																"group_by": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -2851,8 +3402,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -2865,11 +3418,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -2880,8 +3437,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -2890,14 +3449,18 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
+																	MarkdownDescription: "The fields to group aggregations by; each group becomes a series or a row with the field as a label or column.",
 																},
 																"having": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"expression": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
+																			MarkdownDescription: "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5HavingType{
@@ -2905,27 +3468,37 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
+																	MarkdownDescription: "A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100.",
 																},
 																"legend": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
+																	MarkdownDescription: "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
 																},
 																"limit": schema.Int64Attribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
+																	MarkdownDescription: "The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.",
 																},
 																"limit_by": schema.SingleNestedAttribute{
 																	Attributes: map[string]schema.Attribute{
 																		"keys": schema.ListAttribute{
-																			ElementType: types.StringType,
-																			Optional:    true,
-																			Computed:    true,
+																			ElementType:         types.StringType,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "The group-by field names that partition the result before the limit is applied.",
+																			MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																		},
 																		"value": schema.StringAttribute{
-																			Optional: true,
-																			Computed: true,
+																			Optional:            true,
+																			Computed:            true,
+																			Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																			MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																		},
 																	},
 																	CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -2933,23 +3506,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
+																	MarkdownDescription: "Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored.",
 																},
 																"name": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
+																	MarkdownDescription: "The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.",
 																},
 																"offset": schema.Int64Attribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
+																	MarkdownDescription: "The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.",
 																},
 																"order": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"direction": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort direction: asc or desc.",
+																				MarkdownDescription: "The sort direction: asc or desc.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"asc",
@@ -2960,12 +3541,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			"key": schema.SingleNestedAttribute{
 																				Attributes: map[string]schema.Attribute{
 																					"description": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Human-readable summary of the field, present only for well-known fields.",
+																						MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																					},
 																					"field_context": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																						MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"metric",
@@ -2981,8 +3566,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"field_data_type": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																						MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"string",
@@ -2995,11 +3582,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"name": schema.StringAttribute{
-																						Required: true,
+																						Required:            true,
+																						Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																						MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																					},
 																					"signal": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																						MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																						Validators: []validator.String{
 																							stringvalidator.OneOf(
 																								"traces",
@@ -3010,8 +3601,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																					"unit": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "Unit of the field values, present only for well-known fields.",
+																						MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																					},
 																				},
 																				CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -3019,8 +3612,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																				MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -3029,30 +3624,40 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
+																	MarkdownDescription: "The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp.",
 																},
 																"secondary_aggregations": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"alias": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																				MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																			},
 																			"expression": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
+																				MarkdownDescription: "The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).",
 																			},
 																			"group_by": schema.ListNestedAttribute{
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"description": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Human-readable summary of the field, present only for well-known fields.",
+																							MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																						},
 																						"field_context": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																							MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"metric",
@@ -3068,8 +3673,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"field_data_type": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																							MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"string",
@@ -3082,11 +3689,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"name": schema.StringAttribute{
-																							Required: true,
+																							Required:            true,
+																							Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																							MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																						},
 																						"signal": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																							MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"traces",
@@ -3097,8 +3708,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																							},
 																						},
 																						"unit": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "Unit of the field values, present only for well-known fields.",
+																							MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -3107,23 +3720,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The fields to group this aggregation by.",
+																				MarkdownDescription: "The fields to group this aggregation by.",
 																			},
 																			"limit": schema.Int64Attribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The maximum number of groups to return. Unlimited when 0.",
+																				MarkdownDescription: "The maximum number of groups to return. Unlimited when 0.",
 																			},
 																			"limit_by": schema.SingleNestedAttribute{
 																				Attributes: map[string]schema.Attribute{
 																					"keys": schema.ListAttribute{
-																						ElementType: types.StringType,
-																						Optional:    true,
-																						Computed:    true,
+																						ElementType:         types.StringType,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The group-by field names that partition the result before the limit is applied.",
+																						MarkdownDescription: "The group-by field names that partition the result before the limit is applied.",
 																					},
 																					"value": schema.StringAttribute{
-																						Optional: true,
-																						Computed: true,
+																						Optional:            true,
+																						Computed:            true,
+																						Description:         "The aggregation alias or expression whose value ranks entries within each partition.",
+																						MarkdownDescription: "The aggregation alias or expression whose value ranks entries within each partition.",
 																					},
 																				},
 																				CustomType: customtypes.Querybuildertypesv5LimitByType{
@@ -3131,15 +3752,19 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						AttrTypes: customtypes.Querybuildertypesv5LimitByValue{}.AttributeTypes(ctx),
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Applies limit within each distinct combination of the given keys.",
+																				MarkdownDescription: "Applies limit within each distinct combination of the given keys.",
 																			},
 																			"order": schema.ListNestedAttribute{
 																				NestedObject: schema.NestedAttributeObject{
 																					Attributes: map[string]schema.Attribute{
 																						"direction": schema.StringAttribute{
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The sort direction: asc or desc.",
+																							MarkdownDescription: "The sort direction: asc or desc.",
 																							Validators: []validator.String{
 																								stringvalidator.OneOf(
 																									"asc",
@@ -3150,12 +3775,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						"key": schema.SingleNestedAttribute{
 																							Attributes: map[string]schema.Attribute{
 																								"description": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Human-readable summary of the field, present only for well-known fields.",
+																									MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																								},
 																								"field_context": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																									MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"metric",
@@ -3171,8 +3800,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"field_data_type": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																									MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"string",
@@ -3185,11 +3816,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"name": schema.StringAttribute{
-																									Required: true,
+																									Required:            true,
+																									Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																									MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																								},
 																								"signal": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																									MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																									Validators: []validator.String{
 																										stringvalidator.OneOf(
 																											"traces",
@@ -3200,8 +3835,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									},
 																								},
 																								"unit": schema.StringAttribute{
-																									Optional: true,
-																									Computed: true,
+																									Optional:            true,
+																									Computed:            true,
+																									Description:         "Unit of the field values, present only for well-known fields.",
+																									MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																								},
 																							},
 																							CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -3209,8 +3846,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																									AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																								},
 																							},
-																							Optional: true,
-																							Computed: true,
+																							Optional:            true,
+																							Computed:            true,
+																							Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																							MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																						},
 																					},
 																					CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -3219,13 +3858,17 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																						},
 																					},
 																				},
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The sort order of this aggregation result.",
+																				MarkdownDescription: "The sort order of this aggregation result.",
 																			},
 																			"step_interval": schema.StringAttribute{
-																				CustomType: jsontypes.NormalizedType{},
-																				Optional:   true,
-																				Computed:   true,
+																				CustomType:          jsontypes.NormalizedType{},
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
+																				MarkdownDescription: "The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5SecondaryAggregationType{
@@ -3234,19 +3877,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "Accepted but currently ignored, including their nested order, limit and limitBy.",
+																	MarkdownDescription: "Accepted but currently ignored, including their nested order, limit and limitBy.",
 																},
 																"select_fields": schema.ListNestedAttribute{
 																	NestedObject: schema.NestedAttributeObject{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -3262,8 +3911,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -3276,11 +3927,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -3291,8 +3946,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
@@ -3301,11 +3958,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																			},
 																		},
 																	},
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
+																	MarkdownDescription: "The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests.",
 																},
 																"signal": schema.StringAttribute{
-																	Required: true,
+																	Required:            true,
+																	Description:         "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
+																	MarkdownDescription: "The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.",
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"traces",
@@ -3313,8 +3974,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 																"source": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
+																	MarkdownDescription: "The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.",
 																	Validators: []validator.String{
 																		stringvalidator.OneOf(
 																			"meter",
@@ -3323,9 +3986,11 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 																"step_interval": schema.StringAttribute{
-																	CustomType: jsontypes.NormalizedType{},
-																	Optional:   true,
-																	Computed:   true,
+																	CustomType:          jsontypes.NormalizedType{},
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
+																	MarkdownDescription: "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5QueryBuilderQueryGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5TraceAggregationType{
@@ -3382,12 +4047,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"alias": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
+																		MarkdownDescription: "The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.",
 																	},
 																	"expression": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).",
+																		MarkdownDescription: "The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5TraceAggregationType{
@@ -3396,26 +4065,36 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The aggregations to compute over the matched traces for scalar and time_series requests.",
+															MarkdownDescription: "The aggregations to compute over the matched traces for scalar and time_series requests.",
 														},
 														"cursor": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Accepted but currently ignored by the trace operator; page raw results with offset.",
+															MarkdownDescription: "Accepted but currently ignored by the trace operator; page raw results with offset.",
 														},
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "When true, the result is excluded from the response but the query may still run. Defaults to false.",
+															MarkdownDescription: "When true, the result is excluded from the response but the query may still run. Defaults to false.",
 														},
 														"expression": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "A trace-structure expression over traces builder query names using => for direct child, -> for descendant, && for both present, || for either present and NOT for absence, for example A => B && NOT C. At most 10 operators.",
+															MarkdownDescription: "A trace-structure expression over traces builder query names using => for direct child, -> for descendant, && for both present, || for either present and NOT for absence, for example A => B && NOT C. At most 10 operators.",
 														},
 														"filter": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"expression": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
+																	MarkdownDescription: "A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5FilterType{
@@ -3423,8 +4102,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5FilterValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Accepted but currently not applied to the matched traces. Put filters on the operand queries instead.",
+															MarkdownDescription: "Accepted but currently not applied to the matched traces. Put filters on the operand queries instead.",
 														},
 														"functions": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
@@ -3433,8 +4114,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		NestedObject: schema.NestedAttributeObject{
 																			Attributes: map[string]schema.Attribute{
 																				"name": schema.StringAttribute{
-																					Optional: true,
-																					Computed: true,
+																					Optional:            true,
+																					Computed:            true,
+																					Description:         "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
+																					MarkdownDescription: "The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.",
 																				},
 																				"value": schema.StringAttribute{
 																					CustomType: jsontypes.NormalizedType{},
@@ -3448,12 +4131,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
+																		MarkdownDescription: "The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.",
 																	},
 																	"name": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
+																		MarkdownDescription: "The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"cutoffmin",
@@ -3484,19 +4171,25 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Post-processing functions applied in order to each result series.",
+															MarkdownDescription: "Post-processing functions applied in order to each result series.",
 														},
 														"group_by": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"description": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Human-readable summary of the field, present only for well-known fields.",
+																		MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																	},
 																	"field_context": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																		MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"metric",
@@ -3512,8 +4205,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"field_data_type": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																		MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"string",
@@ -3526,11 +4221,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"name": schema.StringAttribute{
-																		Required: true,
+																		Required:            true,
+																		Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																		MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																	},
 																	"signal": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																		MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"traces",
@@ -3541,8 +4240,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"unit": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Unit of the field values, present only for well-known fields.",
+																		MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5GroupByKeyType{
@@ -3551,14 +4252,18 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The fields to group aggregations by.",
+															MarkdownDescription: "The fields to group aggregations by.",
 														},
 														"having": schema.SingleNestedAttribute{
 															Attributes: map[string]schema.Attribute{
 																"expression": schema.StringAttribute{
-																	Optional: true,
-																	Computed: true,
+																	Optional:            true,
+																	Computed:            true,
+																	Description:         "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
+																	MarkdownDescription: "A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.",
 																},
 															},
 															CustomType: customtypes.Querybuildertypesv5HavingType{
@@ -3566,31 +4271,43 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	AttrTypes: customtypes.Querybuildertypesv5HavingValue{}.AttributeTypes(ctx),
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "A condition on the aggregation results, for example count() > 10.",
+															MarkdownDescription: "A condition on the aggregation results, for example count() > 10.",
 														},
 														"legend": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
+															MarkdownDescription: "The display name template for each series; {{field}} placeholders are replaced by group-by label values.",
 														},
 														"limit": schema.Int64Attribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The maximum number of traces or groups to return. For raw requests 0 means 100 rows; for aggregations 0 means unlimited.",
+															MarkdownDescription: "The maximum number of traces or groups to return. For raw requests 0 means 100 rows; for aggregations 0 means unlimited.",
 														},
 														"name": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The unique name of the trace operator query.",
+															MarkdownDescription: "The unique name of the trace operator query.",
 														},
 														"offset": schema.Int64Attribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The number of raw or trace rows, or of ordered series or rows for time_series and scalar requests, to skip before the page starts. Requires limit.",
+															MarkdownDescription: "The number of raw or trace rows, or of ordered series or rows for time_series and scalar requests, to skip before the page starts. Requires limit.",
 														},
 														"order": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"direction": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The sort direction: asc or desc.",
+																		MarkdownDescription: "The sort direction: asc or desc.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"asc",
@@ -3601,12 +4318,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	"key": schema.SingleNestedAttribute{
 																		Attributes: map[string]schema.Attribute{
 																			"description": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Human-readable summary of the field, present only for well-known fields.",
+																				MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																			},
 																			"field_context": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																				MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"metric",
@@ -3622,8 +4343,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"field_data_type": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																				MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"string",
@@ -3636,11 +4359,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"name": schema.StringAttribute{
-																				Required: true,
+																				Required:            true,
+																				Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																				MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																			},
 																			"signal": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																				MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																				Validators: []validator.String{
 																					stringvalidator.OneOf(
 																						"traces",
@@ -3651,8 +4378,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				},
 																			},
 																			"unit": schema.StringAttribute{
-																				Optional: true,
-																				Computed: true,
+																				Optional:            true,
+																				Computed:            true,
+																				Description:         "Unit of the field values, present only for well-known fields.",
+																				MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																			},
 																		},
 																		CustomType: customtypes.Querybuildertypesv5OrderByKeyType{
@@ -3660,8 +4389,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																				AttrTypes: customtypes.Querybuildertypesv5OrderByKeyValue{}.AttributeTypes(ctx),
 																			},
 																		},
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
+																		MarkdownDescription: "The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp.",
 																	},
 																},
 																CustomType: customtypes.Querybuildertypesv5OrderByType{
@@ -3670,23 +4401,31 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The sort order of the matched traces; only span_count and trace_duration may be used as keys.",
+															MarkdownDescription: "The sort order of the matched traces; only span_count and trace_duration may be used as keys.",
 														},
 														"return_spans_from": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The name of the operand query whose spans are returned; when empty, the spans matched by the whole expression are returned.",
+															MarkdownDescription: "The name of the operand query whose spans are returned; when empty, the spans matched by the whole expression are returned.",
 														},
 														"select_fields": schema.ListNestedAttribute{
 															NestedObject: schema.NestedAttributeObject{
 																Attributes: map[string]schema.Attribute{
 																	"description": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Human-readable summary of the field, present only for well-known fields.",
+																		MarkdownDescription: "Human-readable summary of the field, present only for well-known fields.",
 																	},
 																	"field_context": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
+																		MarkdownDescription: "Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"metric",
@@ -3702,8 +4441,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"field_data_type": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
+																		MarkdownDescription: "Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"string",
@@ -3716,11 +4457,15 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"name": schema.StringAttribute{
-																		Required: true,
+																		Required:            true,
+																		Description:         "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
+																		MarkdownDescription: "The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.",
 																	},
 																	"signal": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
+																		MarkdownDescription: "The signal the field belongs to: traces, logs or metrics. Empty means any signal.",
 																		Validators: []validator.String{
 																			stringvalidator.OneOf(
 																				"traces",
@@ -3731,8 +4476,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																		},
 																	},
 																	"unit": schema.StringAttribute{
-																		Optional: true,
-																		Computed: true,
+																		Optional:            true,
+																		Computed:            true,
+																		Description:         "Unit of the field values, present only for well-known fields.",
+																		MarkdownDescription: "Unit of the field values, present only for well-known fields.",
 																	},
 																},
 																CustomType: customtypes.TelemetrytypesTelemetryFieldKeyType{
@@ -3741,13 +4488,17 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 																	},
 																},
 															},
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The span fields to return for each row in raw requests, in addition to the always-present timestamp, trace_id and span_id columns.",
+															MarkdownDescription: "The span fields to return for each row in raw requests, in addition to the always-present timestamp, trace_id and span_id columns.",
 														},
 														"step_interval": schema.StringAttribute{
-															CustomType: jsontypes.NormalizedType{},
-															Optional:   true,
-															Computed:   true,
+															CustomType:          jsontypes.NormalizedType{},
+															Optional:            true,
+															Computed:            true,
+															Description:         "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s.",
+															MarkdownDescription: "The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s.",
 														},
 													},
 													CustomType: customtypes.Querybuildertypesv5QueryBuilderTraceOperatorType{
@@ -3789,20 +4540,28 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 												"spec": schema.SingleNestedAttribute{
 													Attributes: map[string]schema.Attribute{
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "When true, the result is excluded from the response but the query may still run. Defaults to false.",
+															MarkdownDescription: "When true, the result is excluded from the response but the query may still run. Defaults to false.",
 														},
 														"legend": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The display name template for each series; {{column}} placeholders are replaced by result column values.",
+															MarkdownDescription: "The display name template for each series; {{column}} placeholders are replaced by result column values.",
 														},
 														"name": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The unique name of the query, such as A.",
+															MarkdownDescription: "The unique name of the query, such as A.",
 														},
 														"query": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The ClickHouse SQL statement. Reserved time placeholders such as {{.start_timestamp}}, {{.end_timestamp}}, {{.start_timestamp_ms}} and {{.start_datetime}} and dashboard variables written as {{name}}, [[name]] or $name are substituted before execution.",
+															MarkdownDescription: "The ClickHouse SQL statement. Reserved time placeholders such as {{.start_timestamp}}, {{.end_timestamp}}, {{.start_timestamp_ms}} and {{.start_datetime}} and dashboard variables written as {{name}}, [[name]] or $name are substituted before execution.",
 														},
 													},
 													CustomType: customtypes.Querybuildertypesv5ClickHouseQueryType{
@@ -3844,29 +4603,47 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 												"spec": schema.SingleNestedAttribute{
 													Attributes: map[string]schema.Attribute{
 														"disabled": schema.BoolAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "When true, the result is excluded from the response but the query may still run. Defaults to false.",
+															MarkdownDescription: "When true, the result is excluded from the response but the query may still run. Defaults to false.",
 														},
 														"legend": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The display name template for each series; {{label}} placeholders are replaced by label values.",
+															MarkdownDescription: "The display name template for each series; {{label}} placeholders are replaced by label values.",
 														},
 														"name": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The unique name of the query, such as A.",
+															MarkdownDescription: "The unique name of the query, such as A.",
 														},
 														"query": schema.StringAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "The PromQL expression. Dotted metric and label names must use the UTF-8 quoted selector form, for example {'http.server.duration'}.",
+															MarkdownDescription: "The PromQL expression. Dotted metric and label names must use the UTF-8 quoted selector form, for example {'http.server.duration'}.",
+														},
+														"skip_step_alignment": schema.BoolAttribute{
+															Optional:            true,
+															Computed:            true,
+															Description:         "When true, start and end are evaluated as given instead of rounded down to the step, and the result is not cached. Defaults to false.",
+															MarkdownDescription: "When true, start and end are evaluated as given instead of rounded down to the step, and the result is not cached. Defaults to false.",
 														},
 														"stats": schema.BoolAttribute{
-															Optional: true,
-															Computed: true,
+															Optional:            true,
+															Computed:            true,
+															Description:         "Reserved; currently has no effect.",
+															MarkdownDescription: "Reserved; currently has no effect.",
 														},
 														"step": schema.StringAttribute{
-															CustomType: jsontypes.NormalizedType{},
-															Optional:   true,
-															Computed:   true,
+															CustomType:          jsontypes.NormalizedType{},
+															Optional:            true,
+															Computed:            true,
+															Description:         "The evaluation step: seconds as a number or a Go duration string such as 60s. Derived from the time range when omitted.",
+															MarkdownDescription: "The evaluation step: seconds as a number or a Go duration string such as 60s. Derived from the time range when omitted.",
 														},
 													},
 													CustomType: customtypes.Querybuildertypesv5PromQueryType{
@@ -3913,13 +4690,14 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 										validators.ExactlyOneNestedAttribute("builder_ai_query", "builder_formula", "builder_query", "builder_trace_operator", "clickhouse_sql", "promql"),
 									},
 								},
-								Required: true,
-								Validators: []validator.List{
-									listvalidator.SizeAtLeast(1),
-								},
+								Required:            true,
+								Description:         "The queries to evaluate, at least one. Every envelope type must match queryType: builder_query and builder_formula for builder, promql for promql, clickhouse_sql for clickhouse_sql.",
+								MarkdownDescription: "The queries to evaluate, at least one. Every envelope type must match queryType: builder_query and builder_formula for builder, promql for promql, clickhouse_sql for clickhouse_sql.",
 							},
 							"query_type": schema.StringAttribute{
-								Required: true,
+								Required:            true,
+								Description:         "The query language of every query: builder, promql or clickhouse_sql.",
+								MarkdownDescription: "The query language of every query: builder, promql or clickhouse_sql.",
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"builder",
@@ -3929,8 +4707,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 							"unit": schema.StringAttribute{
-								Optional: true,
-								Computed: true,
+								Optional:            true,
+								Computed:            true,
+								Description:         "The unit of the query result, such as percent, ms or bytes. Used to format values in notifications and to convert thresholds given in a different targetUnit.",
+								MarkdownDescription: "The unit of the query result, such as percent, ms or bytes. Used to format values in notifications and to convert thresholds given in a different targetUnit.",
 							},
 						},
 						CustomType: customtypes.RuletypesAlertCompositeQueryType{
@@ -3938,19 +4718,27 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 								AttrTypes: customtypes.RuletypesAlertCompositeQueryValue{}.AttributeTypes(ctx),
 							},
 						},
-						Required: true,
+						Required:            true,
+						Description:         "The queries whose result is compared against the thresholds.",
+						MarkdownDescription: "The queries whose result is compared against the thresholds.",
 					},
 					"require_min_points": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "Whether a series is skipped until it has at least requiredNumPoints points in the window. Defaults to false.",
+						MarkdownDescription: "Whether a series is skipped until it has at least requiredNumPoints points in the window. Defaults to false.",
 					},
 					"required_num_points": schema.Int64Attribute{
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "The minimum number of points a series needs before it is evaluated. Must be greater than 0 when requireMinPoints is true.",
+						MarkdownDescription: "The minimum number of points a series needs before it is evaluated. Must be greater than 0 when requireMinPoints is true.",
 					},
 					"seasonality": schema.StringAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly.",
+						MarkdownDescription: "anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly.",
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"hourly",
@@ -3960,7 +4748,9 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						},
 					},
 					"selected_query_name": schema.StringAttribute{
-						Required: true,
+						Required:            true,
+						Description:         "The name of the query whose result is evaluated, such as A or F1. Must match a query in compositeQuery.",
+						MarkdownDescription: "The name of the query whose result is evaluated, such as A or F1. Must match a query in compositeQuery.",
 					},
 					"thresholds": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
@@ -3980,12 +4770,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
 												"channels": schema.ListAttribute{
-													ElementType: types.StringType,
-													Optional:    true,
-													Computed:    true,
+													ElementType:         types.StringType,
+													Optional:            true,
+													Computed:            true,
+													Description:         "The displayName of each notification channel alerts crossing this threshold are sent to. Ignored when notificationSettings.usePolicy is true.",
+													MarkdownDescription: "The displayName of each notification channel alerts crossing this threshold are sent to. Ignored when notificationSettings.usePolicy is true.",
 												},
 												"match_type": schema.StringAttribute{
-													Required: true,
+													Required:            true,
+													Description:         "Which points in the window must satisfy op. Accepted as at_least_once, all_the_times, on_average, in_total or last, their aliases avg and sum, or the legacy codes as strings, '1' to '5'.",
+													MarkdownDescription: "Which points in the window must satisfy op. Accepted as at_least_once, all_the_times, on_average, in_total or last, their aliases avg and sum, or the legacy codes as strings, '1' to '5'.",
 													Validators: []validator.String{
 														stringvalidator.OneOf(
 															"at_least_once",
@@ -3997,10 +4791,14 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 													},
 												},
 												"name": schema.StringAttribute{
-													Required: true,
+													Required:            true,
+													Description:         "The threshold name, conventionally critical, error, warning or info. Alerts carry it as the threshold.name label and, lowercased, as the severity label; templates can read it as $threshold.name.",
+													MarkdownDescription: "The threshold name, conventionally critical, error, warning or info. Alerts carry it as the threshold.name label and, lowercased, as the severity label; templates can read it as $threshold.name.",
 												},
 												"op": schema.StringAttribute{
-													Required: true,
+													Required:            true,
+													Description:         "How the value is compared with target. Accepted as above, below, equal, not_equal, above_or_equal, below_or_equal or outside_bounds, their symbols, or the legacy codes as strings, '1' to '7'.",
+													MarkdownDescription: "How the value is compared with target. Accepted as above, below, equal, not_equal, above_or_equal, below_or_equal or outside_bounds, their symbols, or the legacy codes as strings, '1' to '7'.",
 													Validators: []validator.String{
 														stringvalidator.OneOf(
 															"above",
@@ -4014,15 +4812,21 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 													},
 												},
 												"recovery_target": schema.Float64Attribute{
-													Optional: true,
-													Computed: true,
+													Optional:            true,
+													Computed:            true,
+													Description:         "The value at which a firing alert resolves, in targetUnit. Keeps an alert firing between target and recoveryTarget to avoid flapping; null resolves at target.",
+													MarkdownDescription: "The value at which a firing alert resolves, in targetUnit. Keeps an alert firing between target and recoveryTarget to avoid flapping; null resolves at target.",
 												},
 												"target": schema.Float64Attribute{
-													Required: true,
+													Required:            true,
+													Description:         "The value the query result is compared against, in targetUnit.",
+													MarkdownDescription: "The value the query result is compared against, in targetUnit.",
 												},
 												"target_unit": schema.StringAttribute{
-													Optional: true,
-													Computed: true,
+													Optional:            true,
+													Computed:            true,
+													Description:         "The unit of target and recoveryTarget, such as percent or ms. Converted to the query unit before comparison when the two differ; empty means the query unit.",
+													MarkdownDescription: "The unit of target and recoveryTarget, such as percent or ms. Converted to the query unit before comparison when the two differ; empty means the query unit.",
 												},
 											},
 											CustomType: customtypes.RuletypesBasicRuleThresholdType{
@@ -4050,7 +4854,9 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 								AttrTypes: customtypes.RuletypesRuleThresholdDataValue{}.AttributeTypes(ctx),
 							},
 						},
-						Required: true,
+						Required:            true,
+						Description:         "The thresholds to evaluate, as a kind and spec.",
+						MarkdownDescription: "The thresholds to evaluate, as a kind and spec.",
 						Validators: []validator.Object{
 							validators.ExactlyOneNestedAttribute("basic"),
 						},
@@ -4061,15 +4867,21 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.RuletypesRuleConditionValue{}.AttributeTypes(ctx),
 					},
 				},
-				Required: true,
+				Required:            true,
+				Description:         "The query to evaluate and the thresholds applied to its result.",
+				MarkdownDescription: "The query to evaluate and the thresholds applied to its result.",
 			},
 			"description": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "A human readable description of what the rule monitors.",
+				MarkdownDescription: "A human readable description of what the rule monitors.",
 			},
 			"disabled": schema.BoolAttribute{
-				Optional: true,
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Whether the rule is paused. A disabled rule is neither evaluated nor notifies. Defaults to false.",
+				MarkdownDescription: "Whether the rule is paused. A disabled rule is neither evaluated nor notifies. Defaults to false.",
 			},
 			"evaluation": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
@@ -4089,24 +4901,34 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"frequency": schema.StringAttribute{
-										Required: true,
+										Required:            true,
+										Description:         "How often the rule is evaluated, as a Go duration such as 1m. Must be positive.",
+										MarkdownDescription: "How often the rule is evaluated, as a Go duration such as 1m. Must be positive.",
 									},
 									"schedule": schema.SingleNestedAttribute{
 										Attributes: map[string]schema.Attribute{
 											"day": schema.Int64Attribute{
-												Optional: true,
-												Computed: true,
+												Optional:            true,
+												Computed:            true,
+												Description:         "The day of the month of the reset boundary, 1 to 31. Required for monthly.",
+												MarkdownDescription: "The day of the month of the reset boundary, 1 to 31. Required for monthly.",
 											},
 											"hour": schema.Int64Attribute{
-												Optional: true,
-												Computed: true,
+												Optional:            true,
+												Computed:            true,
+												Description:         "The hour of the reset boundary, 0 to 23. Required for daily, weekly and monthly.",
+												MarkdownDescription: "The hour of the reset boundary, 0 to 23. Required for daily, weekly and monthly.",
 											},
 											"minute": schema.Int64Attribute{
-												Optional: true,
-												Computed: true,
+												Optional:            true,
+												Computed:            true,
+												Description:         "The minute of the reset boundary, 0 to 59. Required for every type.",
+												MarkdownDescription: "The minute of the reset boundary, 0 to 59. Required for every type.",
 											},
 											"type": schema.StringAttribute{
-												Required: true,
+												Required:            true,
+												Description:         "How often the window resets: hourly, daily, weekly or monthly.",
+												MarkdownDescription: "How often the window resets: hourly, daily, weekly or monthly.",
 												Validators: []validator.String{
 													stringvalidator.OneOf(
 														"hourly",
@@ -4117,8 +4939,10 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 											"weekday": schema.Int64Attribute{
-												Optional: true,
-												Computed: true,
+												Optional:            true,
+												Computed:            true,
+												Description:         "The weekday of the reset boundary, 0 (Sunday) to 6 (Saturday). Required for weekly.",
+												MarkdownDescription: "The weekday of the reset boundary, 0 (Sunday) to 6 (Saturday). Required for weekly.",
 											},
 										},
 										CustomType: customtypes.RuletypesCumulativeScheduleType{
@@ -4126,10 +4950,14 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 												AttrTypes: customtypes.RuletypesCumulativeScheduleValue{}.AttributeTypes(ctx),
 											},
 										},
-										Required: true,
+										Required:            true,
+										Description:         "The boundary the accumulation window starts from. Each evaluation queries from the most recent boundary to now.",
+										MarkdownDescription: "The boundary the accumulation window starts from. Each evaluation queries from the most recent boundary to now.",
 									},
 									"timezone": schema.StringAttribute{
-										Required: true,
+										Required:            true,
+										Description:         "The IANA time zone the schedule is resolved in, such as UTC or Asia/Kolkata.",
+										MarkdownDescription: "The IANA time zone the schedule is resolved in, such as UTC or Asia/Kolkata.",
 									},
 								},
 								CustomType: customtypes.RuletypesCumulativeWindowType{
@@ -4166,10 +4994,14 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"eval_window": schema.StringAttribute{
-										Required: true,
+										Required:            true,
+										Description:         "The sliding lookback window each evaluation queries, as a Go duration such as 5m.",
+										MarkdownDescription: "The sliding lookback window each evaluation queries, as a Go duration such as 5m.",
 									},
 									"frequency": schema.StringAttribute{
-										Required: true,
+										Required:            true,
+										Description:         "How often the rule is evaluated, as a Go duration such as 1m. Must be positive.",
+										MarkdownDescription: "How often the rule is evaluated, as a Go duration such as 1m. Must be positive.",
 									},
 								},
 								CustomType: customtypes.RuletypesRollingWindowType{
@@ -4196,44 +5028,60 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.RuletypesEvaluationEnvelopeValue{}.AttributeTypes(ctx),
 					},
 				},
-				Required: true,
+				Required:            true,
+				Description:         "The evaluation window, as a kind and spec.",
+				MarkdownDescription: "The evaluation window, as a kind and spec.",
 				Validators: []validator.Object{
 					validators.ExactlyOneNestedAttribute("cumulative", "rolling"),
 				},
 			},
 			"id": schema.StringAttribute{
-				Computed: true,
+				Computed:            true,
+				Description:         "The unique identifier of the rule.",
+				MarkdownDescription: "The unique identifier of the rule.",
 			},
 			"labels": schema.MapAttribute{
-				ElementType: types.StringType,
-				Optional:    true,
-				Computed:    true,
+				ElementType:         types.StringType,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Labels attached to every alert the rule fires. Keys match [a-zA-Z_.][a-zA-Z0-9_.]*; values may use Go templates such as {{$labels.service_name}}. severity is the conventional routing label.",
+				MarkdownDescription: "Labels attached to every alert the rule fires. Keys match [a-zA-Z_.][a-zA-Z0-9_.]*; values may use Go templates such as {{$labels.service_name}}. severity is the conventional routing label.",
 			},
 			"notification_settings": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"group_by": schema.ListAttribute{
-						ElementType: types.StringType,
-						Optional:    true,
-						Computed:    true,
+						ElementType:         types.StringType,
+						Optional:            true,
+						Computed:            true,
+						Description:         "Label names whose values group alerts into one notification, such as service.name.",
+						MarkdownDescription: "Label names whose values group alerts into one notification, such as service.name.",
 					},
 					"new_group_eval_delay": schema.StringAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "A grace period, as a Go duration such as 2m, during which a newly seen label group is excluded from evaluation. Applies to metric rules only; log and trace rules are never delayed. A group whose values are not yet known is evaluated immediately.",
+						MarkdownDescription: "A grace period, as a Go duration such as 2m, during which a newly seen label group is excluded from evaluation. Applies to metric rules only; log and trace rules are never delayed. A group whose values are not yet known is evaluated immediately.",
 					},
 					"renotify": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"alert_states": schema.ListAttribute{
-								ElementType: types.StringType,
-								Optional:    true,
-								Computed:    true,
+								ElementType:         types.StringType,
+								Optional:            true,
+								Computed:            true,
+								Description:         "The alert states that are re-notified: firing, nodata or both.",
+								MarkdownDescription: "The alert states that are re-notified: firing, nodata or both.",
 							},
 							"enabled": schema.BoolAttribute{
-								Optional: true,
-								Computed: true,
+								Optional:            true,
+								Computed:            true,
+								Description:         "Whether an active alert is re-sent after interval elapses. When false an alert notifies once per firing.",
+								MarkdownDescription: "Whether an active alert is re-sent after interval elapses. When false an alert notifies once per firing.",
 							},
 							"interval": schema.StringAttribute{
-								Optional: true,
-								Computed: true,
+								Optional:            true,
+								Computed:            true,
+								Description:         "The time between repeat notifications, as a Go duration such as 4h. Must be positive when enabled is true.",
+								MarkdownDescription: "The time between repeat notifications, as a Go duration such as 4h. Must be positive when enabled is true.",
 							},
 						},
 						CustomType: customtypes.RuletypesRenotifyType{
@@ -4241,12 +5089,16 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 								AttrTypes: customtypes.RuletypesRenotifyValue{}.AttributeTypes(ctx),
 							},
 						},
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "Whether and how often to re-send a notification for an alert that stays active.",
+						MarkdownDescription: "Whether and how often to re-send a notification for an alert that stays active.",
 					},
 					"use_policy": schema.BoolAttribute{
-						Optional: true,
-						Computed: true,
+						Optional:            true,
+						Computed:            true,
+						Description:         "When true, alerts are routed by the organisation level notification policies instead of the channels named on the thresholds. Defaults to false.",
+						MarkdownDescription: "When true, alerts are routed by the organisation level notification policies instead of the channels named on the thresholds. Defaults to false.",
 					},
 				},
 				CustomType: customtypes.RuletypesNotificationSettingsType{
@@ -4254,10 +5106,14 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.RuletypesNotificationSettingsValue{}.AttributeTypes(ctx),
 					},
 				},
-				Required: true,
+				Required:            true,
+				Description:         "Grouping, re-notification and routing behaviour.",
+				MarkdownDescription: "Grouping, re-notification and routing behaviour.",
 			},
 			"rule_type": schema.StringAttribute{
-				Required: true,
+				Required:            true,
+				Description:         "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule scores deviation from seasonal history. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
+				MarkdownDescription: "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule scores deviation from seasonal history. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"threshold_rule",
@@ -4267,7 +5123,9 @@ func RuleResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"schema_version": schema.StringAttribute{
-				Required: true,
+				Required:            true,
+				Description:         "The rule payload schema.",
+				MarkdownDescription: "The rule payload schema.",
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"v2alpha1",

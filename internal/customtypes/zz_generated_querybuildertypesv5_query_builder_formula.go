@@ -183,6 +183,24 @@ func (t Querybuildertypesv5QueryBuilderFormulaType) ValueFromObject(ctx context.
 			fmt.Sprintf(`name expected to be basetypes.StringValue, was: %T`, nameAttribute))
 	}
 
+	offsetAttribute, ok := attributes["offset"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`offset is missing from object`)
+
+		return nil, diags
+	}
+
+	offsetVal, ok := offsetAttribute.(basetypes.Int64Value)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`offset expected to be basetypes.Int64Value, was: %T`, offsetAttribute))
+	}
+
 	orderAttribute, ok := attributes["order"]
 
 	if !ok {
@@ -214,6 +232,7 @@ func (t Querybuildertypesv5QueryBuilderFormulaType) ValueFromObject(ctx context.
 		Legend:        legendVal,
 		Limit:         limitVal,
 		Name:          nameVal,
+		Offset:        offsetVal,
 		Order:         orderVal,
 		state:         attr.ValueStateKnown,
 	}, diags
@@ -426,6 +445,24 @@ func NewQuerybuildertypesv5QueryBuilderFormulaValue(attributeTypes map[string]at
 			fmt.Sprintf(`name expected to be basetypes.StringValue, was: %T`, nameAttribute))
 	}
 
+	offsetAttribute, ok := attributes["offset"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`offset is missing from object`)
+
+		return NewQuerybuildertypesv5QueryBuilderFormulaValueUnknown(), diags
+	}
+
+	offsetVal, ok := offsetAttribute.(basetypes.Int64Value)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`offset expected to be basetypes.Int64Value, was: %T`, offsetAttribute))
+	}
+
 	orderAttribute, ok := attributes["order"]
 
 	if !ok {
@@ -457,6 +494,7 @@ func NewQuerybuildertypesv5QueryBuilderFormulaValue(attributeTypes map[string]at
 		Legend:        legendVal,
 		Limit:         limitVal,
 		Name:          nameVal,
+		Offset:        offsetVal,
 		Order:         orderVal,
 		state:         attr.ValueStateKnown,
 	}, diags
@@ -538,12 +576,13 @@ type Querybuildertypesv5QueryBuilderFormulaValue struct {
 	Legend        basetypes.StringValue `tfsdk:"legend"`
 	Limit         basetypes.Int64Value  `tfsdk:"limit"`
 	Name          basetypes.StringValue `tfsdk:"name"`
+	Offset        basetypes.Int64Value  `tfsdk:"offset"`
 	Order         basetypes.ListValue   `tfsdk:"order"`
 	state         attr.ValueState
 }
 
 func (v Querybuildertypesv5QueryBuilderFormulaValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 9)
+	attrTypes := make(map[string]tftypes.Type, 10)
 
 	var val tftypes.Value
 	var err error
@@ -562,6 +601,7 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToTerraformValue(ctx contex
 	attrTypes["legend"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["limit"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["name"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["offset"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["order"] = basetypes.ListType{
 		ElemType: Querybuildertypesv5OrderByValue{}.Type(ctx),
 	}.TerraformType(ctx)
@@ -570,7 +610,7 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToTerraformValue(ctx contex
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 9)
+		vals := make(map[string]tftypes.Value, 10)
 
 		val, err = v.BucketOptions.ToTerraformValue(ctx)
 
@@ -635,6 +675,14 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToTerraformValue(ctx contex
 		}
 
 		vals["name"] = val
+
+		val, err = v.Offset.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["offset"] = val
 
 		val, err = v.Order.ToTerraformValue(ctx)
 
@@ -788,6 +836,7 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToObjectValue(ctx context.C
 		"legend": basetypes.StringType{},
 		"limit":  basetypes.Int64Type{},
 		"name":   basetypes.StringType{},
+		"offset": basetypes.Int64Type{},
 		"order": basetypes.ListType{
 			ElemType: Querybuildertypesv5OrderByValue{}.Type(ctx),
 		},
@@ -812,6 +861,7 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) ToObjectValue(ctx context.C
 			"legend":         v.Legend,
 			"limit":          v.Limit,
 			"name":           v.Name,
+			"offset":         v.Offset,
 			"order":          order,
 		})
 
@@ -865,6 +915,10 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) Equal(o attr.Value) bool {
 		return false
 	}
 
+	if !v.Offset.Equal(other.Offset) {
+		return false
+	}
+
 	if !v.Order.Equal(other.Order) {
 		return false
 	}
@@ -896,6 +950,7 @@ func (v Querybuildertypesv5QueryBuilderFormulaValue) AttributeTypes(ctx context.
 		"legend": basetypes.StringType{},
 		"limit":  basetypes.Int64Type{},
 		"name":   basetypes.StringType{},
+		"offset": basetypes.Int64Type{},
 		"order": basetypes.ListType{
 			ElemType: Querybuildertypesv5OrderByValue{}.Type(ctx),
 		},

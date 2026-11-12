@@ -5,8 +5,15 @@ package apitypes
 
 // DashboardtypesTextPanelSpec defines model for DashboardtypesTextPanelSpec.
 type DashboardtypesTextPanelSpec struct {
-	HeaderOptions *DashboardtypesHeaderOptions    `json:"headerOptions,omitempty"`
-	Mode          *DashboardtypesTextMode         `json:"mode,omitempty"`
-	Presentation  *DashboardtypesTextPresentation `json:"presentation,omitempty"`
-	Text          *string                         `json:"text,omitempty"`
+	// HeaderOptions Whether the panel header is shown.
+	HeaderOptions *DashboardtypesHeaderOptions `json:"headerOptions,omitempty" jsonschema:"Whether the panel header is shown."`
+
+	// Mode How text is interpreted. Only markdown is supported.
+	Mode *DashboardtypesTextMode `json:"mode,omitempty" jsonschema:"How text is interpreted. Only markdown is supported."`
+
+	// Presentation Alignment and background of the content.
+	Presentation *DashboardtypesTextPresentation `json:"presentation,omitempty" jsonschema:"Alignment and background of the content."`
+
+	// Text The content to render.
+	Text *string `json:"text,omitempty" jsonschema:"The content to render."`
 }

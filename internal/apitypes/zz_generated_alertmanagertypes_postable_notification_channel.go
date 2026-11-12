@@ -5,8 +5,15 @@ package apitypes
 
 // AlertmanagertypesPostableNotificationChannel defines model for AlertmanagertypesPostableNotificationChannel.
 type AlertmanagertypesPostableNotificationChannel struct {
-	Config       AlertmanagertypesChannelConfig `json:"config"`
-	DisplayName  *string                        `json:"displayName,omitempty"`
-	GenerateName *bool                          `json:"generateName,omitempty"`
-	Name         *string                        `json:"name,omitempty"`
+	// Config The provider kind and its spec.
+	Config AlertmanagertypesChannelConfig `json:"config" jsonschema:"The provider kind and its spec."`
+
+	// DisplayName The label shown in the UI. Alert rules and routing policies reference it, not name. Defaults to name; required when generateName is true.
+	DisplayName *string `json:"displayName,omitempty" jsonschema:"The label shown in the UI. Alert rules and routing policies reference it, not name. Defaults to name; required when generateName is true."`
+
+	// GenerateName Derive name from displayName plus a random suffix instead of supplying it. Defaults to false.
+	GenerateName *bool `json:"generateName,omitempty" jsonschema:"Derive name from displayName plus a random suffix instead of supplying it. Defaults to false."`
+
+	// Name The immutable DNS-1123 identifier of the channel (lowercase letters, digits and hyphens, at most 63 characters). Required unless generateName is true, in which case it must be empty. Alert rules and routing policies reference displayName, not name.
+	Name *string `json:"name,omitempty" jsonschema:"The immutable DNS-1123 identifier of the channel (lowercase letters, digits and hyphens, at most 63 characters). Required unless generateName is true, in which case it must be empty. Alert rules and routing policies reference displayName, not name."`
 }

@@ -5,5 +5,6 @@ package apitypes
 
 // Querybuildertypesv5LogBucketsSpec defines model for Querybuildertypesv5LogBucketsSpec.
 type Querybuildertypesv5LogBucketsSpec struct {
-	Scale *int `json:"scale,omitempty"`
+	// Scale The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
+	Scale *int `json:"scale,omitempty" jsonschema:"The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted."`
 }

@@ -5,6 +5,9 @@ package apitypes
 
 // DashboardtypesHistogramPanelSpec defines model for DashboardtypesHistogramPanelSpec.
 type DashboardtypesHistogramPanelSpec struct {
-	HistogramBuckets *DashboardtypesHistogramBuckets `json:"histogramBuckets,omitempty"`
-	Legend           *DashboardtypesLegend           `json:"legend,omitempty"`
+	// HistogramBuckets How values are grouped into buckets.
+	HistogramBuckets *DashboardtypesHistogramBuckets `json:"histogramBuckets,omitempty" jsonschema:"How values are grouped into buckets."`
+
+	// Legend Legend placement and series colors.
+	Legend *DashboardtypesLegend `json:"legend,omitempty" jsonschema:"Legend placement and series colors."`
 }

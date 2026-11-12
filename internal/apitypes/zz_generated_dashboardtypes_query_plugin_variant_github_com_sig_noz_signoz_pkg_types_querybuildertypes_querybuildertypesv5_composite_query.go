@@ -20,11 +20,12 @@ func (e DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuilde
 
 // DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQuery defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQuery.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQuery struct {
-	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQueryKind `json:"kind"`
+	// Kind The query kind.
+	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQueryKind `json:"kind" jsonschema:"The query kind."`
 
-	// Spec Composite query containing one or more query envelopes. Each query envelope specifies its type and corresponding spec.
-	Spec Querybuildertypesv5CompositeQuery `json:"spec"`
+	// Spec The kind-specific query spec.
+	Spec Querybuildertypesv5CompositeQuery `json:"spec" jsonschema:"The kind-specific query spec."`
 }
 
-// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQueryKind defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQuery.Kind.
+// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQueryKind The query kind.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5CompositeQueryKind string

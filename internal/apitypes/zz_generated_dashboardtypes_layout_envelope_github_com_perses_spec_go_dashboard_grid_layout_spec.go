@@ -20,9 +20,12 @@ func (e DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpec
 
 // DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpec defines model for DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpec.
 type DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpec struct {
-	Kind DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpecKind `json:"kind"`
-	Spec DashboardGridLayoutSpec                                                      `json:"spec"`
+	// Kind The layout kind.
+	Kind DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpecKind `json:"kind" jsonschema:"The layout kind."`
+
+	// Spec The grid section: an optional display title and up to 100 items that place panels. Each item has a content.$ref of #/spec/panels/<id> plus x, y, width and height on a 12-column grid: x and y at least 0, width and height at least 1, x plus width at most 12, and no two items overlapping.
+	Spec DashboardGridLayoutSpec `json:"spec" jsonschema:"The grid section: an optional display title and up to 100 items that place panels. Each item has a content.$ref of #/spec/panels/<id> plus x, y, width and height on a 12-column grid: x and y at least 0, width and height at least 1, x plus width at most 12, and no two items overlapping."`
 }
 
-// DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpecKind defines model for DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpec.Kind.
+// DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpecKind The layout kind.
 type DashboardtypesLayoutEnvelopeGithubComPersesSpecGoDashboardGridLayoutSpecKind string

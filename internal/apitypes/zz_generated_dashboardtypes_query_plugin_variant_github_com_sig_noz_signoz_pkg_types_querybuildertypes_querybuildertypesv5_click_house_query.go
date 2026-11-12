@@ -20,9 +20,12 @@ func (e DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuilde
 
 // DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQuery defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQuery.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQuery struct {
-	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQueryKind `json:"kind"`
-	Spec Querybuildertypesv5ClickHouseQuery                                                                                   `json:"spec"`
+	// Kind The query kind.
+	Kind DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQueryKind `json:"kind" jsonschema:"The query kind."`
+
+	// Spec The kind-specific query spec.
+	Spec Querybuildertypesv5ClickHouseQuery `json:"spec" jsonschema:"The kind-specific query spec."`
 }
 
-// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQueryKind defines model for DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQuery.Kind.
+// DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQueryKind The query kind.
 type DashboardtypesQueryPluginVariantGithubComSigNozSignozPkgTypesQuerybuildertypesQuerybuildertypesv5ClickHouseQueryKind string

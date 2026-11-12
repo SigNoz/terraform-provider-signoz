@@ -5,10 +5,21 @@ package apitypes
 
 // DashboardtypesAreaChartAppearance defines model for DashboardtypesAreaChartAppearance.
 type DashboardtypesAreaChartAppearance struct {
-	FillMode          *DashboardtypesAreaFillMode      `json:"fillMode,omitempty"`
-	FillOpacity       *DashboardtypesFillOpacity       `json:"fillOpacity,omitempty"`
-	LineInterpolation *DashboardtypesLineInterpolation `json:"lineInterpolation,omitempty"`
-	LineStyle         *DashboardtypesLineStyle         `json:"lineStyle,omitempty"`
-	ShowPoints        *bool                            `json:"showPoints,omitempty"`
-	SpanGaps          *DashboardtypesSpanGaps          `json:"spanGaps,omitempty"`
+	// FillMode The fill under each line: solid (default) or gradient.
+	FillMode *DashboardtypesAreaFillMode `json:"fillMode,omitempty" jsonschema:"The fill under each line: solid (default) or gradient."`
+
+	// FillOpacity The fill opacity from 0 (transparent) to 1 (opaque). Null uses the chart default.
+	FillOpacity *DashboardtypesFillOpacity `json:"fillOpacity,omitempty" jsonschema:"The fill opacity from 0 (transparent) to 1 (opaque). Null uses the chart default."`
+
+	// LineInterpolation How points are joined: linear, spline (default), step_after or step_before.
+	LineInterpolation *DashboardtypesLineInterpolation `json:"lineInterpolation,omitempty" jsonschema:"How points are joined: linear, spline (default), step_after or step_before."`
+
+	// LineStyle The line stroke: solid (default) or dashed.
+	LineStyle *DashboardtypesLineStyle `json:"lineStyle,omitempty" jsonschema:"The line stroke: solid (default) or dashed."`
+
+	// ShowPoints Whether each data point is marked on the line.
+	ShowPoints *bool `json:"showPoints,omitempty" jsonschema:"Whether each data point is marked on the line."`
+
+	// SpanGaps Whether lines connect across missing points.
+	SpanGaps *DashboardtypesSpanGaps `json:"spanGaps,omitempty" jsonschema:"Whether lines connect across missing points."`
 }

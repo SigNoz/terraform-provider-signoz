@@ -5,13 +5,33 @@ package apitypes
 
 // Querybuildertypesv5QueryBuilderFormula defines model for Querybuildertypesv5QueryBuilderFormula.
 type Querybuildertypesv5QueryBuilderFormula struct {
-	BucketOptions *Querybuildertypesv5BucketOptions `json:"bucketOptions,omitempty"`
-	Disabled      *bool                             `json:"disabled,omitempty"`
-	Expression    *string                           `json:"expression,omitempty"`
-	Functions     *[]Querybuildertypesv5Function    `json:"functions,omitempty"`
-	Having        *Querybuildertypesv5Having        `json:"having,omitempty"`
-	Legend        *string                           `json:"legend,omitempty"`
-	Limit         *int                              `json:"limit,omitempty"`
-	Name          *string                           `json:"name,omitempty"`
-	Order         *[]Querybuildertypesv5OrderBy     `json:"order,omitempty"`
+	// BucketOptions The value axis to count the formula result into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw.
+	BucketOptions *Querybuildertypesv5BucketOptions `json:"bucketOptions,omitempty" jsonschema:"The value axis to count the formula result into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw."`
+
+	// Disabled When true, the result is excluded from the response; the formula may still be evaluated. Defaults to false.
+	Disabled *bool `json:"disabled,omitempty" jsonschema:"When true, the result is excluded from the response; the formula may still be evaluated. Defaults to false."`
+
+	// Expression An arithmetic expression over builder query names, for example A / B * 100. Reference queries, not other formulas.
+	Expression *string `json:"expression,omitempty" jsonschema:"An arithmetic expression over builder query names, for example A / B * 100. Reference queries, not other formulas."`
+
+	// Functions Post-processing functions applied in order to each result series.
+	Functions *[]Querybuildertypesv5Function `json:"functions,omitempty" jsonschema:"Post-processing functions applied in order to each result series."`
+
+	// Having A filter on the formula values, referencing the formula by its name or as __result, for example F1 > 0. A time series keeps only the points that match and drops a series with none left; a scalar result keeps only the rows that match.
+	Having *Querybuildertypesv5Having `json:"having,omitempty" jsonschema:"A filter on the formula values, referencing the formula by its name or as __result, for example F1 > 0. A time series keeps only the points that match and drops a series with none left; a scalar result keeps only the rows that match."`
+
+	// Legend The display name template for each series; {{field}} placeholders are replaced by label values.
+	Legend *string `json:"legend,omitempty" jsonschema:"The display name template for each series; {{field}} placeholders are replaced by label values."`
+
+	// Limit The maximum number of series or rows to return. Unlimited when 0.
+	Limit *int `json:"limit,omitempty" jsonschema:"The maximum number of series or rows to return. Unlimited when 0."`
+
+	// Name The unique name of the formula, such as F1, used by selectedQueryName and by panels. Referencing a formula from another formula is not reliable.
+	Name *string `json:"name,omitempty" jsonschema:"The unique name of the formula, such as F1, used by selectedQueryName and by panels. Referencing a formula from another formula is not reliable."`
+
+	// Offset The number of ordered series or rows to skip before the page starts. Requires limit.
+	Offset *int `json:"offset,omitempty" jsonschema:"The number of ordered series or rows to skip before the page starts. Requires limit."`
+
+	// Order The sort order of the formula result.
+	Order *[]Querybuildertypesv5OrderBy `json:"order,omitempty" jsonschema:"The sort order of the formula result."`
 }

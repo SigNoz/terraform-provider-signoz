@@ -5,9 +5,18 @@ package apitypes
 
 // DashboardtypesHeatmapPanelSpec defines model for DashboardtypesHeatmapPanelSpec.
 type DashboardtypesHeatmapPanelSpec struct {
-	Axes            *DashboardtypesHeatmapAxes            `json:"axes,omitempty"`
-	ChartAppearance *DashboardtypesHeatmapChartAppearance `json:"chartAppearance,omitempty"`
-	Formatting      *DashboardtypesPanelFormatting        `json:"formatting,omitempty"`
-	Legend          *DashboardtypesLegend                 `json:"legend,omitempty"`
-	Visualization   *DashboardtypesBasicVisualization     `json:"visualization,omitempty"`
+	// Axes The Y axis scale.
+	Axes *DashboardtypesHeatmapAxes `json:"axes,omitempty" jsonschema:"The Y axis scale."`
+
+	// ChartAppearance How bucket counts map to colors.
+	ChartAppearance *DashboardtypesHeatmapChartAppearance `json:"chartAppearance,omitempty" jsonschema:"How bucket counts map to colors."`
+
+	// Formatting Unit and decimal precision of the bucket bounds.
+	Formatting *DashboardtypesPanelFormatting `json:"formatting,omitempty" jsonschema:"Unit and decimal precision of the bucket bounds."`
+
+	// Legend Legend placement and series colors.
+	Legend *DashboardtypesLegend `json:"legend,omitempty" jsonschema:"Legend placement and series colors."`
+
+	// Visualization The time range the heatmap covers.
+	Visualization *DashboardtypesBasicVisualization `json:"visualization,omitempty" jsonschema:"The time range the heatmap covers."`
 }

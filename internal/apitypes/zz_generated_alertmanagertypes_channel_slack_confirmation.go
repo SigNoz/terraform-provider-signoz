@@ -5,8 +5,15 @@ package apitypes
 
 // AlertmanagertypesChannelSlackConfirmation defines model for AlertmanagertypesChannelSlackConfirmation.
 type AlertmanagertypesChannelSlackConfirmation struct {
-	DismissText *string `json:"dismissText,omitempty"`
-	OkText      *string `json:"okText,omitempty"`
-	Text        string  `json:"text"`
-	Title       *string `json:"title,omitempty"`
+	// DismissText The label of the cancel button.
+	DismissText *string `json:"dismissText,omitempty" jsonschema:"The label of the cancel button."`
+
+	// OkText The label of the confirm button.
+	OkText *string `json:"okText,omitempty" jsonschema:"The label of the confirm button."`
+
+	// Text The dialog body.
+	Text string `json:"text" jsonschema:"The dialog body."`
+
+	// Title The dialog title.
+	Title *string `json:"title,omitempty" jsonschema:"The dialog title."`
 }

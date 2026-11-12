@@ -337,47 +337,47 @@ resource "signoz_dashboard" "redis_overview" {
 
 ### Required
 
-- `schema_version` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec))
-- `tags` (Attributes List) (see [below for nested schema](#nestedatt--tags))
+- `schema_version` (String) The dashboard schema version. Must be v6.
+- `spec` (Attributes) The dashboard content: display, variables, panels, layouts and links. (see [below for nested schema](#nestedatt--spec))
+- `tags` (Attributes List) Up to 10 key/value tags, for example key team with value payments. Keys must not be one of the reserved list filter keys: name, description, created_at, updated_at, created_by, locked, source. Use [] for none. (see [below for nested schema](#nestedatt--tags))
 
 ### Optional
 
-- `image` (String)
-- `name` (String)
+- `image` (String) Icon or logo shown in the dashboard list: the path of an icon or logo bundled with the UI under /assets/Icons/ or /assets/Logos/ (only the prefix is validated), or a base64 image data URI for png, jpeg, gif, webp, avif or svg. Empty for none.
+- `name` (String) The dashboard's unique name, a DNS-1123 label (lowercase letters, digits and hyphens, at most 63 characters). Immutable after creation. Must be empty when generateName is true.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `locked` (Boolean)
-- `org_id` (String)
+- `locked` (Boolean) Whether the dashboard is locked. A locked dashboard rejects update and patch until it is unlocked.
+- `org_id` (String) The organization that owns the dashboard.
 
 <a id="nestedatt--spec"></a>
 ### Nested Schema for `spec`
 
 Required:
 
-- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--display))
-- `layouts` (Attributes List) (see [below for nested schema](#nestedatt--spec--layouts))
-- `panels` (Attributes Map) (see [below for nested schema](#nestedatt--spec--panels))
-- `variables` (Attributes List) (see [below for nested schema](#nestedatt--spec--variables))
+- `display` (Attributes) The dashboard title and description. (see [below for nested schema](#nestedatt--spec--display))
+- `layouts` (Attributes List) The Grid layouts that place panels, at most 500. Each panel can be placed at most once. Use [] for none. (see [below for nested schema](#nestedatt--spec--layouts))
+- `panels` (Attributes Map) The panels keyed by panel id. An id has up to 75 characters from letters, digits, dot, underscore and hyphen. A panel is shown only where a layout item references it as #/spec/panels/<id>. Use {} for none. (see [below for nested schema](#nestedatt--spec--panels))
+- `variables` (Attributes List) The dashboard variables, each a ListVariable or TextVariable envelope, referenced in queries as $name. Names must be unique. Use [] for none. (see [below for nested schema](#nestedatt--spec--variables))
 
 Optional:
 
-- `duration` (String)
-- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--links))
-- `refresh_interval` (String)
+- `duration` (String) The default time range, as a Prometheus duration such as 1h or 7d. Stored, but not applied by the UI.
+- `links` (Attributes List) External links stored with the dashboard. Not shown by the UI. (see [below for nested schema](#nestedatt--spec--links))
+- `refresh_interval` (String) The auto refresh interval, as a Prometheus duration such as 30s. Stored, but not applied by the UI.
 
 <a id="nestedatt--spec--display"></a>
 ### Nested Schema for `spec.display`
 
 Required:
 
-- `name` (String)
+- `name` (String) The human-readable title, at most 128 characters.
 
 Optional:
 
-- `description` (String)
+- `description` (String) A free-text description.
 
 
 <a id="nestedatt--spec--layouts"></a>
@@ -392,8 +392,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--layouts--grid--spec))
+- `kind` (String) The layout kind.
+- `spec` (Attributes) The grid section: an optional display title and up to 100 items that place panels. Each item has a content.$ref of #/spec/panels/<id> plus x, y, width and height on a 12-column grid: x and y at least 0, width and height at least 1, x plus width at most 12, and no two items overlapping. (see [below for nested schema](#nestedatt--spec--layouts--grid--spec))
 
 <a id="nestedatt--spec--layouts--grid--spec"></a>
 ### Nested Schema for `spec.layouts.grid.spec`
@@ -449,32 +449,32 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec))
+- `kind` (String) The panel envelope kind. Always Panel.
+- `spec` (Attributes) The panel content: display, plugin, queries and links. (see [below for nested schema](#nestedatt--spec--panels--spec))
 
 <a id="nestedatt--spec--panels--spec"></a>
 ### Nested Schema for `spec.panels.spec`
 
 Required:
 
-- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--display))
-- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin))
-- `queries` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries))
+- `display` (Attributes) The panel title and description. (see [below for nested schema](#nestedatt--spec--panels--spec--display))
+- `plugin` (Attributes) The visualization: kind is one of signoz/TimeSeriesPanel, signoz/BarChartPanel, signoz/AreaChartPanel, signoz/NumberPanel, signoz/PieChartPanel, signoz/TablePanel, signoz/HistogramPanel, signoz/ListPanel, signoz/TextPanel or signoz/HeatmapPanel, and spec holds that kind's options ({} accepts every default). (see [below for nested schema](#nestedatt--spec--panels--spec--plugin))
+- `queries` (Attributes List) The queries the panel runs. Use exactly one entry for a data panel and [] for signoz/TextPanel. To run several named queries or formulas, use one entry whose spec.plugin.kind is signoz/CompositeQuery and put the constituent queries in its plugin spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries))
 
 Optional:
 
-- `links` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--links))
+- `links` (Attributes List) Context links offered in the data point drilldown menu of the panel, with dashboard variables resolved in the URL. (see [below for nested schema](#nestedatt--spec--panels--spec--links))
 
 <a id="nestedatt--spec--panels--spec--display"></a>
 ### Nested Schema for `spec.panels.spec.display`
 
 Required:
 
-- `name` (String)
+- `name` (String) The human-readable title, at most 128 characters.
 
 Optional:
 
-- `description` (String)
+- `description` (String) A free-text description.
 
 
 <a id="nestedatt--spec--panels--spec--plugin"></a>
@@ -489,6 +489,7 @@ Optional:
 - `list_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel))
 - `number_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel))
 - `pie_chart_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel))
+- `scatter_plot_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel))
 - `table_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel))
 - `text_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel))
 - `time_series_panel` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel))
@@ -498,29 +499,29 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec`
 
 Optional:
 
-- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--axes))
-- `chart_appearance` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance))
-- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--formatting))
-- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--legend))
-- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--thresholds))
-- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--visualization))
+- `axes` (Attributes) Y axis bounds and scale. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--axes))
+- `chart_appearance` (Attributes) Line and fill drawing options. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance))
+- `formatting` (Attributes) Unit and decimal precision of the values. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--formatting))
+- `legend` (Attributes) Legend placement and series colors. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--legend))
+- `thresholds` (Attributes List) Horizontal reference lines drawn at fixed values. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--thresholds))
+- `visualization` (Attributes) Time range, gap handling and stacking. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--visualization))
 
 <a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--axes"></a>
 ### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.axes`
 
 Optional:
 
-- `is_log_scale` (Boolean)
-- `soft_max` (Number)
-- `soft_min` (Number)
+- `is_log_scale` (Boolean) Whether the Y axis uses a logarithmic scale.
+- `soft_max` (Number) The highest value the Y axis always shows; data above it still extends the axis. Null fits the data.
+- `soft_min` (Number) The lowest value the Y axis always shows; data below it still extends the axis. Null fits the data.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance"></a>
@@ -528,19 +529,19 @@ Optional:
 
 Optional:
 
-- `fill_mode` (String)
-- `fill_opacity` (Number)
-- `line_interpolation` (String)
-- `line_style` (String)
-- `show_points` (Boolean)
-- `span_gaps` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance--span_gaps))
+- `fill_mode` (String) The fill under each line: solid (default) or gradient.
+- `fill_opacity` (Number) The fill opacity from 0 (transparent) to 1 (opaque). Null uses the chart default.
+- `line_interpolation` (String) How points are joined: linear, spline (default), step_after or step_before.
+- `line_style` (String) The line stroke: solid (default) or dashed.
+- `show_points` (Boolean) Whether each data point is marked on the line.
+- `span_gaps` (Attributes) Whether lines connect across missing points. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance--span_gaps))
 
 <a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--chart_appearance--span_gaps"></a>
 ### Nested Schema for `spec.panels.spec.plugin.area_chart_panel.spec.chart_appearance.span_gaps`
 
 Optional:
 
-- `fill_less_than` (String) The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected.
+- `fill_less_than` (String) The largest gap still connected when fillOnlyBelow is true; longer gaps are left disconnected. Required in that case, as a positive Prometheus duration such as 30s, 5m or 1d.
 - `fill_only_below` (Boolean) Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected.
 
 
@@ -550,8 +551,8 @@ Optional:
 
 Optional:
 
-- `decimal_precision` (String)
-- `unit` (String)
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+- `unit` (String) The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--legend"></a>
@@ -559,9 +560,9 @@ Optional:
 
 Optional:
 
-- `custom_colors` (Map of String)
-- `mode` (String)
-- `position` (String)
+- `custom_colors` (Map of String) Hex colors keyed by series label, overriding the automatic palette.
+- `mode` (String) The legend layout. Only list is supported.
+- `position` (String) Where the legend sits: bottom (default) or right.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--thresholds"></a>
@@ -569,13 +570,13 @@ Optional:
 
 Required:
 
-- `color` (String)
-- `value` (Number)
+- `color` (String) The CSS color of the line, for example #F1575F, which matches the SigNoz red preset; CSS named colors such as red also work.
+- `value` (Number) The value the line is drawn at, in unit.
 
 Optional:
 
-- `label` (String)
-- `unit` (String)
+- `label` (String) The caption shown on the line.
+- `unit` (String) The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--area_chart_panel--spec--visualization"></a>
@@ -583,9 +584,9 @@ Optional:
 
 Optional:
 
-- `fill_spans` (Boolean)
-- `stack` (String)
-- `time_preference` (String)
+- `fill_spans` (Boolean) Whether intervals with no data are drawn as zero instead of a gap.
+- `stack` (String) How the areas combine: none (default) overlays them, normal stacks the values, percent stacks them as shares of the total.
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
 
 
 
@@ -595,28 +596,28 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec`
 
 Optional:
 
-- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--axes))
-- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--formatting))
-- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--legend))
-- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--thresholds))
-- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--visualization))
+- `axes` (Attributes) Y axis bounds and scale. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--axes))
+- `formatting` (Attributes) Unit and decimal precision of the values. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--formatting))
+- `legend` (Attributes) Legend placement and series colors. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--legend))
+- `thresholds` (Attributes List) Horizontal reference lines drawn at fixed values. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--thresholds))
+- `visualization` (Attributes) Time range, gap handling and stacking. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--visualization))
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--axes"></a>
 ### Nested Schema for `spec.panels.spec.plugin.bar_chart_panel.spec.axes`
 
 Optional:
 
-- `is_log_scale` (Boolean)
-- `soft_max` (Number)
-- `soft_min` (Number)
+- `is_log_scale` (Boolean) Whether the Y axis uses a logarithmic scale.
+- `soft_max` (Number) The highest value the Y axis always shows; data above it still extends the axis. Null fits the data.
+- `soft_min` (Number) The lowest value the Y axis always shows; data below it still extends the axis. Null fits the data.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--formatting"></a>
@@ -624,8 +625,8 @@ Optional:
 
 Optional:
 
-- `decimal_precision` (String)
-- `unit` (String)
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+- `unit` (String) The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--legend"></a>
@@ -633,9 +634,9 @@ Optional:
 
 Optional:
 
-- `custom_colors` (Map of String)
-- `mode` (String)
-- `position` (String)
+- `custom_colors` (Map of String) Hex colors keyed by series label, overriding the automatic palette.
+- `mode` (String) The legend layout. Only list is supported.
+- `position` (String) Where the legend sits: bottom (default) or right.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--thresholds"></a>
@@ -643,13 +644,13 @@ Optional:
 
 Required:
 
-- `color` (String)
-- `value` (Number)
+- `color` (String) The CSS color of the line, for example #F1575F, which matches the SigNoz red preset; CSS named colors such as red also work.
+- `value` (Number) The value the line is drawn at, in unit.
 
 Optional:
 
-- `label` (String)
-- `unit` (String)
+- `label` (String) The caption shown on the line.
+- `unit` (String) The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--bar_chart_panel--spec--visualization"></a>
@@ -657,9 +658,9 @@ Optional:
 
 Optional:
 
-- `fill_spans` (Boolean)
-- `stacked_bar_chart` (Boolean)
-- `time_preference` (String)
+- `fill_spans` (Boolean) Whether intervals with no data are drawn as zero instead of a gap.
+- `stacked_bar_chart` (Boolean) Whether the series are stacked on top of each other.
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
 
 
 
@@ -669,33 +670,33 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec`
 
 Optional:
 
-- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes))
-- `chart_appearance` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance))
-- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--formatting))
-- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--legend))
-- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--visualization))
+- `axes` (Attributes) The Y axis scale. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes))
+- `chart_appearance` (Attributes) How bucket counts map to colors. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance))
+- `formatting` (Attributes) Unit and decimal precision of the bucket bounds. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--formatting))
+- `legend` (Attributes) Legend placement and series colors. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--legend))
+- `visualization` (Attributes) The time range the heatmap covers. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--visualization))
 
 <a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes"></a>
 ### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.axes`
 
 Optional:
 
-- `y` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes--y))
+- `y` (Attributes) The bucket axis. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes--y))
 
 <a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--axes--y"></a>
 ### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.axes.y`
 
 Optional:
 
-- `scale` (String)
+- `scale` (String) How bucket bounds are spaced on the axis: auto (default), linear, log or symlog.
 
 
 
@@ -704,20 +705,20 @@ Optional:
 
 Optional:
 
-- `colors` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance--colors))
+- `colors` (Attributes) The color scale applied to bucket counts. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance--colors))
 
 <a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--chart_appearance--colors"></a>
 ### Nested Schema for `spec.panels.spec.plugin.heatmap_panel.spec.chart_appearance.colors`
 
 Optional:
 
-- `fill` (String)
-- `max_count` (Number)
-- `min_count` (Number)
-- `mode` (String)
-- `palette` (String)
-- `scale` (String)
-- `steps` (Number)
+- `fill` (String) The hex color varied in opacity mode. Empty uses the series legend color.
+- `max_count` (Number) The count mapped to the highest color. Null uses the highest count in the grid.
+- `min_count` (Number) The count mapped to the lowest color. Null uses 0. Must not exceed maxCount.
+- `mode` (String) How counts are colored: palette (default) picks a hue from palette, opacity varies the opacity of fill.
+- `palette` (String) The named color ramp used in palette mode, such as lava (default), ice or ember.
+- `scale` (String) How counts map onto the color range: log (default), sqrt or linear.
+- `steps` (Number) The number of distinct color steps, 2 to 128. 0 uses the chart default.
 
 
 
@@ -726,8 +727,8 @@ Optional:
 
 Optional:
 
-- `decimal_precision` (String)
-- `unit` (String)
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+- `unit` (String) The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--legend"></a>
@@ -735,9 +736,9 @@ Optional:
 
 Optional:
 
-- `custom_colors` (Map of String)
-- `mode` (String)
-- `position` (String)
+- `custom_colors` (Map of String) Hex colors keyed by series label, overriding the automatic palette.
+- `mode` (String) The legend layout. Only list is supported.
+- `position` (String) Where the legend sits: bottom (default) or right.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--heatmap_panel--spec--visualization"></a>
@@ -745,7 +746,7 @@ Optional:
 
 Optional:
 
-- `time_preference` (String)
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
 
 
 
@@ -755,25 +756,25 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--histogram_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.histogram_panel.spec`
 
 Optional:
 
-- `histogram_buckets` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec--histogram_buckets))
-- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec--legend))
+- `histogram_buckets` (Attributes) How values are grouped into buckets. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec--histogram_buckets))
+- `legend` (Attributes) Legend placement and series colors. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--histogram_panel--spec--legend))
 
 <a id="nestedatt--spec--panels--spec--plugin--histogram_panel--spec--histogram_buckets"></a>
 ### Nested Schema for `spec.panels.spec.plugin.histogram_panel.spec.histogram_buckets`
 
 Optional:
 
-- `bucket_count` (Number)
-- `bucket_width` (Number)
-- `merge_all_active_queries` (Boolean)
+- `bucket_count` (Number) The approximate target number of buckets. Ignored when bucketWidth is positive. Null uses the chart default.
+- `bucket_width` (Number) The width of each bucket in the value unit. A positive value takes precedence over bucketCount; null or 0 lets the chart choose.
+- `merge_all_active_queries` (Boolean) Whether every series is combined into a single histogram instead of one per series.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--histogram_panel--spec--legend"></a>
@@ -781,9 +782,9 @@ Optional:
 
 Optional:
 
-- `custom_colors` (Map of String)
-- `mode` (String)
-- `position` (String)
+- `custom_colors` (Map of String) Hex colors keyed by series label, overriding the automatic palette.
+- `mode` (String) The legend layout. Only list is supported.
+- `position` (String) Where the legend sits: bottom (default) or right.
 
 
 
@@ -793,30 +794,30 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--list_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.list_panel.spec`
 
 Optional:
 
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel--spec--select_fields))
+- `select_fields` (Attributes List) The columns shown for each row, as field keys with name and optional fieldContext, fieldDataType and signal. Empty shows the default columns. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--list_panel--spec--select_fields))
 
 <a id="nestedatt--spec--panels--spec--plugin--list_panel--spec--select_fields"></a>
 ### Nested Schema for `spec.panels.spec.plugin.list_panel.spec.select_fields`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -826,25 +827,25 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--number_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.number_panel.spec`
 
 Optional:
 
-- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--formatting))
-- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--thresholds))
-- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--visualization))
+- `formatting` (Attributes) Unit and decimal precision of the value. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--formatting))
+- `thresholds` (Attributes List) Rules that recolor the value when it compares to a threshold as specified. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--thresholds))
+- `visualization` (Attributes) The time range the value is computed over. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--number_panel--spec--visualization))
 
 <a id="nestedatt--spec--panels--spec--plugin--number_panel--spec--formatting"></a>
 ### Nested Schema for `spec.panels.spec.plugin.number_panel.spec.formatting`
 
 Optional:
 
-- `decimal_precision` (String)
-- `unit` (String)
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+- `unit` (String) The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--number_panel--spec--thresholds"></a>
@@ -852,14 +853,14 @@ Optional:
 
 Required:
 
-- `color` (String)
-- `value` (Number)
+- `color` (String) The CSS color applied to the text or background, per format, while the threshold is active. For example #F1575F matches the SigNoz red preset; CSS named colors such as red also work.
+- `value` (Number) The value compared against, in unit.
 
 Optional:
 
-- `format` (String)
-- `operator` (String)
-- `unit` (String)
+- `format` (String) What the color is applied to: text (default) or background.
+- `operator` (String) The comparison that activates the threshold: above (default), below, above_or_equal, below_or_equal, equal or not_equal.
+- `unit` (String) The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--number_panel--spec--visualization"></a>
@@ -867,7 +868,7 @@ Optional:
 
 Optional:
 
-- `time_preference` (String)
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
 
 
 
@@ -877,25 +878,25 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.pie_chart_panel.spec`
 
 Optional:
 
-- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--formatting))
-- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--legend))
-- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--visualization))
+- `formatting` (Attributes) Unit and decimal precision of the slice values. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--formatting))
+- `legend` (Attributes) Legend placement and slice colors. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--legend))
+- `visualization` (Attributes) The time range the slices are computed over. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--visualization))
 
 <a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--formatting"></a>
 ### Nested Schema for `spec.panels.spec.plugin.pie_chart_panel.spec.formatting`
 
 Optional:
 
-- `decimal_precision` (String)
-- `unit` (String)
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+- `unit` (String) The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--legend"></a>
@@ -903,9 +904,9 @@ Optional:
 
 Optional:
 
-- `custom_colors` (Map of String)
-- `mode` (String)
-- `position` (String)
+- `custom_colors` (Map of String) Hex colors keyed by series label, overriding the automatic palette.
+- `mode` (String) The legend layout. Only list is supported.
+- `position` (String) Where the legend sits: bottom (default) or right.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--pie_chart_panel--spec--visualization"></a>
@@ -913,7 +914,133 @@ Optional:
 
 Optional:
 
-- `time_preference` (String)
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
+
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel`
+
+Required:
+
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec))
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec`
+
+Optional:
+
+- `axes` (Attributes) Title, bounds and scale of each axis. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--axes))
+- `chart_appearance` (Attributes) Dot drawing options. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--chart_appearance))
+- `dimensions` (Attributes) Which result columns place, size and color the dots. Each dot is one row of the joined scalar result: one group. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--dimensions))
+- `formatting` (Attributes) Per-column units and decimal precision. The x and y columns' units label their axes; every bound column's unit shows in the tooltip. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--formatting))
+- `legend` (Attributes) Legend placement and series colors. A series is one color group, labeled by its colorBy values joined with a comma, or All when nothing is grouped. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--legend))
+- `thresholds` (Attributes List) Reference lines drawn at fixed values across the x or y axis. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--thresholds))
+- `visualization` (Attributes) The time range the groups are computed over. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--visualization))
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--axes"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.axes`
+
+Optional:
+
+- `x` (Attributes) The axis dimensions.x is plotted along. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--axes--x))
+- `y` (Attributes) The axis dimensions.y is plotted along. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--axes--y))
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--axes--x"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.axes.x`
+
+Optional:
+
+- `label` (String) Axis title. Empty draws none; the tooltip still names the column.
+- `scale` (String) auto (default) uses log, or symlog when values include zero or negatives, when that spreads the dots clearly more than linear does; otherwise linear. log cannot place a value at or below zero and leaves that dot out; symlog is log-like but places it.
+- `soft_max` (Number) The highest value the axis always shows; data above it still extends the axis, as does a threshold on it. Null fits the data.
+- `soft_min` (Number) The lowest value the axis always shows; data below it still extends the axis, as does a threshold on it. Null fits the data. A log axis ignores a bound at or below zero.
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--axes--y"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.axes.y`
+
+Optional:
+
+- `label` (String) Axis title. Empty draws none; the tooltip still names the column.
+- `scale` (String) auto (default) uses log, or symlog when values include zero or negatives, when that spreads the dots clearly more than linear does; otherwise linear. log cannot place a value at or below zero and leaves that dot out; symlog is log-like but places it.
+- `soft_max` (Number) The highest value the axis always shows; data above it still extends the axis, as does a threshold on it. Null fits the data.
+- `soft_min` (Number) The lowest value the axis always shows; data below it still extends the axis, as does a threshold on it. Null fits the data. A log axis ignores a bound at or below zero.
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--chart_appearance"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.chart_appearance`
+
+Optional:
+
+- `points` (Attributes) Dot size and opacity. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--chart_appearance--points))
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--chart_appearance--points"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.chart_appearance.points`
+
+Optional:
+
+- `max_size` (Number) Diameter of the largest dot when dimensions.sizeBy is set, in CSS pixels from 2 to 40. Null means 24.
+- `min_size` (Number) Diameter of the smallest dot when dimensions.sizeBy is set, in CSS pixels from 2 to 40. Null means 4.
+- `opacity` (Number) Fill opacity of every dot, from 0.1 to 1. Null means 0.7.
+- `size` (Number) Diameter of every dot when dimensions.sizeBy is unset, in CSS pixels from 2 to 40. Null means 6.
+
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--dimensions"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.dimensions`
+
+Optional:
+
+- `color_by` (List of String) Group-by label names (e.g. k8s.namespace.name) whose combined values color the dots and drive the legend. Empty colors by every group-by label.
+- `size_by` (String) Value column key that scales each dot's area between chartAppearance.points.minSize and maxSize. Empty draws every dot at chartAppearance.points.size, as does a dot with no value.
+- `x` (String) Value column key (queryName, or queryName.expression for a multi-aggregation query) plotted on the x axis. Empty, or a key the result lacks, uses the first value column.
+- `y` (String) Value column key plotted on the y axis. Empty, or a key the result lacks, uses the first value column x does not use.
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--formatting"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.formatting`
+
+Optional:
+
+- `column_units` (Map of String) Unit id per value column, keyed by the column key: the query name for a builder query with one aggregation (A), the query name dotted with the aggregation expression for several (A.count()), or the SQL alias for a ClickHouse SQL column. Aggregation aliases are display labels, not keys.
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--legend"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.legend`
+
+Optional:
+
+- `custom_colors` (Map of String) Hex colors keyed by series label, overriding the automatic palette.
+- `mode` (String) The legend layout. Only list is supported.
+- `position` (String) Where the legend sits: bottom (default) or right.
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--thresholds"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.thresholds`
+
+Required:
+
+- `color` (String) The CSS color of the line, for example #F1575F, which matches the SigNoz red preset; CSS named colors such as red also work.
+- `value` (Number) The value the line is drawn at, in unit.
+
+Optional:
+
+- `axis` (String) The axis the line marks: y (default) draws it horizontally, x vertically. Unit converts against that axis's column unit, and the axis extends to keep the line in view.
+- `label` (String) The caption shown on the line.
+- `unit` (String) The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms.
+
+
+<a id="nestedatt--spec--panels--spec--plugin--scatter_plot_panel--spec--visualization"></a>
+### Nested Schema for `spec.panels.spec.plugin.scatter_plot_panel.spec.visualization`
+
+Optional:
+
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
 
 
 
@@ -923,25 +1050,25 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--table_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.table_panel.spec`
 
 Optional:
 
-- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--formatting))
-- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--thresholds))
-- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--visualization))
+- `formatting` (Attributes) Per-column units and decimal precision. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--formatting))
+- `thresholds` (Attributes List) Rules that recolor a cell when its column value compares to a threshold as specified. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--thresholds))
+- `visualization` (Attributes) The time range the rows are computed over. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--table_panel--spec--visualization))
 
 <a id="nestedatt--spec--panels--spec--plugin--table_panel--spec--formatting"></a>
 ### Nested Schema for `spec.panels.spec.plugin.table_panel.spec.formatting`
 
 Optional:
 
-- `column_units` (Map of String)
-- `decimal_precision` (String)
+- `column_units` (Map of String) Unit id per value column, keyed by the column key: the query name for a builder query with one aggregation (A), the query name dotted with the aggregation expression for several (A.count()), or the SQL alias for a ClickHouse SQL column. Aggregation aliases are display labels, not keys.
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--table_panel--spec--thresholds"></a>
@@ -949,15 +1076,15 @@ Optional:
 
 Required:
 
-- `color` (String)
-- `column_name` (String)
-- `value` (Number)
+- `color` (String) The CSS color applied to the text or background, per format, while the threshold is active. For example #F1575F matches the SigNoz red preset; CSS named colors such as red also work.
+- `column_name` (String) The key of the value column the rule applies to: the query name for a builder query with one aggregation (A), the query name dotted with the aggregation expression for several (A.count()), or the SQL alias for a ClickHouse SQL column. Group-by columns are never colored, and aggregation aliases are display labels, not keys.
+- `value` (Number) The value compared against, in unit.
 
 Optional:
 
-- `format` (String)
-- `operator` (String)
-- `unit` (String)
+- `format` (String) What the color is applied to: text (default) or background.
+- `operator` (String) The comparison that activates the threshold: above (default), below, above_or_equal, below_or_equal, equal or not_equal.
+- `unit` (String) The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--table_panel--spec--visualization"></a>
@@ -965,7 +1092,7 @@ Optional:
 
 Optional:
 
-- `time_preference` (String)
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
 
 
 
@@ -975,25 +1102,25 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--text_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.text_panel.spec`
 
 Optional:
 
-- `header_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec--header_options))
-- `mode` (String)
-- `presentation` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec--presentation))
-- `text` (String)
+- `header_options` (Attributes) Whether the panel header is shown. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec--header_options))
+- `mode` (String) How text is interpreted. Only markdown is supported.
+- `presentation` (Attributes) Alignment and background of the content. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--text_panel--spec--presentation))
+- `text` (String) The content to render.
 
 <a id="nestedatt--spec--panels--spec--plugin--text_panel--spec--header_options"></a>
 ### Nested Schema for `spec.panels.spec.plugin.text_panel.spec.header_options`
 
 Optional:
 
-- `hide` (Boolean)
+- `hide` (Boolean) Whether the title and description row above the content is hidden.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--text_panel--spec--presentation"></a>
@@ -1001,9 +1128,9 @@ Optional:
 
 Optional:
 
-- `background` (String)
-- `text_align` (String)
-- `vertical_align` (String)
+- `background` (String) A hex background color such as #1f2937. Omit for the panel default.
+- `text_align` (String) Horizontal alignment: left (default), center or right.
+- `vertical_align` (String) Vertical alignment: top (default), center or bottom.
 
 
 
@@ -1013,29 +1140,29 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec))
+- `kind` (String) The panel kind.
+- `spec` (Attributes) The options for this panel kind. {} accepts every default. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec))
 
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec"></a>
 ### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec`
 
 Optional:
 
-- `axes` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--axes))
-- `chart_appearance` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance))
-- `formatting` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--formatting))
-- `legend` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--legend))
-- `thresholds` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--thresholds))
-- `visualization` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--visualization))
+- `axes` (Attributes) Y axis bounds and scale. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--axes))
+- `chart_appearance` (Attributes) Line drawing options. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance))
+- `formatting` (Attributes) Unit and decimal precision of the values. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--formatting))
+- `legend` (Attributes) Legend placement and series colors. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--legend))
+- `thresholds` (Attributes List) Horizontal reference lines drawn at fixed values. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--thresholds))
+- `visualization` (Attributes) Time range and gap handling. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--visualization))
 
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--axes"></a>
 ### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.axes`
 
 Optional:
 
-- `is_log_scale` (Boolean)
-- `soft_max` (Number)
-- `soft_min` (Number)
+- `is_log_scale` (Boolean) Whether the Y axis uses a logarithmic scale.
+- `soft_max` (Number) The highest value the Y axis always shows; data above it still extends the axis. Null fits the data.
+- `soft_min` (Number) The lowest value the Y axis always shows; data below it still extends the axis. Null fits the data.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance"></a>
@@ -1043,18 +1170,18 @@ Optional:
 
 Optional:
 
-- `fill_mode` (String)
-- `line_interpolation` (String)
-- `line_style` (String)
-- `show_points` (Boolean)
-- `span_gaps` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance--span_gaps))
+- `fill_mode` (String) The fill under each line: none (default), solid or gradient.
+- `line_interpolation` (String) How points are joined: linear, spline (default), step_after or step_before.
+- `line_style` (String) The line stroke: solid (default) or dashed.
+- `show_points` (Boolean) Whether each data point is marked on the line.
+- `span_gaps` (Attributes) Whether lines connect across missing points. (see [below for nested schema](#nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance--span_gaps))
 
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--chart_appearance--span_gaps"></a>
 ### Nested Schema for `spec.panels.spec.plugin.time_series_panel.spec.chart_appearance.span_gaps`
 
 Optional:
 
-- `fill_less_than` (String) The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected.
+- `fill_less_than` (String) The largest gap still connected when fillOnlyBelow is true; longer gaps are left disconnected. Required in that case, as a positive Prometheus duration such as 30s, 5m or 1d.
 - `fill_only_below` (Boolean) Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected.
 
 
@@ -1064,8 +1191,8 @@ Optional:
 
 Optional:
 
-- `decimal_precision` (String)
-- `unit` (String)
+- `decimal_precision` (String) Decimal places shown: 0, 1, 2 (default), 3, 4 or full.
+- `unit` (String) The display unit of the values, such as By, ms, s, percent or percentunit. Use percent for values already expressed as percentages (95 displays as 95%) and percentunit for fractions (0.95 displays as 95%). Empty shows plain numbers.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--legend"></a>
@@ -1073,9 +1200,9 @@ Optional:
 
 Optional:
 
-- `custom_colors` (Map of String)
-- `mode` (String)
-- `position` (String)
+- `custom_colors` (Map of String) Hex colors keyed by series label, overriding the automatic palette.
+- `mode` (String) The legend layout. Only list is supported.
+- `position` (String) Where the legend sits: bottom (default) or right.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--thresholds"></a>
@@ -1083,13 +1210,13 @@ Optional:
 
 Required:
 
-- `color` (String)
-- `value` (Number)
+- `color` (String) The CSS color of the line, for example #F1575F, which matches the SigNoz red preset; CSS named colors such as red also work.
+- `value` (Number) The value the line is drawn at, in unit.
 
 Optional:
 
-- `label` (String)
-- `unit` (String)
+- `label` (String) The caption shown on the line.
+- `unit` (String) The unit id of value, such as ms or percent. Empty means the panel's unit, or the column's unit for a table threshold. Prefer the panel's unit; a different unit works only when it converts to it, such as s against a panel in ms.
 
 
 <a id="nestedatt--spec--panels--spec--plugin--time_series_panel--spec--visualization"></a>
@@ -1097,8 +1224,8 @@ Optional:
 
 Optional:
 
-- `fill_spans` (Boolean)
-- `time_preference` (String)
+- `fill_spans` (Boolean) Whether intervals with no data are drawn as zero instead of a gap.
+- `time_preference` (String) The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
 
 
 
@@ -1109,19 +1236,19 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec))
+- `kind` (String) The result shape the panel requests: time_series for time series, bar, area and histogram panels, scalar for number, table and pie panels, raw for list panels, heatmap for heatmap panels, trace for trace panels.
+- `spec` (Attributes) The query content: an optional name and the query plugin. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec`
 
 Required:
 
-- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin))
+- `plugin` (Attributes) The query: kind is one of signoz/BuilderQuery, signoz/AIBuilderQuery (builder query over AI observability traces), signoz/CompositeQuery (several named queries and formulas), signoz/Formula, signoz/PromQLQuery, signoz/ClickHouseSQL or signoz/TraceOperator, and spec holds that kind's query. Pie and table panels reject signoz/PromQLQuery; heatmap panels reject signoz/AIBuilderQuery and signoz/TraceOperator; list panels accept only signoz/BuilderQuery and signoz/AIBuilderQuery. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin))
 
 Optional:
 
-- `name` (String)
+- `name` (String) An optional label for the query. The name queries refer to each other by lives in the plugin spec.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin`
@@ -1141,44 +1268,44 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec))
+- `kind` (String) The query kind.
+- `spec` (Attributes) The kind-specific query spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec`
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--bucket_options"></a>
@@ -1202,11 +1329,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -1223,7 +1350,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -1233,7 +1360,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions"></a>
@@ -1241,15 +1368,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -1259,15 +1386,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--having"></a>
@@ -1275,7 +1402,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--limit_by"></a>
@@ -1283,8 +1410,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order"></a>
@@ -1292,23 +1419,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1317,28 +1444,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--limit_by"></a>
@@ -1346,8 +1473,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order"></a>
@@ -1355,23 +1482,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--aibuilder_query--spec--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.aibuilder_query.spec.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1381,15 +1508,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1399,8 +1526,8 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec))
+- `kind` (String) The query kind.
+- `spec` (Attributes) The kind-specific query spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec`
@@ -1416,36 +1543,36 @@ Optional:
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects log records, in the query filter syntax, for example severity_text = 'ERROR' AND body CONTAINS 'timeout'. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over log records, such as count(), sum(item_price), count_distinct(user_id) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--bucket_options"></a>
@@ -1469,11 +1596,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -1490,7 +1617,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -1500,7 +1627,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions"></a>
@@ -1508,15 +1635,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -1526,15 +1653,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--having"></a>
@@ -1542,7 +1669,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--limit_by"></a>
@@ -1550,8 +1677,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order"></a>
@@ -1559,23 +1686,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1584,28 +1711,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--limit_by"></a>
@@ -1613,8 +1740,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order"></a>
@@ -1622,23 +1749,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--logs--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.logs.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1648,15 +1775,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1665,48 +1792,48 @@ Optional:
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects series by their attributes, in the query filter syntax, for example k8s.namespace.name = 'prod' AND k8s.pod.name LIKE 'api%'. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.aggregations`
 
 Optional:
 
-- `comparison_space_aggregation_param` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
-- `metric_name` (String)
-- `reduce_to` (String)
-- `space_aggregation` (String)
-- `temporality` (String)
-- `time_aggregation` (String)
+- `comparison_space_aggregation_param` (Attributes) Histogram metrics with spaceAggregation count only: the comparison operator and bucket bound used to estimate how many observations fall at or below, or above, the threshold. Ignored for other metric types and aggregations. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
+- `metric_name` (String) The name of the metric to query, for example k8s.pod.cpu_request_utilization.
+- `reduce_to` (String) How a series collapses to one number in scalar requests: sum, count, avg, min, max, last or median. Ignored by time_series requests.
+- `space_aggregation` (String) How series are combined across each group, such as sum, avg, min, max or count; histograms take percentiles such as p50, p90, p95 or p99.
+- `temporality` (String) The temporality of the metric: delta, cumulative or unspecified. Resolved from the metric metadata when omitted.
+- `time_aggregation` (String) How samples of one series are combined within each step, such as avg, sum, min, max, count, count_distinct, latest, rate or increase.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.aggregations.comparison_space_aggregation_param`
 
 Required:
 
-- `operator` (String)
-- `threshold` (Number)
+- `operator` (String) Comparison applied to histogram bucket bounds when spaceAggregation is count: <= gives the estimated count of observations at or below threshold, > the estimated count above it.
+- `threshold` (Number) Bucket bound the comparison uses, in the unit of the histogram metric. The count is exact when threshold equals one of the metric's le bucket bounds, and otherwise an estimate interpolated linearly between the two nearest bounds.
 
 
 
@@ -1731,11 +1858,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -1752,7 +1879,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -1762,7 +1889,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions"></a>
@@ -1770,15 +1897,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -1788,15 +1915,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--having"></a>
@@ -1804,7 +1931,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--limit_by"></a>
@@ -1812,8 +1939,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order"></a>
@@ -1821,23 +1948,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1846,28 +1973,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--limit_by"></a>
@@ -1875,8 +2002,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order"></a>
@@ -1884,23 +2011,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--metrics--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.metrics.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1910,15 +2037,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -1927,36 +2054,36 @@ Optional:
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--bucket_options"></a>
@@ -1980,11 +2107,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -2001,7 +2128,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -2011,7 +2138,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions"></a>
@@ -2019,15 +2146,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -2037,15 +2164,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--having"></a>
@@ -2053,7 +2180,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--limit_by"></a>
@@ -2061,8 +2188,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order"></a>
@@ -2070,23 +2197,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2095,28 +2222,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--limit_by"></a>
@@ -2124,8 +2251,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order"></a>
@@ -2133,23 +2260,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--builder_query--spec--traces--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.builder_query.spec.traces.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2159,15 +2286,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2178,18 +2305,18 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql--spec))
+- `kind` (String) The query kind.
+- `spec` (Attributes) The kind-specific query spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--click_house_sql--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.click_house_sql.spec`
 
 Optional:
 
-- `disabled` (Boolean)
-- `legend` (String)
-- `name` (String)
-- `query` (String)
+- `disabled` (Boolean) When true, the result is excluded from the response but the query may still run. Defaults to false.
+- `legend` (String) The display name template for each series; {{column}} placeholders are replaced by result column values.
+- `name` (String) The unique name of the query, such as A.
+- `query` (String) The ClickHouse SQL statement. Reserved time placeholders such as {{.start_timestamp}}, {{.end_timestamp}}, {{.start_timestamp_ms}} and {{.start_datetime}} and dashboard variables written as {{name}}, [[name]] or $name are substituted before execution.
 
 
 
@@ -2198,15 +2325,15 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) Composite query containing one or more query envelopes. Each query envelope specifies its type and corresponding spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec))
+- `kind` (String) The query kind.
+- `spec` (Attributes) The kind-specific query spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec`
 
 Optional:
 
-- `queries` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries))
+- `queries` (Attributes List) The queries to run, each wrapped in a type-discriminated envelope. Names must be unique; formulas and trace operators reference other queries by name. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries`
@@ -2236,36 +2363,36 @@ Optional:
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--bucket_options"></a>
@@ -2289,11 +2416,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -2310,7 +2437,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -2320,7 +2447,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions"></a>
@@ -2328,15 +2455,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -2346,15 +2473,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--having"></a>
@@ -2362,7 +2489,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--limit_by"></a>
@@ -2370,8 +2497,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order"></a>
@@ -2379,23 +2506,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2404,28 +2531,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--limit_by"></a>
@@ -2433,8 +2560,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order"></a>
@@ -2442,23 +2569,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_ai_query--spec--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_ai_query.spec.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2468,15 +2595,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2497,15 +2624,16 @@ Optional:
 
 Optional:
 
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options))
-- `disabled` (Boolean)
-- `expression` (String)
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--having))
-- `legend` (String)
-- `limit` (Number)
-- `name` (String)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order))
+- `bucket_options` (Attributes) The value axis to count the formula result into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options))
+- `disabled` (Boolean) When true, the result is excluded from the response; the formula may still be evaluated. Defaults to false.
+- `expression` (String) An arithmetic expression over builder query names, for example A / B * 100. Reference queries, not other formulas.
+- `functions` (Attributes List) Post-processing functions applied in order to each result series. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions))
+- `having` (Attributes) A filter on the formula values, referencing the formula by its name or as __result, for example F1 > 0. A time series keeps only the points that match and drops a series with none left; a scalar result keeps only the rows that match. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by label values.
+- `limit` (Number) The maximum number of series or rows to return. Unlimited when 0.
+- `name` (String) The unique name of the formula, such as F1, used by selectedQueryName and by panels. Referencing a formula from another formula is not reliable.
+- `offset` (Number) The number of ordered series or rows to skip before the page starts. Requires limit.
+- `order` (Attributes List) The sort order of the formula result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--bucket_options"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.bucket_options`
@@ -2528,11 +2656,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -2549,7 +2677,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -2559,15 +2687,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -2577,7 +2705,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order"></a>
@@ -2585,23 +2713,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_formula--spec--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_formula.spec.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2632,36 +2760,36 @@ Optional:
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects log records, in the query filter syntax, for example severity_text = 'ERROR' AND body CONTAINS 'timeout'. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over log records, such as count(), sum(item_price), count_distinct(user_id) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--bucket_options"></a>
@@ -2685,11 +2813,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -2706,7 +2834,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -2716,7 +2844,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions"></a>
@@ -2724,15 +2852,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -2742,15 +2870,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--having"></a>
@@ -2758,7 +2886,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--limit_by"></a>
@@ -2766,8 +2894,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order"></a>
@@ -2775,23 +2903,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2800,28 +2928,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--limit_by"></a>
@@ -2829,8 +2957,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order"></a>
@@ -2838,23 +2966,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--logs--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.logs.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2864,15 +2992,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -2881,48 +3009,48 @@ Optional:
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects series by their attributes, in the query filter syntax, for example k8s.namespace.name = 'prod' AND k8s.pod.name LIKE 'api%'. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.aggregations`
 
 Optional:
 
-- `comparison_space_aggregation_param` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
-- `metric_name` (String)
-- `reduce_to` (String)
-- `space_aggregation` (String)
-- `temporality` (String)
-- `time_aggregation` (String)
+- `comparison_space_aggregation_param` (Attributes) Histogram metrics with spaceAggregation count only: the comparison operator and bucket bound used to estimate how many observations fall at or below, or above, the threshold. Ignored for other metric types and aggregations. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param))
+- `metric_name` (String) The name of the metric to query, for example k8s.pod.cpu_request_utilization.
+- `reduce_to` (String) How a series collapses to one number in scalar requests: sum, count, avg, min, max, last or median. Ignored by time_series requests.
+- `space_aggregation` (String) How series are combined across each group, such as sum, avg, min, max or count; histograms take percentiles such as p50, p90, p95 or p99.
+- `temporality` (String) The temporality of the metric: delta, cumulative or unspecified. Resolved from the metric metadata when omitted.
+- `time_aggregation` (String) How samples of one series are combined within each step, such as avg, sum, min, max, count, count_distinct, latest, rate or increase.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--aggregations--comparison_space_aggregation_param"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.aggregations.comparison_space_aggregation_param`
 
 Required:
 
-- `operator` (String)
-- `threshold` (Number)
+- `operator` (String) Comparison applied to histogram bucket bounds when spaceAggregation is count: <= gives the estimated count of observations at or below threshold, > the estimated count above it.
+- `threshold` (Number) Bucket bound the comparison uses, in the unit of the histogram metric. The count is exact when threshold equals one of the metric's le bucket bounds, and otherwise an estimate interpolated linearly between the two nearest bounds.
 
 
 
@@ -2947,11 +3075,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -2968,7 +3096,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -2978,7 +3106,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions"></a>
@@ -2986,15 +3114,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -3004,15 +3132,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--having"></a>
@@ -3020,7 +3148,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--limit_by"></a>
@@ -3028,8 +3156,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order"></a>
@@ -3037,23 +3165,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3062,28 +3190,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--limit_by"></a>
@@ -3091,8 +3219,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order"></a>
@@ -3100,23 +3228,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--metrics--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.metrics.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3126,15 +3254,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3143,36 +3271,36 @@ Optional:
 
 Required:
 
-- `signal` (String)
+- `signal` (String) The telemetry signal to query: traces, logs or metrics. It selects the aggregation shape and is required for builder_query.
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--aggregations))
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--having))
-- `legend` (String)
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--limit_by))
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order))
-- `secondary_aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations))
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--select_fields))
-- `source` (String)
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute, one result per entry. Traces and logs take expressions such as count() or p99(duration_nano); metrics take a metricName with time and space aggregations. Omit for raw requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--aggregations))
+- `bucket_options` (Attributes) The value axis to count this query into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options))
+- `cursor` (String) The opaque nextCursor value from a previous raw result, used to fetch the next page. Honored only by raw requests whose order starts with timestamp, for logs followed by id in the same direction; every other request ignores it.
+- `disabled` (Boolean) When true, the result is excluded from the response; the query may still run and can still feed a formula or trace operator. Defaults to false.
+- `filter` (Attributes) The filter that selects spans, in the query filter syntax, for example service.name = 'frontend' AND http.response.status_code >= 500. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series, such as absolute, cumulativeSum, timeShift or anomaly. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions))
+- `group_by` (Attributes List) The fields to group aggregations by; each group becomes a series or a row with the field as a label or column. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--group_by))
+- `having` (Attributes) A filter applied to aggregation results, referencing aliases or expressions, for example count() > 100. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of rows for raw and trace requests, or of series or rows for grouped scalar and time_series requests, keeping the top entries by order. When 0, scalar and time_series requests are unlimited, raw requests ordered by timestamp return a page of 10000 rows to continue with nextCursor, and other raw and trace requests return 100 rows.
+- `limit_by` (Attributes) Reserved for applying limit within each combination of the given group-by keys. Accepted but currently ignored. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--limit_by))
+- `name` (String) The unique name of the query, such as A or B; formulas, trace operators and selectedQueryName refer to it.
+- `offset` (Number) The number of rows for raw and trace requests, or of ordered series or rows for scalar and time_series requests, to skip before the page starts. Requires limit. On raw requests the skip counts from where a cursor resumes, and the skipped rows are still read, so prefer cursor for paging.
+- `order` (Attributes List) The sort order of the result. Order by a group-by field, an aggregation alias, or for raw requests a selected field such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order))
+- `secondary_aggregations` (Attributes List) Accepted but currently ignored, including their nested order, limit and limitBy. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations))
+- `select_fields` (Attributes List) The fields to return for each row in raw requests, in addition to the columns always present: timestamp and id for logs, timestamp, trace_id and span_id for traces. Ignored by aggregating requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--select_fields))
+- `source` (String) The data source within the signal. Set to meter for Cost Meter metrics; leave empty for regular telemetry.
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s or 1m. Derived from the time range when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--bucket_options"></a>
@@ -3196,11 +3324,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -3217,7 +3345,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -3227,7 +3355,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions"></a>
@@ -3235,15 +3363,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -3253,15 +3381,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--having"></a>
@@ -3269,7 +3397,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--limit_by"></a>
@@ -3277,8 +3405,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order"></a>
@@ -3286,23 +3414,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3311,28 +3439,28 @@ Optional:
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by))
-- `limit` (Number)
-- `limit_by` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by))
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order))
-- `step_interval` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over the primary results, such as count(), sum(item_price) or countIf(day > 10).
+- `group_by` (Attributes List) The fields to group this aggregation by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by))
+- `limit` (Number) The maximum number of groups to return. Unlimited when 0.
+- `limit_by` (Attributes) Applies limit within each distinct combination of the given keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by))
+- `order` (Attributes List) The sort order of this aggregation result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order))
+- `step_interval` (String) The time bucket for this aggregation: seconds as a number or a Go duration string. Uses the primary aggregation step when omitted.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--group_by"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.secondary_aggregations.group_by`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--limit_by"></a>
@@ -3340,8 +3468,8 @@ Optional:
 
 Optional:
 
-- `keys` (List of String)
-- `value` (String)
+- `keys` (List of String) The group-by field names that partition the result before the limit is applied.
+- `value` (String) The aggregation alias or expression whose value ranks entries within each partition.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order"></a>
@@ -3349,23 +3477,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_query--spec--traces--secondary_aggregations--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_query.spec.traces.secondary_aggregations.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3375,15 +3503,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3405,30 +3533,30 @@ Optional:
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--aggregations))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `expression` (String)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--having))
-- `legend` (String)
-- `limit` (Number)
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order))
-- `return_spans_from` (String)
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--select_fields))
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute over the matched traces for scalar and time_series requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--aggregations))
+- `cursor` (String) Accepted but currently ignored by the trace operator; page raw results with offset.
+- `disabled` (Boolean) When true, the result is excluded from the response but the query may still run. Defaults to false.
+- `expression` (String) A trace-structure expression over traces builder query names using => for direct child, -> for descendant, && for both present, || for either present and NOT for absence, for example A => B && NOT C. At most 10 operators.
+- `filter` (Attributes) Accepted but currently not applied to the matched traces. Put filters on the operand queries instead. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions))
+- `group_by` (Attributes List) The fields to group aggregations by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--group_by))
+- `having` (Attributes) A condition on the aggregation results, for example count() > 10. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of traces or groups to return. For raw requests 0 means 100 rows; for aggregations 0 means unlimited.
+- `name` (String) The unique name of the trace operator query.
+- `offset` (Number) The number of raw or trace rows, or of ordered series or rows for time_series and scalar requests, to skip before the page starts. Requires limit.
+- `order` (Attributes List) The sort order of the matched traces; only span_count and trace_duration may be used as keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order))
+- `return_spans_from` (String) The name of the operand query whose spans are returned; when empty, the spans matched by the whole expression are returned.
+- `select_fields` (Attributes List) The span fields to return for each row in raw requests, in addition to the always-present timestamp, trace_id and span_id columns. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--select_fields))
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--filter"></a>
@@ -3436,7 +3564,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions"></a>
@@ -3444,15 +3572,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -3462,15 +3590,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--having"></a>
@@ -3478,7 +3606,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order"></a>
@@ -3486,23 +3614,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--composite_query--spec--queries--builder_trace_operator--spec--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.composite_query.spec.queries.builder_trace_operator.spec.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3511,15 +3639,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3540,10 +3668,10 @@ Optional:
 
 Optional:
 
-- `disabled` (Boolean)
-- `legend` (String)
-- `name` (String)
-- `query` (String)
+- `disabled` (Boolean) When true, the result is excluded from the response but the query may still run. Defaults to false.
+- `legend` (String) The display name template for each series; {{column}} placeholders are replaced by result column values.
+- `name` (String) The unique name of the query, such as A.
+- `query` (String) The ClickHouse SQL statement. Reserved time placeholders such as {{.start_timestamp}}, {{.end_timestamp}}, {{.start_timestamp_ms}} and {{.start_datetime}} and dashboard variables written as {{name}}, [[name]] or $name are substituted before execution.
 
 
 
@@ -3563,12 +3691,13 @@ Optional:
 
 Optional:
 
-- `disabled` (Boolean)
-- `legend` (String)
-- `name` (String)
-- `query` (String)
-- `stats` (Boolean)
-- `step` (String)
+- `disabled` (Boolean) When true, the result is excluded from the response but the query may still run. Defaults to false.
+- `legend` (String) The display name template for each series; {{label}} placeholders are replaced by label values.
+- `name` (String) The unique name of the query, such as A.
+- `query` (String) The PromQL expression. Dotted metric and label names must use the UTF-8 quoted selector form, for example {'http.server.duration'}.
+- `skip_step_alignment` (Boolean) When true, start and end are evaluated as given instead of rounded down to the step, and the result is not cached. Defaults to false.
+- `stats` (Boolean) Reserved; currently has no effect.
+- `step` (String) The evaluation step: seconds as a number or a Go duration string such as 60s. Derived from the time range when omitted.
 
 
 
@@ -3580,23 +3709,24 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec))
+- `kind` (String) The query kind.
+- `spec` (Attributes) The kind-specific query spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec`
 
 Optional:
 
-- `bucket_options` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options))
-- `disabled` (Boolean)
-- `expression` (String)
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--having))
-- `legend` (String)
-- `limit` (Number)
-- `name` (String)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order))
+- `bucket_options` (Attributes) The value axis to count the formula result into, as a kind-discriminated linear or log bucket spec. Read only by heatmap requests, and only from the query they draw. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options))
+- `disabled` (Boolean) When true, the result is excluded from the response; the formula may still be evaluated. Defaults to false.
+- `expression` (String) An arithmetic expression over builder query names, for example A / B * 100. Reference queries, not other formulas.
+- `functions` (Attributes List) Post-processing functions applied in order to each result series. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions))
+- `having` (Attributes) A filter on the formula values, referencing the formula by its name or as __result, for example F1 > 0. A time series keeps only the points that match and drops a series with none left; a scalar result keeps only the rows that match. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by label values.
+- `limit` (Number) The maximum number of series or rows to return. Unlimited when 0.
+- `name` (String) The unique name of the formula, such as F1, used by selectedQueryName and by panels. Referencing a formula from another formula is not reliable.
+- `offset` (Number) The number of ordered series or rows to skip before the page starts. Requires limit.
+- `order` (Attributes List) The sort order of the formula result. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--bucket_options"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.bucket_options`
@@ -3619,11 +3749,11 @@ Required:
 
 Required:
 
-- `max_value` (Number)
+- `max_value` (Number) The upper bound of the last regular band; values above it are counted in a trailing overflow band.
 
 Optional:
 
-- `num_buckets` (Number)
+- `num_buckets` (Number) The number of evenly spaced bands between 0 and maxValue. A default applies when omitted or 0.
 
 
 
@@ -3640,7 +3770,7 @@ Required:
 
 Optional:
 
-- `scale` (Number)
+- `scale` (Number) The exponential histogram scale: 2^scale bands per doubling of the value. The maximum supported scale applies when omitted.
 
 
 
@@ -3650,15 +3780,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -3668,7 +3798,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order"></a>
@@ -3676,23 +3806,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--formula--spec--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.formula.spec.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3703,20 +3833,21 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery--spec))
+- `kind` (String) The query kind.
+- `spec` (Attributes) The kind-specific query spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--prom_qlquery--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.prom_qlquery.spec`
 
 Optional:
 
-- `disabled` (Boolean)
-- `legend` (String)
-- `name` (String)
-- `query` (String)
-- `stats` (Boolean)
-- `step` (String)
+- `disabled` (Boolean) When true, the result is excluded from the response but the query may still run. Defaults to false.
+- `legend` (String) The display name template for each series; {{label}} placeholders are replaced by label values.
+- `name` (String) The unique name of the query, such as A.
+- `query` (String) The PromQL expression. Dotted metric and label names must use the UTF-8 quoted selector form, for example {'http.server.duration'}.
+- `skip_step_alignment` (Boolean) When true, start and end are evaluated as given instead of rounded down to the step, and the result is not cached. Defaults to false.
+- `stats` (Boolean) Reserved; currently has no effect.
+- `step` (String) The evaluation step: seconds as a number or a Go duration string such as 60s. Derived from the time range when omitted.
 
 
 
@@ -3725,38 +3856,38 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec))
+- `kind` (String) The query kind.
+- `spec` (Attributes) The kind-specific query spec. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec`
 
 Optional:
 
-- `aggregations` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--aggregations))
-- `cursor` (String)
-- `disabled` (Boolean)
-- `expression` (String)
-- `filter` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--filter))
-- `functions` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions))
-- `group_by` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--group_by))
-- `having` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--having))
-- `legend` (String)
-- `limit` (Number)
-- `name` (String)
-- `offset` (Number)
-- `order` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order))
-- `return_spans_from` (String)
-- `select_fields` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--select_fields))
-- `step_interval` (String)
+- `aggregations` (Attributes List) The aggregations to compute over the matched traces for scalar and time_series requests. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--aggregations))
+- `cursor` (String) Accepted but currently ignored by the trace operator; page raw results with offset.
+- `disabled` (Boolean) When true, the result is excluded from the response but the query may still run. Defaults to false.
+- `expression` (String) A trace-structure expression over traces builder query names using => for direct child, -> for descendant, && for both present, || for either present and NOT for absence, for example A => B && NOT C. At most 10 operators.
+- `filter` (Attributes) Accepted but currently not applied to the matched traces. Put filters on the operand queries instead. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--filter))
+- `functions` (Attributes List) Post-processing functions applied in order to each result series. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions))
+- `group_by` (Attributes List) The fields to group aggregations by. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--group_by))
+- `having` (Attributes) A condition on the aggregation results, for example count() > 10. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--having))
+- `legend` (String) The display name template for each series; {{field}} placeholders are replaced by group-by label values.
+- `limit` (Number) The maximum number of traces or groups to return. For raw requests 0 means 100 rows; for aggregations 0 means unlimited.
+- `name` (String) The unique name of the trace operator query.
+- `offset` (Number) The number of raw or trace rows, or of ordered series or rows for time_series and scalar requests, to skip before the page starts. Requires limit.
+- `order` (Attributes List) The sort order of the matched traces; only span_count and trace_duration may be used as keys. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order))
+- `return_spans_from` (String) The name of the operand query whose spans are returned; when empty, the spans matched by the whole expression are returned.
+- `select_fields` (Attributes List) The span fields to return for each row in raw requests, in addition to the always-present timestamp, trace_id and span_id columns. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--select_fields))
+- `step_interval` (String) The time bucket for time_series aggregation: seconds as a number or a Go duration string such as 60s.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--aggregations"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.aggregations`
 
 Optional:
 
-- `alias` (String)
-- `expression` (String)
+- `alias` (String) The name the aggregation is reported under; when omitted, the result carries the alias __result_N, with N the zero-based index of the aggregation.
+- `expression` (String) The aggregation over spans, such as count(), sum(item_price), p99(duration_nano) or countIf(day > 10).
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--filter"></a>
@@ -3764,7 +3895,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A filter in the query filter syntax: comparisons such as =, !=, <, >, IN, LIKE, CONTAINS and EXISTS on field names, combined with AND, OR and NOT, with string values in single quotes, for example key = 'value' AND other_key > 10. Which fields exist depends on the signal or endpoint the filter is used with.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions"></a>
@@ -3772,15 +3903,15 @@ Optional:
 
 Optional:
 
-- `args` (Attributes List) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions--args))
-- `name` (String)
+- `args` (Attributes List) The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions--args))
+- `name` (String) The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--functions--args"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.functions.args`
 
 Optional:
 
-- `name` (String)
+- `name` (String) The argument name for functions that take named arguments, such as z_score_threshold or seasonality for anomaly.
 - `value` (String)
 
 
@@ -3790,15 +3921,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--having"></a>
@@ -3806,7 +3937,7 @@ Optional:
 
 Optional:
 
-- `expression` (String)
+- `expression` (String) A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
 
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order"></a>
@@ -3814,23 +3945,23 @@ Optional:
 
 Optional:
 
-- `direction` (String)
-- `key` (Attributes) (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order--key))
+- `direction` (String) The sort direction: asc or desc.
+- `key` (Attributes) The sort key. For aggregation requests name is a group-by field such as service.name, an aggregation alias, or the aggregation expression: count() or p99(duration_nano) for traces and logs; for metrics the spaceAggregation(timeAggregation(metricName)) form such as sum(rate(signoz_calls_total)), p99(metricName) for histogram metrics, or __result. Raw requests sort by any field, such as timestamp. (see [below for nested schema](#nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order--key))
 
 <a id="nestedatt--spec--panels--spec--queries--spec--plugin--trace_operator--spec--order--key"></a>
 ### Nested Schema for `spec.panels.spec.queries.spec.plugin.trace_operator.spec.order.key`
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3839,15 +3970,15 @@ Optional:
 
 Required:
 
-- `name` (String)
+- `name` (String) The field name, such as service.name, k8s.pod.name or http.response.status_code. Dots are part of the name, and the names available depend on the signal and the data ingested.
 
 Optional:
 
-- `description` (String)
-- `field_context` (String)
-- `field_data_type` (String)
-- `signal` (String)
-- `unit` (String)
+- `description` (String) Human-readable summary of the field, present only for well-known fields.
+- `field_context` (String) Where the field lives: resource, attribute, scope, span, trace, log, body or metric. Empty means unspecified, so the server resolves it.
+- `field_data_type` (String) Data type of the field values: string, bool, int64, float64 or number. Empty means unspecified.
+- `signal` (String) The signal the field belongs to: traces, logs or metrics. Empty means any signal.
+- `unit` (String) Unit of the field values, present only for well-known fields.
 
 
 
@@ -3860,11 +3991,11 @@ Optional:
 
 Optional:
 
-- `name` (String)
-- `render_variables` (Boolean)
-- `target_blank` (Boolean)
-- `tooltip` (String)
-- `url` (String)
+- `name` (String) The link label.
+- `render_variables` (Boolean) Whether dashboard variable values are substituted into url before opening it.
+- `target_blank` (Boolean) Whether the link opens in a new tab.
+- `tooltip` (String) Hover text for the link. Stored, but not shown by the UI.
+- `url` (String) The link target. May reference dashboard variables as {{name}} when renderVariables is true.
 
 
 
@@ -3882,37 +4013,37 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec))
+- `kind` (String) The variable kind.
+- `spec` (Attributes) The kind-specific variable spec. (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec))
 
 <a id="nestedatt--spec--variables--list_variable--spec"></a>
 ### Nested Schema for `spec.variables.list_variable.spec`
 
 Required:
 
-- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--display))
-- `name` (String)
+- `display` (Attributes) The label shown for the variable control. (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--display))
+- `name` (String) The handle queries reference as $name. Up to 75 characters from letters, digits, dot, underscore and hyphen, not all digits, unique within the dashboard.
 
 Optional:
 
-- `allow_all_value` (Boolean)
-- `allow_multiple` (Boolean)
-- `capturing_regexp` (String)
-- `custom_all_value` (String)
-- `default_value` (String)
-- `plugin` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin))
-- `sort` (String)
+- `allow_all_value` (Boolean) Whether an all option is offered. Requires allowMultiple.
+- `allow_multiple` (Boolean) Whether several values can be selected at once.
+- `capturing_regexp` (String) A regular expression meant to keep only matching values, reduced to the capture group when one is present. Stored, but not applied by the UI.
+- `custom_all_value` (String) The value meant to replace every value when all is selected. Requires allowAllValue. Stored, but currently ignored by the UI.
+- `default_value` (String) The initially selected value: a string, or a list of strings when allowMultiple is true.
+- `plugin` (Attributes) Where the values come from: kind is signoz/DynamicVariable (observed attribute values), signoz/QueryVariable (a ClickHouse query) or signoz/CustomVariable (a fixed list), and spec holds that kind's settings. (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin))
+- `sort` (String) How the values are ordered: none (default), alphabetical-asc, alphabetical-desc, numerical-asc, numerical-desc, alphabetical-ci-asc or alphabetical-ci-desc.
 
 <a id="nestedatt--spec--variables--list_variable--spec--display"></a>
 ### Nested Schema for `spec.variables.list_variable.spec.display`
 
 Required:
 
-- `name` (String)
+- `name` (String) The human-readable title, at most 128 characters.
 
 Optional:
 
-- `description` (String)
+- `description` (String) A free-text description.
 
 
 <a id="nestedatt--spec--variables--list_variable--spec--plugin"></a>
@@ -3929,15 +4060,15 @@ Optional:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--custom_variable--spec))
+- `kind` (String) The value source kind.
+- `spec` (Attributes) The kind-specific value source spec. (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--custom_variable--spec))
 
 <a id="nestedatt--spec--variables--list_variable--spec--plugin--custom_variable--spec"></a>
 ### Nested Schema for `spec.variables.list_variable.spec.plugin.custom_variable.spec`
 
 Required:
 
-- `custom_value` (String)
+- `custom_value` (String) The fixed values as a comma-separated list, such as 1,10,100.
 
 
 
@@ -3946,16 +4077,16 @@ Required:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--dynamic_variable--spec))
+- `kind` (String) The value source kind.
+- `spec` (Attributes) The kind-specific value source spec. (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--dynamic_variable--spec))
 
 <a id="nestedatt--spec--variables--list_variable--spec--plugin--dynamic_variable--spec"></a>
 ### Nested Schema for `spec.variables.list_variable.spec.plugin.dynamic_variable.spec`
 
 Required:
 
-- `name` (String)
-- `signal` (String)
+- `name` (String) The attribute key whose observed values populate the variable, such as service.name.
+- `signal` (String) The signal the values are read from: traces, logs, metrics or all (default).
 
 
 
@@ -3964,15 +4095,15 @@ Required:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--query_variable--spec))
+- `kind` (String) The value source kind.
+- `spec` (Attributes) The kind-specific value source spec. (see [below for nested schema](#nestedatt--spec--variables--list_variable--spec--plugin--query_variable--spec))
 
 <a id="nestedatt--spec--variables--list_variable--spec--plugin--query_variable--spec"></a>
 ### Nested Schema for `spec.variables.list_variable.spec.plugin.query_variable.spec`
 
 Required:
 
-- `query_value` (String)
+- `query_value` (String) A ClickHouse SQL query returning one column of selectable values; every returned column is offered.
 
 
 
@@ -3984,32 +4115,32 @@ Required:
 
 Required:
 
-- `kind` (String)
-- `spec` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--text_variable--spec))
+- `kind` (String) The variable kind.
+- `spec` (Attributes) The kind-specific variable spec. (see [below for nested schema](#nestedatt--spec--variables--text_variable--spec))
 
 <a id="nestedatt--spec--variables--text_variable--spec"></a>
 ### Nested Schema for `spec.variables.text_variable.spec`
 
 Required:
 
-- `display` (Attributes) (see [below for nested schema](#nestedatt--spec--variables--text_variable--spec--display))
-- `name` (String)
-- `value` (String)
+- `display` (Attributes) The label shown for the variable control. (see [below for nested schema](#nestedatt--spec--variables--text_variable--spec--display))
+- `name` (String) The handle queries reference as $name. Up to 75 characters from letters, digits, dot, underscore and hyphen, not all digits, unique within the dashboard.
+- `value` (String) The default text. Must be non-empty when constant is true.
 
 Optional:
 
-- `constant` (Boolean)
+- `constant` (Boolean) Whether the value is meant to be fixed. Stored, but not applied by the UI.
 
 <a id="nestedatt--spec--variables--text_variable--spec--display"></a>
 ### Nested Schema for `spec.variables.text_variable.spec.display`
 
 Required:
 
-- `name` (String)
+- `name` (String) The human-readable title, at most 128 characters.
 
 Optional:
 
-- `description` (String)
+- `description` (String) A free-text description.
 
 
 
@@ -4020,11 +4151,11 @@ Optional:
 
 Optional:
 
-- `name` (String)
-- `render_variables` (Boolean)
-- `target_blank` (Boolean)
-- `tooltip` (String)
-- `url` (String)
+- `name` (String) The link label.
+- `render_variables` (Boolean) Whether dashboard variable values are substituted into url before opening it.
+- `target_blank` (Boolean) Whether the link opens in a new tab.
+- `tooltip` (String) Hover text for the link. Stored, but not shown by the UI.
+- `url` (String) The link target. May reference dashboard variables as {{name}} when renderVariables is true.
 
 
 

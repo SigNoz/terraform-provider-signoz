@@ -5,19 +5,48 @@ package apitypes
 
 // AlertmanagertypesChannelJiraConfig defines model for AlertmanagertypesChannelJiraConfig.
 type AlertmanagertypesChannelJiraConfig struct {
-	ApiToken          string                  `json:"apiToken"`
-	CustomFields      *map[string]interface{} `json:"customFields,omitempty"`
-	Description       *string                 `json:"description,omitempty"`
-	Email             string                  `json:"email"`
-	IssueType         string                  `json:"issueType"`
-	Labels            *[]string               `json:"labels,omitempty"`
-	Priority          *string                 `json:"priority,omitempty"`
-	Project           string                  `json:"project"`
-	ReopenDuration    *string                 `json:"reopenDuration,omitempty"`
-	ReopenTransition  *string                 `json:"reopenTransition,omitempty"`
-	ResolveTransition *string                 `json:"resolveTransition,omitempty"`
-	SendResolved      *bool                   `json:"sendResolved,omitempty"`
-	Site              string                  `json:"site"`
-	Summary           *string                 `json:"summary,omitempty"`
-	WontFixResolution *string                 `json:"wontFixResolution,omitempty"`
+	// Auth The credentials: email and apiToken when deployment is cloud, pat when deployment is selfhosted.
+	Auth AlertmanagertypesChannelJiraAuth `json:"auth" jsonschema:"The credentials: email and apiToken when deployment is cloud, pat when deployment is selfhosted."`
+
+	// CustomFields Extra issue fields keyed by Jira field ID. Stored, but not currently included in the issue Jira receives.
+	CustomFields *map[string]interface{} `json:"customFields,omitempty" jsonschema:"Extra issue fields keyed by Jira field ID. Stored, but not currently included in the issue Jira receives."`
+
+	// Deployment The Jira edition: cloud for an Atlassian-hosted site, selfhosted for Jira Server or Data Center.
+	Deployment AlertmanagertypesJiraDeployment `json:"deployment" jsonschema:"The Jira edition: cloud for an Atlassian-hosted site, selfhosted for Jira Server or Data Center."`
+
+	// Description Alertmanager template for the issue description, rendered as markdown; defaults to the SigNoz Jira default.
+	Description *string `json:"description,omitempty" jsonschema:"Alertmanager template for the issue description, rendered as markdown; defaults to the SigNoz Jira default."`
+
+	// IssueType The issue type name, such as Bug.
+	IssueType string `json:"issueType" jsonschema:"The issue type name, such as Bug."`
+
+	// Labels Labels added to every issue.
+	Labels *[]string `json:"labels,omitempty" jsonschema:"Labels added to every issue."`
+
+	// Priority The priority name assigned to new issues.
+	Priority *string `json:"priority,omitempty" jsonschema:"The priority name assigned to new issues."`
+
+	// Project The key of the project issues are created in.
+	Project string `json:"project" jsonschema:"The key of the project issues are created in."`
+
+	// ReopenDuration How long after resolution a firing alert reopens the issue instead of creating a new one, as a Prometheus duration in canonical form such as 3d; defaults to 3d.
+	ReopenDuration *string `json:"reopenDuration,omitempty" jsonschema:"How long after resolution a firing alert reopens the issue instead of creating a new one, as a Prometheus duration in canonical form such as 3d; defaults to 3d."`
+
+	// ReopenTransition The transition applied when an alert fires again on a resolved issue.
+	ReopenTransition *string `json:"reopenTransition,omitempty" jsonschema:"The transition applied when an alert fires again on a resolved issue."`
+
+	// ResolveTransition The transition applied to the issue when the alert resolves.
+	ResolveTransition *string `json:"resolveTransition,omitempty" jsonschema:"The transition applied to the issue when the alert resolves."`
+
+	// SendResolved Also notify when the alert resolves. Defaults to false.
+	SendResolved *bool `json:"sendResolved,omitempty" jsonschema:"Also notify when the alert resolves. Defaults to false."`
+
+	// Site The base URL of the Jira site, for example https://example.atlassian.net or https://jira.example.com.
+	Site string `json:"site" jsonschema:"The base URL of the Jira site, for example https://example.atlassian.net or https://jira.example.com."`
+
+	// Summary Alertmanager template for the issue summary; defaults to the SigNoz Jira default.
+	Summary *string `json:"summary,omitempty" jsonschema:"Alertmanager template for the issue summary; defaults to the SigNoz Jira default."`
+
+	// WontFixResolution The resolution name that stops an issue from being reopened.
+	WontFixResolution *string `json:"wontFixResolution,omitempty" jsonschema:"The resolution name that stops an issue from being reopened."`
 }

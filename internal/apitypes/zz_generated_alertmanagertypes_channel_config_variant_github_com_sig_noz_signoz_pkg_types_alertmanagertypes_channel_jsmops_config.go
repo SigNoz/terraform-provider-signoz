@@ -20,9 +20,12 @@ func (e AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertm
 
 // AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfig defines model for AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfig.
 type AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfig struct {
-	Kind AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfigKind `json:"kind"`
-	Spec AlertmanagertypesChannelJSMOpsConfig                                                                       `json:"spec"`
+	// Kind The channel provider kind this variant accepts.
+	Kind AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfigKind `json:"kind" jsonschema:"The channel provider kind this variant accepts."`
+
+	// Spec The provider-specific configuration for this kind.
+	Spec AlertmanagertypesChannelJSMOpsConfig `json:"spec" jsonschema:"The provider-specific configuration for this kind."`
 }
 
-// AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfigKind defines model for AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfig.Kind.
+// AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfigKind The channel provider kind this variant accepts.
 type AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJSMOpsConfigKind string

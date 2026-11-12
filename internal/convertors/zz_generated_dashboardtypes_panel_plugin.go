@@ -139,6 +139,23 @@ func ExpandDashboardtypesPanelPlugin(ctx context.Context, v customtypes.Dashboar
 		return &out, diags
 	}
 
+	if !v.ScatterPlotPanel.IsNull() && !v.ScatterPlotPanel.IsUnknown() {
+		typed, d := dashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesScatterPlotPanelSpecValueFromObject(ctx, v.ScatterPlotPanel)
+		diags.Append(d...)
+		member, d := ExpandDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesScatterPlotPanelSpec(ctx, typed)
+		diags.Append(d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		if member != nil {
+			if err := out.FromDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesScatterPlotPanelSpec(*member); err != nil {
+				diags.AddError("Failed to encode scatter_plot_panel union variant", err.Error())
+				return nil, diags
+			}
+		}
+		return &out, diags
+	}
+
 	if !v.TablePanel.IsNull() && !v.TablePanel.IsUnknown() {
 		typed, d := dashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpecValueFromObject(ctx, v.TablePanel)
 		diags.Append(d...)
@@ -199,16 +216,17 @@ func FlattenDashboardtypesPanelPlugin(ctx context.Context, in *apitypes.Dashboar
 		return customtypes.NewDashboardtypesPanelPluginValueNull(), diags
 	}
 	attrs := map[string]attr.Value{
-		"area_chart_panel":  basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpecValue{}.AttributeTypes(ctx)),
-		"bar_chart_panel":   basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpecValue{}.AttributeTypes(ctx)),
-		"heatmap_panel":     basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpecValue{}.AttributeTypes(ctx)),
-		"histogram_panel":   basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHistogramPanelSpecValue{}.AttributeTypes(ctx)),
-		"list_panel":        basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesListPanelSpecValue{}.AttributeTypes(ctx)),
-		"number_panel":      basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesNumberPanelSpecValue{}.AttributeTypes(ctx)),
-		"pie_chart_panel":   basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesPieChartPanelSpecValue{}.AttributeTypes(ctx)),
-		"table_panel":       basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpecValue{}.AttributeTypes(ctx)),
-		"text_panel":        basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx)),
-		"time_series_panel": basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpecValue{}.AttributeTypes(ctx)),
+		"area_chart_panel":   basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesAreaChartPanelSpecValue{}.AttributeTypes(ctx)),
+		"bar_chart_panel":    basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesBarChartPanelSpecValue{}.AttributeTypes(ctx)),
+		"heatmap_panel":      basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHeatmapPanelSpecValue{}.AttributeTypes(ctx)),
+		"histogram_panel":    basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesHistogramPanelSpecValue{}.AttributeTypes(ctx)),
+		"list_panel":         basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesListPanelSpecValue{}.AttributeTypes(ctx)),
+		"number_panel":       basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesNumberPanelSpecValue{}.AttributeTypes(ctx)),
+		"pie_chart_panel":    basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesPieChartPanelSpecValue{}.AttributeTypes(ctx)),
+		"scatter_plot_panel": basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesScatterPlotPanelSpecValue{}.AttributeTypes(ctx)),
+		"table_panel":        basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpecValue{}.AttributeTypes(ctx)),
+		"text_panel":         basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTextPanelSpecValue{}.AttributeTypes(ctx)),
+		"time_series_panel":  basetypes.NewObjectNull(customtypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTimeSeriesPanelSpecValue{}.AttributeTypes(ctx)),
 	}
 	disc, err := in.ValueByDiscriminator()
 	if err != nil {
@@ -258,6 +276,12 @@ func FlattenDashboardtypesPanelPlugin(ctx context.Context, in *apitypes.Dashboar
 		ov, d := fv.ToObjectValue(ctx)
 		diags.Append(d...)
 		attrs["pie_chart_panel"] = ov
+	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesScatterPlotPanelSpec:
+		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesScatterPlotPanelSpec(ctx, &member)
+		diags.Append(d...)
+		ov, d := fv.ToObjectValue(ctx)
+		diags.Append(d...)
+		attrs["scatter_plot_panel"] = ov
 	case apitypes.DashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpec:
 		fv, d := FlattenDashboardtypesPanelPluginVariantGithubComSigNozSignozPkgTypesDashboardtypesTablePanelSpec(ctx, &member)
 		diags.Append(d...)

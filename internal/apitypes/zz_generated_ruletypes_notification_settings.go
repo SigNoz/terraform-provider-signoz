@@ -5,8 +5,15 @@ package apitypes
 
 // RuletypesNotificationSettings defines model for RuletypesNotificationSettings.
 type RuletypesNotificationSettings struct {
-	GroupBy           *[]string          `json:"groupBy,omitempty"`
-	NewGroupEvalDelay *string            `json:"newGroupEvalDelay,omitempty"`
-	Renotify          *RuletypesRenotify `json:"renotify,omitempty"`
-	UsePolicy         *bool              `json:"usePolicy,omitempty"`
+	// GroupBy Label names whose values group alerts into one notification, such as service.name.
+	GroupBy *[]string `json:"groupBy,omitempty" jsonschema:"Label names whose values group alerts into one notification, such as service.name."`
+
+	// NewGroupEvalDelay A grace period, as a Go duration such as 2m, during which a newly seen label group is excluded from evaluation. Applies to metric rules only; log and trace rules are never delayed. A group whose values are not yet known is evaluated immediately.
+	NewGroupEvalDelay *string `json:"newGroupEvalDelay,omitempty" jsonschema:"A grace period, as a Go duration such as 2m, during which a newly seen label group is excluded from evaluation. Applies to metric rules only; log and trace rules are never delayed. A group whose values are not yet known is evaluated immediately."`
+
+	// Renotify Whether and how often to re-send a notification for an alert that stays active.
+	Renotify *RuletypesRenotify `json:"renotify,omitempty" jsonschema:"Whether and how often to re-send a notification for an alert that stays active."`
+
+	// UsePolicy When true, alerts are routed by the organisation level notification policies instead of the channels named on the thresholds. Defaults to false.
+	UsePolicy *bool `json:"usePolicy,omitempty" jsonschema:"When true, alerts are routed by the organisation level notification policies instead of the channels named on the thresholds. Defaults to false."`
 }

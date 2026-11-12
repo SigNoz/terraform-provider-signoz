@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesHeatmapAxis defines model for DashboardtypesHeatmapAxis.
 type DashboardtypesHeatmapAxis struct {
-	Scale *DashboardtypesHeatmapYScale `json:"scale,omitempty"`
+	// Scale How bucket bounds are spaced on the axis: auto (default), linear, log or symlog.
+	Scale *DashboardtypesHeatmapYScale `json:"scale,omitempty" jsonschema:"How bucket bounds are spaced on the axis: auto (default), linear, log or symlog."`
 }

@@ -24,24 +24,49 @@ func (e RuletypesRuleSchemaVersion) Valid() bool {
 
 // RuletypesRule defines model for RuletypesRule.
 type RuletypesRule struct {
-	Alert                string                        `json:"alert"`
-	AlertType            RuletypesAlertType            `json:"alertType"`
-	Annotations          *map[string]string            `json:"annotations,omitempty"`
-	Condition            RuletypesRuleCondition        `json:"condition"`
-	CreatedAt            *time.Time                    `json:"createdAt,omitempty"`
-	CreatedBy            *string                       `json:"createdBy,omitempty"`
-	Description          *string                       `json:"description,omitempty"`
-	Disabled             *bool                         `json:"disabled,omitempty"`
-	Evaluation           RuletypesEvaluationEnvelope   `json:"evaluation"`
-	Id                   string                        `json:"id"`
-	Labels               *map[string]string            `json:"labels,omitempty"`
-	NotificationSettings RuletypesNotificationSettings `json:"notificationSettings"`
-	RuleType             RuletypesRuleType             `json:"ruleType"`
-	SchemaVersion        RuletypesRuleSchemaVersion    `json:"schemaVersion"`
-	State                RuletypesAlertState           `json:"state"`
-	UpdatedAt            *time.Time                    `json:"updatedAt,omitempty"`
-	UpdatedBy            *string                       `json:"updatedBy,omitempty"`
+	// Alert The display name of the alert rule.
+	Alert string `json:"alert" jsonschema:"The display name of the alert rule."`
+
+	// AlertType The signal the rule evaluates: METRIC_BASED_ALERT, TRACES_BASED_ALERT, LOGS_BASED_ALERT, EXCEPTIONS_BASED_ALERT or AI_TRACES_BASED_ALERT.
+	AlertType RuletypesAlertType `json:"alertType" jsonschema:"The signal the rule evaluates: METRIC_BASED_ALERT, TRACES_BASED_ALERT, LOGS_BASED_ALERT, EXCEPTIONS_BASED_ALERT or AI_TRACES_BASED_ALERT."`
+
+	// Annotations Free text attached to every alert, conventionally summary and description. Values may use Go templates with $value, $threshold and $labels.
+	Annotations *map[string]string `json:"annotations,omitempty" jsonschema:"Free text attached to every alert, conventionally summary and description. Values may use Go templates with $value, $threshold and $labels."`
+
+	// Condition The query to evaluate and the thresholds applied to its result.
+	Condition RuletypesRuleCondition `json:"condition" jsonschema:"The query to evaluate and the thresholds applied to its result."`
+	CreatedAt *time.Time             `json:"createdAt,omitempty"`
+	CreatedBy *string                `json:"createdBy,omitempty"`
+
+	// Description A human readable description of what the rule monitors.
+	Description *string `json:"description,omitempty" jsonschema:"A human readable description of what the rule monitors."`
+
+	// Disabled Whether the rule is paused. A disabled rule is neither evaluated nor notifies. Defaults to false.
+	Disabled *bool `json:"disabled,omitempty" jsonschema:"Whether the rule is paused. A disabled rule is neither evaluated nor notifies. Defaults to false."`
+
+	// Evaluation The evaluation window, as a kind and spec.
+	Evaluation RuletypesEvaluationEnvelope `json:"evaluation" jsonschema:"The evaluation window, as a kind and spec."`
+
+	// Id The unique identifier of the rule.
+	Id string `json:"id" jsonschema:"The unique identifier of the rule."`
+
+	// Labels Labels attached to every alert the rule fires. Keys match [a-zA-Z_.][a-zA-Z0-9_.]*; values may use Go templates such as {{$labels.service_name}}. severity is the conventional routing label.
+	Labels *map[string]string `json:"labels,omitempty" jsonschema:"Labels attached to every alert the rule fires. Keys match [a-zA-Z_.][a-zA-Z0-9_.]*; values may use Go templates such as {{$labels.service_name}}. severity is the conventional routing label."`
+
+	// NotificationSettings Grouping, re-notification and routing behaviour.
+	NotificationSettings RuletypesNotificationSettings `json:"notificationSettings" jsonschema:"Grouping, re-notification and routing behaviour."`
+
+	// RuleType The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule scores deviation from seasonal history. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.
+	RuleType RuletypesRuleType `json:"ruleType" jsonschema:"The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule scores deviation from seasonal history. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries."`
+
+	// SchemaVersion The rule payload schema.
+	SchemaVersion RuletypesRuleSchemaVersion `json:"schemaVersion" jsonschema:"The rule payload schema."`
+
+	// State The current evaluation state: inactive, pending, recovering, firing, nodata or disabled.
+	State     RuletypesAlertState `json:"state" jsonschema:"The current evaluation state: inactive, pending, recovering, firing, nodata or disabled."`
+	UpdatedAt *time.Time          `json:"updatedAt,omitempty"`
+	UpdatedBy *string             `json:"updatedBy,omitempty"`
 }
 
-// RuletypesRuleSchemaVersion defines model for RuletypesRule.SchemaVersion.
+// RuletypesRuleSchemaVersion The rule payload schema.
 type RuletypesRuleSchemaVersion string

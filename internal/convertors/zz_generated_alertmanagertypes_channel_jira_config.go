@@ -20,6 +20,10 @@ func ExpandAlertmanagertypesChannelJiraConfig(ctx context.Context, v customtypes
 		return nil, diags
 	}
 
+	authTyped, d := alertmanagertypesChannelJiraAuthValueFromObject(ctx, v.Auth)
+	diags.Append(d...)
+	auth, d := ExpandAlertmanagertypesChannelJiraAuth(ctx, authTyped)
+	diags.Append(d...)
 	customFields, d := convtypes.InterfaceMapPointerFromMap(ctx, v.CustomFields)
 	diags.Append(d...)
 	labels, d := convtypes.StringPointerSliceFromList(ctx, v.Labels)
@@ -27,11 +31,10 @@ func ExpandAlertmanagertypesChannelJiraConfig(ctx context.Context, v customtypes
 	if diags.HasError() {
 		return nil, diags
 	}
-	return &apitypes.AlertmanagertypesChannelJiraConfig{
-		ApiToken:          v.ApiToken.ValueString(),
+	out := &apitypes.AlertmanagertypesChannelJiraConfig{
 		CustomFields:      customFields,
+		Deployment:        apitypes.AlertmanagertypesJiraDeployment(v.Deployment.ValueString()),
 		Description:       convtypes.StringPointer(v.Description),
-		Email:             v.Email.ValueString(),
 		IssueType:         v.IssueType.ValueString(),
 		Labels:            labels,
 		Priority:          convtypes.StringPointer(v.Priority),
@@ -43,7 +46,11 @@ func ExpandAlertmanagertypesChannelJiraConfig(ctx context.Context, v customtypes
 		Site:              v.Site.ValueString(),
 		Summary:           convtypes.StringPointer(v.Summary),
 		WontFixResolution: convtypes.StringPointer(v.WontFixResolution),
-	}, diags
+	}
+	if auth != nil {
+		out.Auth = *auth
+	}
+	return out, diags
 }
 
 func FlattenAlertmanagertypesChannelJiraConfig(ctx context.Context, in *apitypes.AlertmanagertypesChannelJiraConfig) (customtypes.AlertmanagertypesChannelJiraConfigValue, diag.Diagnostics) {
@@ -52,6 +59,10 @@ func FlattenAlertmanagertypesChannelJiraConfig(ctx context.Context, in *apitypes
 		return customtypes.NewAlertmanagertypesChannelJiraConfigValueNull(), diags
 	}
 
+	authFlatTyped, d := FlattenAlertmanagertypesChannelJiraAuth(ctx, &in.Auth)
+	diags.Append(d...)
+	authFlat, d := authFlatTyped.ToObjectValue(ctx)
+	diags.Append(d...)
 	customFieldsFlat, d := convtypes.MapFromInterfaceMapPointer(ctx, in.CustomFields)
 	diags.Append(d...)
 	labelsFlat, d := convtypes.ListFromStringPointerSlice(ctx, in.Labels)
@@ -63,10 +74,10 @@ func FlattenAlertmanagertypesChannelJiraConfig(ctx context.Context, in *apitypes
 	rv, d := customtypes.NewAlertmanagertypesChannelJiraConfigValue(
 		customtypes.AlertmanagertypesChannelJiraConfigValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
-			"api_token":           types.StringValue(in.ApiToken),
+			"auth":                authFlat,
 			"custom_fields":       customFieldsFlat,
+			"deployment":          types.StringValue(string(in.Deployment)),
 			"description":         convtypes.StringFromPointer(in.Description),
-			"email":               types.StringValue(in.Email),
 			"issue_type":          types.StringValue(in.IssueType),
 			"labels":              labelsFlat,
 			"priority":            convtypes.StringFromPointer(in.Priority),
