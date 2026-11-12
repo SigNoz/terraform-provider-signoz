@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesListPanelSpec defines model for DashboardtypesListPanelSpec.
 type DashboardtypesListPanelSpec struct {
-	SelectFields *[]TelemetrytypesTelemetryFieldKey `json:"selectFields,omitempty"`
+	// SelectFields The columns shown for each row, as field keys with name and optional fieldContext, fieldDataType and signal. Empty shows the default columns.
+	SelectFields *[]TelemetrytypesTelemetryFieldKey `json:"selectFields,omitempty" jsonschema:"The columns shown for each row, as field keys with name and optional fieldContext, fieldDataType and signal. Empty shows the default columns."`
 }

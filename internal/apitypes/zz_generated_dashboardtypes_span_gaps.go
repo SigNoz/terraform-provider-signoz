@@ -5,8 +5,8 @@ package apitypes
 
 // DashboardtypesSpanGaps defines model for DashboardtypesSpanGaps.
 type DashboardtypesSpanGaps struct {
-	// FillLessThan The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected.
-	FillLessThan *string `json:"fillLessThan,omitempty" jsonschema:"The maximum gap size to connect when fillOnlyBelow is true. Gaps larger than this duration are left disconnected."`
+	// FillLessThan The largest gap still connected when fillOnlyBelow is true; longer gaps are left disconnected. Required in that case, as a positive Prometheus duration such as 30s, 5m or 1d.
+	FillLessThan *string `json:"fillLessThan,omitempty" jsonschema:"The largest gap still connected when fillOnlyBelow is true; longer gaps are left disconnected. Required in that case, as a positive Prometheus duration such as 30s, 5m or 1d."`
 
 	// FillOnlyBelow Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected.
 	FillOnlyBelow *bool `json:"fillOnlyBelow,omitempty" jsonschema:"Controls whether lines connect across null values. When false (default), all gaps are connected. When true, only gaps smaller than fillLessThan are connected."`

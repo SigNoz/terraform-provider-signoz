@@ -5,5 +5,6 @@ package apitypes
 
 // AlertmanagertypesUpdatableNotificationChannel defines model for AlertmanagertypesUpdatableNotificationChannel.
 type AlertmanagertypesUpdatableNotificationChannel struct {
-	Config AlertmanagertypesChannelConfig `json:"config"`
+	// Config The replacement provider kind and spec. Name and displayName are immutable and not part of the body.
+	Config AlertmanagertypesChannelConfig `json:"config" jsonschema:"The replacement provider kind and spec. Name and displayName are immutable and not part of the body."`
 }

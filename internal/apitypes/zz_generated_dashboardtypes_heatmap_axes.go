@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesHeatmapAxes defines model for DashboardtypesHeatmapAxes.
 type DashboardtypesHeatmapAxes struct {
-	Y *DashboardtypesHeatmapAxis `json:"y,omitempty"`
+	// Y The bucket axis.
+	Y *DashboardtypesHeatmapAxis `json:"y,omitempty" jsonschema:"The bucket axis."`
 }

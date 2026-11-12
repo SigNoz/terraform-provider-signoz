@@ -5,6 +5,9 @@ package apitypes
 
 // DashboardtypesPanel defines model for DashboardtypesPanel.
 type DashboardtypesPanel struct {
-	Kind DashboardtypesPanelKind `json:"kind"`
-	Spec DashboardtypesPanelSpec `json:"spec"`
+	// Kind The panel envelope kind. Always Panel.
+	Kind DashboardtypesPanelKind `json:"kind" jsonschema:"The panel envelope kind. Always Panel."`
+
+	// Spec The panel content: display, plugin, queries and links.
+	Spec DashboardtypesPanelSpec `json:"spec" jsonschema:"The panel content: display, plugin, queries and links."`
 }

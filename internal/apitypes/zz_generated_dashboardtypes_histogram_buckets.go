@@ -5,7 +5,12 @@ package apitypes
 
 // DashboardtypesHistogramBuckets defines model for DashboardtypesHistogramBuckets.
 type DashboardtypesHistogramBuckets struct {
-	BucketCount           *float32 `json:"bucketCount,omitempty"`
-	BucketWidth           *float32 `json:"bucketWidth,omitempty"`
-	MergeAllActiveQueries *bool    `json:"mergeAllActiveQueries,omitempty"`
+	// BucketCount The approximate target number of buckets. Ignored when bucketWidth is positive. Null uses the chart default.
+	BucketCount *float32 `json:"bucketCount,omitempty" jsonschema:"The approximate target number of buckets. Ignored when bucketWidth is positive. Null uses the chart default."`
+
+	// BucketWidth The width of each bucket in the value unit. A positive value takes precedence over bucketCount; null or 0 lets the chart choose.
+	BucketWidth *float32 `json:"bucketWidth,omitempty" jsonschema:"The width of each bucket in the value unit. A positive value takes precedence over bucketCount; null or 0 lets the chart choose."`
+
+	// MergeAllActiveQueries Whether every series is combined into a single histogram instead of one per series.
+	MergeAllActiveQueries *bool `json:"mergeAllActiveQueries,omitempty" jsonschema:"Whether every series is combined into a single histogram instead of one per series."`
 }

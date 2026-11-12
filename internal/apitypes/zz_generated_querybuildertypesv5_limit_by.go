@@ -5,6 +5,9 @@ package apitypes
 
 // Querybuildertypesv5LimitBy defines model for Querybuildertypesv5LimitBy.
 type Querybuildertypesv5LimitBy struct {
-	Keys  *[]string `json:"keys,omitempty"`
-	Value *string   `json:"value,omitempty"`
+	// Keys The group-by field names that partition the result before the limit is applied.
+	Keys *[]string `json:"keys,omitempty" jsonschema:"The group-by field names that partition the result before the limit is applied."`
+
+	// Value The aggregation alias or expression whose value ranks entries within each partition.
+	Value *string `json:"value,omitempty" jsonschema:"The aggregation alias or expression whose value ranks entries within each partition."`
 }

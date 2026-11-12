@@ -9,10 +9,21 @@ import (
 
 // AlertmanagertypesGettableNotificationChannel defines model for AlertmanagertypesGettableNotificationChannel.
 type AlertmanagertypesGettableNotificationChannel struct {
-	Config      AlertmanagertypesChannelConfig `json:"config"`
-	CreatedAt   time.Time                      `json:"createdAt"`
-	DisplayName string                         `json:"displayName"`
-	Id          string                         `json:"id"`
-	Name        string                         `json:"name"`
-	UpdatedAt   time.Time                      `json:"updatedAt"`
+	// Config The provider kind and spec, credentials included.
+	Config AlertmanagertypesChannelConfig `json:"config" jsonschema:"The provider kind and spec, credentials included."`
+
+	// CreatedAt When the channel was created, as an RFC 3339 timestamp.
+	CreatedAt time.Time `json:"createdAt" jsonschema:"When the channel was created, as an RFC 3339 timestamp."`
+
+	// DisplayName The label shown in the UI. Alert rules and routing policies reference it, not name.
+	DisplayName string `json:"displayName" jsonschema:"The label shown in the UI. Alert rules and routing policies reference it, not name."`
+
+	// Id The channel UUID.
+	Id string `json:"id" jsonschema:"The channel UUID."`
+
+	// Name The immutable DNS-1123 identifier of the channel. Alert rules and routing policies reference displayName, not name.
+	Name string `json:"name" jsonschema:"The immutable DNS-1123 identifier of the channel. Alert rules and routing policies reference displayName, not name."`
+
+	// UpdatedAt When the channel was last updated, as an RFC 3339 timestamp.
+	UpdatedAt time.Time `json:"updatedAt" jsonschema:"When the channel was last updated, as an RFC 3339 timestamp."`
 }

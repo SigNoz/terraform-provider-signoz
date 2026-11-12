@@ -5,7 +5,12 @@ package apitypes
 
 // RuletypesRenotify defines model for RuletypesRenotify.
 type RuletypesRenotify struct {
-	AlertStates *[]RuletypesAlertState `json:"alertStates,omitempty"`
-	Enabled     *bool                  `json:"enabled,omitempty"`
-	Interval    *string                `json:"interval,omitempty"`
+	// AlertStates The alert states that are re-notified: firing, nodata or both.
+	AlertStates *[]RuletypesAlertState `json:"alertStates,omitempty" jsonschema:"The alert states that are re-notified: firing, nodata or both."`
+
+	// Enabled Whether an active alert is re-sent after interval elapses. When false an alert notifies once per firing.
+	Enabled *bool `json:"enabled,omitempty" jsonschema:"Whether an active alert is re-sent after interval elapses. When false an alert notifies once per firing."`
+
+	// Interval The time between repeat notifications, as a Go duration such as 4h. Must be positive when enabled is true.
+	Interval *string `json:"interval,omitempty" jsonschema:"The time between repeat notifications, as a Go duration such as 4h. Must be positive when enabled is true."`
 }

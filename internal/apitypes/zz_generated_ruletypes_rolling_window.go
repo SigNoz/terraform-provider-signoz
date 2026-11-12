@@ -5,6 +5,9 @@ package apitypes
 
 // RuletypesRollingWindow defines model for RuletypesRollingWindow.
 type RuletypesRollingWindow struct {
-	EvalWindow string `json:"evalWindow"`
-	Frequency  string `json:"frequency"`
+	// EvalWindow The sliding lookback window each evaluation queries, as a Go duration such as 5m.
+	EvalWindow string `json:"evalWindow" jsonschema:"The sliding lookback window each evaluation queries, as a Go duration such as 5m."`
+
+	// Frequency How often the rule is evaluated, as a Go duration such as 1m. Must be positive.
+	Frequency string `json:"frequency" jsonschema:"How often the rule is evaluated, as a Go duration such as 1m. Must be positive."`
 }

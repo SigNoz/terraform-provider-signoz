@@ -5,8 +5,15 @@ package apitypes
 
 // AlertmanagertypesChannelMSTeamsConfig defines model for AlertmanagertypesChannelMSTeamsConfig.
 type AlertmanagertypesChannelMSTeamsConfig struct {
-	SendResolved *bool   `json:"sendResolved,omitempty"`
-	Text         *string `json:"text,omitempty"`
-	Title        *string `json:"title,omitempty"`
-	WebhookUrl   string  `json:"webhookUrl"`
+	// SendResolved Also notify when the alert resolves. Defaults to true.
+	SendResolved *bool `json:"sendResolved,omitempty" jsonschema:"Also notify when the alert resolves. Defaults to true."`
+
+	// Text Alertmanager template for the card body; defaults to the Alertmanager Teams default.
+	Text *string `json:"text,omitempty" jsonschema:"Alertmanager template for the card body; defaults to the Alertmanager Teams default."`
+
+	// Title Alertmanager template for the card title; defaults to the Alertmanager Teams default.
+	Title *string `json:"title,omitempty" jsonschema:"Alertmanager template for the card title; defaults to the Alertmanager Teams default."`
+
+	// WebhookUrl The Teams incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list.
+	WebhookUrl string `json:"webhookUrl" jsonschema:"The Teams incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list."`
 }

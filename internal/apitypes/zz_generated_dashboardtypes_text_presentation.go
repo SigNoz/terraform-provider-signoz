@@ -5,7 +5,12 @@ package apitypes
 
 // DashboardtypesTextPresentation defines model for DashboardtypesTextPresentation.
 type DashboardtypesTextPresentation struct {
-	Background    *string                      `json:"background,omitempty"`
-	TextAlign     *DashboardtypesTextAlign     `json:"textAlign,omitempty"`
-	VerticalAlign *DashboardtypesVerticalAlign `json:"verticalAlign,omitempty"`
+	// Background A hex background color such as #1f2937. Omit for the panel default.
+	Background *string `json:"background,omitempty" jsonschema:"A hex background color such as #1f2937. Omit for the panel default."`
+
+	// TextAlign Horizontal alignment: left (default), center or right.
+	TextAlign *DashboardtypesTextAlign `json:"textAlign,omitempty" jsonschema:"Horizontal alignment: left (default), center or right."`
+
+	// VerticalAlign Vertical alignment: top (default), center or bottom.
+	VerticalAlign *DashboardtypesVerticalAlign `json:"verticalAlign,omitempty" jsonschema:"Vertical alignment: top (default), center or bottom."`
 }

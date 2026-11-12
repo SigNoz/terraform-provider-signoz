@@ -44,6 +44,7 @@ func ExpandQuerybuildertypesv5QueryBuilderFormula(ctx context.Context, v customt
 		Legend:        convtypes.StringPointer(v.Legend),
 		Limit:         convtypes.IntPointer(v.Limit),
 		Name:          convtypes.StringPointer(v.Name),
+		Offset:        convtypes.IntPointer(v.Offset),
 		Order:         order,
 	}, diags
 }
@@ -81,6 +82,7 @@ func FlattenQuerybuildertypesv5QueryBuilderFormula(ctx context.Context, in *apit
 			"legend":         convtypes.StringFromPointer(in.Legend),
 			"limit":          convtypes.IntFromPointer(in.Limit),
 			"name":           convtypes.StringFromPointer(in.Name),
+			"offset":         convtypes.IntFromPointer(in.Offset),
 			"order":          orderFlat,
 		},
 	)

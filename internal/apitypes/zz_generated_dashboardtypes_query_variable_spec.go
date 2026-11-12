@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesQueryVariableSpec defines model for DashboardtypesQueryVariableSpec.
 type DashboardtypesQueryVariableSpec struct {
-	QueryValue string `json:"queryValue"`
+	// QueryValue A ClickHouse SQL query returning one column of selectable values; every returned column is offered.
+	QueryValue string `json:"queryValue" jsonschema:"A ClickHouse SQL query returning one column of selectable values; every returned column is offered."`
 }

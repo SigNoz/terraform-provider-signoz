@@ -5,6 +5,9 @@ package apitypes
 
 // Querybuildertypesv5Function defines model for Querybuildertypesv5Function.
 type Querybuildertypesv5Function struct {
-	Args *[]Querybuildertypesv5FunctionArg `json:"args,omitempty"`
-	Name *Querybuildertypesv5FunctionName  `json:"name,omitempty"`
+	// Args The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions.
+	Args *[]Querybuildertypesv5FunctionArg `json:"args,omitempty" jsonschema:"The function arguments; which ones are required depends on the function, for example a threshold for the cutOff and clamp functions."`
+
+	// Name The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero.
+	Name *Querybuildertypesv5FunctionName `json:"name,omitempty" jsonschema:"The function to apply, such as cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, log2, log10, cumulativeSum, ewma3, ewma5, ewma7, median3, median5, median7, timeShift, anomaly or fillZero."`
 }

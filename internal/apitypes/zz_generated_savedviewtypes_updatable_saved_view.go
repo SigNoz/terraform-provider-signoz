@@ -5,7 +5,12 @@ package apitypes
 
 // SavedviewtypesUpdatableSavedView defines model for SavedviewtypesUpdatableSavedView.
 type SavedviewtypesUpdatableSavedView struct {
-	SchemaVersion SavedviewtypesSchemaVersion `json:"schemaVersion"`
-	Source        SavedviewtypesSource        `json:"source"`
-	Spec          SavedviewtypesSavedViewSpec `json:"spec"`
+	// SchemaVersion The version of the spec shape. The only accepted value is v2.
+	SchemaVersion SavedviewtypesSchemaVersion `json:"schemaVersion" jsonschema:"The version of the spec shape. The only accepted value is v2."`
+
+	// Source The explorer page the view belongs to: traces, logs, metrics, meter or ai_observability. The machine name cannot be changed; it is identified by the id in the path.
+	Source SavedviewtypesSource `json:"source" jsonschema:"The explorer page the view belongs to: traces, logs, metrics, meter or ai_observability. The machine name cannot be changed; it is identified by the id in the path."`
+
+	// Spec The full replacement spec. Fields left out are reset, not preserved.
+	Spec SavedviewtypesSavedViewSpec `json:"spec" jsonschema:"The full replacement spec. Fields left out are reset, not preserved."`
 }

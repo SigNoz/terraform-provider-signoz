@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesHeaderOptions defines model for DashboardtypesHeaderOptions.
 type DashboardtypesHeaderOptions struct {
-	Hide *bool `json:"hide,omitempty"`
+	// Hide Whether the title and description row above the content is hidden.
+	Hide *bool `json:"hide,omitempty" jsonschema:"Whether the title and description row above the content is hidden."`
 }

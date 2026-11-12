@@ -39,22 +39,22 @@ func (t AlertmanagertypesChannelJiraConfigType) ValueFromObject(ctx context.Cont
 
 	attributes := in.Attributes()
 
-	apiTokenAttribute, ok := attributes["api_token"]
+	authAttribute, ok := attributes["auth"]
 
 	if !ok {
 		diags.AddError(
 			"Attribute Missing",
-			`api_token is missing from object`)
+			`auth is missing from object`)
 
 		return nil, diags
 	}
 
-	apiTokenVal, ok := apiTokenAttribute.(basetypes.StringValue)
+	authVal, ok := authAttribute.(basetypes.ObjectValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_token expected to be basetypes.StringValue, was: %T`, apiTokenAttribute))
+			fmt.Sprintf(`auth expected to be basetypes.ObjectValue, was: %T`, authAttribute))
 	}
 
 	customFieldsAttribute, ok := attributes["custom_fields"]
@@ -75,6 +75,24 @@ func (t AlertmanagertypesChannelJiraConfigType) ValueFromObject(ctx context.Cont
 			fmt.Sprintf(`custom_fields expected to be basetypes.MapValue, was: %T`, customFieldsAttribute))
 	}
 
+	deploymentAttribute, ok := attributes["deployment"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`deployment is missing from object`)
+
+		return nil, diags
+	}
+
+	deploymentVal, ok := deploymentAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`deployment expected to be basetypes.StringValue, was: %T`, deploymentAttribute))
+	}
+
 	descriptionAttribute, ok := attributes["description"]
 
 	if !ok {
@@ -91,24 +109,6 @@ func (t AlertmanagertypesChannelJiraConfigType) ValueFromObject(ctx context.Cont
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`description expected to be basetypes.StringValue, was: %T`, descriptionAttribute))
-	}
-
-	emailAttribute, ok := attributes["email"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`email is missing from object`)
-
-		return nil, diags
-	}
-
-	emailVal, ok := emailAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`email expected to be basetypes.StringValue, was: %T`, emailAttribute))
 	}
 
 	issueTypeAttribute, ok := attributes["issue_type"]
@@ -314,10 +314,10 @@ func (t AlertmanagertypesChannelJiraConfigType) ValueFromObject(ctx context.Cont
 	}
 
 	return AlertmanagertypesChannelJiraConfigValue{
-		ApiToken:          apiTokenVal,
+		Auth:              authVal,
 		CustomFields:      customFieldsVal,
+		Deployment:        deploymentVal,
 		Description:       descriptionVal,
-		Email:             emailVal,
 		IssueType:         issueTypeVal,
 		Labels:            labelsVal,
 		Priority:          priorityVal,
@@ -396,22 +396,22 @@ func NewAlertmanagertypesChannelJiraConfigValue(attributeTypes map[string]attr.T
 		return NewAlertmanagertypesChannelJiraConfigValueUnknown(), diags
 	}
 
-	apiTokenAttribute, ok := attributes["api_token"]
+	authAttribute, ok := attributes["auth"]
 
 	if !ok {
 		diags.AddError(
 			"Attribute Missing",
-			`api_token is missing from object`)
+			`auth is missing from object`)
 
 		return NewAlertmanagertypesChannelJiraConfigValueUnknown(), diags
 	}
 
-	apiTokenVal, ok := apiTokenAttribute.(basetypes.StringValue)
+	authVal, ok := authAttribute.(basetypes.ObjectValue)
 
 	if !ok {
 		diags.AddError(
 			"Attribute Wrong Type",
-			fmt.Sprintf(`api_token expected to be basetypes.StringValue, was: %T`, apiTokenAttribute))
+			fmt.Sprintf(`auth expected to be basetypes.ObjectValue, was: %T`, authAttribute))
 	}
 
 	customFieldsAttribute, ok := attributes["custom_fields"]
@@ -432,6 +432,24 @@ func NewAlertmanagertypesChannelJiraConfigValue(attributeTypes map[string]attr.T
 			fmt.Sprintf(`custom_fields expected to be basetypes.MapValue, was: %T`, customFieldsAttribute))
 	}
 
+	deploymentAttribute, ok := attributes["deployment"]
+
+	if !ok {
+		diags.AddError(
+			"Attribute Missing",
+			`deployment is missing from object`)
+
+		return NewAlertmanagertypesChannelJiraConfigValueUnknown(), diags
+	}
+
+	deploymentVal, ok := deploymentAttribute.(basetypes.StringValue)
+
+	if !ok {
+		diags.AddError(
+			"Attribute Wrong Type",
+			fmt.Sprintf(`deployment expected to be basetypes.StringValue, was: %T`, deploymentAttribute))
+	}
+
 	descriptionAttribute, ok := attributes["description"]
 
 	if !ok {
@@ -448,24 +466,6 @@ func NewAlertmanagertypesChannelJiraConfigValue(attributeTypes map[string]attr.T
 		diags.AddError(
 			"Attribute Wrong Type",
 			fmt.Sprintf(`description expected to be basetypes.StringValue, was: %T`, descriptionAttribute))
-	}
-
-	emailAttribute, ok := attributes["email"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`email is missing from object`)
-
-		return NewAlertmanagertypesChannelJiraConfigValueUnknown(), diags
-	}
-
-	emailVal, ok := emailAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`email expected to be basetypes.StringValue, was: %T`, emailAttribute))
 	}
 
 	issueTypeAttribute, ok := attributes["issue_type"]
@@ -671,10 +671,10 @@ func NewAlertmanagertypesChannelJiraConfigValue(attributeTypes map[string]attr.T
 	}
 
 	return AlertmanagertypesChannelJiraConfigValue{
-		ApiToken:          apiTokenVal,
+		Auth:              authVal,
 		CustomFields:      customFieldsVal,
+		Deployment:        deploymentVal,
 		Description:       descriptionVal,
-		Email:             emailVal,
 		IssueType:         issueTypeVal,
 		Labels:            labelsVal,
 		Priority:          priorityVal,
@@ -758,10 +758,10 @@ func (t AlertmanagertypesChannelJiraConfigType) ValueType(ctx context.Context) a
 var _ basetypes.ObjectValuable = AlertmanagertypesChannelJiraConfigValue{}
 
 type AlertmanagertypesChannelJiraConfigValue struct {
-	ApiToken          basetypes.StringValue `tfsdk:"api_token"`
+	Auth              basetypes.ObjectValue `tfsdk:"auth"`
 	CustomFields      basetypes.MapValue    `tfsdk:"custom_fields"`
+	Deployment        basetypes.StringValue `tfsdk:"deployment"`
 	Description       basetypes.StringValue `tfsdk:"description"`
-	Email             basetypes.StringValue `tfsdk:"email"`
 	IssueType         basetypes.StringValue `tfsdk:"issue_type"`
 	Labels            basetypes.ListValue   `tfsdk:"labels"`
 	Priority          basetypes.StringValue `tfsdk:"priority"`
@@ -782,12 +782,14 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToTerraformValue(ctx context.Co
 	var val tftypes.Value
 	var err error
 
-	attrTypes["api_token"] = basetypes.StringType{}.TerraformType(ctx)
+	attrTypes["auth"] = basetypes.ObjectType{
+		AttrTypes: AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+	}.TerraformType(ctx)
 	attrTypes["custom_fields"] = basetypes.MapType{
 		ElemType: types.StringType,
 	}.TerraformType(ctx)
+	attrTypes["deployment"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["description"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["email"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["issue_type"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["labels"] = basetypes.ListType{
 		ElemType: types.StringType,
@@ -808,13 +810,13 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToTerraformValue(ctx context.Co
 	case attr.ValueStateKnown:
 		vals := make(map[string]tftypes.Value, 15)
 
-		val, err = v.ApiToken.ToTerraformValue(ctx)
+		val, err = v.Auth.ToTerraformValue(ctx)
 
 		if err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
 
-		vals["api_token"] = val
+		vals["auth"] = val
 
 		val, err = v.CustomFields.ToTerraformValue(ctx)
 
@@ -824,6 +826,14 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToTerraformValue(ctx context.Co
 
 		vals["custom_fields"] = val
 
+		val, err = v.Deployment.ToTerraformValue(ctx)
+
+		if err != nil {
+			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
+		}
+
+		vals["deployment"] = val
+
 		val, err = v.Description.ToTerraformValue(ctx)
 
 		if err != nil {
@@ -831,14 +841,6 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToTerraformValue(ctx context.Co
 		}
 
 		vals["description"] = val
-
-		val, err = v.Email.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["email"] = val
 
 		val, err = v.IssueType.ToTerraformValue(ctx)
 
@@ -957,6 +959,27 @@ func (v AlertmanagertypesChannelJiraConfigValue) String() string {
 func (v AlertmanagertypesChannelJiraConfigValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	var auth basetypes.ObjectValue
+
+	if v.Auth.IsNull() {
+		auth = types.ObjectNull(
+			AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if v.Auth.IsUnknown() {
+		auth = types.ObjectUnknown(
+			AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+		)
+	}
+
+	if !v.Auth.IsNull() && !v.Auth.IsUnknown() {
+		auth = types.ObjectValueMust(
+			AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+			v.Auth.Attributes(),
+		)
+	}
+
 	var customFieldsVal basetypes.MapValue
 	switch {
 	case v.CustomFields.IsUnknown():
@@ -971,12 +994,14 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToObjectValue(ctx context.Conte
 
 	if diags.HasError() {
 		return types.ObjectUnknown(map[string]attr.Type{
-			"api_token": basetypes.StringType{},
+			"auth": basetypes.ObjectType{
+				AttrTypes: AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+			},
 			"custom_fields": basetypes.MapType{
 				ElemType: types.StringType,
 			},
+			"deployment":  basetypes.StringType{},
 			"description": basetypes.StringType{},
-			"email":       basetypes.StringType{},
 			"issue_type":  basetypes.StringType{},
 			"labels": basetypes.ListType{
 				ElemType: types.StringType,
@@ -1007,12 +1032,14 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToObjectValue(ctx context.Conte
 
 	if diags.HasError() {
 		return types.ObjectUnknown(map[string]attr.Type{
-			"api_token": basetypes.StringType{},
+			"auth": basetypes.ObjectType{
+				AttrTypes: AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+			},
 			"custom_fields": basetypes.MapType{
 				ElemType: types.StringType,
 			},
+			"deployment":  basetypes.StringType{},
 			"description": basetypes.StringType{},
-			"email":       basetypes.StringType{},
 			"issue_type":  basetypes.StringType{},
 			"labels": basetypes.ListType{
 				ElemType: types.StringType,
@@ -1030,12 +1057,14 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToObjectValue(ctx context.Conte
 	}
 
 	attributeTypes := map[string]attr.Type{
-		"api_token": basetypes.StringType{},
+		"auth": basetypes.ObjectType{
+			AttrTypes: AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+		},
 		"custom_fields": basetypes.MapType{
 			ElemType: types.StringType,
 		},
+		"deployment":  basetypes.StringType{},
 		"description": basetypes.StringType{},
-		"email":       basetypes.StringType{},
 		"issue_type":  basetypes.StringType{},
 		"labels": basetypes.ListType{
 			ElemType: types.StringType,
@@ -1062,10 +1091,10 @@ func (v AlertmanagertypesChannelJiraConfigValue) ToObjectValue(ctx context.Conte
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"api_token":           v.ApiToken,
+			"auth":                auth,
 			"custom_fields":       customFieldsVal,
+			"deployment":          v.Deployment,
 			"description":         v.Description,
-			"email":               v.Email,
 			"issue_type":          v.IssueType,
 			"labels":              labelsVal,
 			"priority":            v.Priority,
@@ -1097,7 +1126,7 @@ func (v AlertmanagertypesChannelJiraConfigValue) Equal(o attr.Value) bool {
 		return true
 	}
 
-	if !v.ApiToken.Equal(other.ApiToken) {
+	if !v.Auth.Equal(other.Auth) {
 		return false
 	}
 
@@ -1105,11 +1134,11 @@ func (v AlertmanagertypesChannelJiraConfigValue) Equal(o attr.Value) bool {
 		return false
 	}
 
-	if !v.Description.Equal(other.Description) {
+	if !v.Deployment.Equal(other.Deployment) {
 		return false
 	}
 
-	if !v.Email.Equal(other.Email) {
+	if !v.Description.Equal(other.Description) {
 		return false
 	}
 
@@ -1170,12 +1199,14 @@ func (v AlertmanagertypesChannelJiraConfigValue) Type(ctx context.Context) attr.
 
 func (v AlertmanagertypesChannelJiraConfigValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
-		"api_token": basetypes.StringType{},
+		"auth": basetypes.ObjectType{
+			AttrTypes: AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+		},
 		"custom_fields": basetypes.MapType{
 			ElemType: types.StringType,
 		},
+		"deployment":  basetypes.StringType{},
 		"description": basetypes.StringType{},
-		"email":       basetypes.StringType{},
 		"issue_type":  basetypes.StringType{},
 		"labels": basetypes.ListType{
 			ElemType: types.StringType,

@@ -5,5 +5,6 @@ package apitypes
 
 // Querybuildertypesv5Having defines model for Querybuildertypesv5Having.
 type Querybuildertypesv5Having struct {
-	Expression *string `json:"expression,omitempty"`
+	// Expression A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100.
+	Expression *string `json:"expression,omitempty" jsonschema:"A condition on aggregation results in the filter syntax, referencing an alias or expression, for example count() > 100."`
 }

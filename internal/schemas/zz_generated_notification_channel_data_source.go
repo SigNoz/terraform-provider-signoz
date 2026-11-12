@@ -21,22 +21,32 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"email": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"headers": schema.MapAttribute{
-										ElementType: types.StringType,
-										Computed:    true,
+										ElementType:         types.StringType,
+										Computed:            true,
+										Description:         "Extra SMTP headers keyed by canonical MIME header name, such as Subject.",
+										MarkdownDescription: "Extra SMTP headers keyed by canonical MIME header name, such as Subject.",
 									},
 									"html": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the HTML body; defaults to the Alertmanager email default.",
+										MarkdownDescription: "Alertmanager template for the HTML body; defaults to the Alertmanager email default.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to false.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to false.",
 									},
 									"to": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The recipient addresses, comma separated.",
+										MarkdownDescription: "The recipient addresses, comma separated.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelEmailConfigType{
@@ -44,7 +54,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelEmailConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelEmailConfigType{
@@ -57,22 +69,32 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"googlechat": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to false.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to false.",
 									},
 									"text": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the message body; defaults to the SigNoz Google Chat default.",
+										MarkdownDescription: "Alertmanager template for the message body; defaults to the SigNoz Google Chat default.",
 									},
 									"title": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the message title; defaults to the SigNoz Google Chat default.",
+										MarkdownDescription: "Alertmanager template for the message title; defaults to the SigNoz Google Chat default.",
 									},
 									"webhook_url": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The Google Chat space webhook URL. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The Google Chat space webhook URL. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelGoogleChatConfigType{
@@ -80,7 +102,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelGoogleChatConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelGoogleChatConfigType{
@@ -93,29 +117,43 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"incidentio": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"description": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the alert description, rendered as markdown; defaults to the SigNoz incident.io default.",
+										MarkdownDescription: "Alertmanager template for the alert description, rendered as markdown; defaults to the SigNoz incident.io default.",
 									},
 									"metadata": schema.MapAttribute{
-										ElementType: types.StringType,
-										Computed:    true,
+										ElementType:         types.StringType,
+										Computed:            true,
+										Description:         "Extra event metadata keyed by name, merged over the group's common labels; values are Alertmanager templates.",
+										MarkdownDescription: "Extra event metadata keyed by name, merged over the group's common labels; values are Alertmanager templates.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to false.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to false.",
 									},
 									"title": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the alert title; defaults to the SigNoz incident.io default.",
+										MarkdownDescription: "Alertmanager template for the alert title; defaults to the SigNoz incident.io default.",
 									},
 									"token": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The alert source secret token, without the Bearer prefix. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The alert source secret token, without the Bearer prefix. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 									"url": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The alert source HTTP alert events endpoint copied from its setup page.",
+										MarkdownDescription: "The alert source HTTP alert events endpoint copied from its setup page.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelIncidentIoconfigType{
@@ -123,7 +161,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelIncidentIoconfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelIncidentIoconfigType{
@@ -136,57 +176,112 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"jira": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
-									"api_token": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+									"auth": schema.SingleNestedAttribute{
+										Attributes: map[string]schema.Attribute{
+											"api_token": schema.StringAttribute{
+												Computed:            true,
+												Sensitive:           true,
+												Description:         "The Atlassian API token paired with email. Required when deployment is cloud. A secret; returned by create, update and fetch by ID, never by list.",
+												MarkdownDescription: "The Atlassian API token paired with email. Required when deployment is cloud. A secret; returned by create, update and fetch by ID, never by list.",
+											},
+											"email": schema.StringAttribute{
+												Computed:            true,
+												Description:         "The Atlassian account email used for basic auth. Required when deployment is cloud.",
+												MarkdownDescription: "The Atlassian account email used for basic auth. Required when deployment is cloud.",
+											},
+											"pat": schema.StringAttribute{
+												Computed:            true,
+												Sensitive:           true,
+												Description:         "The Jira personal access token, sent as a Bearer header. Required when deployment is selfhosted. A secret; returned by create, update and fetch by ID, never by list.",
+												MarkdownDescription: "The Jira personal access token, sent as a Bearer header. Required when deployment is selfhosted. A secret; returned by create, update and fetch by ID, never by list.",
+											},
+										},
+										CustomType: customtypes.AlertmanagertypesChannelJiraAuthType{
+											ObjectType: types.ObjectType{
+												AttrTypes: customtypes.AlertmanagertypesChannelJiraAuthValue{}.AttributeTypes(ctx),
+											},
+										},
+										Computed:            true,
+										Description:         "The credentials: email and apiToken when deployment is cloud, pat when deployment is selfhosted.",
+										MarkdownDescription: "The credentials: email and apiToken when deployment is cloud, pat when deployment is selfhosted.",
 									},
 									"custom_fields": schema.MapAttribute{
-										ElementType: types.StringType,
-										Computed:    true,
+										ElementType:         types.StringType,
+										Computed:            true,
+										Description:         "Extra issue fields keyed by Jira field ID. Stored, but not currently included in the issue Jira receives.",
+										MarkdownDescription: "Extra issue fields keyed by Jira field ID. Stored, but not currently included in the issue Jira receives.",
+									},
+									"deployment": schema.StringAttribute{
+										Computed:            true,
+										Description:         "The Jira edition: cloud for an Atlassian-hosted site, selfhosted for Jira Server or Data Center.",
+										MarkdownDescription: "The Jira edition: cloud for an Atlassian-hosted site, selfhosted for Jira Server or Data Center.",
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
-									},
-									"email": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the issue description, rendered as markdown; defaults to the SigNoz Jira default.",
+										MarkdownDescription: "Alertmanager template for the issue description, rendered as markdown; defaults to the SigNoz Jira default.",
 									},
 									"issue_type": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The issue type name, such as Bug.",
+										MarkdownDescription: "The issue type name, such as Bug.",
 									},
 									"labels": schema.ListAttribute{
-										ElementType: types.StringType,
-										Computed:    true,
+										ElementType:         types.StringType,
+										Computed:            true,
+										Description:         "Labels added to every issue.",
+										MarkdownDescription: "Labels added to every issue.",
 									},
 									"priority": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The priority name assigned to new issues.",
+										MarkdownDescription: "The priority name assigned to new issues.",
 									},
 									"project": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The key of the project issues are created in.",
+										MarkdownDescription: "The key of the project issues are created in.",
 									},
 									"reopen_duration": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "How long after resolution a firing alert reopens the issue instead of creating a new one, as a Prometheus duration in canonical form such as 3d; defaults to 3d.",
+										MarkdownDescription: "How long after resolution a firing alert reopens the issue instead of creating a new one, as a Prometheus duration in canonical form such as 3d; defaults to 3d.",
 									},
 									"reopen_transition": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The transition applied when an alert fires again on a resolved issue.",
+										MarkdownDescription: "The transition applied when an alert fires again on a resolved issue.",
 									},
 									"resolve_transition": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The transition applied to the issue when the alert resolves.",
+										MarkdownDescription: "The transition applied to the issue when the alert resolves.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to false.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to false.",
 									},
 									"site": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The base URL of the Jira site, for example https://example.atlassian.net or https://jira.example.com.",
+										MarkdownDescription: "The base URL of the Jira site, for example https://example.atlassian.net or https://jira.example.com.",
 									},
 									"summary": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the issue summary; defaults to the SigNoz Jira default.",
+										MarkdownDescription: "Alertmanager template for the issue summary; defaults to the SigNoz Jira default.",
 									},
 									"wont_fix_resolution": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The resolution name that stops an issue from being reopened.",
+										MarkdownDescription: "The resolution name that stops an issue from being reopened.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelJiraConfigType{
@@ -194,7 +289,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelJiraConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJiraConfigType{
@@ -207,28 +304,42 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"jsmops": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"api_key": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The JSM Ops integration API key. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The JSM Ops integration API key. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the alert description; defaults to the SigNoz JSM Ops default.",
+										MarkdownDescription: "Alertmanager template for the alert description; defaults to the SigNoz JSM Ops default.",
 									},
 									"message": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the alert message; defaults to the SigNoz JSM Ops default.",
+										MarkdownDescription: "Alertmanager template for the alert message; defaults to the SigNoz JSM Ops default.",
 									},
 									"priority": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The alert priority, P1 to P5.",
+										MarkdownDescription: "The alert priority, P1 to P5.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to false.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to false.",
 									},
 									"tags": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Comma-separated tags attached to the alert; defaults to signoz.",
+										MarkdownDescription: "Comma-separated tags attached to the alert; defaults to signoz.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelJsmopsConfigType{
@@ -236,7 +347,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelJsmopsConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelJsmopsConfigType{
@@ -249,22 +362,32 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"msteams": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to true.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to true.",
 									},
 									"text": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the card body; defaults to the Alertmanager Teams default.",
+										MarkdownDescription: "Alertmanager template for the card body; defaults to the Alertmanager Teams default.",
 									},
 									"title": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the card title; defaults to the Alertmanager Teams default.",
+										MarkdownDescription: "Alertmanager template for the card title; defaults to the Alertmanager Teams default.",
 									},
 									"webhook_url": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The Teams incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The Teams incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelMsteamsConfigType{
@@ -272,7 +395,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelMsteamsConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelMsteamsConfigType{
@@ -285,35 +410,53 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"opsgenie": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"api_key": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The Opsgenie API integration key. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The Opsgenie API integration key. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 									"api_url": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The Opsgenie API host; empty uses the global Alertmanager default.",
+										MarkdownDescription: "The Opsgenie API host; empty uses the global Alertmanager default.",
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the alert description; defaults to the Alertmanager Opsgenie default.",
+										MarkdownDescription: "Alertmanager template for the alert description; defaults to the Alertmanager Opsgenie default.",
 									},
 									"details": schema.MapAttribute{
-										ElementType: types.StringType,
-										Computed:    true,
+										ElementType:         types.StringType,
+										Computed:            true,
+										Description:         "Custom alert details keyed by name, each an Alertmanager template.",
+										MarkdownDescription: "Custom alert details keyed by name, each an Alertmanager template.",
 									},
 									"message": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the alert message; defaults to the Alertmanager Opsgenie default.",
+										MarkdownDescription: "Alertmanager template for the alert message; defaults to the Alertmanager Opsgenie default.",
 									},
 									"priority": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The alert priority, P1 to P5.",
+										MarkdownDescription: "The alert priority, P1 to P5.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to true.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to true.",
 									},
 									"source": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the alert source; defaults to the Alertmanager Opsgenie default.",
+										MarkdownDescription: "Alertmanager template for the alert source; defaults to the Alertmanager Opsgenie default.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelOpsgenieConfigType{
@@ -321,7 +464,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelOpsgenieConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelOpsgenieConfigType{
@@ -334,47 +479,73 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"pagerduty": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"class": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The class or type of the event.",
+										MarkdownDescription: "The class or type of the event.",
 									},
 									"client": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the client identifier; defaults to the Alertmanager PagerDuty default.",
+										MarkdownDescription: "Alertmanager template for the client identifier; defaults to the Alertmanager PagerDuty default.",
 									},
 									"client_url": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the client URL; defaults to the Alertmanager PagerDuty default.",
+										MarkdownDescription: "Alertmanager template for the client URL; defaults to the Alertmanager PagerDuty default.",
 									},
 									"component": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The component of the source machine that is responsible for the event.",
+										MarkdownDescription: "The component of the source machine that is responsible for the event.",
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the incident summary; defaults to the Alertmanager PagerDuty default.",
+										MarkdownDescription: "Alertmanager template for the incident summary; defaults to the Alertmanager PagerDuty default.",
 									},
 									"details": schema.MapAttribute{
-										ElementType: types.StringType,
-										Computed:    true,
+										ElementType:         types.StringType,
+										Computed:            true,
+										Description:         "Custom details keyed by name, each an Alertmanager template; defaults to the Alertmanager firing and resolved summary set.",
+										MarkdownDescription: "Custom details keyed by name, each an Alertmanager template; defaults to the Alertmanager firing and resolved summary set.",
 									},
 									"group": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The logical grouping of components the event belongs to.",
+										MarkdownDescription: "The logical grouping of components the event belongs to.",
 									},
 									"routing_key": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The Events API v2 integration key. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The Events API v2 integration key. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to true.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to true.",
 									},
 									"severity": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The incident severity: critical, error, warning or info.",
+										MarkdownDescription: "The incident severity: critical, error, warning or info.",
 									},
 									"source": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the unique location of the affected system; defaults to client.",
+										MarkdownDescription: "Alertmanager template for the unique location of the affected system; defaults to client.",
 									},
 									"url": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The Events API endpoint; empty uses the PagerDuty default.",
+										MarkdownDescription: "The Events API endpoint; empty uses the PagerDuty default.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelPagerdutyConfigType{
@@ -382,7 +553,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelPagerdutyConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelPagerdutyConfigType{
@@ -395,7 +568,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"slack": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
@@ -405,16 +580,24 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 												"confirm": schema.SingleNestedAttribute{
 													Attributes: map[string]schema.Attribute{
 														"dismiss_text": schema.StringAttribute{
-															Computed: true,
+															Computed:            true,
+															Description:         "The label of the cancel button.",
+															MarkdownDescription: "The label of the cancel button.",
 														},
 														"ok_text": schema.StringAttribute{
-															Computed: true,
+															Computed:            true,
+															Description:         "The label of the confirm button.",
+															MarkdownDescription: "The label of the confirm button.",
 														},
 														"text": schema.StringAttribute{
-															Computed: true,
+															Computed:            true,
+															Description:         "The dialog body.",
+															MarkdownDescription: "The dialog body.",
 														},
 														"title": schema.StringAttribute{
-															Computed: true,
+															Computed:            true,
+															Description:         "The dialog title.",
+															MarkdownDescription: "The dialog title.",
 														},
 													},
 													CustomType: customtypes.AlertmanagertypesChannelSlackConfirmationType{
@@ -422,25 +605,39 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 															AttrTypes: customtypes.AlertmanagertypesChannelSlackConfirmationValue{}.AttributeTypes(ctx),
 														},
 													},
-													Computed: true,
+													Computed:            true,
+													Description:         "A confirmation dialog shown before the action runs.",
+													MarkdownDescription: "A confirmation dialog shown before the action runs.",
 												},
 												"name": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The action name Slack posts back for a message button; required unless url is set.",
+													MarkdownDescription: "The action name Slack posts back for a message button; required unless url is set.",
 												},
 												"style": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The button style: default, primary or danger.",
+													MarkdownDescription: "The button style: default, primary or danger.",
 												},
 												"text": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The button label.",
+													MarkdownDescription: "The button label.",
 												},
 												"type": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The Slack action type, normally button.",
+													MarkdownDescription: "The Slack action type, normally button.",
 												},
 												"url": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The link the button opens; required unless name is set.",
+													MarkdownDescription: "The link the button opens; required unless name is set.",
 												},
 												"value": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The value Slack posts back with a message button.",
+													MarkdownDescription: "The value Slack posts back with a message button.",
 												},
 											},
 											CustomType: customtypes.AlertmanagertypesChannelSlackActionType{
@@ -449,32 +646,48 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 										},
-										Computed: true,
+										Computed:            true,
+										Description:         "Attachment buttons; each requires type and text plus url or name.",
+										MarkdownDescription: "Attachment buttons; each requires type and text plus url or name.",
 									},
 									"api_url": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The Slack incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The Slack incoming webhook URL. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 									"channel": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The channel or user to post to, such as #alerts; empty uses the webhook default.",
+										MarkdownDescription: "The channel or user to post to, such as #alerts; empty uses the webhook default.",
 									},
 									"color": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the attachment color; defaults to the Alertmanager Slack default.",
+										MarkdownDescription: "Alertmanager template for the attachment color; defaults to the Alertmanager Slack default.",
 									},
 									"fallback": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the plain-text summary shown where attachments cannot render; defaults to the Alertmanager Slack default.",
+										MarkdownDescription: "Alertmanager template for the plain-text summary shown where attachments cannot render; defaults to the Alertmanager Slack default.",
 									},
 									"fields": schema.ListNestedAttribute{
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
 												"short": schema.BoolAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "Render the field side by side with other short fields.",
+													MarkdownDescription: "Render the field side by side with other short fields.",
 												},
 												"title": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The field title.",
+													MarkdownDescription: "The field title.",
 												},
 												"value": schema.StringAttribute{
-													Computed: true,
+													Computed:            true,
+													Description:         "The field value; an Alertmanager template.",
+													MarkdownDescription: "The field value; an Alertmanager template.",
 												},
 											},
 											CustomType: customtypes.AlertmanagertypesChannelSlackFieldType{
@@ -483,25 +696,39 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 												},
 											},
 										},
-										Computed: true,
+										Computed:            true,
+										Description:         "Attachment fields appended to the message; each requires title and value.",
+										MarkdownDescription: "Attachment fields appended to the message; each requires title and value.",
 									},
 									"footer": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the attachment footer; defaults to the Alertmanager Slack default.",
+										MarkdownDescription: "Alertmanager template for the attachment footer; defaults to the Alertmanager Slack default.",
 									},
 									"pretext": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the text shown above the attachment; defaults to the Alertmanager Slack default.",
+										MarkdownDescription: "Alertmanager template for the text shown above the attachment; defaults to the Alertmanager Slack default.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to false.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to false.",
 									},
 									"text": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the message body; defaults to the Alertmanager Slack default.",
+										MarkdownDescription: "Alertmanager template for the message body; defaults to the Alertmanager Slack default.",
 									},
 									"title": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the message title; defaults to the Alertmanager Slack default.",
+										MarkdownDescription: "Alertmanager template for the message title; defaults to the Alertmanager Slack default.",
 									},
 									"title_link": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Alertmanager template for the link the title opens; defaults to the Alertmanager Slack default.",
+										MarkdownDescription: "Alertmanager template for the link the title opens; defaults to the Alertmanager Slack default.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelSlackConfigType{
@@ -509,7 +736,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelSlackConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelSlackConfigType{
@@ -522,7 +751,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"telegram": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
@@ -557,7 +788,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelTelegramConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelTelegramConfigType{
@@ -570,27 +803,39 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 					"webhook": schema.SingleNestedAttribute{
 						Attributes: map[string]schema.Attribute{
 							"kind": schema.StringAttribute{
-								Computed: true,
+								Computed:            true,
+								Description:         "The channel provider kind this variant accepts.",
+								MarkdownDescription: "The channel provider kind this variant accepts.",
 							},
 							"spec": schema.SingleNestedAttribute{
 								Attributes: map[string]schema.Attribute{
 									"bearer_token": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The bearer token sent in the Authorization header; cannot be combined with username or password.",
+										MarkdownDescription: "The bearer token sent in the Authorization header; cannot be combined with username or password.",
 									},
 									"password": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The basic auth password; cannot be combined with bearerToken.",
+										MarkdownDescription: "The basic auth password; cannot be combined with bearerToken.",
 									},
 									"send_resolved": schema.BoolAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "Also notify when the alert resolves. Defaults to true.",
+										MarkdownDescription: "Also notify when the alert resolves. Defaults to true.",
 									},
 									"url": schema.StringAttribute{
-										Computed:  true,
-										Sensitive: true,
+										Computed:            true,
+										Sensitive:           true,
+										Description:         "The endpoint that receives the Alertmanager webhook payload. A secret; returned by create, update and fetch by ID, never by list.",
+										MarkdownDescription: "The endpoint that receives the Alertmanager webhook payload. A secret; returned by create, update and fetch by ID, never by list.",
 									},
 									"username": schema.StringAttribute{
-										Computed: true,
+										Computed:            true,
+										Description:         "The basic auth user; cannot be combined with bearerToken.",
+										MarkdownDescription: "The basic auth user; cannot be combined with bearerToken.",
 									},
 								},
 								CustomType: customtypes.AlertmanagertypesChannelWebhookConfigType{
@@ -598,7 +843,9 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 										AttrTypes: customtypes.AlertmanagertypesChannelWebhookConfigValue{}.AttributeTypes(ctx),
 									},
 								},
-								Computed: true,
+								Computed:            true,
+								Description:         "The provider-specific configuration for this kind.",
+								MarkdownDescription: "The provider-specific configuration for this kind.",
 							},
 						},
 						CustomType: customtypes.AlertmanagertypesChannelConfigVariantGithubComSigNozSignozPkgTypesAlertmanagertypesChannelWebhookConfigType{
@@ -614,19 +861,27 @@ func NotificationChannelDataSourceSchema(ctx context.Context) schema.Schema {
 						AttrTypes: customtypes.AlertmanagertypesChannelConfigValue{}.AttributeTypes(ctx),
 					},
 				},
-				Computed: true,
+				Computed:            true,
+				Description:         "The provider kind and spec, credentials included.",
+				MarkdownDescription: "The provider kind and spec, credentials included.",
 				Validators: []validator.Object{
 					validators.ExactlyOneNestedAttribute("email", "googlechat", "incidentio", "jira", "jsmops", "msteams", "opsgenie", "pagerduty", "slack", "telegram", "webhook"),
 				},
 			},
 			"display_name": schema.StringAttribute{
-				Computed: true,
+				Computed:            true,
+				Description:         "The label shown in the UI. Alert rules and routing policies reference it, not name.",
+				MarkdownDescription: "The label shown in the UI. Alert rules and routing policies reference it, not name.",
 			},
 			"id": schema.StringAttribute{
-				Required: true,
+				Required:            true,
+				Description:         "The channel UUID.",
+				MarkdownDescription: "The channel UUID.",
 			},
 			"name": schema.StringAttribute{
-				Computed: true,
+				Computed:            true,
+				Description:         "The immutable DNS-1123 identifier of the channel. Alert rules and routing policies reference displayName, not name.",
+				MarkdownDescription: "The immutable DNS-1123 identifier of the channel. Alert rules and routing policies reference displayName, not name.",
 			},
 		},
 	}

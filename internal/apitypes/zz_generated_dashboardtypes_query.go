@@ -5,6 +5,9 @@ package apitypes
 
 // DashboardtypesQuery defines model for DashboardtypesQuery.
 type DashboardtypesQuery struct {
-	Kind Querybuildertypesv5RequestType `json:"kind"`
-	Spec DashboardtypesQuerySpec        `json:"spec"`
+	// Kind The result shape the panel requests: time_series for time series, bar, area and histogram panels, scalar for number, table and pie panels, raw for list panels, heatmap for heatmap panels, trace for trace panels.
+	Kind Querybuildertypesv5RequestType `json:"kind" jsonschema:"The result shape the panel requests: time_series for time series, bar, area and histogram panels, scalar for number, table and pie panels, raw for list panels, heatmap for heatmap panels, trace for trace panels."`
+
+	// Spec The query content: an optional name and the query plugin.
+	Spec DashboardtypesQuerySpec `json:"spec" jsonschema:"The query content: an optional name and the query plugin."`
 }

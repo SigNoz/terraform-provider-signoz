@@ -75,24 +75,6 @@ func (t RuletypesRuleConditionType) ValueFromObject(ctx context.Context, in base
 			fmt.Sprintf(`alert_on_absent expected to be basetypes.BoolValue, was: %T`, alertOnAbsentAttribute))
 	}
 
-	algorithmAttribute, ok := attributes["algorithm"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`algorithm is missing from object`)
-
-		return nil, diags
-	}
-
-	algorithmVal, ok := algorithmAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`algorithm expected to be basetypes.StringValue, was: %T`, algorithmAttribute))
-	}
-
 	compositeQueryAttribute, ok := attributes["composite_query"]
 
 	if !ok {
@@ -208,7 +190,6 @@ func (t RuletypesRuleConditionType) ValueFromObject(ctx context.Context, in base
 	return RuletypesRuleConditionValue{
 		AbsentFor:         absentForVal,
 		AlertOnAbsent:     alertOnAbsentVal,
-		Algorithm:         algorithmVal,
 		CompositeQuery:    compositeQueryVal,
 		RequireMinPoints:  requireMinPointsVal,
 		RequiredNumPoints: requiredNumPointsVal,
@@ -318,24 +299,6 @@ func NewRuletypesRuleConditionValue(attributeTypes map[string]attr.Type, attribu
 			fmt.Sprintf(`alert_on_absent expected to be basetypes.BoolValue, was: %T`, alertOnAbsentAttribute))
 	}
 
-	algorithmAttribute, ok := attributes["algorithm"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`algorithm is missing from object`)
-
-		return NewRuletypesRuleConditionValueUnknown(), diags
-	}
-
-	algorithmVal, ok := algorithmAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`algorithm expected to be basetypes.StringValue, was: %T`, algorithmAttribute))
-	}
-
 	compositeQueryAttribute, ok := attributes["composite_query"]
 
 	if !ok {
@@ -451,7 +414,6 @@ func NewRuletypesRuleConditionValue(attributeTypes map[string]attr.Type, attribu
 	return RuletypesRuleConditionValue{
 		AbsentFor:         absentForVal,
 		AlertOnAbsent:     alertOnAbsentVal,
-		Algorithm:         algorithmVal,
 		CompositeQuery:    compositeQueryVal,
 		RequireMinPoints:  requireMinPointsVal,
 		RequiredNumPoints: requiredNumPointsVal,
@@ -532,7 +494,6 @@ var _ basetypes.ObjectValuable = RuletypesRuleConditionValue{}
 type RuletypesRuleConditionValue struct {
 	AbsentFor         basetypes.Int64Value  `tfsdk:"absent_for"`
 	AlertOnAbsent     basetypes.BoolValue   `tfsdk:"alert_on_absent"`
-	Algorithm         basetypes.StringValue `tfsdk:"algorithm"`
 	CompositeQuery    basetypes.ObjectValue `tfsdk:"composite_query"`
 	RequireMinPoints  basetypes.BoolValue   `tfsdk:"require_min_points"`
 	RequiredNumPoints basetypes.Int64Value  `tfsdk:"required_num_points"`
@@ -543,14 +504,13 @@ type RuletypesRuleConditionValue struct {
 }
 
 func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 9)
+	attrTypes := make(map[string]tftypes.Type, 8)
 
 	var val tftypes.Value
 	var err error
 
 	attrTypes["absent_for"] = basetypes.Int64Type{}.TerraformType(ctx)
 	attrTypes["alert_on_absent"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["algorithm"] = basetypes.StringType{}.TerraformType(ctx)
 	attrTypes["composite_query"] = basetypes.ObjectType{
 		AttrTypes: RuletypesAlertCompositeQueryValue{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
@@ -566,7 +526,7 @@ func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tfty
 
 	switch v.state {
 	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 9)
+		vals := make(map[string]tftypes.Value, 8)
 
 		val, err = v.AbsentFor.ToTerraformValue(ctx)
 
@@ -583,14 +543,6 @@ func (v RuletypesRuleConditionValue) ToTerraformValue(ctx context.Context) (tfty
 		}
 
 		vals["alert_on_absent"] = val
-
-		val, err = v.Algorithm.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["algorithm"] = val
 
 		val, err = v.CompositeQuery.ToTerraformValue(ctx)
 
@@ -714,7 +666,6 @@ func (v RuletypesRuleConditionValue) ToObjectValue(ctx context.Context) (basetyp
 	attributeTypes := map[string]attr.Type{
 		"absent_for":      basetypes.Int64Type{},
 		"alert_on_absent": basetypes.BoolType{},
-		"algorithm":       basetypes.StringType{},
 		"composite_query": basetypes.ObjectType{
 			AttrTypes: RuletypesAlertCompositeQueryValue{}.AttributeTypes(ctx),
 		},
@@ -740,7 +691,6 @@ func (v RuletypesRuleConditionValue) ToObjectValue(ctx context.Context) (basetyp
 		map[string]attr.Value{
 			"absent_for":          v.AbsentFor,
 			"alert_on_absent":     v.AlertOnAbsent,
-			"algorithm":           v.Algorithm,
 			"composite_query":     compositeQuery,
 			"require_min_points":  v.RequireMinPoints,
 			"required_num_points": v.RequiredNumPoints,
@@ -772,10 +722,6 @@ func (v RuletypesRuleConditionValue) Equal(o attr.Value) bool {
 	}
 
 	if !v.AlertOnAbsent.Equal(other.AlertOnAbsent) {
-		return false
-	}
-
-	if !v.Algorithm.Equal(other.Algorithm) {
 		return false
 	}
 
@@ -818,7 +764,6 @@ func (v RuletypesRuleConditionValue) AttributeTypes(ctx context.Context) map[str
 	return map[string]attr.Type{
 		"absent_for":      basetypes.Int64Type{},
 		"alert_on_absent": basetypes.BoolType{},
-		"algorithm":       basetypes.StringType{},
 		"composite_query": basetypes.ObjectType{
 			AttrTypes: RuletypesAlertCompositeQueryValue{}.AttributeTypes(ctx),
 		},

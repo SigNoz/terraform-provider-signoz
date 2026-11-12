@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesBasicVisualization defines model for DashboardtypesBasicVisualization.
 type DashboardtypesBasicVisualization struct {
-	TimePreference *DashboardtypesTimePreference `json:"timePreference,omitempty"`
+	// TimePreference The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window.
+	TimePreference *DashboardtypesTimePreference `json:"timePreference,omitempty" jsonschema:"The time range the panel queries: global_time (default) follows the dashboard range; last_5_min, last_15_min, last_30_min, last_1_hr, last_6_hr, last_1_day, last_3_days, last_1_week or last_1_month pin a fixed window."`
 }

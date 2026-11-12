@@ -5,11 +5,24 @@ package apitypes
 
 // DashboardtypesHeatmapColors defines model for DashboardtypesHeatmapColors.
 type DashboardtypesHeatmapColors struct {
-	Fill     *string                          `json:"fill,omitempty"`
-	MaxCount *float32                         `json:"maxCount,omitempty"`
-	MinCount *float32                         `json:"minCount,omitempty"`
-	Mode     *DashboardtypesHeatmapColorMode  `json:"mode,omitempty"`
-	Palette  *DashboardtypesHeatmapPalette    `json:"palette,omitempty"`
-	Scale    *DashboardtypesHeatmapColorScale `json:"scale,omitempty"`
-	Steps    *int                             `json:"steps,omitempty"`
+	// Fill The hex color varied in opacity mode. Empty uses the series legend color.
+	Fill *string `json:"fill,omitempty" jsonschema:"The hex color varied in opacity mode. Empty uses the series legend color."`
+
+	// MaxCount The count mapped to the highest color. Null uses the highest count in the grid.
+	MaxCount *float32 `json:"maxCount,omitempty" jsonschema:"The count mapped to the highest color. Null uses the highest count in the grid."`
+
+	// MinCount The count mapped to the lowest color. Null uses 0. Must not exceed maxCount.
+	MinCount *float32 `json:"minCount,omitempty" jsonschema:"The count mapped to the lowest color. Null uses 0. Must not exceed maxCount."`
+
+	// Mode How counts are colored: palette (default) picks a hue from palette, opacity varies the opacity of fill.
+	Mode *DashboardtypesHeatmapColorMode `json:"mode,omitempty" jsonschema:"How counts are colored: palette (default) picks a hue from palette, opacity varies the opacity of fill."`
+
+	// Palette The named color ramp used in palette mode, such as lava (default), ice or ember.
+	Palette *DashboardtypesHeatmapPalette `json:"palette,omitempty" jsonschema:"The named color ramp used in palette mode, such as lava (default), ice or ember."`
+
+	// Scale How counts map onto the color range: log (default), sqrt or linear.
+	Scale *DashboardtypesHeatmapColorScale `json:"scale,omitempty" jsonschema:"How counts map onto the color range: log (default), sqrt or linear."`
+
+	// Steps The number of distinct color steps, 2 to 128. 0 uses the chart default.
+	Steps *int `json:"steps,omitempty" jsonschema:"The number of distinct color steps, 2 to 128. 0 uses the chart default."`
 }

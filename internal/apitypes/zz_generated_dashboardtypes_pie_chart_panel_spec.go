@@ -5,7 +5,12 @@ package apitypes
 
 // DashboardtypesPieChartPanelSpec defines model for DashboardtypesPieChartPanelSpec.
 type DashboardtypesPieChartPanelSpec struct {
-	Formatting    *DashboardtypesPanelFormatting    `json:"formatting,omitempty"`
-	Legend        *DashboardtypesLegend             `json:"legend,omitempty"`
-	Visualization *DashboardtypesBasicVisualization `json:"visualization,omitempty"`
+	// Formatting Unit and decimal precision of the slice values.
+	Formatting *DashboardtypesPanelFormatting `json:"formatting,omitempty" jsonschema:"Unit and decimal precision of the slice values."`
+
+	// Legend Legend placement and slice colors.
+	Legend *DashboardtypesLegend `json:"legend,omitempty" jsonschema:"Legend placement and slice colors."`
+
+	// Visualization The time range the slices are computed over.
+	Visualization *DashboardtypesBasicVisualization `json:"visualization,omitempty" jsonschema:"The time range the slices are computed over."`
 }

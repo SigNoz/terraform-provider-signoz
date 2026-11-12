@@ -5,7 +5,12 @@ package apitypes
 
 // DashboardtypesLegend defines model for DashboardtypesLegend.
 type DashboardtypesLegend struct {
-	CustomColors *map[string]string            `json:"customColors,omitempty"`
-	Mode         *DashboardtypesLegendMode     `json:"mode,omitempty"`
-	Position     *DashboardtypesLegendPosition `json:"position,omitempty"`
+	// CustomColors Hex colors keyed by series label, overriding the automatic palette.
+	CustomColors *map[string]string `json:"customColors,omitempty" jsonschema:"Hex colors keyed by series label, overriding the automatic palette."`
+
+	// Mode The legend layout. Only list is supported.
+	Mode *DashboardtypesLegendMode `json:"mode,omitempty" jsonschema:"The legend layout. Only list is supported."`
+
+	// Position Where the legend sits: bottom (default) or right.
+	Position *DashboardtypesLegendPosition `json:"position,omitempty" jsonschema:"Where the legend sits: bottom (default) or right."`
 }

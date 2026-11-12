@@ -26,12 +26,13 @@ func ExpandQuerybuildertypesv5PromQuery(ctx context.Context, v customtypes.Query
 		return nil, diags
 	}
 	return &apitypes.Querybuildertypesv5PromQuery{
-		Disabled: convtypes.BoolPointer(v.Disabled),
-		Legend:   convtypes.StringPointer(v.Legend),
-		Name:     convtypes.StringPointer(v.Name),
-		Query:    convtypes.StringPointer(v.Query),
-		Stats:    convtypes.BoolPointer(v.Stats),
-		Step:     step,
+		Disabled:          convtypes.BoolPointer(v.Disabled),
+		Legend:            convtypes.StringPointer(v.Legend),
+		Name:              convtypes.StringPointer(v.Name),
+		Query:             convtypes.StringPointer(v.Query),
+		SkipStepAlignment: convtypes.BoolPointer(v.SkipStepAlignment),
+		Stats:             convtypes.BoolPointer(v.Stats),
+		Step:              step,
 	}, diags
 }
 
@@ -50,12 +51,13 @@ func FlattenQuerybuildertypesv5PromQuery(ctx context.Context, in *apitypes.Query
 	rv, d := customtypes.NewQuerybuildertypesv5PromQueryValue(
 		customtypes.Querybuildertypesv5PromQueryValue{}.AttributeTypes(ctx),
 		map[string]attr.Value{
-			"disabled": convtypes.BoolFromPointer(in.Disabled),
-			"legend":   convtypes.StringFromPointer(in.Legend),
-			"name":     convtypes.StringFromPointer(in.Name),
-			"query":    convtypes.StringFromPointer(in.Query),
-			"stats":    convtypes.BoolFromPointer(in.Stats),
-			"step":     stepFlat,
+			"disabled":            convtypes.BoolFromPointer(in.Disabled),
+			"legend":              convtypes.StringFromPointer(in.Legend),
+			"name":                convtypes.StringFromPointer(in.Name),
+			"query":               convtypes.StringFromPointer(in.Query),
+			"skip_step_alignment": convtypes.BoolFromPointer(in.SkipStepAlignment),
+			"stats":               convtypes.BoolFromPointer(in.Stats),
+			"step":                stepFlat,
 		},
 	)
 	diags.Append(d...)

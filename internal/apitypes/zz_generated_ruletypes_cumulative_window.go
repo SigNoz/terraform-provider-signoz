@@ -5,7 +5,12 @@ package apitypes
 
 // RuletypesCumulativeWindow defines model for RuletypesCumulativeWindow.
 type RuletypesCumulativeWindow struct {
-	Frequency string                      `json:"frequency"`
-	Schedule  RuletypesCumulativeSchedule `json:"schedule"`
-	Timezone  string                      `json:"timezone"`
+	// Frequency How often the rule is evaluated, as a Go duration such as 1m. Must be positive.
+	Frequency string `json:"frequency" jsonschema:"How often the rule is evaluated, as a Go duration such as 1m. Must be positive."`
+
+	// Schedule The boundary the accumulation window starts from. Each evaluation queries from the most recent boundary to now.
+	Schedule RuletypesCumulativeSchedule `json:"schedule" jsonschema:"The boundary the accumulation window starts from. Each evaluation queries from the most recent boundary to now."`
+
+	// Timezone The IANA time zone the schedule is resolved in, such as UTC or Asia/Kolkata.
+	Timezone string `json:"timezone" jsonschema:"The IANA time zone the schedule is resolved in, such as UTC or Asia/Kolkata."`
 }

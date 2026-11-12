@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesCustomVariableSpec defines model for DashboardtypesCustomVariableSpec.
 type DashboardtypesCustomVariableSpec struct {
-	CustomValue string `json:"customValue"`
+	// CustomValue The fixed values as a comma-separated list, such as 1,10,100.
+	CustomValue string `json:"customValue" jsonschema:"The fixed values as a comma-separated list, such as 1,10,100."`
 }

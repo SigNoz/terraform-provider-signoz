@@ -5,10 +5,21 @@ package apitypes
 
 // AlertmanagertypesChannelIncidentIOConfig defines model for AlertmanagertypesChannelIncidentIOConfig.
 type AlertmanagertypesChannelIncidentIOConfig struct {
-	Description  *string            `json:"description,omitempty"`
-	Metadata     *map[string]string `json:"metadata,omitempty"`
-	SendResolved *bool              `json:"sendResolved,omitempty"`
-	Title        *string            `json:"title,omitempty"`
-	Token        string             `json:"token"`
-	Url          string             `json:"url"`
+	// Description Alertmanager template for the alert description, rendered as markdown; defaults to the SigNoz incident.io default.
+	Description *string `json:"description,omitempty" jsonschema:"Alertmanager template for the alert description, rendered as markdown; defaults to the SigNoz incident.io default."`
+
+	// Metadata Extra event metadata keyed by name, merged over the group's common labels; values are Alertmanager templates.
+	Metadata *map[string]string `json:"metadata,omitempty" jsonschema:"Extra event metadata keyed by name, merged over the group's common labels; values are Alertmanager templates."`
+
+	// SendResolved Also notify when the alert resolves. Defaults to false.
+	SendResolved *bool `json:"sendResolved,omitempty" jsonschema:"Also notify when the alert resolves. Defaults to false."`
+
+	// Title Alertmanager template for the alert title; defaults to the SigNoz incident.io default.
+	Title *string `json:"title,omitempty" jsonschema:"Alertmanager template for the alert title; defaults to the SigNoz incident.io default."`
+
+	// Token The alert source secret token, without the Bearer prefix. A secret; returned by create, update and fetch by ID, never by list.
+	Token string `json:"token" jsonschema:"The alert source secret token, without the Bearer prefix. A secret; returned by create, update and fetch by ID, never by list."`
+
+	// Url The alert source HTTP alert events endpoint copied from its setup page.
+	Url string `json:"url" jsonschema:"The alert source HTTP alert events endpoint copied from its setup page."`
 }

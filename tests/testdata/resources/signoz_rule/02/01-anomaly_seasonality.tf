@@ -20,7 +20,6 @@ resource "signoz_rule" "scenario_02" {
   rule_type  = "anomaly_rule"
 
   condition = {
-    algorithm           = "standard"
     seasonality         = "daily"
     require_min_points  = true
     required_num_points = 4

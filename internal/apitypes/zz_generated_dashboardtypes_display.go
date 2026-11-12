@@ -5,6 +5,9 @@ package apitypes
 
 // DashboardtypesDisplay defines model for DashboardtypesDisplay.
 type DashboardtypesDisplay struct {
-	Description *string `json:"description,omitempty"`
-	Name        string  `json:"name"`
+	// Description A free-text description.
+	Description *string `json:"description,omitempty" jsonschema:"A free-text description."`
+
+	// Name The human-readable title, at most 128 characters.
+	Name string `json:"name" jsonschema:"The human-readable title, at most 128 characters."`
 }

@@ -5,6 +5,9 @@ package apitypes
 
 // DashboardtypesDynamicVariableSpec defines model for DashboardtypesDynamicVariableSpec.
 type DashboardtypesDynamicVariableSpec struct {
-	Name   string                              `json:"name"`
-	Signal DashboardtypesDynamicVariableSignal `json:"signal"`
+	// Name The attribute key whose observed values populate the variable, such as service.name.
+	Name string `json:"name" jsonschema:"The attribute key whose observed values populate the variable, such as service.name."`
+
+	// Signal The signal the values are read from: traces, logs, metrics or all (default).
+	Signal DashboardtypesDynamicVariableSignal `json:"signal" jsonschema:"The signal the values are read from: traces, logs, metrics or all (default)."`
 }

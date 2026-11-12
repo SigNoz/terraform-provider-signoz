@@ -5,10 +5,21 @@ package apitypes
 
 // DashboardtypesTimeSeriesPanelSpec defines model for DashboardtypesTimeSeriesPanelSpec.
 type DashboardtypesTimeSeriesPanelSpec struct {
-	Axes            *DashboardtypesAxes                      `json:"axes,omitempty"`
-	ChartAppearance *DashboardtypesTimeSeriesChartAppearance `json:"chartAppearance,omitempty"`
-	Formatting      *DashboardtypesPanelFormatting           `json:"formatting,omitempty"`
-	Legend          *DashboardtypesLegend                    `json:"legend,omitempty"`
-	Thresholds      *[]DashboardtypesThresholdWithLabel      `json:"thresholds,omitempty"`
-	Visualization   *DashboardtypesTimeSeriesVisualization   `json:"visualization,omitempty"`
+	// Axes Y axis bounds and scale.
+	Axes *DashboardtypesAxes `json:"axes,omitempty" jsonschema:"Y axis bounds and scale."`
+
+	// ChartAppearance Line drawing options.
+	ChartAppearance *DashboardtypesTimeSeriesChartAppearance `json:"chartAppearance,omitempty" jsonschema:"Line drawing options."`
+
+	// Formatting Unit and decimal precision of the values.
+	Formatting *DashboardtypesPanelFormatting `json:"formatting,omitempty" jsonschema:"Unit and decimal precision of the values."`
+
+	// Legend Legend placement and series colors.
+	Legend *DashboardtypesLegend `json:"legend,omitempty" jsonschema:"Legend placement and series colors."`
+
+	// Thresholds Horizontal reference lines drawn at fixed values.
+	Thresholds *[]DashboardtypesThresholdWithLabel `json:"thresholds,omitempty" jsonschema:"Horizontal reference lines drawn at fixed values."`
+
+	// Visualization Time range and gap handling.
+	Visualization *DashboardtypesTimeSeriesVisualization `json:"visualization,omitempty" jsonschema:"Time range and gap handling."`
 }

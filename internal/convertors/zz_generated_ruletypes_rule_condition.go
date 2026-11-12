@@ -39,7 +39,6 @@ func ExpandRuletypesRuleCondition(ctx context.Context, v customtypes.RuletypesRu
 	out := &apitypes.RuletypesRuleCondition{
 		AbsentFor:         convtypes.IntPointer(v.AbsentFor),
 		AlertOnAbsent:     convtypes.BoolPointer(v.AlertOnAbsent),
-		Algorithm:         convtypes.StringPointer(v.Algorithm),
 		RequireMinPoints:  convtypes.BoolPointer(v.RequireMinPoints),
 		RequiredNumPoints: convtypes.IntPointer(v.RequiredNumPoints),
 		Seasonality:       seasonality,
@@ -83,7 +82,6 @@ func FlattenRuletypesRuleCondition(ctx context.Context, in *apitypes.RuletypesRu
 		map[string]attr.Value{
 			"absent_for":          convtypes.IntFromPointer(in.AbsentFor),
 			"alert_on_absent":     convtypes.BoolFromPointer(in.AlertOnAbsent),
-			"algorithm":           convtypes.StringFromPointer(in.Algorithm),
 			"composite_query":     compositeQueryFlat,
 			"require_min_points":  convtypes.BoolFromPointer(in.RequireMinPoints),
 			"required_num_points": convtypes.IntFromPointer(in.RequiredNumPoints),

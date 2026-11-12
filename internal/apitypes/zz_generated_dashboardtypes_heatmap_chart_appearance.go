@@ -5,5 +5,6 @@ package apitypes
 
 // DashboardtypesHeatmapChartAppearance defines model for DashboardtypesHeatmapChartAppearance.
 type DashboardtypesHeatmapChartAppearance struct {
-	Colors *DashboardtypesHeatmapColors `json:"colors,omitempty"`
+	// Colors The color scale applied to bucket counts.
+	Colors *DashboardtypesHeatmapColors `json:"colors,omitempty" jsonschema:"The color scale applied to bucket counts."`
 }

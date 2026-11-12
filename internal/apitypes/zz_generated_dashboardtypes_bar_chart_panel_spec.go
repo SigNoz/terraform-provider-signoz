@@ -5,9 +5,18 @@ package apitypes
 
 // DashboardtypesBarChartPanelSpec defines model for DashboardtypesBarChartPanelSpec.
 type DashboardtypesBarChartPanelSpec struct {
-	Axes          *DashboardtypesAxes                  `json:"axes,omitempty"`
-	Formatting    *DashboardtypesPanelFormatting       `json:"formatting,omitempty"`
-	Legend        *DashboardtypesLegend                `json:"legend,omitempty"`
-	Thresholds    *[]DashboardtypesThresholdWithLabel  `json:"thresholds,omitempty"`
-	Visualization *DashboardtypesBarChartVisualization `json:"visualization,omitempty"`
+	// Axes Y axis bounds and scale.
+	Axes *DashboardtypesAxes `json:"axes,omitempty" jsonschema:"Y axis bounds and scale."`
+
+	// Formatting Unit and decimal precision of the values.
+	Formatting *DashboardtypesPanelFormatting `json:"formatting,omitempty" jsonschema:"Unit and decimal precision of the values."`
+
+	// Legend Legend placement and series colors.
+	Legend *DashboardtypesLegend `json:"legend,omitempty" jsonschema:"Legend placement and series colors."`
+
+	// Thresholds Horizontal reference lines drawn at fixed values.
+	Thresholds *[]DashboardtypesThresholdWithLabel `json:"thresholds,omitempty" jsonschema:"Horizontal reference lines drawn at fixed values."`
+
+	// Visualization Time range, gap handling and stacking.
+	Visualization *DashboardtypesBarChartVisualization `json:"visualization,omitempty" jsonschema:"Time range, gap handling and stacking."`
 }

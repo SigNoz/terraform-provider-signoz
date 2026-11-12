@@ -5,7 +5,12 @@ package apitypes
 
 // AlertmanagertypesChannelSlackField defines model for AlertmanagertypesChannelSlackField.
 type AlertmanagertypesChannelSlackField struct {
-	Short *bool  `json:"short,omitempty"`
-	Title string `json:"title"`
-	Value string `json:"value"`
+	// Short Render the field side by side with other short fields.
+	Short *bool `json:"short,omitempty" jsonschema:"Render the field side by side with other short fields."`
+
+	// Title The field title.
+	Title string `json:"title" jsonschema:"The field title."`
+
+	// Value The field value; an Alertmanager template.
+	Value string `json:"value" jsonschema:"The field value; an Alertmanager template."`
 }

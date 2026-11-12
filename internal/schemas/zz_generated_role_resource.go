@@ -79,6 +79,7 @@ func RoleResourceSchema(ctx context.Context) schema.Schema {
 													"logs-field",
 													"traces-field",
 													"metrics-field",
+													"llm-pricing-rule",
 												),
 											},
 										},
