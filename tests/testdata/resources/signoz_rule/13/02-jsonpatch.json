@@ -1,0 +1,4 @@
+[
+  { "op": "replace", "path": "/condition/alert_on_absent", "value": true },
+  { "op": "replace", "path": "/condition/absent_for", "value": 45 }
+]

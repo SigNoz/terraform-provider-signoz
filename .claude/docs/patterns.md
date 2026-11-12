@@ -109,6 +109,14 @@ A `*float64` Go field emits bare `{type: number}` with **no `format`** (swaggest
 - **Fix:** add a `` `format:"double"` `` struct tag → `float64` everywhere.
 - **Example:** `signoz_rule` `condition.thresholds.basic.spec[].{target,recoveryTarget}` and `condition.target` (signoz#12061).
 
+### Non-pointer `omitempty` scalar
+
+A non-pointer `bool` / number / `string` field tagged `omitempty`, so the server can't tell an explicit zero value from unset and drops it from the read.
+
+- **Pitfall:** `false` / `0` / `""` is accepted on write and then absent from the read, so apply fails: *"Provider produced inconsistent result after apply … was cty.False, but now null"* — the object exists on the server and Terraform leaves it tainted. On an Optional+Computed field, omitting the value instead plans `No changes`, so a `true` → `false` edit has no working path.
+- **Fix:** drop `omitempty` when the zero value is meaningful, or make the field a pointer when unset must stay distinct from zero. The provider schema is right; the wire drops the value.
+- **Example:** `signoz_rule` `condition.{alert_on_absent,absent_for}` (fixed in SigNoz v0.150.0, signoz#13524) and `condition.composite_query.unit`, still `omitempty` on `AlertCompositeQuery.Unit` in `pkg/types/ruletypes/alerting.go` (#153).
+
 ### Scalar-or-array union whose arm is inferred from emptiness
 
 A `oneOf [string, array<string>]` whose marshaller takes the scalar arm only while the scalar is non-empty, so which arm the caller set is inferred rather than recorded.
