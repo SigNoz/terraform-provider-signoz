@@ -2,8 +2,8 @@
   "resource": {
     "signoz_notification_channel": {
       "slack": {
-        "name": "slack-scenario-13",
-        "display_name": "slack-scenario-13",
+        "name": "slack-scenario-14",
+        "display_name": "slack-scenario-14",
         "config": {
           "webhook": {
             "kind": "webhook",
@@ -16,7 +16,7 @@
       }
     },
     "signoz_rule": {
-      "scenario_13": {
+      "scenario_14": {
         "alert": "testdata-absent-zero-values",
         "alert_type": "METRIC_BASED_ALERT",
         "rule_type": "threshold_rule",
