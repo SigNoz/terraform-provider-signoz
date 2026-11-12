@@ -1,0 +1,80 @@
+{
+  "resource": {
+    "signoz_notification_channel": {
+      "slack": {
+        "name": "slack-scenario-14",
+        "display_name": "slack-scenario-14",
+        "config": {
+          "webhook": {
+            "kind": "webhook",
+            "spec": {
+              "url": "https://example.com/webhook",
+              "send_resolved": true
+            }
+          }
+        }
+      }
+    },
+    "signoz_rule": {
+      "scenario_14": {
+        "alert": "testdata-absent-zero-values",
+        "alert_type": "METRIC_BASED_ALERT",
+        "rule_type": "threshold_rule",
+        "schema_version": "v2alpha1",
+        "condition": {
+          "alert_on_absent": false,
+          "absent_for": 0,
+          "composite_query": {
+            "panel_type": "graph",
+            "query_type": "builder",
+            "queries": [
+              {
+                "builder_query": {
+                  "type": "builder_query",
+                  "spec": {
+                    "metrics": {
+                      "name": "A",
+                      "signal": "metrics",
+                      "aggregations": [
+                        {
+                          "metric_name": "system.cpu.utilization",
+                          "space_aggregation": "avg",
+                          "time_aggregation": "avg"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "selected_query_name": "A",
+          "thresholds": {
+            "basic": {
+              "kind": "basic",
+              "spec": [
+                {
+                  "channels": ["${signoz_notification_channel.slack.display_name}"],
+                  "match_type": "at_least_once",
+                  "name": "warning",
+                  "op": "above",
+                  "target": 0.7
+                }
+              ]
+            }
+          }
+        },
+        "evaluation": {
+          "rolling": {
+            "kind": "rolling",
+            "spec": {
+              "eval_window": "5m",
+              "frequency": "1m"
+            }
+          }
+        },
+        "notification_settings": {}
+      }
+    }
+  }
+}
