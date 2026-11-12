@@ -117,6 +117,14 @@ A `oneOf [string, array<string>]` whose marshaller takes the scalar arm only whi
 - **Fix:** record which arm was set instead of inferring it from emptiness, so an empty string round-trips; failing that, reject an empty scalar on write so the caller gets a clean 400.
 - **Example:** `signoz_dashboard` `spec.variables[].list_variable.spec.default_value` — `jsonencode("")` writes but never reads back, while `jsonencode("prod")` and every array form round-trip (#155).
 
+### Enum that reads back spellings outside its own spec
+
+A field whose `Enum()` publishes only the canonical names, while the server also accepts aliases or legacy codes, stores whichever spelling it was sent, and returns it as stored.
+
+- **Pitfall:** config written in Terraform always round-trips, since the plan-time validator only lets canonical names through. A row written by another client (the UI, an older API, a migration) reads back with the alias, so `-generate-config-out` emits config the same provider rejects: *"Invalid Attribute Value Match … value must be one of: [\"above\" …], got: \"1\""*.
+- **Fix:** canonicalize to the published enum on write and rewrite already-stored rows in a migration, so a read only ever returns enum members; failing that, return the canonical form on read. Don't widen the enum to the aliases: that pushes every legacy spelling onto every client.
+- **Example:** `signoz_rule` `condition.thresholds.basic.spec[].{op,match_type}` — a rule stored with the codes `"1"` reads back as `"1"`, including after the v1 → v2alpha1 rule migration (signoz#13524), which carries the codes through unchanged (#161).
+
 ### Association via path params
 
 Identity/CRUD expressed through path params (`/service_accounts/{id}/roles`, delete `/roles/{rid}`), a list-returning read, and no update endpoint.
